@@ -46,10 +46,13 @@ next-env.d.ts
 *.swp
 Aboutme.avif
 Ideas/
+!public/assets/ideas/
 Images/
 !public/images/
 Inspirations/
+!public/assets/inspirations/
 Sides/
+!public/assets/sides/
 Domis IMGs/
 MCES Process/
 Obscura Process/
