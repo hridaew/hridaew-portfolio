@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
+/* ===== Design Tokens (migrated from legacy theme.css) ===== */
+
+@custom-variant dark (&:is(.dark *));
+
 :root {
+  --font-size: 16px;
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #363636;
+  --card: #ffffff;
+  --card-foreground: #363636;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f3f5;
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --border: rgba(0, 0, 0, 0.1);
+  --radius: 0.625rem;
+
+  /* Portfolio-specific tokens */
+  --text-primary: #363636;
+  --text-secondary: #525252;
+  --text-muted: #818181;
+  --text-subtle: #a1a1a1;
+  --surface-modal: #f7f7f7;
+  --surface-card: #f7f7f7;
+  --border-card: #e5e5e5;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #e5e5e5;
+  --card: #1a1a1a;
+  --card-foreground: #e5e5e5;
+  --primary: #e5e5e5;
+  --primary-foreground: #1a1a1a;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #e5e5e5;
+  --muted: #2a2a2a;
+  --muted-foreground: #a1a1a1;
+  --accent: #2a2a2a;
+  --accent-foreground: #e5e5e5;
+  --border: rgba(255, 255, 255, 0.1);
+
+  --text-primary: #e5e5e5;
+  --text-secondary: #d4d4d4;
+  --text-muted: #a1a1a1;
+  --text-subtle: #717182;
+  --surface-modal: #1a1a1a;
+  --surface-card: #2a2a2a;
+  --border-card: #3a3a3a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-instrument: var(--font-instrument-serif);
+  --font-dm: var(--font-dm-sans);
+  --font-noto: var(--font-noto-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ===== Base Styles ===== */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans), sans-serif;
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Modal smooth scrolling (Safari momentum) */
+  .modal-scroll {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===== Cheat Code Theme Overrides ===== */
+
+.theme-2004 {
+  --background: #c0c0c0;
+  --foreground: #000080;
+  --text-primary: #000080;
+  --text-secondary: #000080;
+  --text-muted: #000080;
+  --text-subtle: #000080;
+  --surface-card: #c0c0c0;
+  --surface-modal: #c0c0c0;
+  --border-card: #808080;
+  --border: #808080;
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+.theme-2004 * {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+.theme-2004 img {
+  image-rendering: pixelated;
+}
+
+.theme-cyberpunk {
+  --background: #0a0a12;
+  --foreground: #00f0ff;
+  --text-primary: #00f0ff;
+  --text-secondary: #00f0ff;
+  --text-muted: #ff2d6b;
+  --text-subtle: #ff2d6b;
+  --surface-card: #12121e;
+  --surface-modal: #0a0a12;
+  --border-card: #00f0ff33;
+  --border: #00f0ff33;
+}
+
+/* Scanline overlay for cyberpunk */
+.theme-cyberpunk::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+}
+
+/* Glitch text effect for cyberpunk headings */
+.theme-cyberpunk h1,
+.theme-cyberpunk h2 {
+  animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% {
+    clip-path: inset(0 0 0 0);
+  }
+  92% {
+    clip-path: inset(10% 0 60% 0);
+    transform: translateX(-2px);
+  }
+  94% {
+    clip-path: inset(40% 0 20% 0);
+    transform: translateX(2px);
+  }
+  96% {
+    clip-path: inset(70% 0 5% 0);
+    transform: translateX(-1px);
+  }
+  98% {
+    clip-path: inset(0 0 0 0);
+    transform: translateX(0);
+  }
 }

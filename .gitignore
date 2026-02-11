@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local reference files
+*.pdf
+*.mp3
+*.swp
+Aboutme.avif
+Ideas/
+Images/
+Inspirations/
+Sides/
+Domis IMGs/
+MCES Process/
+Obscura Process/
+Virdio Process/
+Live Classes with filter.png
+New Case Study Writings.txt
+socialpreview.png
