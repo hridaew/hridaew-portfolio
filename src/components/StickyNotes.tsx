@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { toast } from "sonner";
 
 interface StickyNote {
     id: string;
@@ -12,6 +13,7 @@ interface StickyNote {
     color: string;
     rotation: number;
     createdAt: string;
+    page: string;
 }
 
 const COLORS = [
@@ -32,17 +34,23 @@ function getUserId(): string {
     return id;
 }
 
-export function StickyNotes() {
+interface StickyNotesProps {
+    page?: string;
+}
+
+export function StickyNotes({ page = "home" }: StickyNotesProps) {
     const [notes, setNotes] = useState<StickyNote[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [email, setEmail] = useState("");
+    const [honeypot, setHoneypot] = useState("");
     const [selectedColor, setSelectedColor] = useState(COLORS[0]);
     const [placingNote, setPlacingNote] = useState<Omit<StickyNote, "x" | "y" | "id" | "createdAt"> | null>(null);
     const [isHoveringStack, setIsHoveringStack] = useState(false);
     const [isMobile, setIsMobile] = useState(true);
     const formRef = useRef<HTMLDivElement>(null);
     const userIdRef = useRef<string>("");
+    const isAdminRef = useRef(false);
 
     // Hide on mobile
     useEffect(() => {
@@ -52,28 +60,33 @@ export function StickyNotes() {
     // Load notes on mount, filtered by userId (admin sees all)
     useEffect(() => {
         userIdRef.current = getUserId();
-        const isAdmin = new URLSearchParams(window.location.search).get("admin") === "hridae";
-        fetch("/api/sticky-notes")
+        isAdminRef.current = new URLSearchParams(window.location.search).get("admin") === "hridae";
+
+        const params = new URLSearchParams({ userId: userIdRef.current });
+        if (isAdminRef.current) params.set("admin", "hridae");
+
+        fetch(`/api/sticky-notes?${params.toString()}`)
             .then((r) => r.json())
             .then((data) => {
                 if (Array.isArray(data)) {
-                    setNotes(isAdmin ? data : data.filter((n: StickyNote) => n.userId === userIdRef.current));
+                    setNotes(data.filter((n: StickyNote) => n.page === page));
                 }
             })
             .catch(() => {});
-    }, []);
+    }, [page]);
 
     const handleSubmit = useCallback(() => {
         if (!message.trim()) return;
         const rotation = (Math.random() - 0.5) * 8;
-        setPlacingNote({ message: message.trim(), email: email.trim() || undefined, userId: userIdRef.current, color: selectedColor, rotation });
+        setPlacingNote({ message: message.trim(), email: email.trim() || undefined, userId: userIdRef.current, color: selectedColor, rotation, page });
         setIsOpen(false);
         setMessage("");
         setEmail("");
-    }, [message, email, selectedColor]);
+        setHoneypot("");
+    }, [message, email, selectedColor, page]);
 
     const handlePlacement = useCallback(
-        (e: React.MouseEvent) => {
+        async (e: React.MouseEvent) => {
             if (!placingNote) return;
             const note: StickyNote = {
                 id: Date.now().toString(36),
@@ -87,18 +100,35 @@ export function StickyNotes() {
             setPlacingNote(null);
 
             // Persist
-            fetch("/api/sticky-notes", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(note),
-            }).catch(() => {});
+            try {
+                const res = await fetch("/api/sticky-notes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...note, website: honeypot }),
+                });
+
+                if (res.status === 429) {
+                    setNotes((prev) => prev.filter((n) => n.id !== note.id));
+                    toast.error("Too many notes! Try again later.");
+                } else if (res.ok) {
+                    // Update with server-generated ID
+                    const saved = await res.json();
+                    setNotes((prev) => prev.map((n) => (n.id === note.id ? saved : n)));
+                }
+            } catch {
+                // Keep optimistic note on network failure
+            }
         },
-        [placingNote]
+        [placingNote, honeypot]
     );
 
     const handleDelete = useCallback((noteId: string) => {
         setNotes((prev) => prev.filter((n) => n.id !== noteId));
-        fetch(`/api/sticky-notes?id=${encodeURIComponent(noteId)}`, {
+
+        const params = new URLSearchParams({ id: noteId, userId: userIdRef.current });
+        if (isAdminRef.current) params.set("admin", "hridae");
+
+        fetch(`/api/sticky-notes?${params.toString()}`, {
             method: "DELETE",
         }).catch(() => {});
     }, []);
@@ -207,6 +237,17 @@ export function StickyNotes() {
                             placeholder="Email (optional)"
                             type="email"
                             className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm font-[family-name:var(--font-dm-sans)] text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-300"
+                        />
+                        {/* Honeypot — invisible to humans, bots fill this */}
+                        <input
+                            value={honeypot}
+                            onChange={(e) => setHoneypot(e.target.value)}
+                            name="website"
+                            autoComplete="off"
+                            tabIndex={-1}
+                            aria-hidden="true"
+                            className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+                            placeholder="Website"
                         />
                         <div className="flex items-center gap-2">
                             {COLORS.map((color) => (

@@ -100,7 +100,7 @@ export default function DomisPage() {
                 <div className="h-12" />
             </div>
         </LightboxProvider>
-        <StickyNotes />
+        <StickyNotes page="domis" />
         </>
     );
 }

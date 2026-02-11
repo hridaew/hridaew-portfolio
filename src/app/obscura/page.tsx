@@ -696,7 +696,7 @@ export default function ObscuraPage() {
                 <div className="h-20" />
             </div>
         </LightboxProvider>
-        <StickyNotes />
+        <StickyNotes page="obscura" />
         </>
     );
 }

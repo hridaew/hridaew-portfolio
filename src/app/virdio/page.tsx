@@ -560,7 +560,7 @@ export default function VirdioPage() {
                 <div className="h-24" />
             </div>
         </LightboxProvider>
-        <StickyNotes />
+        <StickyNotes page="virdio" />
         </>
     );
 }

@@ -111,6 +111,17 @@
   .modal-scroll {
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Hide hero bottom text on short viewports to prevent overlap */
+  .hero-bottom-text {
+    display: none;
+  }
+
+  @media (min-height: 750px) {
+    .hero-bottom-text {
+      display: block;
+    }
+  }
 }
 
 /* ===== Cheat Code Theme Overrides ===== */

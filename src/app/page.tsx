@@ -269,9 +269,9 @@ export default function Home() {
 
               {/* Image Gallery */}
               <div className="w-full relative px-4 md:px-0">
-                <div className="grid grid-cols-2 gap-4 justify-items-center p-4 md:flex md:items-center md:justify-center md:overflow-visible md:p-0 md:-space-x-[11px] lg:-space-x-[12.5px]">
+                <div className="flex flex-wrap items-center justify-center overflow-visible p-0 -space-x-[11px] lg:-space-x-[12.5px]">
                   {caseStudies.map((cs, i) => (
-                    <div key={cs.slug} className="md:shrink-0">
+                    <div key={cs.slug} className="shrink-0">
                       <AnimatedCard
                         src={cs.image}
                         title={cs.title}
@@ -313,7 +313,7 @@ export default function Home() {
             {/* Bottom text - Intro */}
             <div
               ref={bottomRef}
-              className="absolute bottom-12 left-0 right-0 font-[family-name:var(--font-dm-sans)] font-semibold leading-relaxed text-[var(--text-subtle)] text-base text-center uppercase pb-4 opacity-0"
+              className="absolute bottom-12 left-0 right-0 font-[family-name:var(--font-dm-sans)] font-semibold leading-relaxed text-[var(--text-subtle)] text-base text-center uppercase pb-4 opacity-0 hero-bottom-text"
             >
               <p className="mb-0">5+ years of experience in 0-to-1 design</p>
               <p>across AI, Emerging Tech, Startups, and immersive Experiences</p>
@@ -337,10 +337,10 @@ export default function Home() {
         </main>
       </div>
 
-      <p className="text-center text-[10px] text-neutral-400 py-2">v2.0.2</p>
+      <p className="text-center text-[10px] text-neutral-400 py-2">v2.1.0</p>
 
       {/* Sticky Notes */}
-      <StickyNotes />
+      <StickyNotes page="home" />
 
       {/* Cheat Code Overlays */}
       {activeCheat === "destroy" && <DestroySequence />}

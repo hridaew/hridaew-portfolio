@@ -46,6 +46,12 @@
 - Case study source of truth: `New Case Study Writings.txt`
 - Process images: organized by project in their respective Process folders (e.g., `Virdio Process/`)
 
+## Deployment Checklist
+- **Build number**: Always bump the version string at the bottom of `src/app/page.tsx` (currently `v2.0.1` at ~line 340) before deploying to Vercel. Increment patch for fixes, minor for features.
+- **Deploy command**: `vercel --prod --yes` from project root
+- **Always commit + push before deploying** so git and Vercel stay in sync
+- Before deploying, verify local `main` is up to date with `origin/main` (`git fetch origin && git log --oneline origin/main -3`)
+
 ## Bug Prevention
 - Never use `setPointerCapture` for scroll containers — it kills native trackpad/touch scrolling. Use native `overflow-x: auto` instead.
 - Never use `scroll-snap-type: x mandatory` on horizontal galleries — it often breaks trackpad/touch scrolling. Plain `overflow-x: auto` with `flex` + `flex-shrink-0` children is more reliable.
@@ -57,6 +63,10 @@
 - Use `<Link href="/">` for navigation buttons, not `useRouter().push()` or `useRouter().back()` — programmatic navigation can fail silently in certain component contexts.
 - For mixed-size image layouts (e.g., desktop + phone mockups), use flex with the larger image setting natural height and the smaller one scaling via `h-full w-auto object-contain` — never use `items-stretch` on a grid as it distorts aspect ratios.
 - Case studies with dedicated pages should use `href` field in case study data to navigate instead of opening the modal.
+- **Audio autoplay**: Browser autoplay policy blocks `new Audio().play()` if called outside a direct user gesture. Always preload Audio objects on mount with `.load()`, then `.play()` on user action. If play is triggered via state change (e.g., `useEffect` on phase change), the gesture context is lost — preloading on mount preserves it.
+- **Fixed overlays inside positioned containers**: Framer Motion `layoutId` calculates positions relative to the nearest `overflow: hidden` ancestor. Use `createPortal(…, document.body)` to escape container constraints for expanded image overlays.
+- **Touch handling on custom pan/drag components**: Always add `touchAction: "none"` to containers that handle their own pointer events, otherwise the browser will fight for touch gestures (scroll vs. drag).
+- **Border-radius mismatches**: When nesting rounded elements, inner border-radius must match the outer container's radius exactly or gaps will show at corners on small screens.
 
 ## Key Conventions
 - All components use `"use client"` directive when they need interactivity

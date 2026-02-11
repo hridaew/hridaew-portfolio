@@ -628,7 +628,7 @@ export default function MemoryCarePage() {
                 </section>
             </div>
         </LightboxProvider>
-        <StickyNotes />
+        <StickyNotes page="memory-care" />
         </>
     );
 }

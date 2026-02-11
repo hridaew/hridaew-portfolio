@@ -127,7 +127,7 @@ export function AnimatedCard({
   return (
     <div
       ref={cardRef}
-      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[20px] md:rounded-[36px] overflow-hidden"
+      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-hidden"
       style={{ willChange: "transform", boxShadow: "0px 24px 64px 0px rgba(0,0,0,0.15)" }}
       onMouseEnter={() => selectedCase === null && onHoverChange(index)}
       onMouseLeave={() => selectedCase === null && onHoverChange(null)}
@@ -139,18 +139,18 @@ export function AnimatedCard({
       <motion.div
         layoutId={`card-image-${slug}`}
         ref={containerRef}
-        className="relative rounded-[20px] md:rounded-[36px] w-[130px] h-[130px] sm:w-[160px] sm:h-[160px] md:w-[220px] md:h-[220px] lg:w-[250px] lg:h-[250px] overflow-hidden"
+        className="relative rounded-[clamp(20px,14.06px+1.524vw,36px)] w-[clamp(130px,76.41px+12.057vw,250px)] h-[clamp(130px,76.41px+12.057vw,250px)] overflow-hidden"
       >
         <Image
           alt={title}
           className="absolute inset-0 object-cover"
           src={src}
           fill
-          sizes="(max-width: 768px) 180px, (max-width: 1024px) 220px, 250px"
+          sizes="clamp(130px,76.41px+12.057vw,250px)"
         />
         <div
           aria-hidden="true"
-          className="absolute border-[3px] border-solid border-white inset-0 rounded-[20px] md:rounded-[36px] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
+          className="absolute border-[3px] border-solid border-white inset-0 rounded-[clamp(20px,14.06px+1.524vw,36px)] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
         />
 
       </motion.div>
