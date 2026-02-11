@@ -47,6 +47,7 @@ next-env.d.ts
 Aboutme.avif
 Ideas/
 Images/
+!public/images/
 Inspirations/
 Sides/
 Domis IMGs/
