@@ -42,7 +42,7 @@ next-env.d.ts
 
 # Local reference files
 *.pdf
-*.mp3
+/*.mp3
 *.swp
 Aboutme.avif
 /Ideas/
