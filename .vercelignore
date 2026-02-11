@@ -6,14 +6,10 @@
 *.wav
 *.pptx
 Aboutme.avif
-Ideas/
-!public/assets/ideas/
-Images/
-!public/images/
-Inspirations/
-!public/assets/inspirations/
-Sides/
-!public/assets/sides/
+/Ideas/
+/Images/
+/Inspirations/
+/Sides/
 Domis IMGs/
 MCES Process/
 Obscura Process/
