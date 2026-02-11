@@ -66,7 +66,7 @@ export function AboutMeSection() {
                                 <p>
                                     With over 5 years of experience, I&apos;ve helped startups and
                                     museums alike bring their visions to life, from 0-to-1 product
-                                    launches to interactive exhibits that delight.
+                                    launches to interactive exhibits that make you go :O.
                                 </p>
                             </div>
                         </Reveal>
