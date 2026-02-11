@@ -127,7 +127,7 @@ export function AnimatedCard({
   return (
     <div
       ref={cardRef}
-      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[20px] md:rounded-[36px]"
+      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[20px] md:rounded-[36px] overflow-hidden"
       style={{ willChange: "transform", boxShadow: "0px 24px 64px 0px rgba(0,0,0,0.15)" }}
       onMouseEnter={() => selectedCase === null && onHoverChange(index)}
       onMouseLeave={() => selectedCase === null && onHoverChange(null)}
@@ -150,7 +150,7 @@ export function AnimatedCard({
         />
         <div
           aria-hidden="true"
-          className="absolute border-[3px] border-solid border-white inset-0 rounded-[24px] md:rounded-[36px] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
+          className="absolute border-[3px] border-solid border-white inset-0 rounded-[20px] md:rounded-[36px] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
         />
 
       </motion.div>

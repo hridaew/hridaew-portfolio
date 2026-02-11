@@ -9,8 +9,13 @@ export function DestroySequence() {
     const [phase, setPhase] = useState<"shake" | "flash" | "done">("shake");
     const overlayRef = useRef<HTMLDivElement>(null);
     const mainRef = useRef<HTMLElement | null>(null);
+    const boomAudioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
+        // Preload boom sound during user-gesture context
+        boomAudioRef.current = new Audio("/assets/cheat-codes/boom.mp3");
+        boomAudioRef.current.load();
+
         mainRef.current = document.querySelector("main");
         playAlarm();
 
@@ -50,10 +55,10 @@ export function DestroySequence() {
     useEffect(() => {
         if (phase === "flash") {
             // Play boom sound
-            try {
-                const boom = new Audio("/assets/cheat-codes/boom.mp3");
-                boom.play();
-            } catch {}
+            if (boomAudioRef.current) {
+                boomAudioRef.current.currentTime = 0;
+                boomAudioRef.current.play().catch(() => {});
+            }
 
             // Stop shake
             if (mainRef.current) {

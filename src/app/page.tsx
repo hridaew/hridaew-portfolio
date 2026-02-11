@@ -203,7 +203,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen w-full relative overflow-x-hidden">
       {/* Main content wrapper */}
       <div
         ref={mainWrapperRef}

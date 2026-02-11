@@ -10,6 +10,7 @@ import { ExpandableStack } from "@/components/shared/ExpandableStack";
 import { HapticsFlow } from "@/components/memory-care/HapticsFlow";
 import { CatPettingInteractive } from "@/components/memory-care/CatPettingInteractive";
 import { StickySidebar } from "@/components/shared/StickySidebar";
+import { StickyNotes } from "@/components/StickyNotes";
 
 export default function MemoryCarePage() {
     useEffect(() => {
@@ -17,8 +18,9 @@ export default function MemoryCarePage() {
     }, []);
 
     return (
+        <>
         <LightboxProvider>
-            <div className="bg-[#FDF8F0] min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-neutral-900 font-sans antialiased">
+            <div className="bg-[#FAFAFA] min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-neutral-900 font-sans antialiased">
                 <CloseButton />
                 <StickySidebar
                     sections={[
@@ -626,5 +628,7 @@ export default function MemoryCarePage() {
                 </section>
             </div>
         </LightboxProvider>
+        <StickyNotes />
+        </>
     );
 }

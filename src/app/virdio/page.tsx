@@ -13,6 +13,7 @@ import { PunchBag } from "@/components/virdio/PunchBag";
 import { TextReveal } from "@/components/TextReveal";
 import { Reveal } from "@/components/Reveal";
 import { ExpandableStack } from "@/components/shared/ExpandableStack";
+import { StickyNotes } from "@/components/StickyNotes";
 
 export default function VirdioPage() {
     useEffect(() => {
@@ -20,6 +21,7 @@ export default function VirdioPage() {
     }, []);
 
     return (
+        <>
         <LightboxProvider>
             <div className="bg-white min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-black font-sans antialiased text-neutral-900">
 
@@ -558,5 +560,7 @@ export default function VirdioPage() {
                 <div className="h-24" />
             </div>
         </LightboxProvider>
+        <StickyNotes />
+        </>
     );
 }

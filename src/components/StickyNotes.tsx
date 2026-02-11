@@ -40,8 +40,14 @@ export function StickyNotes() {
     const [selectedColor, setSelectedColor] = useState(COLORS[0]);
     const [placingNote, setPlacingNote] = useState<Omit<StickyNote, "x" | "y" | "id" | "createdAt"> | null>(null);
     const [isHoveringStack, setIsHoveringStack] = useState(false);
+    const [isMobile, setIsMobile] = useState(true);
     const formRef = useRef<HTMLDivElement>(null);
     const userIdRef = useRef<string>("");
+
+    // Hide on mobile
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     // Load notes on mount, filtered by userId (admin sees all)
     useEffect(() => {
@@ -106,6 +112,8 @@ export function StickyNotes() {
             };
         }
     }, [placingNote]);
+
+    if (isMobile) return null;
 
     return (
         <>

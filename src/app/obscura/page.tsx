@@ -15,6 +15,7 @@ import { WayneCarousel } from "@/components/obscura/WayneCarousel";
 import { EyeTrackingDemo } from "@/components/obscura/EyeTrackingDemo";
 import { ExhibitionMosaic } from "@/components/obscura/ExhibitionMosaic";
 import { StickySidebar } from "@/components/shared/StickySidebar";
+import { StickyNotes } from "@/components/StickyNotes";
 
 interface DwellData {
     regionId: string;
@@ -91,6 +92,7 @@ export default function ObscuraPage() {
     }, []);
 
     return (
+        <>
         <LightboxProvider>
             <div className="bg-[#0A0A0A] min-h-screen w-full relative overflow-x-hidden selection:bg-amber-900/40 selection:text-amber-200 font-sans antialiased">
                 <GrainOverlay />
@@ -694,5 +696,7 @@ export default function ObscuraPage() {
                 <div className="h-20" />
             </div>
         </LightboxProvider>
+        <StickyNotes />
+        </>
     );
 }

@@ -107,14 +107,16 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
   }, [deactivateSystem]);
 
   const handleCatClick = useCallback(() => {
-    if (!meowAudioRef.current) {
-      meowAudioRef.current = new Audio("/assets/memory-care/meow.mp3");
-    }
+    if (!meowAudioRef.current) return;
     meowAudioRef.current.currentTime = 0;
-    meowAudioRef.current.play();
+    meowAudioRef.current.play().catch(() => {});
   }, []);
 
   useEffect(() => {
+    // Preload meow sound
+    meowAudioRef.current = new Audio("/assets/memory-care/meow.mp3");
+    meowAudioRef.current.load();
+
     return () => {
       if (animTimelineRef.current) animTimelineRef.current.kill();
     };
@@ -133,7 +135,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           ref={(el) => { signalRefs.current[0] = el; }}
           d="M160 160 Q100 130 70 100"
           fill="none"
-          stroke="#d97706"
+          stroke="#a3a3a3"
           strokeWidth="2"
           strokeDasharray="6 4"
           opacity="0.15"
@@ -143,7 +145,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           ref={(el) => { signalRefs.current[1] = el; }}
           d="M230 120 Q230 70 230 50"
           fill="none"
-          stroke="#d97706"
+          stroke="#a3a3a3"
           strokeWidth="2"
           strokeDasharray="6 4"
           opacity="0.15"
@@ -153,7 +155,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           ref={(el) => { signalRefs.current[2] = el; }}
           d="M180 200 Q130 250 100 270"
           fill="none"
-          stroke="#d97706"
+          stroke="#a3a3a3"
           strokeWidth="2"
           strokeDasharray="6 4"
           opacity="0.15"
@@ -163,7 +165,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           ref={(el) => { signalRefs.current[3] = el; }}
           d="M280 200 Q330 250 360 270"
           fill="none"
-          stroke="#d97706"
+          stroke="#a3a3a3"
           strokeWidth="2"
           strokeDasharray="6 4"
           opacity="0.15"
@@ -171,17 +173,17 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
 
         {/* TV (top center) */}
         <g ref={tvRef} opacity="0.5">
-          <rect x="185" y="10" width="90" height="55" rx="6" fill="#fef3c7" stroke="#d97706" strokeWidth="1.5" />
-          <polygon points="225,28 225,48 242,38" fill="#d97706" opacity="0.6" />
-          <text x="230" y="78" textAnchor="middle" className="text-[10px] fill-amber-700 font-[family-name:var(--font-dm-sans)]">TV</text>
+          <rect x="185" y="10" width="90" height="55" rx="6" fill="#f5f5f5" stroke="#a3a3a3" strokeWidth="1.5" />
+          <polygon points="225,28 225,48 242,38" fill="#a3a3a3" opacity="0.6" />
+          <text x="230" y="78" textAnchor="middle" className="text-[10px] fill-neutral-500 font-[family-name:var(--font-dm-sans)]">TV</text>
         </g>
 
         {/* Speaker (top-left) */}
         <g ref={speakerRef} opacity="0.5">
-          <rect x="35" y="70" width="60" height="50" rx="8" fill="#fef3c7" stroke="#d97706" strokeWidth="1.5" />
-          <circle cx="65" cy="90" r="10" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <circle cx="65" cy="90" r="4" fill="#d97706" />
-          <text x="65" y="135" textAnchor="middle" className="text-[10px] fill-amber-700 font-[family-name:var(--font-dm-sans)]">Speaker</text>
+          <rect x="35" y="70" width="60" height="50" rx="8" fill="#f5f5f5" stroke="#a3a3a3" strokeWidth="1.5" />
+          <circle cx="65" cy="90" r="10" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <circle cx="65" cy="90" r="4" fill="#a3a3a3" />
+          <text x="65" y="135" textAnchor="middle" className="text-[10px] fill-neutral-500 font-[family-name:var(--font-dm-sans)]">Speaker</text>
         </g>
 
         {/* Cat (center) — interactive zone */}
@@ -206,31 +208,31 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
             height="100"
             preserveAspectRatio="xMidYMid meet"
           />
-          <text x="230" y="218" textAnchor="middle" className="text-[10px] fill-amber-700 font-[family-name:var(--font-dm-sans)]">Cat (pet me!)</text>
+          <text x="230" y="218" textAnchor="middle" className="text-[10px] fill-neutral-500 font-[family-name:var(--font-dm-sans)]">Cat (pet me!)</text>
         </g>
 
         {/* Haptic Emitter Left */}
         <g ref={hapticLeftRef} opacity="0.5">
-          <rect x="65" y="250" width="60" height="40" rx="6" fill="#fef3c7" stroke="#d97706" strokeWidth="1.5" />
+          <rect x="65" y="250" width="60" height="40" rx="6" fill="#f5f5f5" stroke="#a3a3a3" strokeWidth="1.5" />
           {/* Vibration waves */}
-          <path d="M82 260 Q85 265 82 270" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <path d="M88 258 Q92 265 88 272" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <path d="M94 256 Q99 265 94 274" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <text x="95" y="305" textAnchor="middle" className="text-[10px] fill-amber-700 font-[family-name:var(--font-dm-sans)]">Haptic L</text>
+          <path d="M82 260 Q85 265 82 270" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <path d="M88 258 Q92 265 88 272" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <path d="M94 256 Q99 265 94 274" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <text x="95" y="305" textAnchor="middle" className="text-[10px] fill-neutral-500 font-[family-name:var(--font-dm-sans)]">Haptic L</text>
         </g>
 
         {/* Haptic Emitter Right */}
         <g ref={hapticRightRef} opacity="0.5">
-          <rect x="335" y="250" width="60" height="40" rx="6" fill="#fef3c7" stroke="#d97706" strokeWidth="1.5" />
+          <rect x="335" y="250" width="60" height="40" rx="6" fill="#f5f5f5" stroke="#a3a3a3" strokeWidth="1.5" />
           {/* Vibration waves */}
-          <path d="M352 260 Q355 265 352 270" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <path d="M358 258 Q362 265 358 272" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <path d="M364 256 Q369 265 364 274" fill="none" stroke="#d97706" strokeWidth="1.5" />
-          <text x="365" y="305" textAnchor="middle" className="text-[10px] fill-amber-700 font-[family-name:var(--font-dm-sans)]">Haptic R</text>
+          <path d="M352 260 Q355 265 352 270" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <path d="M358 258 Q362 265 358 272" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <path d="M364 256 Q369 265 364 274" fill="none" stroke="#a3a3a3" strokeWidth="1.5" />
+          <text x="365" y="305" textAnchor="middle" className="text-[10px] fill-neutral-500 font-[family-name:var(--font-dm-sans)]">Haptic R</text>
         </g>
       </svg>
 
-      <p className="text-sm text-amber-700/80 font-[family-name:var(--font-dm-sans)]">
+      <p className="text-sm text-neutral-500 font-[family-name:var(--font-dm-sans)]">
         {isPetting ? "The system is responding to your touch..." : "Hover over the cat to activate the experience"}
       </p>
     </div>

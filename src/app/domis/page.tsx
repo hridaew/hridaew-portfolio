@@ -5,6 +5,7 @@ import { CloseButton } from "@/components/virdio/CloseButton";
 import { LightboxProvider, LightboxImage } from "@/components/virdio/Lightbox";
 import { Reveal } from "@/components/Reveal";
 import { HeroTextAnimation } from "@/components/HeroTextAnimation";
+import { StickyNotes } from "@/components/StickyNotes";
 
 export default function DomisPage() {
     useEffect(() => {
@@ -12,6 +13,7 @@ export default function DomisPage() {
     }, []);
 
     return (
+        <>
         <LightboxProvider>
             <div className="bg-white min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-black font-sans antialiased text-neutral-900">
                 <CloseButton />
@@ -98,5 +100,7 @@ export default function DomisPage() {
                 <div className="h-12" />
             </div>
         </LightboxProvider>
+        <StickyNotes />
+        </>
     );
 }

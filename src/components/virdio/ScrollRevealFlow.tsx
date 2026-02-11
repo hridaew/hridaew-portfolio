@@ -41,9 +41,9 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
         scrollTrigger: {
           trigger: section,
           pin: pinContainer,
-          start: "top top",
+          start: "top 5%",
           end: "bottom bottom",
-          scrub: 0.5,
+          scrub: 1,
           anticipatePin: 1,
         },
       });

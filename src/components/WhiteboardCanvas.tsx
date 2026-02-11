@@ -213,6 +213,7 @@ export function WhiteboardCanvas() {
                         ref={viewportRef}
                         className="relative w-full h-[500px] md:h-[600px] overflow-hidden cursor-grab select-none rounded-2xl border border-[var(--border-card)]"
                         style={{
+                            touchAction: "none",
                             backgroundColor: "#f5f5f5",
                             backgroundImage: "radial-gradient(circle, #d0d0d0 1px, transparent 1px)",
                             backgroundSize: "24px 24px",

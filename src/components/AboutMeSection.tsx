@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { EditorialLayout } from "./case-study/EditorialLayout";
@@ -8,6 +9,9 @@ import { Reveal } from "./Reveal";
 
 export function AboutMeSection() {
     const [imageExpanded, setImageExpanded] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
 
     const socialLinks = [
         { label: "LinkedIn", url: "https://www.linkedin.com/in/hridae" },
@@ -49,6 +53,9 @@ export function AboutMeSection() {
                         </Reveal>
 
                         <Reveal delay={0.1}>
+                            <p className="font-[family-name:var(--font-dm-sans)] text-base italic text-neutral-400 mb-2">
+                                (pronounced ri-they waliaa)
+                            </p>
                             <div className="space-y-6 font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-[var(--text-secondary)] leading-relaxed">
                                 <p>
                                     I am a Product Designer and Technologist with a passion for building
@@ -157,47 +164,50 @@ export function AboutMeSection() {
                 </div>
             </EditorialLayout>
 
-            {/* Expanded Image Overlay */}
-            <AnimatePresence>
-                {imageExpanded && (
-                    <motion.div
-                        className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        onClick={() => setImageExpanded(false)}
-                    >
-                        {/* Backdrop */}
+            {/* Expanded Image Overlay — portaled to body for correct viewport centering */}
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {imageExpanded && (
                         <motion.div
-                            className="absolute inset-0 bg-black/80"
+                            className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                        />
-
-                        {/* Expanded image */}
-                        <motion.img
-                            layoutId="aboutme-image"
-                            src="/assets/aboutme.png"
-                            alt="Hridae at Valve Software"
-                            className="relative z-10 max-w-[600px] w-full rounded-2xl"
-                            draggable={false}
-                        />
-
-                        {/* Caption text */}
-                        <motion.p
-                            className="relative z-10 mt-6 font-[family-name:var(--font-dm-sans)] text-white/80 text-base md:text-lg text-center max-w-[500px] leading-relaxed"
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ delay: 0.2, duration: 0.3 }}
+                            transition={{ duration: 0.3 }}
+                            onClick={() => setImageExpanded(false)}
                         >
-                            This photo is from when I visited the offices of Valve Software, they also signed my Steam Deck. Pretty cool...
-                        </motion.p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            {/* Backdrop */}
+                            <motion.div
+                                className="absolute inset-0 bg-black/80"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            />
+
+                            {/* Expanded image */}
+                            <motion.img
+                                layoutId="aboutme-image"
+                                src="/assets/aboutme.png"
+                                alt="Hridae at Valve Software"
+                                className="relative z-10 max-w-[600px] w-full rounded-2xl"
+                                draggable={false}
+                            />
+
+                            {/* Caption text */}
+                            <motion.p
+                                className="relative z-10 mt-6 font-[family-name:var(--font-dm-sans)] text-white/80 text-base md:text-lg text-center max-w-[500px] leading-relaxed"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ delay: 0.2, duration: 0.3 }}
+                            >
+                                This photo is from when I visited the offices of Valve Software, they also signed my Steam Deck. Pretty cool...
+                            </motion.p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </section>
     );
 }
