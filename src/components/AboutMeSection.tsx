@@ -88,7 +88,7 @@ export function AboutMeSection() {
                     </div>
 
                     {/* Right Column: Details */}
-                    <div className="space-y-12 lg:pt-20">
+                    <div className="space-y-12">
                         {/* Experience */}
                         <Reveal delay={0.3}>
                             <div className="space-y-4">
