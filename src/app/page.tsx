@@ -279,6 +279,7 @@ export default function Home() {
                         index={i}
                         rotation={cs.rotation}
                         yOffset={cs.yOffset}
+                        tags={"tags" in cs ? cs.tags : undefined}
                         isHovered={hoveredIndex}
                         selectedCase={selectedCase}
                         registerCard={registerCard}

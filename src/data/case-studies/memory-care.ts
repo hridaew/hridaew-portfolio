@@ -9,6 +9,7 @@ export const memoryCare: CaseStudy = {
   href: "/memory-care",
   rotation: 4.1,
   yOffset: 3,
+  tags: ["Healthcare", "Immersive", "Tangible", "Web"],
   content: [
     // ===== Hero =====
     {

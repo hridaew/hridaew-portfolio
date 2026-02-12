@@ -16,6 +16,7 @@ const domis: LegacyCaseStudy = {
   team: "2 Designers, 4 Engineers, 1 PM",
   rotation: -3.5,
   yOffset: 8,
+  tags: ["Consumer App", "AI"],
   challenge:
     "Creating intuitive interfaces for managing home maintenance services while building trust with homeowners.",
   solution:

@@ -48,11 +48,27 @@ export function InspirationsGallery() {
                 >
                     {inspirations.map((item, i) => (
                         <Reveal key={i} delay={i * 0.03} className={sizeClasses[item.size]}>
-                            <div className="group relative w-full h-full overflow-hidden rounded-lg transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:z-10">
+                            <div
+                                className="group relative w-full h-full overflow-hidden rounded-lg transition-all duration-300 ease-out border border-white/30 ring-1 ring-white/20"
+                                style={{ transform: "scale(1)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+                                onMouseEnter={(e) => {
+                                    const el = e.currentTarget;
+                                    el.style.transform = "scale(1.06)";
+                                    el.style.boxShadow = "0 4px 8px rgba(0,0,0,0.10), 0 16px 40px rgba(0,0,0,0.15)";
+                                    // Set z-index on the Reveal wrapper (parent) to escape its stacking context
+                                    if (el.parentElement) el.parentElement.style.zIndex = "20";
+                                }}
+                                onMouseLeave={(e) => {
+                                    const el = e.currentTarget;
+                                    el.style.transform = "scale(1)";
+                                    el.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+                                    if (el.parentElement) el.parentElement.style.zIndex = "";
+                                }}
+                            >
                                 <img
                                     src={item.src}
                                     alt={item.caption}
-                                    className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                                    className="w-full h-full object-cover"
                                     draggable={false}
                                     loading="lazy"
                                 />

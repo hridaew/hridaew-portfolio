@@ -9,6 +9,7 @@ export const obscura: CaseStudy = {
   href: "/obscura",
   rotation: -1.8,
   yOffset: 12,
+  tags: ["Immersive Exhibit", "VR"],
   content: [
     // ===== Hero =====
     {

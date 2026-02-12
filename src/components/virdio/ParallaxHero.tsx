@@ -37,7 +37,7 @@ const ParallaxHero = () => {
                     className="z-20 flex flex-col items-center text-center px-6 max-w-5xl mx-auto"
                 >
                     <h1 className="font-[family-name:var(--font-instrument-serif)] text-[72px] md:text-[120px] lg:text-[160px] leading-[0.9] tracking-tighter mb-6 py-3 text-neutral-900">
-                        <HeroTextAnimation variant="slide-up">Virdio</HeroTextAnimation>
+                        <HeroTextAnimation variant="slide-up">Virdio </HeroTextAnimation>
                     </h1>
 
                     <motion.div

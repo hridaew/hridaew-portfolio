@@ -8,6 +8,7 @@ export const virdio: CaseStudy = {
   image: "/images/virdio.png",
   rotation: 2.2,
   yOffset: -5,
+  tags: ["Consumer App", "Multiplatform", "AR"],
   href: "/virdio",
   content: [
     // ===== Hero =====

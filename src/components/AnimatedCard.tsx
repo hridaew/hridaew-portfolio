@@ -18,6 +18,7 @@ interface AnimatedCardProps {
   index: number;
   rotation: number;
   yOffset: number;
+  tags?: string[];
   isHovered: number | null;
   selectedCase: number | null;
   registerCard: (index: number, handlers: CardHandlers) => void;
@@ -32,6 +33,7 @@ export function AnimatedCard({
   index,
   rotation,
   yOffset,
+  tags,
   isHovered,
   selectedCase,
   registerCard,
@@ -40,6 +42,7 @@ export function AnimatedCard({
 }: AnimatedCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pillsRef = useRef<HTMLDivElement>(null);
   const isThisHovered = isHovered === index;
   const isAnyHovered = isHovered !== null;
   const isSelected = selectedCase === index;
@@ -94,6 +97,37 @@ export function AnimatedCard({
     }
   }, [isThisHovered, isAnyHovered, rotation, selectedCase, index]);
 
+  // Animate pills on hover
+  useEffect(() => {
+    if (!pillsRef.current) return;
+    const pills = pillsRef.current.children;
+    if (!pills.length) return;
+
+    // Kill any in-flight tweens to prevent stranded pills during fast hovering
+    gsap.killTweensOf(pills);
+
+    if (isThisHovered) {
+      // Staggered entrance: fade + slide up
+      gsap.to(pills, {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        ease: "back.out(1.4)",
+        stagger: 0.06,
+        overwrite: true,
+      });
+    } else {
+      // Immediate reset: no stagger on exit to prevent lingering pills
+      gsap.to(pills, {
+        opacity: 0,
+        y: 8,
+        duration: 0.15,
+        ease: "power2.in",
+        overwrite: true,
+      });
+    }
+  }, [isThisHovered]);
+
   // Tap/Click effects
   const handlePointerDown = () => {
     if (selectedCase !== null || !cardRef.current) return;
@@ -127,7 +161,7 @@ export function AnimatedCard({
   return (
     <div
       ref={cardRef}
-      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-hidden"
+      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-visible"
       style={{ willChange: "transform", boxShadow: "0px 24px 64px 0px rgba(0,0,0,0.15)" }}
       onMouseEnter={() => selectedCase === null && onHoverChange(index)}
       onMouseLeave={() => selectedCase === null && onHoverChange(null)}
@@ -136,6 +170,29 @@ export function AnimatedCard({
       onPointerCancel={handlePointerUp}
       onClick={() => selectedCase === null && onClick()}
     >
+      {/* Metadata pills — hidden on mobile, float above card */}
+      {tags && tags.length > 0 && (
+        <div
+          ref={pillsRef}
+          className="hidden md:flex absolute -top-10 left-1/2 -translate-x-1/2 gap-1.5 pointer-events-none whitespace-nowrap z-10"
+        >
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="opacity-0 translate-y-2 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider font-[family-name:var(--font-dm-sans)] border backdrop-blur-md"
+              style={{
+                background: "rgba(255, 255, 255, 0.12)",
+                borderColor: "rgba(255, 255, 255, 0.2)",
+                color: "var(--text-primary)",
+                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       <motion.div
         layoutId={`card-image-${slug}`}
         ref={containerRef}

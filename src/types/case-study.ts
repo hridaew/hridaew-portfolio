@@ -9,6 +9,7 @@ export interface CaseStudy {
   image: string;
   rotation: number;
   yOffset: number;
+  tags?: string[];
   // Optional dedicated page URL (bypasses modal)
   href?: string;
   // Content blocks for the modal
@@ -28,6 +29,7 @@ export interface LegacyCaseStudy {
   platforms?: string;
   rotation: number;
   yOffset: number;
+  tags?: string[];
   href?: string;
   challenge?: string;
   solution?: string;

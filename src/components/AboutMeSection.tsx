@@ -19,10 +19,10 @@ export function AboutMeSection() {
     ];
 
     const experience = [
-        { name: "Domis", url: "https://getdomis.com" },
-        { name: "Museum of History and Industry", url: "https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/" },
-        { name: "Maria Mortati Experience Design", url: "https://mortatidesign.com" },
-        { name: "Virdio", url: "https://virdiohealth.com" },
+        { name: "Domis", years: "2024 —", url: "https://getdomis.com", subtitle: "Founding Product Designer for a consumer app leveraging AI, and premium design to make home maintenance a breeze." },
+        { name: "Museum of History and Industry", years: "2024 – 2025", url: "https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/", subtitle: "Design lead for an immersive exhibit based on photos from post WW2 Japan, sold out event on 09/13/2025." },
+        { name: "Maria Mortati Experience Design", years: "2020 – 2023 (non-consecutive)", url: "https://mortatidesign.com", subtitle: "Interaction Design and Research for a project focused on multi-sensory, immersive experiences for people with Alzheimer's." },
+        { name: "Virdio", years: "2021 – 2022", url: "https://virdiohealth.com", subtitle: "Product Designer, owned end-to-end Design for a cross-platform AR fitness app." },
     ];
 
     const education = [
@@ -97,7 +97,7 @@ export function AboutMeSection() {
                                 </h3>
                                 <ul className="space-y-2">
                                     {experience.map((item, i) => (
-                                        <li key={i} className="border-b border-[var(--border-card)] pb-2 last:border-0">
+                                        <li key={i} className="border-b border-[var(--border-card)] pb-3 last:border-0">
                                             <a
                                                 href={item.url}
                                                 target="_blank"
@@ -106,6 +106,12 @@ export function AboutMeSection() {
                                             >
                                                 {item.name}
                                             </a>
+                                            <p className="font-[family-name:var(--font-dm-sans)] text-xs text-[var(--text-subtle)] tracking-wide mt-0.5">
+                                                {item.years}
+                                            </p>
+                                            <p className="font-[family-name:var(--font-dm-sans)] text-sm text-[var(--text-muted)] leading-relaxed mt-1">
+                                                {item.subtitle}
+                                            </p>
                                         </li>
                                     ))}
                                 </ul>

@@ -94,13 +94,16 @@ export function WhiteboardCanvas() {
         el.scrollLeft = scrollStart.current.x - dx;
         el.scrollTop = scrollStart.current.y - dy;
 
-        // Track velocity
+        // Track velocity (clamped to prevent throwing too far)
         const now = performance.now();
         const dt = now - lastPointerTime.current;
+        const MAX_VELOCITY = 30;
         if (dt > 0) {
+            const rawVx = (lastPointerPos.current.x - e.clientX) / dt * 16;
+            const rawVy = (lastPointerPos.current.y - e.clientY) / dt * 16;
             velocity.current = {
-                x: (lastPointerPos.current.x - e.clientX) / dt * 16,
-                y: (lastPointerPos.current.y - e.clientY) / dt * 16,
+                x: Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, rawVx)),
+                y: Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, rawVy)),
             };
         }
         lastPointerPos.current = { x: e.clientX, y: e.clientY };
@@ -114,7 +117,7 @@ export function WhiteboardCanvas() {
         if (el) el.style.cursor = "grab";
 
         // Start inertia
-        const decay = 0.95;
+        const decay = 0.92;
         const startInertia = () => {
             const vx = velocity.current.x;
             const vy = velocity.current.y;
@@ -134,7 +137,7 @@ export function WhiteboardCanvas() {
     }, []);
 
     // Apply scale transform to inner canvas
-    const applyScale = useCallback((scale: number, originX?: number, originY?: number) => {
+    const applyScale = useCallback((scale: number, mouseOffsetX?: number, mouseOffsetY?: number, contentX?: number, contentY?: number) => {
         const el = viewportRef.current;
         const inner = innerRef.current;
         if (!el || !inner) return;
@@ -144,17 +147,27 @@ export function WhiteboardCanvas() {
 
         inner.style.transformOrigin = "0 0";
 
+        // Calculate target scroll to keep content point under the mouse
+        const targetScrollLeft = contentX !== undefined && mouseOffsetX !== undefined
+            ? contentX * scale - mouseOffsetX
+            : el.scrollLeft;
+        const targetScrollTop = contentY !== undefined && mouseOffsetY !== undefined
+            ? contentY * scale - mouseOffsetY
+            : el.scrollTop;
+
+        const startScrollLeft = el.scrollLeft;
+        const startScrollTop = el.scrollTop;
+
         gsap.to(inner, {
             scale,
             duration: 0.3,
             ease: "power3.out",
             onUpdate() {
-                if (originX !== undefined && originY !== undefined) {
-                    const currentScale = gsap.getProperty(inner, "scaleX") as number;
-                    const ratio = currentScale / prevScale;
-                    el.scrollLeft = originX * ratio - (originX - el.scrollLeft);
-                    el.scrollTop = originY * ratio - (originY - el.scrollTop);
-                }
+                // Interpolate scroll in sync with the scale animation
+                const progress = (gsap.getProperty(inner, "scaleX") as number - prevScale) / (scale - prevScale);
+                const clampedProgress = Math.max(0, Math.min(1, isNaN(progress) ? 1 : progress));
+                el.scrollLeft = startScrollLeft + (targetScrollLeft - startScrollLeft) * clampedProgress;
+                el.scrollTop = startScrollTop + (targetScrollTop - startScrollTop) * clampedProgress;
             },
         });
     }, []);
@@ -165,11 +178,15 @@ export function WhiteboardCanvas() {
         if (!el) return;
 
         const rect = el.getBoundingClientRect();
-        const originX = e.clientX - rect.left + el.scrollLeft;
-        const originY = e.clientY - rect.top + el.scrollTop;
+        // Mouse offset within the viewport element
+        const mouseOffsetX = e.clientX - rect.left;
+        const mouseOffsetY = e.clientY - rect.top;
+        // Content coordinate under the mouse (unscaled)
+        const contentX = (el.scrollLeft + mouseOffsetX) / scaleRef.current;
+        const contentY = (el.scrollTop + mouseOffsetY) / scaleRef.current;
 
         const newScale = scaleRef.current === 1 ? 2 : 1;
-        applyScale(newScale, originX, originY);
+        applyScale(newScale, mouseOffsetX, mouseOffsetY, contentX, contentY);
     }, [applyScale]);
 
     // Pinch/trackpad zoom
@@ -182,13 +199,15 @@ export function WhiteboardCanvas() {
             e.preventDefault();
 
             const rect = el.getBoundingClientRect();
-            const originX = e.clientX - rect.left + el.scrollLeft;
-            const originY = e.clientY - rect.top + el.scrollTop;
+            const mouseOffsetX = e.clientX - rect.left;
+            const mouseOffsetY = e.clientY - rect.top;
+            const contentX = (el.scrollLeft + mouseOffsetX) / scaleRef.current;
+            const contentY = (el.scrollTop + mouseOffsetY) / scaleRef.current;
 
             const delta = 1 - e.deltaY * 0.01;
             const newScale = Math.min(3, Math.max(0.5, scaleRef.current * delta));
 
-            applyScale(newScale, originX, originY);
+            applyScale(newScale, mouseOffsetX, mouseOffsetY, contentX, contentY);
         };
 
         el.addEventListener("wheel", handleWheel, { passive: false });
@@ -208,54 +227,54 @@ export function WhiteboardCanvas() {
                 </p>
             </div>
 
-                <div className="max-w-[1200px] mx-auto px-6 md:px-12">
+            <div className="max-w-[1200px] mx-auto px-6 md:px-12">
+                <div
+                    ref={viewportRef}
+                    className="relative w-full h-[500px] md:h-[600px] overflow-hidden cursor-grab select-none rounded-2xl border border-[var(--border-card)]"
+                    style={{
+                        touchAction: "none",
+                        backgroundColor: "#f5f5f5",
+                        backgroundImage: "radial-gradient(circle, #d0d0d0 1px, transparent 1px)",
+                        backgroundSize: "24px 24px",
+                    }}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerLeave={handlePointerUp}
+                    onDoubleClick={handleDoubleClick}
+                >
                     <div
-                        ref={viewportRef}
-                        className="relative w-full h-[500px] md:h-[600px] overflow-hidden cursor-grab select-none rounded-2xl border border-[var(--border-card)]"
-                        style={{
-                            touchAction: "none",
-                            backgroundColor: "#f5f5f5",
-                            backgroundImage: "radial-gradient(circle, #d0d0d0 1px, transparent 1px)",
-                            backgroundSize: "24px 24px",
-                        }}
-                        onPointerDown={handlePointerDown}
-                        onPointerMove={handlePointerMove}
-                        onPointerUp={handlePointerUp}
-                        onPointerLeave={handlePointerUp}
-                        onDoubleClick={handleDoubleClick}
+                        ref={innerRef}
+                        className="absolute"
+                        style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
                     >
-                        <div
-                            ref={innerRef}
-                            className="absolute"
-                            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-                        >
-                            {images.map((img, i) => (
+                        {images.map((img, i) => (
+                            <div
+                                key={i}
+                                className="absolute group"
+                                style={{
+                                    left: img.x,
+                                    top: img.y,
+                                    width: img.width,
+                                    transform: `rotate(${img.rotation}deg)`,
+                                }}
+                            >
                                 <div
-                                    key={i}
-                                    className="absolute group"
-                                    style={{
-                                        left: img.x,
-                                        top: img.y,
-                                        width: img.width,
-                                        transform: `rotate(${img.rotation}deg)`,
-                                    }}
+                                    className="bg-white p-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-shadow duration-200"
                                 >
-                                    <div
-                                        className="bg-white p-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-shadow duration-200"
-                                    >
-                                        <img
-                                            src={img.src}
-                                            alt={img.alt}
-                                            className="w-full h-auto rounded"
-                                            draggable={false}
-                                            loading="lazy"
-                                        />
-                                    </div>
+                                    <img
+                                        src={img.src}
+                                        alt={img.alt}
+                                        className="w-full h-auto rounded"
+                                        draggable={false}
+                                        loading="lazy"
+                                    />
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
+            </div>
         </section>
     );
 }
