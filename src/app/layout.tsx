@@ -4,7 +4,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { PageTransitionProvider } from "@/components/PageTransition";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
