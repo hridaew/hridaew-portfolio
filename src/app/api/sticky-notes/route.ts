@@ -3,6 +3,9 @@ import { after } from "next/server";
 import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
 
+// Force dynamic — never cache GET responses on Vercel edge
+export const dynamic = "force-dynamic";
+
 const redis = Redis.fromEnv();
 
 const VALID_PAGES = ["home", "virdio", "memory-care", "obscura", "domis"];
@@ -28,9 +31,11 @@ type NoteData = {
 // --- Email notification (fire-and-forget) ---
 
 async function sendNotificationEmail(note: NoteData) {
-  if (!process.env.RESEND_API_KEY || !process.env.NOTIFICATION_EMAIL) return;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const notifEmail = process.env.NOTIFICATION_EMAIL?.trim();
+  if (!apiKey || !notifEmail) return;
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const resend = new Resend(apiKey);
   const pageLabel =
     note.page === "home"
       ? "Home"
@@ -40,7 +45,7 @@ async function sendNotificationEmail(note: NoteData) {
 
   await resend.emails.send({
     from: "Portfolio Notes <onboarding@resend.dev>",
-    to: process.env.NOTIFICATION_EMAIL,
+    to: notifEmail,
     subject: `New sticky note on ${pageLabel}`,
     html: `
       <h2>New Sticky Note</h2>
@@ -86,7 +91,9 @@ export async function GET(request: NextRequest) {
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
 
-    return NextResponse.json(validNotes);
+    return NextResponse.json(validNotes, {
+      headers: { "Cache-Control": "no-store, max-age=0" },
+    });
   } catch (error) {
     console.error("GET /api/sticky-notes error:", error);
     return NextResponse.json([]);
@@ -149,7 +156,7 @@ export async function POST(request: NextRequest) {
     const note: NoteData = {
       id,
       message: message.trim(),
-      email: email?.trim() || undefined,
+      ...(email?.trim() ? { email: email.trim() } : {}),
       userId,
       x,
       y,
