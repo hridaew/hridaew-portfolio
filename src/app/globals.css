@@ -25,8 +25,8 @@
   /* Portfolio-specific tokens */
   --text-primary: #363636;
   --text-secondary: #525252;
-  --text-muted: #818181;
-  --text-subtle: #a1a1a1;
+  --text-muted: #707070;
+  --text-subtle: #737373;
   --surface-modal: #f7f7f7;
   --surface-card: #f7f7f7;
   --border-card: #e5e5e5;
@@ -50,7 +50,7 @@
   --text-primary: #e5e5e5;
   --text-secondary: #d4d4d4;
   --text-muted: #a1a1a1;
-  --text-subtle: #717182;
+  --text-subtle: #8e8ea0;  /* ~5.0:1 on #1a1a1a */
   --surface-modal: #1a1a1a;
   --surface-card: #2a2a2a;
   --border-card: #3a3a3a;
@@ -86,6 +86,18 @@
 @layer base {
   * {
     @apply border-border;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 4px;
+    border-radius: 4px;
   }
 
   html {

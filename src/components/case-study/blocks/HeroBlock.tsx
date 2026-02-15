@@ -28,7 +28,7 @@ export function HeroBlock({ block, layoutId }: { block: HeroBlockType; layoutId?
       {/* Title + subtitle */}
       <EditorialLayout width="text">
         <div className="space-y-4">
-          <h1 className="font-[family-name:var(--font-instrument-serif)] text-[48px] md:text-[64px] lg:text-[72px] leading-[1.05] text-[var(--text-primary)] tracking-tight">
+          <h1 id="modal-title" className="font-[family-name:var(--font-instrument-serif)] text-[48px] md:text-[64px] lg:text-[72px] leading-[1.05] text-[var(--text-primary)] tracking-tight">
             {block.title}
           </h1>
           <p className="font-[family-name:var(--font-dm-sans)] text-[20px] md:text-[24px] text-[var(--text-muted)] leading-relaxed">

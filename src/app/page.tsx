@@ -338,7 +338,7 @@ export default function Home() {
         </main>
       </div>
 
-      <p className="text-center text-[10px] text-neutral-400 py-2">v2.1.0</p>
+      <p className="text-center text-[10px] text-neutral-400 py-2">v2.1.1</p>
 
       {/* Sticky Notes */}
       <StickyNotes page="home" />

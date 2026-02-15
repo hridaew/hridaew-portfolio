@@ -72,7 +72,7 @@ function LegacyModalContent({ caseStudy, scroller, layoutId }: { caseStudy: Lega
 
       <EditorialLayout width="text">
         <div className="space-y-4">
-          <h1 className="font-[family-name:var(--font-instrument-serif)] text-[48px] md:text-[64px] lg:text-[72px] leading-[1.05] text-[var(--text-primary)] tracking-tight">
+          <h1 id="modal-title" className="font-[family-name:var(--font-instrument-serif)] text-[48px] md:text-[64px] lg:text-[72px] leading-[1.05] text-[var(--text-primary)] tracking-tight">
             {caseStudy.title}
           </h1>
           <p className="font-[family-name:var(--font-dm-sans)] text-[20px] md:text-[24px] text-[var(--text-muted)] leading-relaxed">
@@ -169,6 +169,24 @@ export function CaseStudyModal({
   }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<Element | null>(null);
+
+  // Capture the element that triggered the modal (for focus restore)
+  useEffect(() => {
+    triggerRef.current = document.activeElement;
+    return () => {
+      // Return focus to triggering element on unmount
+      if (triggerRef.current instanceof HTMLElement) {
+        triggerRef.current.focus();
+      }
+    };
+  }, []);
+
+  // Auto-focus close button when modal opens
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
 
   // Scroll to top on case change
   useEffect(() => {
@@ -179,6 +197,15 @@ export function CaseStudyModal({
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
+
+  // Escape key to close
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [handleClose]);
 
   const nextIndex = (selectedIndex + 1) % caseStudies.length;
   const nextCase = caseStudies[nextIndex];
@@ -205,6 +232,9 @@ export function CaseStudyModal({
       {/* Modal container — centered */}
       <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-3 md:p-6 lg:p-8">
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
           initial={{ scale: 0.92, opacity: 0, y: 40 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.96, opacity: 0, y: 30 }}
@@ -220,6 +250,7 @@ export function CaseStudyModal({
             {/* Close button — sticky */}
             <div className="sticky top-0 z-20 flex justify-end p-0 pointer-events-none">
               <button
+                ref={closeButtonRef}
                 onClick={handleClose}
                 className="pointer-events-auto w-10 h-10 rounded-full bg-[var(--surface-modal)] hover:bg-[var(--border-card)] flex items-center justify-center transition-colors border border-[var(--border-card)] shadow-sm backdrop-blur-sm"
                 aria-label="Close case study"

@@ -47,7 +47,7 @@
 - Process images: organized by project in their respective Process folders (e.g., `Virdio Process/`)
 
 ## Deployment Checklist
-- **Build number**: Always bump the version string at the bottom of `src/app/page.tsx` (currently `v2.0.1` at ~line 340) before deploying to Vercel. Increment patch for fixes, minor for features.
+- **Build number (MANDATORY)**: Always bump the version string at the bottom of `src/app/page.tsx` (currently at ~line 341) before EVERY push. Increment patch for fixes, minor for features. Never push without bumping.
 - **Deploy command**: `vercel --prod --yes` from project root
 - **Always commit + push before deploying** so git and Vercel stay in sync
 - Before deploying, verify local `main` is up to date with `origin/main` (`git fetch origin && git log --oneline origin/main -3`)
@@ -67,6 +67,12 @@
 - **Fixed overlays inside positioned containers**: Framer Motion `layoutId` calculates positions relative to the nearest `overflow: hidden` ancestor. Use `createPortal(…, document.body)` to escape container constraints for expanded image overlays.
 - **Touch handling on custom pan/drag components**: Always add `touchAction: "none"` to containers that handle their own pointer events, otherwise the browser will fight for touch gestures (scroll vs. drag).
 - **Border-radius mismatches**: When nesting rounded elements, inner border-radius must match the outer container's radius exactly or gaps will show at corners on small screens.
+
+## Accessibility
+- **ARIA references**: When using `aria-labelledby`, always ensure the target `id` exists in the DOM. The modal uses `aria-labelledby="modal-title"` — both `HeroBlock.tsx` and `CaseStudyModal.tsx` (legacy path) must have `id="modal-title"` on their `<h1>`. Only one renders at a time, so no duplicate ID conflict.
+- **Color contrast**: All text must meet WCAG AA 4.5:1 contrast ratio. Dark mode `--text-subtle` was bumped from `#7a7a8c` (~4.1:1) to `#8e8ea0` (~5.0:1) for this reason. Always verify contrast when changing color tokens.
+- **Focus management**: Modal auto-focuses close button on open, restores focus to trigger on close. All interactive elements have visible `:focus-visible` outlines defined in `globals.css`.
+- **Keyboard navigation**: Modal closes on Escape. All interactive elements must be keyboard-accessible.
 
 ## Key Conventions
 - All components use `"use client"` directive when they need interactivity

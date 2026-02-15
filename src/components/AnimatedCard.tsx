@@ -161,6 +161,9 @@ export function AnimatedCard({
   return (
     <div
       ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${title} case study`}
       className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-visible"
       style={{ willChange: "transform", boxShadow: "0px 24px 64px 0px rgba(0,0,0,0.15)" }}
       onMouseEnter={() => selectedCase === null && onHoverChange(index)}
@@ -169,6 +172,12 @@ export function AnimatedCard({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onClick={() => selectedCase === null && onClick()}
+      onKeyDown={(e) => {
+        if ((e.key === "Enter" || e.key === " ") && selectedCase === null) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       {/* Metadata pills — hidden on mobile, float above card */}
       {tags && tags.length > 0 && (
