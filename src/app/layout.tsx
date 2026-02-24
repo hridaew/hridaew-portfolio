@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import { SmoothScroll } from "@/components/SmoothScroll";
 import { PageTransitionProvider } from "@/components/PageTransition";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
@@ -53,7 +52,6 @@ export default function RootLayout({
       <body
         className={`${instrumentSerif.variable} ${dmSans.variable} antialiased`}
       >
-        <SmoothScroll />
         <PageTransitionProvider>
           {children}
         </PageTransitionProvider>
