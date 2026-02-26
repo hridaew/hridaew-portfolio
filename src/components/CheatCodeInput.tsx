@@ -21,7 +21,7 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
     );
 
     return (
-        <div className="max-w-[1200px] mx-auto px-6 md:px-12 py-8">
+        <div className="max-w-[1558px] mx-auto px-4 md:px-8 py-8">
             <div className="flex items-center justify-center gap-3">
                 <input
                     type="text"
