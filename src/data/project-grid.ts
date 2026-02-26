@@ -49,7 +49,7 @@ export const gridProjects: GridProjectData[] = [
     title: "Virdio",
     role: "Product Designer",
     description:
-      "Working with engineering and leadership to ship an ambitious cross-platform AR fitness app. Designed consumer apps for mobile and desktop users, and 10+ AR activities with a dynamic UI.",
+      "Working with engineering and leadership to ship an ambitious cross-platform AR fitness app. Designed consumer apps for mobile and desktop users, and 10+ AR activities.",
     timeline: "2021 — 2022",
     accentColor: "#9e80f4",
     isActive: false,
@@ -135,7 +135,7 @@ export const gridProjects: GridProjectData[] = [
     title: "Memory Care Experience Station",
     role: "Interaction Designer & Prototyper",
     description:
-      "Working with Maria Mortati Experience Design to research and design multi-modal interactive experiences for the life enrichment of residents living with mid-to-late stage dementia.",
+      "Working with Maria Mortati Experience Design to research and design multi-modal experiences for residents living with mid-to-late stage dementia.",
     timeline: "2020-2023 (non-consecutive)",
     accentColor: "#f3781f",
     isActive: false,

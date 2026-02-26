@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { EditorialLayout } from "./case-study/EditorialLayout";
 import { Reveal } from "./Reveal";
 
 export function AboutMeSection() {
@@ -12,6 +11,84 @@ export function AboutMeSection() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => setMounted(true), []);
+
+    const bentoImgRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const mousePosRef = useRef({ x: 0, y: 0 });
+    const tiltStateRef = useRef([
+        { rx: 0, ry: 0, scale: 1 },
+        { rx: 0, ry: 0, scale: 1 },
+        { rx: 0, ry: 0, scale: 1 },
+    ]);
+    const tiltRafRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            mousePosRef.current = { x: e.clientX, y: e.clientY };
+        };
+        window.addEventListener("mousemove", handleMouseMove);
+
+        const loop = () => {
+            const { x: mx, y: my } = mousePosRef.current;
+
+            bentoImgRefs.current.forEach((el, i) => {
+                if (!el) return;
+                const state = tiltStateRef.current[i];
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const isInside = mx >= rect.left && mx <= rect.right && my >= rect.top && my <= rect.bottom;
+
+                let targetRx: number, targetRy: number, targetScale: number;
+
+                if (isInside) {
+                    const nx = ((mx - rect.left) / rect.width) * 2 - 1;
+                    const ny = ((my - rect.top) / rect.height) * 2 - 1;
+                    targetRx = -ny * 4.5;
+                    targetRy = nx * 4.5;
+                    targetScale = 1.02;
+                } else {
+                    const dx = mx - cx;
+                    const dy = my - cy;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const radius = 320;
+                    if (dist < radius) {
+                        const strength = (1 - dist / radius) * 0.25;
+                        const nx = dx / (dist || 1);
+                        const ny = dy / (dist || 1);
+                        targetRx = -ny * 4 * strength;
+                        targetRy = nx * 4 * strength;
+                        targetScale = 1 + 0.008 * (1 - dist / radius);
+                    } else {
+                        targetRx = 0;
+                        targetRy = 0;
+                        targetScale = 1;
+                    }
+                }
+
+                const lerpSpeed = isInside ? 0.14 : 0.07;
+                state.rx += (targetRx - state.rx) * lerpSpeed;
+                state.ry += (targetRy - state.ry) * lerpSpeed;
+                state.scale += (targetScale - state.scale) * lerpSpeed;
+
+                if (Math.abs(state.rx) > 0.005 || Math.abs(state.ry) > 0.005 || Math.abs(state.scale - 1) > 0.0003) {
+                    el.style.transform = `perspective(900px) rotateX(${state.rx}deg) rotateY(${state.ry}deg) scale(${state.scale})`;
+                    el.style.zIndex = isInside ? "10" : "";
+                } else {
+                    el.style.transform = "";
+                    el.style.zIndex = "";
+                }
+            });
+
+            tiltRafRef.current = requestAnimationFrame(loop);
+        };
+
+        loop();
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            if (tiltRafRef.current) cancelAnimationFrame(tiltRafRef.current);
+        };
+    }, []);
 
     const socialLinks = [
         { label: "LinkedIn", url: "https://www.linkedin.com/in/hridae" },
@@ -32,23 +109,60 @@ export function AboutMeSection() {
 
     return (
         <section className="py-24 md:py-32 bg-[var(--surface-card)] border-t border-[var(--border-card)]">
-            <EditorialLayout width="breakout">
+            <div className="max-w-[1558px] mx-auto px-4 md:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                     {/* Left Column: Bio */}
                     <div className="space-y-8">
-                        {/* Clickable About Me Image */}
+                        {/* Bento image grid */}
                         <Reveal>
                             <div
-                                className="cursor-pointer rounded-2xl overflow-hidden"
-                                onClick={() => setImageExpanded(true)}
+                                className="grid gap-3 h-[480px] md:h-[580px]"
+                                style={{
+                                    gridTemplateColumns: "3fr 2fr",
+                                    gridTemplateRows: "3fr 2fr",
+                                }}
                             >
-                                <motion.img
-                                    layoutId="aboutme-image"
-                                    src="/assets/aboutme.png"
-                                    alt="Hridae at Valve Software"
-                                    className="w-full h-auto rounded-2xl"
-                                    draggable={false}
-                                />
+                                {/* Main image — spans full height, clickable */}
+                                <div
+                                    ref={el => { bentoImgRefs.current[0] = el; }}
+                                    className="row-span-2 cursor-pointer overflow-hidden rounded-3xl border border-white/70"
+                                    style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
+                                    onClick={() => setImageExpanded(true)}
+                                >
+                                    <motion.img
+                                        layoutId="aboutme-image"
+                                        src="/assets/aboutme.png"
+                                        alt="Hridae at Valve Software"
+                                        className="w-full h-full object-cover"
+                                        draggable={false}
+                                    />
+                                </div>
+                                {/* Whiteboard / working photo — taller */}
+                                <div
+                                    ref={el => { bentoImgRefs.current[1] = el; }}
+                                    className="overflow-hidden rounded-3xl border border-white/70"
+                                    style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
+                                >
+                                    <img
+                                        src="/assets/about/whiteboard.png"
+                                        alt="Affinity mapping during research"
+                                        className="w-full h-full object-cover"
+                                        draggable={false}
+                                    />
+                                </div>
+                                {/* Childhood / glasses photo — smaller */}
+                                <div
+                                    ref={el => { bentoImgRefs.current[2] = el; }}
+                                    className="overflow-hidden rounded-3xl border border-white/70"
+                                    style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
+                                >
+                                    <img
+                                        src="/assets/about/childhood.png"
+                                        alt="Childhood"
+                                        className="w-full h-full object-cover"
+                                        draggable={false}
+                                    />
+                                </div>
                             </div>
                         </Reveal>
 
@@ -66,23 +180,55 @@ export function AboutMeSection() {
                                 <p>
                                     With over 5 years of experience, I&apos;ve helped startups and
                                     museums alike bring their visions to life, from 0-to-1 product
-                                    launches to interactive exhibits that make you go :O.
+                                    launches to interactive exhibits that make you go 😮.
                                 </p>
                             </div>
                         </Reveal>
 
                         <Reveal delay={0.2}>
                             <div className="pt-8">
-                                <Link
-                                    href="https://drive.google.com/file/d/1Ha7vP0l5HG9IKC4rbd3Y58GZqCIeqGZa/view"
-                                    target="_blank"
-                                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background font-[family-name:var(--font-dm-sans)] font-semibold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                                <motion.div
+                                    className="inline-block"
+                                    whileHover={{ y: -2 }}
+                                    whileTap={{ y: 0, scale: 0.98 }}
+                                    transition={{ duration: 0.18, ease: "easeOut" }}
                                 >
-                                    Download CV
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M6 1V11M6 11L1 6M6 11L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </Link>
+                                    <Link
+                                        href="https://drive.google.com/file/d/1Ha7vP0l5HG9IKC4rbd3Y58GZqCIeqGZa/view"
+                                        target="_blank"
+                                        className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full overflow-hidden font-[family-name:var(--font-dm-sans)]"
+                                        style={{
+                                            background: "linear-gradient(170deg, #ffffff 0%, #f0f0f0 100%)",
+                                            border: "1px solid rgba(255,255,255,0.9)",
+                                            boxShadow: [
+                                                "inset 0 1px 0 rgba(255,255,255,1)",
+                                                "inset 0 -1px 0 rgba(0,0,0,0.05)",
+                                                "0 1px 2px rgba(0,0,0,0.07)",
+                                                "0 4px 12px rgba(0,0,0,0.09)",
+                                                "0 16px 36px rgba(0,0,0,0.06)",
+                                            ].join(", "),
+                                            backdropFilter: "blur(24px) saturate(1.6)",
+                                            WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                                        }}
+                                    >
+                                        {/* Top specular edge */}
+                                        <span className="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+
+                                        {/* Arrow icon */}
+                                        <svg
+                                            width="11" height="11" viewBox="0 0 12 12" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="text-[#1c1c1e]"
+                                        >
+                                            <path d="M6 1V11M6 11L1 6M6 11L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+
+                                        {/* Label */}
+                                        <span className="text-[#1c1c1e] text-xs font-semibold tracking-[0.1em] uppercase">
+                                            Download CV
+                                        </span>
+                                    </Link>
+                                </motion.div>
                             </div>
                         </Reveal>
                     </div>
@@ -168,7 +314,7 @@ export function AboutMeSection() {
                         </Reveal>
                     </div>
                 </div>
-            </EditorialLayout>
+            </div>
 
             {/* Expanded Image Overlay — portaled to body for correct viewport centering */}
             {mounted && createPortal(

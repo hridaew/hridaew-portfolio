@@ -29,6 +29,8 @@ export function ProjectCard({
   const quickToRefs = useRef<{ x: gsap.QuickToFunc; y: gsap.QuickToFunc }[]>(
     []
   );
+  const shadowOpacityRef = useRef(0);
+  const shadowTargetRef = useRef(0);
 
   // Sort assets: non-front (tilted/behind) first, front (straight) second
   const sortedAssets = [...assets].sort((a, b) => (a.isFront ? 1 : 0) - (b.isFront ? 1 : 0));
@@ -58,6 +60,7 @@ export function ProjectCard({
 
     const handleMouseEnter = () => {
       isHoveredRef.current = true;
+      shadowTargetRef.current = 1;
 
       // Asset spread with anticipation → action → follow-through
       assetRefs.current.forEach((el, i) => {
@@ -95,6 +98,7 @@ export function ProjectCard({
     const handleMouseLeave = () => {
       isHoveredRef.current = false;
       mouseRef.current = { x: 0, y: 0 };
+      shadowTargetRef.current = 0;
 
       // Assets return to stacked
       assetRefs.current.forEach((el, i) => {
@@ -122,10 +126,13 @@ export function ProjectCard({
 
     // RAF loop for parallax + dynamic shadows
     const loop = () => {
-      if (isHoveredRef.current) {
-        const mx = mouseRef.current.x;
-        const my = mouseRef.current.y;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
 
+      // Lerp shadow opacity toward target for smooth fade in/out
+      shadowOpacityRef.current += (shadowTargetRef.current - shadowOpacityRef.current) * 0.08;
+
+      if (isHoveredRef.current) {
         assetRefs.current.forEach((el, i) => {
           if (!el) return;
           const asset = sortedAssets[i];
@@ -136,16 +143,28 @@ export function ProjectCard({
 
           quickToRefs.current[i]?.x(targetX);
           quickToRefs.current[i]?.y(targetY);
+        });
+      }
 
-          // Dynamic shadow direction
+      // Apply shadow on all frames (opacity lerps to 0 on leave)
+      const so = shadowOpacityRef.current;
+      if (so > 0.002) {
+        assetRefs.current.forEach((el, i) => {
+          if (!el) return;
+          const asset = sortedAssets[i];
           const depthMultiplier = asset.isFront ? 2 : 1;
           const shadowX = -mx * (depthMultiplier * 3);
           const shadowY = -my * (depthMultiplier * 3);
           const blur = 4 + depthMultiplier * 10;
-          const opacity = 0.08 + depthMultiplier * 0.04;
-          el.style.filter = `drop-shadow(${shadowX}px ${shadowY}px ${blur}px rgba(0,0,0,${opacity}))`;
+          const baseOpacity = 0.05 + depthMultiplier * 0.03; // slightly lighter than before
+          el.style.filter = `drop-shadow(${shadowX}px ${shadowY}px ${blur}px rgba(0,0,0,${baseOpacity * so}))`;
+        });
+      } else {
+        assetRefs.current.forEach((el) => {
+          if (el && el.style.filter) el.style.filter = "";
         });
       }
+
       rafRef.current = requestAnimationFrame(loop);
     };
 
@@ -275,7 +294,7 @@ export function ProjectCard({
         <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-base text-[#666] dark:text-[var(--text-secondary)]">
           {role}
         </span>
-        <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-sm text-[var(--text-muted)] leading-relaxed">
+        <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-base text-[#999] dark:text-[#6a6a6a] leading-relaxed">
           {description}
         </span>
       </div>

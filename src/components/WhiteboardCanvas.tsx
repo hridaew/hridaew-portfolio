@@ -221,13 +221,13 @@ export function WhiteboardCanvas() {
 
     return (
         <section className="py-16 md:py-24 border-t border-[var(--border-card)]">
-            <div className="max-w-[1200px] mx-auto px-6 md:px-12 mb-8">
+            <div className="max-w-[1558px] mx-auto px-4 md:px-8 mb-8">
                 <p className="font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] text-base">
                     Things
                 </p>
             </div>
 
-            <div className="max-w-[1200px] mx-auto px-6 md:px-12">
+            <div className="max-w-[1558px] mx-auto px-4 md:px-8">
                 <div
                     ref={viewportRef}
                     className="relative w-full h-[500px] md:h-[600px] overflow-hidden cursor-grab select-none rounded-2xl border border-[var(--border-card)]"
