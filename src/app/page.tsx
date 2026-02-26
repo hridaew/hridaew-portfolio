@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import Image from "next/image";
 import { toast } from "sonner";
-import { AnimatePresence } from "framer-motion";
 import { caseStudies } from "@/data/case-studies/index";
 import { AnimatedCard } from "@/components/AnimatedCard";
 import { IconButton } from "@/components/IconButton";
-
-import { CaseStudyModal } from "@/components/CaseStudyModal";
 import { AboutMeSection } from "@/components/AboutMeSection";
 import { WhiteboardCanvas } from "@/components/WhiteboardCanvas";
 import { InspirationsGallery } from "@/components/InspirationsGallery";
@@ -20,15 +16,12 @@ import { StickyNotes } from "@/components/StickyNotes";
 import { HeroTextAnimation } from "@/components/HeroTextAnimation";
 import { TextReveal } from "@/components/TextReveal";
 import { MagneticButton } from "@/components/MagneticButton";
-import { usePageTransition } from "@/components/PageTransition";
+import { ProjectGrid } from "@/components/ProjectGrid";
 import { playClick } from "@/lib/audio";
 import { DestroySequence } from "@/components/cheat-codes/DestroySequence";
 import { ButterChicken } from "@/components/cheat-codes/ButterChicken";
 
 export default function Home() {
-  const router = useRouter();
-  const { transitionTo } = usePageTransition();
-  const [selectedCase, setSelectedCase] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeCheat, setActiveCheat] = useState<string | null>(null);
   // Refs for GSAP entrance animations
@@ -128,16 +121,6 @@ export default function Home() {
       .fromTo(bottomRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3");
   }, []);
 
-  // Animate main wrapper scale when modal opens/closes
-  useEffect(() => {
-    if (!mainWrapperRef.current) return;
-    gsap.to(mainWrapperRef.current, {
-      scale: selectedCase !== null ? 0.95 : 1,
-      opacity: selectedCase !== null ? 0.6 : 1,
-      duration: 0.5,
-      ease: "power3.out",
-    });
-  }, [selectedCase]);
 
   // Copy email
   const copyEmail = useCallback(async () => {
@@ -212,7 +195,7 @@ export default function Home() {
         {/* Header: location + email */}
         <div
           ref={headerRef}
-          className="fixed top-0 left-0 right-0 z-10 pt-6 px-4 flex flex-col items-center gap-1 opacity-0 mix-blend-difference text-white pointer-events-none"
+          className="absolute top-0 left-0 right-0 z-10 pt-6 px-4 flex flex-col items-center gap-1 opacity-0 mix-blend-difference text-white pointer-events-none"
         >
           <p className="font-[family-name:var(--font-dm-sans)] font-semibold leading-normal text-base text-center uppercase tracking-wide">
             San Francisco, CA
@@ -279,18 +262,14 @@ export default function Home() {
                         index={i}
                         rotation={cs.rotation}
                         yOffset={cs.yOffset}
-                        tags={"tags" in cs ? cs.tags : undefined}
                         isHovered={hoveredIndex}
-                        selectedCase={selectedCase}
+                        selectedCase={null}
                         registerCard={registerCard}
                         onHoverChange={setHoveredIndex}
+                        interactive={false}
                         onClick={() => {
                           playClick();
-                          if ("href" in cs && cs.href) {
-                            transitionTo(cs.href);
-                          } else {
-                            setSelectedCase(i);
-                          }
+                          document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
                         }}
                       />
                     </div>
@@ -321,6 +300,9 @@ export default function Home() {
             </div>
           </div>
 
+          {/* PROJECT GRID */}
+          <ProjectGrid />
+
           {/* NEW SECTIONS */}
           <div className="relative z-0">
             <AboutMeSection />
@@ -338,7 +320,7 @@ export default function Home() {
         </main>
       </div>
 
-      <p className="text-center text-[10px] text-neutral-400 py-2">v2.1.1</p>
+      <p className="text-center text-[10px] text-neutral-400 py-2">v2.3.0</p>
 
       {/* Sticky Notes */}
       <StickyNotes page="home" />
@@ -347,19 +329,6 @@ export default function Home() {
       {activeCheat === "destroy" && <DestroySequence />}
       {activeCheat === "butter-chicken" && <ButterChicken />}
 
-      {/* Case Study Modal */}
-      <AnimatePresence>
-        {selectedCase !== null && (
-          <CaseStudyModal
-            key="modal"
-            caseStudy={caseStudies[selectedCase]}
-            caseStudies={caseStudies}
-            selectedIndex={selectedCase}
-            onClose={() => setSelectedCase(null)}
-            onSelectCase={setSelectedCase}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

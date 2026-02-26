@@ -22,14 +22,14 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
 
     return (
         <div className="max-w-[1200px] mx-auto px-6 md:px-12 py-8">
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-3">
                 <input
                     type="text"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="enter cheat code"
-                    className="w-full max-w-[280px] bg-transparent border-b border-[var(--border-card)] py-2 text-sm font-[family-name:var(--font-dm-sans)] text-[var(--text-subtle)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:border-[var(--text-muted)] transition-colors text-center"
+                    className="w-full max-w-[320px] bg-[var(--surface-card)] border border-[var(--border-card)] rounded-xl px-4 py-3 text-sm font-[family-name:var(--font-dm-sans)] text-[var(--text-primary)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[var(--text-muted)]/20 focus:border-[var(--text-muted)] transition-all text-center"
                     autoComplete="off"
                     spellCheck={false}
                 />

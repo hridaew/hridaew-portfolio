@@ -24,6 +24,7 @@ interface AnimatedCardProps {
   registerCard: (index: number, handlers: CardHandlers) => void;
   onHoverChange: (index: number | null) => void;
   onClick: () => void;
+  interactive?: boolean;
 }
 
 export function AnimatedCard({
@@ -39,6 +40,7 @@ export function AnimatedCard({
   registerCard,
   onHoverChange,
   onClick,
+  interactive = true,
 }: AnimatedCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -128,16 +130,18 @@ export function AnimatedCard({
     }
   }, [isThisHovered]);
 
-  // Tap/Click effects
+  // Pointer down — premium press for both interactive and decorative modes
   const handlePointerDown = () => {
     if (selectedCase !== null || !cardRef.current) return;
-    gsap.to(cardRef.current, { scale: 0.97, duration: 0.1, ease: "power1.out" });
+    const pressScale = interactive ? 0.97 : 0.96;
+    gsap.to(cardRef.current, { scale: pressScale, duration: 0.12, ease: "power2.out", overwrite: "auto" });
   };
 
+  // Pointer up — spring release
   const handlePointerUp = () => {
     if (selectedCase !== null || !cardRef.current) return;
     const targetScale = isThisHovered ? 1.15 : 1;
-    gsap.to(cardRef.current, { scale: targetScale, duration: 0.4, ease: "back.out(1.7)" });
+    gsap.to(cardRef.current, { scale: targetScale, duration: 0.35, ease: "back.out(1.4)", overwrite: "auto" });
   };
 
   // Entrance animation
@@ -161,26 +165,29 @@ export function AnimatedCard({
   return (
     <div
       ref={cardRef}
-      role="button"
-      tabIndex={0}
-      aria-label={`View ${title} case study`}
-      className="flex-shrink-0 cursor-pointer relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-visible"
+      role={interactive ? "button" : "presentation"}
+      tabIndex={interactive ? 0 : -1}
+      aria-label={interactive ? `View ${title} case study` : undefined}
+      className="flex-shrink-0 relative opacity-0 will-change-transform rounded-[clamp(20px,14.06px+1.524vw,36px)] overflow-visible cursor-pointer"
       style={{ willChange: "transform", boxShadow: "0px 24px 64px 0px rgba(0,0,0,0.15)" }}
       onMouseEnter={() => selectedCase === null && onHoverChange(index)}
       onMouseLeave={() => selectedCase === null && onHoverChange(null)}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      onClick={() => selectedCase === null && onClick()}
-      onKeyDown={(e) => {
+      onClick={() => {
+        if (selectedCase !== null) return;
+        onClick();
+      }}
+      onKeyDown={interactive ? (e) => {
         if ((e.key === "Enter" || e.key === " ") && selectedCase === null) {
           e.preventDefault();
           onClick();
         }
-      }}
+      } : undefined}
     >
-      {/* Metadata pills — hidden on mobile, float above card */}
-      {tags && tags.length > 0 && (
+      {/* Metadata pills — hidden on mobile and when non-interactive, float above card */}
+      {interactive && tags && tags.length > 0 && (
         <div
           ref={pillsRef}
           className="hidden md:flex absolute -top-10 left-1/2 -translate-x-1/2 gap-1.5 pointer-events-none whitespace-nowrap z-10"
