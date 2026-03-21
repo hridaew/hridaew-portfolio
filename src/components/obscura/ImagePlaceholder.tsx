@@ -74,9 +74,9 @@ export function ImagePlaceholder({
         </>
       )}
 
-      {/* Label */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-neutral-600 text-sm font-[family-name:var(--font-dm-sans)] tracking-wide">
+      {/* Label — fill via right/bottom + size so top/left stay unset (matches preview tweaks) */}
+      <div className="absolute bottom-0 right-0 flex h-full w-full items-center justify-center">
+        <span className="text-neutral-600 text-lg leading-relaxed font-[family-name:var(--font-dm-sans)] tracking-wide">
           {label}
         </span>
       </div>

@@ -45,7 +45,7 @@ export function DualPerspective({
             The Curator
           </h3>
           <motion.p
-            className="text-neutral-300 text-sm mt-2 leading-relaxed"
+            className="font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-300 mt-2"
             animate={{ opacity: active === "curator" ? 1 : 0, y: active === "curator" ? 0 : 10 }}
             transition={{ duration: 0.3 }}
           >
@@ -80,7 +80,7 @@ export function DualPerspective({
             The Spectator
           </h3>
           <motion.p
-            className="text-neutral-300 text-sm mt-2 leading-relaxed"
+            className="font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-300 mt-2"
             animate={{ opacity: active === "spectator" ? 1 : 0, y: active === "spectator" ? 0 : 10 }}
             transition={{ duration: 0.3 }}
           >

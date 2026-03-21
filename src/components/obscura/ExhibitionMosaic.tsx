@@ -250,7 +250,7 @@ export function ExhibitionMosaic({ className }: ExhibitionMosaicProps) {
         </div>
       </div>
 
-      <p className="text-center font-[family-name:var(--font-dm-sans)] text-sm text-neutral-400 italic">
+      <p className="text-center font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-400 italic">
         Exhibition Day at MOHAI — September 13, 2025
       </p>
     </div>

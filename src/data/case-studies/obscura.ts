@@ -143,7 +143,7 @@ export const obscura: CaseStudy = {
     {
       id: "obs-blueprint-section",
       type: "section",
-      title: "The Blueprint: Making Meaning",
+      title: "Making Meaning",
       subtitle: "Designing for Connection, Intent, and Curiosity.",
     },
 
@@ -240,11 +240,11 @@ export const obscura: CaseStudy = {
       aspectRatio: "16/10",
     },
 
-    // ===== Prototyping & The Pivot =====
+    // ===== Prototyping =====
     {
       id: "obs-proto-section",
       type: "section",
-      title: "Prototyping & The Pivot",
+      title: "Prototyping",
     },
     {
       id: "obs-eyetracking-intro",

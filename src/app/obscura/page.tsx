@@ -16,6 +16,13 @@ import { EyeTrackingDemo } from "@/components/obscura/EyeTrackingDemo";
 import { ExhibitionMosaic } from "@/components/obscura/ExhibitionMosaic";
 import { StickySidebar } from "@/components/shared/StickySidebar";
 import { StickyNotes } from "@/components/StickyNotes";
+import { cn } from "@/lib/utils";
+
+/** DM Sans, 18px (`text-lg`), relaxed leading — default body for this case study page */
+const obBody = "font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed";
+
+/** Shared content column: max width + horizontal padding + center */
+const obscuraSectionShell = "max-w-[920px] mx-auto px-6 md:px-12";
 
 interface DwellData {
     regionId: string;
@@ -24,13 +31,26 @@ interface DwellData {
     color: string;
 }
 
-function ObscuraVideo({ src, label }: { src: string; label: string }) {
+function ObscuraVideo({
+    src,
+    label,
+    objectPosition = "center",
+    objectFit = "cover",
+}: {
+    src: string;
+    label: string;
+    objectPosition?: "center" | "bottom";
+    objectFit?: "cover" | "contain";
+}) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isMuted, setIsMuted] = useState(true);
 
     return (
         <div
-            className="relative rounded-xl overflow-hidden border border-neutral-800 group"
+            className={cn(
+                "relative rounded-xl overflow-hidden border border-neutral-800 group",
+                objectFit === "contain" && "bg-neutral-950"
+            )}
             onMouseEnter={() => {
                 if (videoRef.current) {
                     videoRef.current.muted = false;
@@ -51,7 +71,11 @@ function ObscuraVideo({ src, label }: { src: string; label: string }) {
                 muted
                 loop
                 playsInline
-                className="w-full aspect-square object-cover"
+                className={cn(
+                    "w-full aspect-square",
+                    objectFit === "contain" ? "object-contain" : "object-cover",
+                    objectPosition === "bottom" && "object-bottom"
+                )}
             />
             <div className="absolute bottom-3 left-3 flex items-center gap-2">
                 <span className="font-[family-name:var(--font-dm-sans)] text-xs text-white/70 bg-black/40 px-2 py-1 rounded">
@@ -72,6 +96,27 @@ function ObscuraVideo({ src, label }: { src: string; label: string }) {
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
                     </svg>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function ObscuraBreakoutPlaceholder({
+    ariaLabel,
+    aspectRatio = "16/10",
+}: {
+    ariaLabel: string;
+    aspectRatio?: string;
+}) {
+    return (
+        <div className="mb-10">
+            <div role="img" aria-label={ariaLabel}>
+                <ImagePlaceholder
+                    aspectRatio={aspectRatio}
+                    variant="frame"
+                    label="Image coming soon"
+                    className="border border-neutral-800"
+                />
             </div>
         </div>
     );
@@ -127,7 +172,7 @@ export default function ObscuraPage() {
                         }} />
                     </div>
 
-                    <div className="relative text-center px-6 py-32 md:py-40">
+                    <div className="relative text-center px-6 md:px-12 py-32 md:py-40">
                         <Reveal>
                             <a
                                 href="https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/"
@@ -136,8 +181,38 @@ export default function ObscuraPage() {
                                 className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.3em] mb-8 hover:text-amber-200/90 transition-colors inline-flex items-center gap-1.5"
                             >
                                 MOHAI &mdash; Museum of History &amp; Industry, Seattle
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="inline-block">
-                                    <path d="M3 9L9 3M9 3H4M9 3V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <svg
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className="inline-block shrink-0 opacity-80"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <polyline
+                                        points="15 3 21 3 21 9"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <line
+                                        x1="10"
+                                        y1="14"
+                                        x2="21"
+                                        y2="3"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
                                 </svg>
                             </a>
                         </Reveal>
@@ -147,13 +222,13 @@ export default function ObscuraPage() {
                         </HeroTextAnimation>
 
                         <Reveal delay={0.3}>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-neutral-400 max-w-[540px] mx-auto leading-relaxed mb-10">
+                            <p className={cn(obBody, "text-neutral-400 max-w-[540px] mx-auto mb-10")}>
                                 A dynamically curated immersive exhibit where your gaze writes the story.
                             </p>
                         </Reveal>
 
                         <Reveal delay={0.4}>
-                            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 font-[family-name:var(--font-dm-sans)] text-sm text-neutral-500">
+                            <div className={cn("flex flex-wrap justify-center gap-x-8 gap-y-3", obBody, "text-neutral-500")}>
                                 <div>
                                     <span className="text-neutral-600 block text-xs uppercase tracking-wider mb-0.5">Role</span>
                                     Project Lead, Design, Unity Dev
@@ -164,7 +239,14 @@ export default function ObscuraPage() {
                                 </div>
                                 <div>
                                     <span className="text-neutral-600 block text-xs uppercase tracking-wider mb-0.5">Client</span>
-                                    MOHAI
+                                    <a
+                                        href="https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-neutral-500 underline underline-offset-2 decoration-neutral-500/60 hover:text-amber-200/90 hover:decoration-amber-200/70 transition-colors"
+                                    >
+                                        MOHAI
+                                    </a>
                                 </div>
                                 <div>
                                     <span className="text-neutral-600 block text-xs uppercase tracking-wider mb-0.5">Date</span>
@@ -180,10 +262,10 @@ export default function ObscuraPage() {
                 </section>
 
                 {/* ─── THE PROMPT ─── */}
-                <section className="max-w-[720px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-neutral-400 leading-[1.7] font-normal">
-                            The Museum of History and Industry (MOHAI) approached our team with a hidden archive: hundreds of unexposed 35mm photos taken by Wayne Wong, a Signal Corps soldier rebuilding Japan in 1946. The brief was ambiguous: take these images and &ldquo;create something boundary-pushing.&rdquo;
+                        <p className={cn(obBody, "text-neutral-400")}>
+                            The Museum of History and Industry handed us a box of unexposed film &mdash; hundreds of photographs taken by a Signal Corps soldier in 1946 Japan, never developed, never seen. The brief was three words: create something boundary-pushing. We made something that asks: when you look at a photograph, who is really doing the looking?
                         </p>
                     </Reveal>
                 </section>
@@ -198,13 +280,13 @@ export default function ObscuraPage() {
                 {/* ═══════════════════════════════════════════════
                     EXPERIENCE OVERVIEW
                 ═══════════════════════════════════════════════ */}
-                <section id="overview" className="max-w-[920px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section id="overview" className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
                         <div className="mb-12">
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-3">
                                 Experience Overview
                             </h2>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-neutral-500 text-lg">
+                            <p className={cn(obBody, "text-neutral-500")}>
                                 Obscura is a gaze-driven documentary system consisting of two simultaneous experiences.
                             </p>
                         </div>
@@ -229,16 +311,18 @@ export default function ObscuraPage() {
                             <ObscuraVideo
                                 src="/assets/obscura/spectator.mp4"
                                 label="Spectator View"
+                                objectPosition="bottom"
+                                objectFit="contain"
                             />
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center mt-4">
+                        <p className={cn(obBody, "text-neutral-600 text-center mt-4")}>
                             Hover to unmute — the Curator View (inside the booth) and the Spectator View (audience outside).
                         </p>
                     </Reveal>
                 </section>
 
                 {/* ─── VIDEO EMBED ─── */}
-                <section className="max-w-[1000px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
                         <div className="rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-950">
                             <video
@@ -252,8 +336,8 @@ export default function ObscuraPage() {
                                 poster="/assets/obscura/audience_gaze.avif"
                             />
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center mt-4">
-                            Exhibition Day at MOHAI
+                        <p className={cn(obBody, "text-neutral-600 text-center mt-4")}>
+                            End of Exhibition Day at MOHAI
                         </p>
                     </Reveal>
                 </section>
@@ -261,57 +345,52 @@ export default function ObscuraPage() {
                 {/* ═══════════════════════════════════════════════
                     INTENT
                 ═══════════════════════════════════════════════ */}
-                <section id="intent" className="max-w-[920px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section id="intent" className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
                         <div className="mb-16">
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-3">
                                 Intent
                             </h2>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-neutral-500 text-lg">
+                            <p className={cn(obBody, "text-neutral-500")}>
                                 We wanted to explore new ways to present images as an orchestrated experience.
                             </p>
                         </div>
                     </Reveal>
 
-                    {/* 4 Editorial Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+                    <div className="space-y-10 mb-16">
                         <Reveal>
                             <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
                                 <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
                                     Speak to the Audience While Respecting the Artist
                                 </h3>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-400 text-sm leading-relaxed">
+                                <p className={cn(obBody, "text-neutral-400")}>
                                     Wayne took hundreds of photos but didn&apos;t talk about his intent. The exhibit allows users to view his photos, tracking what parts they dwell on. An external audience views through the first viewer&apos;s eyes, collectively defining the role of intent.
                                 </p>
                             </div>
                         </Reveal>
-                        <Reveal delay={0.1}>
+                        <Reveal>
+                            <ObscuraBreakoutPlaceholder ariaLabel="The viewer experience inside the Portola Obscura booth" />
+                        </Reveal>
+                        <Reveal delay={0.05}>
                             <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
                                 <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
                                     Build Anticipation
                                 </h3>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-400 text-sm leading-relaxed">
-                                    The &ldquo;Audience View&rdquo; offered a low-pressure way to engage before entering. People could wonder, &ldquo;Why are they focused on the clothing instead of the temple?&rdquo; This turned waiting into an active, social event.
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    The &ldquo;Audience View&rdquo; offered a low-pressure way to engage before entering. People could wonder, &ldquo;Why are they focused on the clothing instead of the temple?&rdquo;. This turned waiting into an active, social event.
                                 </p>
                             </div>
                         </Reveal>
-                        <Reveal delay={0.2}>
+                        <Reveal delay={0.1}>
+                            <ObscuraBreakoutPlaceholder ariaLabel="The audience watching the projected gaze view outside the booth" />
+                        </Reveal>
+                        <Reveal delay={0.15}>
                             <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
                                 <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
                                     Give People Something to Talk About
                                 </h3>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-400 text-sm leading-relaxed">
+                                <p className={cn(obBody, "text-neutral-400")}>
                                     Recognizing the value of conversation before and after an experience, I designed a photo-strip souvenir. This strip visualizes which parts of an image participants looked at most.
-                                </p>
-                            </div>
-                        </Reveal>
-                        <Reveal delay={0.3}>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
-                                    Create Space for Meaningful Engagement
-                                </h3>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-400 text-sm leading-relaxed">
-                                    Today&apos;s image engagement, largely through social media, often overlooks the significance of what we see. By presenting Wayne&apos;s photos individually, the exhibit creates an intimate setting for detailed investigation.
                                 </p>
                             </div>
                         </Reveal>
@@ -339,23 +418,50 @@ export default function ObscuraPage() {
                                 ))}
                             </div>
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center mt-4">
+                        <p className={cn(obBody, "text-neutral-600 text-center mt-4")}>
                             Photo-strip souvenirs generated based on each viewer&apos;s gaze path &mdash; Faces, Environments, Clothing, Occupation, and Wayne.
                         </p>
                     </Reveal>
+
+                    <div className="mt-16 space-y-10">
+                        <Reveal>
+                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
+                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
+                                    Create Space for Meaningful Engagement
+                                </h3>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    Today&apos;s image engagement, largely through social media, often overlooks the significance of what we see. Wayne&apos;s photos, from a time when images held gravity, regain that importance in this exhibit. By presenting the large, focused photos individually, the exhibit creates an intimate setting for detailed investigation.
+                                </p>
+                            </div>
+                        </Reveal>
+                        <Reveal>
+                            <ObscuraBreakoutPlaceholder ariaLabel="A focused, large-scale photograph displayed within the exhibit" />
+                        </Reveal>
+                    </div>
                 </section>
 
                 {/* ═══════════════════════════════════════════════
                     THE BLUEPRINT
                 ═══════════════════════════════════════════════ */}
-                <section id="blueprint" className="max-w-[920px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section id="blueprint" className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
                         <div className="mb-16">
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-3">
-                                The Blueprint: Making Meaning
+                                Making Meaning
                             </h2>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-neutral-500 text-lg">
+                            <p className={cn(obBody, "text-neutral-500")}>
                                 Designing for Connection, Intent, and Curiosity.
+                            </p>
+                        </div>
+                    </Reveal>
+
+                    <Reveal>
+                        <div className="mb-16 md:mb-20 w-full rounded-2xl border border-neutral-800 bg-neutral-900/40 px-6 py-10 text-center md:px-10 md:py-12">
+                            <p className={obBody}>
+                                <span className="text-amber-200">How might we</span>{" "}
+                                <span className="text-neutral-200">
+                                    give an audience a meaningful encounter with photographs whose meaning was never meant for them?
+                                </span>
                             </p>
                         </div>
                     </Reveal>
@@ -366,9 +472,30 @@ export default function ObscuraPage() {
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
                                 Research: Finding the Human Narrative
                             </span>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-lg text-neutral-400 leading-relaxed max-w-[680px]">
-                                We began with a blurry image of what to make. To find clarity, we moved away from abstract theory and went directly to the source. We interviewed Subject Matter Experts in museology and history, but most importantly, we conducted deep-dive interviews with younger Asian Americans to understand how they engage with historical imagery in the digital age.
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                We began with a blurry image of what to make. To find clarity, we moved away from abstract theory and went directly to the source. We interviewed Subject Matter Experts in museology and history, but most importantly, we conducted deep-dive interviews with younger Asian Americans to understand how they engage with historical imagery in the digital age. Three themes emerged:
                             </p>
+                        </div>
+                    </Reveal>
+
+                    <Reveal>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-16">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
+                                <LightboxImage
+                                    src="/assets/obscura/process_interview.avif"
+                                    alt="Community interview"
+                                    className="h-full w-full object-cover"
+                                    draggable={false}
+                                />
+                            </div>
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
+                                <LightboxImage
+                                    src="/assets/obscura/process_sme_interview.avif"
+                                    alt="Subject matter expert interview"
+                                    className="h-full w-full object-cover"
+                                    draggable={false}
+                                />
+                            </div>
                         </div>
                     </Reveal>
 
@@ -376,112 +503,121 @@ export default function ObscuraPage() {
                     <div className="space-y-8 mb-16">
                         <Reveal>
                             <blockquote className="border-l-2 border-amber-200/30 pl-6 py-2">
-                                <p className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-neutral-300 leading-relaxed mb-3">
+                                <p className={cn(obBody, "text-neutral-300 mb-3")}>
                                     &ldquo;Looking at old family photos can be very emotional. I&apos;m the youngest of a very big family. So there&apos;s a lot of family history that I have no experience of, so getting to engage with photos from that time is really meaningful.&rdquo;
                                 </p>
-                                <cite className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 not-italic">
+                                <cite className={cn(obBody, "text-neutral-600 not-italic")}>
                                     Interview Participant &mdash; On Connection &amp; Family History
                                 </cite>
                             </blockquote>
                         </Reveal>
                         <Reveal>
                             <blockquote className="border-l-2 border-amber-200/30 pl-6 py-2">
-                                <p className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-neutral-300 leading-relaxed mb-3">
+                                <p className={cn(obBody, "text-neutral-300 mb-3")}>
                                     &ldquo;He took many pictures of kids. I wonder how he got to know them? Did he ask if he could take the picture? Especially the kids&hellip; Did he know them?&rdquo;
                                 </p>
-                                <cite className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 not-italic">
+                                <cite className={cn(obBody, "text-neutral-600 not-italic")}>
                                     Interview Participant &mdash; On The Mystery of Intent
                                 </cite>
                             </blockquote>
                         </Reveal>
                         <Reveal>
                             <blockquote className="border-l-2 border-amber-200/30 pl-6 py-2">
-                                <p className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-neutral-300 leading-relaxed mb-3">
+                                <p className={cn(obBody, "text-neutral-300 mb-3")}>
                                     &ldquo;It&apos;s a really disorienting thing where you&apos;re scrolling, and you&apos;re watching something that&apos;s funny, and then you&apos;re looking at a recipe, and the next picture is of an atrocity.&rdquo;
                                 </p>
-                                <cite className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 not-italic">
+                                <cite className={cn(obBody, "text-neutral-600 not-italic")}>
                                     Interview Participant &mdash; On Modern Media Fatigue
                                 </cite>
                             </blockquote>
                         </Reveal>
                     </div>
 
-                    {/* Process photos */}
+                    {/* Research synthesis */}
                     <Reveal>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
+                        <div className="max-w-[680px] mb-16 space-y-10">
+                            <div>
+                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                    Connection
+                                </span>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    People encounter historical imagery through the lens of personal family memory, not historical distance.
+                                </p>
+                            </div>
+                            <div>
+                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                    The Mystery of Intent
+                                </span>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    Viewers project questions onto images when context is absent &mdash; the gap is the engagement.
+                                </p>
+                            </div>
+                            <div>
+                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                    Scroll Fatigue
+                                </span>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    The speed and flattening of modern image consumption had made people hungry for slowness and weight, even if they couldn&apos;t name it. These three themes became the design pillars of the exhibit.
+                                </p>
+                            </div>
+                        </div>
+                    </Reveal>
+
+                    {/* Process photos — research & interviews */}
+                    <Reveal>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
                                 <LightboxImage
                                     src="/assets/obscura/process_brainstorm.avif"
                                     alt="Team brainstorming session"
-                                    className="w-full h-full object-cover"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
-                                <LightboxImage
-                                    src="/assets/obscura/process_interview.avif"
-                                    alt="Community interview"
-                                    className="w-full h-full object-cover"
-                                    draggable={false}
-                                />
-                            </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
-                                <LightboxImage
-                                    src="/assets/obscura/process_sme_interview.avif"
-                                    alt="Subject matter expert interview"
-                                    className="w-full h-full object-cover"
-                                    draggable={false}
-                                />
-                            </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800 col-span-2 md:col-span-2">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
                                 <LightboxImage
                                     src="/assets/obscura/process_ideation.avif"
                                     alt="Ideation — 100+ ideas generated"
-                                    className="w-full h-full object-cover"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center mb-16">
-                            Research, interviews, and ideation — generating over 80 concepts before aligning on five &ldquo;North Star&rdquo; adjectives.
+                        <p className={cn(obBody, "text-neutral-600 text-center mb-16")}>
+                            Research, interviews, and ideation &mdash; generating over 80 concepts before aligning on five &ldquo;North Star&rdquo; adjectives.
                         </p>
                     </Reveal>
 
-                    {/* Ideation text */}
+                    {/* North Star adjectives */}
                     <Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-16">
-                            <div>
-                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                    Ideation: Finding the North Star
-                                </span>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-base text-neutral-400 leading-relaxed">
-                                    We generated over 80 concepts, explicitly filtering out trends like NFTs or AI-modification to focus on the core value of the archive. We aligned on five &ldquo;North Star&rdquo; adjectives: Introspective, Connected, Reflective, Transient, and Enduring.
-                                </p>
+                        <div className="mb-16">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-6">
+                                North Star adjectives
+                            </span>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
+                                {(
+                                    [
+                                        "Introspective",
+                                        "Connected",
+                                        "Reflective",
+                                        "Transient",
+                                        "Enduring",
+                                    ] as const
+                                ).map((word) => (
+                                    <div
+                                        key={word}
+                                        className="flex min-h-[5rem] items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-900/50 px-3 py-4 text-center md:min-h-[5.5rem] md:py-5"
+                                    >
+                                        <span className="font-[family-name:var(--font-dm-sans)] text-[13px] font-semibold leading-snug text-neutral-300 sm:text-sm md:text-[15px]">
+                                            {word}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
-                            <div>
-                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                    Storyboarding the Invisible
-                                </span>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-base text-neutral-400 leading-relaxed">
-                                    Because we were creating an asynchronous experience dictated by attention, standard wireframes failed. I used high-fidelity storyboarding to map the emotional journey, identifying key opportunities like the &ldquo;Souvenir Moment&rdquo; at the exit.
-                                </p>
-                            </div>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                These adjectives became the filter for every design decision from there forward.
+                            </p>
                         </div>
-                    </Reveal>
-
-                    {/* Storyboard image */}
-                    <Reveal>
-                        <div className="rounded-2xl overflow-hidden border border-neutral-800 mb-4">
-                            <LightboxImage
-                                src="/assets/obscura/storyboard.png"
-                                alt="Hand-drawn storyboards mapping the visitor journey"
-                                className="w-full h-auto"
-                                draggable={false}
-                            />
-                        </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center mb-16">
-                            Hand-drawn storyboards showcasing key visitor interaction opportunities throughout the experience.
-                        </p>
                     </Reveal>
 
                     {/* Sketches — Click to expand */}
@@ -510,94 +646,161 @@ export default function ObscuraPage() {
                                 ))}
                             </div>
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center">
+                        <p className={cn(obBody, "text-neutral-600 text-center mb-16")}>
                             Early concept sketches exploring spatial layout, viewer interaction, and gaze-tracking visualization.
+                        </p>
+                    </Reveal>
+
+                    {/* Storyboarding */}
+                    <Reveal>
+                        <div className="mb-6">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                Storyboarding the Invisible
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                Because we were creating an asynchronous experience dictated by attention, standard wireframes failed. I used high-fidelity storyboarding to map the emotional journey: the moment a visitor first sees the audience projection and grows curious, the transition from spectator to participant as they enter the booth, the private act of looking, and the &ldquo;Souvenir Moment&rdquo; at the exit &mdash; where a printed photo-strip gives them something physical to carry out and compare with others.
+                            </p>
+                        </div>
+                    </Reveal>
+
+                    {/* Storyboard image */}
+                    <Reveal>
+                        <div className="rounded-2xl overflow-hidden border border-neutral-800 mb-4">
+                            <LightboxImage
+                                src="/assets/obscura/storyboard.png"
+                                alt="Hand-drawn storyboards mapping the visitor journey"
+                                className="w-full h-auto"
+                                draggable={false}
+                            />
+                        </div>
+                        <p className={cn(obBody, "text-neutral-600 text-center")}>
+                            Hand-drawn storyboards mapping the transition from the &ldquo;Immersed Self&rdquo; to the &ldquo;Audience Self.&rdquo;
                         </p>
                     </Reveal>
                 </section>
 
                 {/* ═══════════════════════════════════════════════
-                    PROTOTYPING & THE PIVOT
+                    PROTOTYPING
                 ═══════════════════════════════════════════════ */}
-                <section id="prototyping" className="max-w-[920px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section id="prototyping" className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
                         <div className="mb-16">
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-3">
-                                Prototyping &amp; The Pivot
+                                Prototyping
                             </h2>
                         </div>
                     </Reveal>
 
                     <Reveal>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-lg text-neutral-400 leading-relaxed max-w-[680px] mb-12">
-                            We role-played with low-fidelity prototypes to test the physical space, creating a cardboard &ldquo;Portola Obscura&rdquo; booth to test light and shadow.
+                        <div className="mb-10">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                The Original Vision: Eye Tracking
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                We wanted to capture how the subconscious mind looks at images &mdash; the involuntary flickers of attention that might surprise even the viewer themselves. To validate this, we ran tests with a Tobii eye tracker in our studio. The results confirmed the premise: participants were genuinely surprised by where their eyes lingered, often focusing on details they hadn&apos;t consciously noticed.
+                            </p>
+                        </div>
+                    </Reveal>
+                    <Reveal>
+                        <ObscuraBreakoutPlaceholder ariaLabel="Testing eye tracking with a Tobii bar in the studio" />
+                        <p className={cn(obBody, "text-neutral-600 text-center -mt-4 mb-12")}>
+                            Studio testing with a Tobii eye tracker confirmed that subconscious gaze patterns surprised participants.
                         </p>
                     </Reveal>
 
-                    {/* Problem / Solution 2-col */}
                     <Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-16">
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-red-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                    The Problem
-                                </span>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-base text-neutral-400 leading-relaxed">
-                                    Our initial concept relied on Eye Tracking (using a Tobii bar) for precision. However, consultations with Meta Reality Labs revealed that displaying raw eye-tracking data to a public audience violated privacy protocols.
-                                </p>
-                            </div>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-emerald-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                    The Solution
-                                </span>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-base text-neutral-400 leading-relaxed">
-                                    We pivoted to Head Tracking. This technical constraint became a design feature: by scaling the images up in the virtual space, we forced users to physically turn their heads, making their intent visible and performative for the audience outside.
-                                </p>
-                            </div>
+                        <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8 mb-12">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-red-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                The Problem
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                When we explored how to implement eye tracking inside a VR headset apparatus for the exhibit, an advisor from Meta Reality Labs informed us that displaying raw eye-tracking data to a public audience without explicit informed consent from every viewer violated privacy protocols. The core mechanic of the exhibit was gone.
+                            </p>
                         </div>
                     </Reveal>
 
-                    {/* Eye Tracking Demo — after Problem/Solution */}
+                    <Reveal>
+                        <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8 mb-10">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-emerald-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                The Solution
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                We pivoted to head tracking. Less precise &mdash; but fundamentally different in character. Where eye tracking captured involuntary, subconscious attention, head tracking required the viewer to be intentional. To look at something, you had to physically turn toward it. To accommodate this shift, we drastically increased the size of the images in the VR view, forcing users to move their heads deliberately to take in the full photograph. The constraint made the design more honest: intent became visible, physical, and performative for the audience outside.
+                            </p>
+                        </div>
+                    </Reveal>
+
+                    {/* Eye Tracking Demo */}
                     <Reveal>
                         <div className="mb-16">
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
                                 The Gaze Challenge
                             </span>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-base text-neutral-400 leading-relaxed max-w-[680px] mb-8">
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px] mb-8")}>
                                 Eye tracking produces erratic, involuntary data &mdash; saccades and micro-fixations that don&rsquo;t reflect conscious intent. Head tracking, by contrast, captures deliberate, performative movement that audiences can read from outside.
                             </p>
                             <EyeTrackingDemo />
                         </div>
                     </Reveal>
 
-                    {/* Technical diagrams */}
+                    {/* Process: physical prototyping */}
                     <Reveal>
+                        <div className="mb-6 mt-16">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                Process: Testing in Physical Space
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                We role-played with low-fidelity prototypes to test the physical space, creating a cardboard &ldquo;Portola Obscura&rdquo; booth to test light and shadow.
+                            </p>
+                        </div>
+                    </Reveal>
+                    <Reveal>
+                        <ObscuraBreakoutPlaceholder
+                            ariaLabel="Low-fidelity prototype of the Portola Obscura booth"
+                            aspectRatio="4/3"
+                        />
+                        <p className={cn(obBody, "text-neutral-600 text-center -mt-4 mb-0")}>
+                            Cardboard prototyping the booth to test light, shadow, and physical flow before Unity development.
+                        </p>
+                    </Reveal>
+
+                    {/* Technical diagrams — before Unity implementation (next section) */}
+                    <Reveal>
+                        <div className="mb-8 mt-16">
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                Building the Obscura Engine
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                In order for our self-curating system to work, the images needed to be tagged according to the themes they represent, and the themes they contain. We went through over 300 images and labeled and organized them so they may be used by the system.
+                            </p>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
                                 <LightboxImage
                                     src="/assets/obscura/zone_breakdown.png"
                                     alt="Zone breakdown diagram showing image regions"
-                                    className="w-full h-full object-cover"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 aspect-[4/3]">
                                 <LightboxImage
                                     src="/assets/obscura/image_annotations.png"
                                     alt="Image annotations screenshot"
-                                    className="w-full h-full object-cover"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 aspect-[4/3] flex items-center justify-center p-2">
                                 <LightboxImage
                                     src="/assets/obscura/zone_labels.png"
                                     alt="Zone labels for annotation system"
-                                    className="w-full h-full object-cover"
+                                    className="max-h-full max-w-full object-contain"
                                     draggable={false}
                                 />
                             </div>
                         </div>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-600 text-center">
+                        <p className={cn(obBody, "text-neutral-600 text-center")}>
                             Technical diagrams &mdash; zone breakdown, image annotations, and labeling system for the gaze-driven narrative branching.
                         </p>
                     </Reveal>
@@ -606,7 +809,26 @@ export default function ObscuraPage() {
                 {/* ═══════════════════════════════════════════════
                     GAZE SIMULATOR (Interactive)
                 ═══════════════════════════════════════════════ */}
-                <section className="max-w-[920px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
+                    <Reveal>
+                        <div className="mb-12 md:mb-16">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 mb-8 aspect-video bg-neutral-950">
+                                <LightboxImage
+                                    src="/assets/obscura/CuratorIMG.png"
+                                    alt="Curator view from the Unity XR build — head-tracked photograph experience on Meta Quest 3"
+                                    className="h-full w-full object-cover"
+                                    draggable={false}
+                                />
+                            </div>
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                From Concept to Unity
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                After we had the design and interaction logic laid out, I moved into Unity to prototype a working version of the experience. I used a Unity XR rig and iterated on device with a Meta Quest 3. With help from Gemini and Claude Code, I wrote the C# scripts that acted as the &ldquo;game engine&rdquo; for Obscura &mdash; tracking where the viewer was looking and deciding which image set to surface next.
+                            </p>
+                        </div>
+                    </Reveal>
+
                     <Reveal>
                         <div className="mb-12">
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
@@ -615,7 +837,7 @@ export default function ObscuraPage() {
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-3">
                                 Explore Like a Viewer
                             </h2>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-neutral-500 text-lg max-w-[600px]">
+                            <p className={cn(obBody, "text-neutral-500 max-w-[600px]")}>
                                 Move your cursor over Wayne&apos;s photograph below. Dwell on regions of interest to see how the system tracks and categorizes your attention.
                             </p>
                         </div>
@@ -640,22 +862,35 @@ export default function ObscuraPage() {
                 {/* ═══════════════════════════════════════════════
                     EXHIBITION PHOTOS
                 ═══════════════════════════════════════════════ */}
-                <section id="exhibition" className="max-w-[1000px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
+                <section id="exhibition" className={cn(obscuraSectionShell, "pb-24 md:pb-32")}>
                     <Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
-                            <div className="rounded-xl overflow-hidden border border-neutral-800 h-fit">
+                        <div className="mb-10 md:mb-12">
+                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-4">
+                                Physical take-home artifacts
+                            </h2>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px] mb-6")}>
+                                I really wanted viewers to take something home with them &mdash; to remember their experience and to remember Wayne&apos;s story. The photostrip souvenir is distinct because it was given to viewers based on the visual theme they dwelled on the most, so when they take it home and look at it after a while, they won&apos;t just remember the exhibit but also a remnant of what they specifically engaged with.
+                            </p>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                While testing we also discovered that the interaction was so passive, and VR is still unfamiliar enough, that users desired some level of instruction and explanation of what they were experiencing. So I designed and printed instructional cards that were handed out to people waiting in line.
+                            </p>
+                        </div>
+                    </Reveal>
+                    <Reveal>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 h-[min(52vw,320px)] md:h-[min(28vw,440px)] min-h-[240px]">
                                 <LightboxImage
                                     src="/assets/obscura/exhibition_photostrips.avif"
                                     alt="Photo strip souvenirs displayed at exhibition"
-                                    className="w-full h-auto object-contain"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800 h-fit">
+                            <div className="rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 h-[min(52vw,320px)] md:h-[min(28vw,440px)] min-h-[240px]">
                                 <LightboxImage
                                     src="/assets/obscura/flyer.png"
-                                    alt="Obscura exhibition flyer"
-                                    className="w-full h-auto object-contain"
+                                    alt="Obscura instructional cards and exhibition flyer"
+                                    className="h-full w-full object-cover"
                                     draggable={false}
                                 />
                             </div>
@@ -668,20 +903,26 @@ export default function ObscuraPage() {
                 ═══════════════════════════════════════════════ */}
                 <section id="reflection" className="relative py-24 md:py-32 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-[#0A0A0A]" />
-                    <div className="relative max-w-[920px] mx-auto px-6 md:px-12">
+                    <div className={cn("relative", obscuraSectionShell)}>
                         <Reveal>
                             <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-8">
                                 Reflection
                             </h2>
                         </Reveal>
                         <Reveal delay={0.1}>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-lg text-neutral-400 leading-relaxed mb-6 max-w-[680px]">
-                                The exhibit launched at MOHAI on September 13, 2025. The dynamic nature of the &ldquo;Audience View&rdquo; successfully built anticipation, creating a queue that lasted the entire duration of the event. The project proved that we could bridge the gap between a soldier&rsquo;s 1946 reality and a modern audience&rsquo;s digital curiosity, simply by asking them to look closer.
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                Outcome
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 mb-8 max-w-[680px]")}>
+                                The exhibit launched at MOHAI on September 13, 2025. The queue for the booth lasted the full duration of the event, and the atmosphere was lively &mdash; but what surprised me most was the audience outside. The projected gaze view, originally designed as a waiting mechanism, became its own destination. Groups stood watching, narrating what the person inside was doing, debating why they kept returning to the same face.
                             </p>
                         </Reveal>
                         <Reveal delay={0.2}>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-lg text-neutral-400 leading-relaxed max-w-[680px]">
-                                We are currently in talks for expanding the exhibit to a longer-term installation at MOHAI.
+                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                Key lesson
+                            </span>
+                            <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
+                                If I built it again &mdash; which I intend to, at a larger scale &mdash; I would pay far more attention to the pathfinding and spatial choreography of the audience experience. Exhibition design lives in the transitions: how people approach, how they wait, how they move through, how they leave. I&apos;d like to design the external apparatus with the same care as the internal experience, and explore how the physical space can facilitate more discussion and interaction between visitors before and after they step inside. The project proved that we could bridge the gap between a soldier&apos;s 1946 reality and a modern audience&apos;s digital curiosity, simply by asking them to look closer.
                             </p>
                         </Reveal>
                     </div>

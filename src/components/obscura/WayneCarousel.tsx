@@ -102,7 +102,7 @@ export function WayneCarousel({ className }: WayneCarouselProps) {
           ))}
         </div>
       </div>
-      <p className="text-center font-[family-name:var(--font-dm-sans)] text-sm text-neutral-400 italic">
+      <p className="text-center font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-400 italic">
         Wayne Wong&apos;s hidden archive — hundreds of unexposed 35mm photographs from post-war
         Japan, 1946
       </p>
