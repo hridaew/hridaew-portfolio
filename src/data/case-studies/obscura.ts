@@ -26,13 +26,13 @@ export const obscura: CaseStudy = {
       },
     },
 
-    // ===== Prompt =====
+    // ===== Lead =====
     {
       id: "obs-prompt",
       type: "text",
       variant: "lead",
       content:
-        "The Museum of History and Industry (MOHAI) approached our team with a hidden archive: hundreds of unexposed 35mm photos taken by Wayne Wong, a Signal Corps soldier rebuilding Japan in 1946. The brief was ambiguous: take these images and \u201Ccreate something boundary-pushing.\u201D",
+        "The Museum of History and Industry handed us a box of unexposed film \u2014 hundreds of photographs taken by a Signal Corps soldier in 1946 Japan, never developed, never seen. The brief was three words: create something boundary-pushing. We made something that asks: when you look at a photograph, who is really doing the looking?",
     },
 
     // ===== Experience Overview =====
@@ -85,11 +85,27 @@ export const obscura: CaseStudy = {
         "Wayne took hundreds of photos but didn\u2019t talk about his intent. The exhibit allows users to view his photos, tracking what parts they dwell on. An external audience views through the first viewer\u2019s eyes, collectively defining the role of intent.",
     },
     {
+      id: "obs-intent-1-img",
+      type: "image",
+      src: "",
+      alt: "The viewer experience inside the Portola Obscura booth",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
+    {
       id: "obs-intent-2",
       type: "text",
       label: "Build Anticipation",
       content:
         "The \u201CAudience View\u201D offered a low-pressure way to engage before entering. People could wonder, \u201CWhy are they focused on the clothing instead of the temple?\u201D. This turned waiting into an active, social event.",
+    },
+    {
+      id: "obs-intent-2-img",
+      type: "image",
+      src: "",
+      alt: "The audience watching the projected gaze view outside the booth",
+      layout: "breakout",
+      aspectRatio: "16/10",
     },
     {
       id: "obs-intent-3",
@@ -114,20 +130,30 @@ export const obscura: CaseStudy = {
       content:
         "Today\u2019s image engagement, largely through social media, often overlooks the significance of what we see. Wayne\u2019s photos, from a time when images held gravity, regain that importance in this exhibit. By presenting the large, focused photos individually, the exhibit creates an intimate setting for detailed investigation.",
     },
+    {
+      id: "obs-intent-4-img",
+      type: "image",
+      src: "",
+      alt: "A focused, large-scale photograph displayed within the exhibit",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
 
-    // ===== Blueprint =====
+    // ===== The Blueprint =====
     {
       id: "obs-blueprint-section",
       type: "section",
       title: "The Blueprint: Making Meaning",
       subtitle: "Designing for Connection, Intent, and Curiosity.",
     },
+
+    // --- 1. Research ---
     {
       id: "obs-research-intro",
       type: "text",
       label: "Research: Finding the Human Narrative",
       content:
-        "We began with a blurry image of what to make. To find clarity, we moved away from abstract theory and went directly to the source. We interviewed Subject Matter Experts in museology and history, but most importantly, we conducted deep-dive interviews with younger Asian Americans to understand how they engage with historical imagery in the digital age. We uncovered three critical themes that defined the exhibit:",
+        "We began with a blurry image of what to make. To find clarity, we moved away from abstract theory and went directly to the source. We interviewed Subject Matter Experts in museology and history, but most importantly, we conducted deep-dive interviews with younger Asian Americans to understand how they engage with historical imagery in the digital age. Three themes emerged:",
     },
     {
       id: "obs-theme-1",
@@ -154,54 +180,19 @@ export const obscura: CaseStudy = {
       attribution: "Interview Participant \u2014 On Modern Media Fatigue",
     },
     {
-      id: "obs-ideation",
+      id: "obs-research-synthesis",
       type: "text",
-      label: "Ideation: Finding the North Star",
       content:
-        "We generated over 80 concepts, explicitly filtering out trends like NFTs or AI-modification to focus on the core value of the archive. We aligned on five \u201CNorth Star\u201D adjectives: Introspective, Connected, Reflective, Transient, and Enduring.",
-    },
-    {
-      id: "obs-storyboard-text",
-      type: "text",
-      label: "Storyboarding the Invisible",
-      content:
-        "Because we were creating an asynchronous experience dictated by attention, standard wireframes failed. I used high-fidelity storyboarding to map the emotional journey, identifying key opportunities like the \u201CSouvenir Moment\u201D at the exit.",
-    },
-    {
-      id: "obs-storyboard-img",
-      type: "image",
-      src: "",
-      alt: "Storyboard Scans",
-      caption: "Hand-drawn storyboards mapping the transition from the \u201CImmersed Self\u201D to the \u201CAudience Self.\u201D",
-      layout: "breakout",
-      aspectRatio: "16/10",
+        "Connection: people encounter historical imagery through the lens of personal family memory, not historical distance. The Mystery of Intent: viewers project questions onto images when context is absent \u2014 the gap is the engagement. Scroll Fatigue: the speed and flattening of modern image consumption had made people hungry for slowness and weight, even if they couldn\u2019t name it. These three themes became the design pillars of the exhibit.",
     },
 
-    // ===== Prototyping & Pivot =====
+    // --- 2. Process ---
     {
-      id: "obs-proto-section",
-      type: "section",
-      title: "Prototyping & The Pivot",
-    },
-    {
-      id: "obs-proto-text",
+      id: "obs-process-text",
       type: "text",
+      label: "Process: Testing in Physical Space",
       content:
         "We role-played with low-fidelity prototypes to test the physical space, creating a cardboard \u201CPortola Obscura\u201D booth to test light and shadow.",
-    },
-    {
-      id: "obs-problem",
-      type: "text",
-      label: "The Problem",
-      content:
-        "Our initial concept relied on Eye Tracking (using a Tobii bar) for precision. However, consultations with Meta Reality Labs revealed that displaying raw eye-tracking data to a public audience violated privacy protocols.",
-    },
-    {
-      id: "obs-pivot-solution",
-      type: "text",
-      label: "The Solution",
-      content:
-        "We pivoted to Head Tracking. This technical constraint became a design feature: by scaling the images up in the virtual space, we forced users to physically turn their heads, making their intent visible and performative for the audience outside.",
     },
     {
       id: "obs-proto-img",
@@ -213,27 +204,97 @@ export const obscura: CaseStudy = {
       aspectRatio: "4/3",
     },
 
+    // --- 3. Ideation ---
+    {
+      id: "obs-ideation",
+      type: "text",
+      label: "Ideation: Finding the North Star",
+      content:
+        "Eighty concepts. Five words: Introspective, Connected, Reflective, Transient, and Enduring. These adjectives became the filter for every design decision from there forward. A digital souvenir failed (not Enduring). A looping, resettable experience failed (not Transient). A purely private, solo booth failed (not Connected). The final design was tested against all five before it was built.",
+    },
+    {
+      id: "obs-sketches-img",
+      type: "image",
+      src: "",
+      alt: "Early concept sketches and ideation artifacts",
+      caption: "Early sketches exploring the exhibit\u2019s spatial layout and interaction model.",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
+
+    // --- 4. Storyboarding ---
+    {
+      id: "obs-storyboard-text",
+      type: "text",
+      label: "Storyboarding the Invisible",
+      content:
+        "Because we were creating an asynchronous experience dictated by attention, standard wireframes failed. I used high-fidelity storyboarding to map the emotional journey: the moment a visitor first sees the audience projection and grows curious, the transition from spectator to participant as they enter the booth, the private act of looking, and the \u201CSouvenir Moment\u201D at the exit \u2014 where a printed photo-strip gives them something physical to carry out and compare with others.",
+    },
+    {
+      id: "obs-storyboard-img",
+      type: "image",
+      src: "",
+      alt: "Storyboard Scans",
+      caption: "Hand-drawn storyboards mapping the transition from the \u201CImmersed Self\u201D to the \u201CAudience Self.\u201D",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
+
+    // ===== Prototyping & The Pivot =====
+    {
+      id: "obs-proto-section",
+      type: "section",
+      title: "Prototyping & The Pivot",
+    },
+    {
+      id: "obs-eyetracking-intro",
+      type: "text",
+      label: "The Original Vision: Eye Tracking",
+      content:
+        "We wanted to capture how the subconscious mind looks at images \u2014 the involuntary flickers of attention that might surprise even the viewer themselves. To validate this, we ran tests with a Tobii eye tracker in our studio. The results confirmed the premise: participants were genuinely surprised by where their eyes lingered, often focusing on details they hadn\u2019t consciously noticed.",
+    },
+    {
+      id: "obs-tobii-img",
+      type: "image",
+      src: "",
+      alt: "Testing eye tracking with a Tobii bar in the studio",
+      caption: "Studio testing with a Tobii eye tracker confirmed that subconscious gaze patterns surprised participants.",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
+    {
+      id: "obs-problem",
+      type: "text",
+      label: "The Problem",
+      content:
+        "When we explored how to implement eye tracking inside a VR headset apparatus for the exhibit, an advisor from Meta Reality Labs informed us that displaying raw eye-tracking data to a public audience without explicit informed consent from every viewer violated privacy protocols. The core mechanic of the exhibit was gone.",
+    },
+    {
+      id: "obs-pivot-solution",
+      type: "text",
+      label: "The Solution",
+      content:
+        "We pivoted to head tracking. Less precise \u2014 but fundamentally different in character. Where eye tracking captured involuntary, subconscious attention, head tracking required the viewer to be intentional. To look at something, you had to physically turn toward it. To accommodate this shift, we drastically increased the size of the images in the VR view, forcing users to move their heads deliberately to take in the full photograph. The constraint made the design more honest: intent became visible, physical, and performative for the audience outside.",
+    },
+    {
+      id: "obs-tracking-comparison-img",
+      type: "image",
+      src: "",
+      alt: "Sketches comparing eye tracking versus head tracking interaction models",
+      caption: "Eye tracking captures involuntary attention. Head tracking requires intentional movement \u2014 a fundamentally different kind of looking.",
+      layout: "breakout",
+      aspectRatio: "16/10",
+    },
+
     // ===== Reflection =====
     {
       id: "obs-reflection",
       type: "reflection",
       title: "Reflection",
       outcome:
-        "The exhibit launched at MOHAI on September 13, 2025. The dynamic nature of the \u201CAudience View\u201D successfully built anticipation, creating a queue that lasted the entire duration of the event.",
+        "The exhibit launched at MOHAI on September 13, 2025. The queue for the booth lasted the full duration of the event, and the atmosphere was lively \u2014 but what surprised me most was the audience outside. The projected gaze view, originally designed as a waiting mechanism, became its own destination. Groups stood watching, narrating what the person inside was doing, debating why they kept returning to the same face.",
       keyLesson:
-        "The project proved that we could bridge the gap between a soldier\u2019s 1946 reality and a modern audience\u2019s digital curiosity, simply by asking them to look closer.",
-    },
-
-    // ===== Stats =====
-    {
-      id: "obs-stats",
-      type: "stats",
-      variant: "dark",
-      stats: [
-        { value: "200+", label: "Visitors experienced the installation" },
-        { value: "4.7", label: "Average experience rating" },
-        { value: "3", label: "Award nominations" },
-      ],
+        "If I built it again \u2014 which I intend to, at a larger scale \u2014 I would pay far more attention to the pathfinding and spatial choreography of the audience experience. Exhibition design lives in the transitions: how people approach, how they wait, how they move through, how they leave. I\u2019d like to design the external apparatus with the same care as the internal experience, and explore how the physical space can facilitate more discussion and interaction between visitors before and after they step inside. The project proved that we could bridge the gap between a soldier\u2019s 1946 reality and a modern audience\u2019s digital curiosity, simply by asking them to look closer.",
     },
   ],
 };
