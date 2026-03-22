@@ -1,5 +1,3 @@
-import { type ContentBlock } from "./content-blocks";
-
 export interface CaseStudy {
   slug: string;
   // Gallery card data
@@ -12,8 +10,6 @@ export interface CaseStudy {
   tags?: string[];
   // Optional dedicated page URL (bypasses modal)
   href?: string;
-  // Content blocks for the modal
-  content: ContentBlock[];
 }
 
 // Legacy interface for Domis (will be migrated to bento-grid later)
@@ -39,7 +35,3 @@ export interface LegacyCaseStudy {
 }
 
 export type AnyCaseStudy = CaseStudy | LegacyCaseStudy;
-
-export function isLegacyCaseStudy(cs: AnyCaseStudy): cs is LegacyCaseStudy {
-  return !("content" in cs);
-}

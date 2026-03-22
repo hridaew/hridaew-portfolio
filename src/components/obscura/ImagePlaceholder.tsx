@@ -7,6 +7,8 @@ interface ImagePlaceholderProps {
   variant?: "frame" | "viewfinder" | "film";
   aspectRatio?: string;
   className?: string;
+  /** Edge-to-edge in parent; no inner frame inset, fills height when used in a sized container */
+  fullBleed?: boolean;
 }
 
 export function ImagePlaceholder({
@@ -14,14 +16,16 @@ export function ImagePlaceholder({
   variant = "frame",
   aspectRatio = "16/9",
   className,
+  fullBleed = false,
 }: ImagePlaceholderProps) {
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950",
+        fullBleed && "h-full min-h-0 rounded-none",
         className
       )}
-      style={{ aspectRatio }}
+      style={fullBleed ? { minHeight: "100%", height: "100%", width: "100%" } : { aspectRatio }}
     >
       {/* Grain texture */}
       <div className="absolute inset-0 opacity-[0.04]">
@@ -39,7 +43,7 @@ export function ImagePlaceholder({
       </div>
 
       {/* Variant decorations */}
-      {variant === "frame" && (
+      {variant === "frame" && !fullBleed && (
         <div className="absolute inset-4 border border-neutral-700/40 rounded-lg" />
       )}
 

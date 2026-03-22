@@ -100,8 +100,8 @@ export function StickySidebar({ sections, variant = "light" }: StickySidebarProp
                                             ? "translate-x-0 opacity-100 text-neutral-100"
                                             : "translate-x-0 opacity-100 text-neutral-900"
                                         : isDark
-                                            ? "-translate-x-3 opacity-0 text-neutral-400 group-hover:translate-x-0 group-hover:opacity-100"
-                                            : "-translate-x-3 opacity-0 text-neutral-500 group-hover:translate-x-0 group-hover:opacity-100"
+                                            ? "translate-x-0 opacity-50 text-neutral-500 group-hover:opacity-100 group-hover:text-neutral-300"
+                                            : "translate-x-0 opacity-50 text-neutral-400 group-hover:opacity-100 group-hover:text-neutral-700"
                                 )}
                             >
                                 {section.label}

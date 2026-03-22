@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { GrainOverlay } from "@/components/virdio/GrainOverlay";
 import { CloseButton } from "@/components/virdio/CloseButton";
 import { LightboxProvider, LightboxImage } from "@/components/virdio/Lightbox";
@@ -23,6 +23,55 @@ const obBody = "font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed";
 
 /** Shared content column: max width + horizontal padding + center */
 const obscuraSectionShell = "max-w-[920px] mx-auto px-6 md:px-12";
+
+function IntentPrincipleRow({
+  children,
+  imageAria,
+  delay = 0,
+  imageSrc,
+  imageAlt,
+}: {
+  children: ReactNode;
+  /** Used when `imageSrc` is not set (placeholder). */
+  imageAria?: string;
+  delay?: number;
+  imageSrc?: string;
+  imageAlt?: string;
+}) {
+  const visual =
+    imageSrc != null && imageAlt != null ? (
+      <LightboxImage
+        src={imageSrc}
+        alt={imageAlt}
+        className="h-full w-full object-cover"
+        draggable={false}
+      />
+    ) : (
+      <div className="h-full w-full min-h-0" role="img" aria-label={imageAria ?? ""}>
+        <ImagePlaceholder
+          variant="frame"
+          label="Image coming soon"
+          fullBleed
+          className="border-0 bg-gradient-to-br from-neutral-900 to-neutral-950"
+        />
+      </div>
+    );
+
+  return (
+    <Reveal delay={delay}>
+      <div className="grid grid-cols-1 md:grid-cols-[7fr_3fr] gap-6 md:items-stretch">
+        <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8 min-h-0 flex flex-col md:h-full">
+          {children}
+        </div>
+        <div className="md:flex md:h-full md:min-h-0 md:items-center md:justify-center">
+          <div className="relative w-full aspect-square shrink-0 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 md:max-h-full md:w-full">
+            {visual}
+          </div>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
 
 interface DwellData {
     regionId: string;
@@ -101,27 +150,6 @@ function ObscuraVideo({
     );
 }
 
-function ObscuraBreakoutPlaceholder({
-    ariaLabel,
-    aspectRatio = "16/10",
-}: {
-    ariaLabel: string;
-    aspectRatio?: string;
-}) {
-    return (
-        <div className="mb-10">
-            <div role="img" aria-label={ariaLabel}>
-                <ImagePlaceholder
-                    aspectRatio={aspectRatio}
-                    variant="frame"
-                    label="Image coming soon"
-                    className="border border-neutral-800"
-                />
-            </div>
-        </div>
-    );
-}
-
 export default function ObscuraPage() {
     const [dwellData, setDwellData] = useState<DwellData[]>([]);
 
@@ -147,7 +175,7 @@ export default function ObscuraPage() {
                         { id: "hero", label: "Intro", number: "00" },
                         { id: "overview", label: "Overview", number: "01" },
                         { id: "intent", label: "Intent", number: "02" },
-                        { id: "blueprint", label: "Blueprint", number: "03" },
+                        { id: "blueprint", label: "Ideation", number: "03" },
                         { id: "prototyping", label: "Prototyping", number: "04" },
                         { id: "exhibition", label: "Exhibition", number: "05" },
                         { id: "reflection", label: "Reflection", number: "06" },
@@ -222,8 +250,23 @@ export default function ObscuraPage() {
                         </HeroTextAnimation>
 
                         <Reveal delay={0.3}>
-                            <p className={cn(obBody, "text-neutral-400 max-w-[540px] mx-auto mb-10")}>
-                                A dynamically curated immersive exhibit where your gaze writes the story.
+                            <p
+                                className={cn(
+                                    obBody,
+                                    "text-neutral-400 max-w-[min(680px,calc(100vw-3rem))] mx-auto mb-10 text-balance [text-shadow:0_1px_2px_rgba(0,0,0,0.9),0_2px_16px_rgba(0,0,0,0.65),0_0_40px_rgba(10,10,10,0.55)]"
+                                )}
+                            >
+                                Obscura is an immersive experience that bridges solitary Virtual Reality and public exhibition &mdash; a spatial computing environment where the viewer&apos;s gaze dynamically curates the images they see.
+                            </p>
+                        </Reveal>
+                        <Reveal delay={0.35}>
+                            <p
+                                className={cn(
+                                    obBody,
+                                    "text-neutral-400 max-w-[min(680px,calc(100vw-3rem))] mx-auto mb-10 text-balance [text-shadow:0_1px_2px_rgba(0,0,0,0.9),0_2px_16px_rgba(0,0,0,0.65),0_0_40px_rgba(10,10,10,0.55)]"
+                                )}
+                            >
+                                I drove the Interaction Design, prototyping, and Unity development. Together, the team and I transformed isolated exploration into a shared social narrative for the broader museum audience.
                             </p>
                         </Reveal>
 
@@ -231,7 +274,7 @@ export default function ObscuraPage() {
                             <div className={cn("flex flex-wrap justify-center gap-x-8 gap-y-3", obBody, "text-neutral-500")}>
                                 <div>
                                     <span className="text-neutral-600 block text-xs uppercase tracking-wider mb-0.5">Role</span>
-                                    Project Lead, Design, Unity Dev
+                                    Lead Interaction Designer, Prototyper, &amp; Developer
                                 </div>
                                 <div>
                                     <span className="text-neutral-600 block text-xs uppercase tracking-wider mb-0.5">Team</span>
@@ -357,86 +400,54 @@ export default function ObscuraPage() {
                         </div>
                     </Reveal>
 
-                    <div className="space-y-10 mb-16">
-                        <Reveal>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
-                                    Speak to the Audience While Respecting the Artist
-                                </h3>
-                                <p className={cn(obBody, "text-neutral-400")}>
-                                    Wayne took hundreds of photos but didn&apos;t talk about his intent. The exhibit allows users to view his photos, tracking what parts they dwell on. An external audience views through the first viewer&apos;s eyes, collectively defining the role of intent.
-                                </p>
-                            </div>
-                        </Reveal>
-                        <Reveal>
-                            <ObscuraBreakoutPlaceholder ariaLabel="The viewer experience inside the Portola Obscura booth" />
-                        </Reveal>
-                        <Reveal delay={0.05}>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
-                                    Build Anticipation
-                                </h3>
-                                <p className={cn(obBody, "text-neutral-400")}>
-                                    The &ldquo;Audience View&rdquo; offered a low-pressure way to engage before entering. People could wonder, &ldquo;Why are they focused on the clothing instead of the temple?&rdquo;. This turned waiting into an active, social event.
-                                </p>
-                            </div>
-                        </Reveal>
-                        <Reveal delay={0.1}>
-                            <ObscuraBreakoutPlaceholder ariaLabel="The audience watching the projected gaze view outside the booth" />
-                        </Reveal>
-                        <Reveal delay={0.15}>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
-                                    Give People Something to Talk About
-                                </h3>
-                                <p className={cn(obBody, "text-neutral-400")}>
-                                    Recognizing the value of conversation before and after an experience, I designed a photo-strip souvenir. This strip visualizes which parts of an image participants looked at most.
-                                </p>
-                            </div>
-                        </Reveal>
-                    </div>
-
-                    {/* Photo strip souvenirs */}
-                    <Reveal>
-                        <div className="overflow-x-auto pb-4 -mx-6 px-6">
-                            <div className="flex gap-4 min-w-max">
-                                {[
-                                    { src: "/assets/obscura/photostrip_faces.png", alt: "Faces photo strip souvenir" },
-                                    { src: "/assets/obscura/photostrip_environments.png", alt: "Environments photo strip souvenir" },
-                                    { src: "/assets/obscura/photostrip_clothing.png", alt: "Clothing photo strip souvenir" },
-                                    { src: "/assets/obscura/photostrip_occupation.png", alt: "Occupation photo strip souvenir" },
-                                    { src: "/assets/obscura/photostrip_wayne.png", alt: "Wayne photo strip souvenir" },
-                                ].map((strip) => (
-                                    <div key={strip.alt} className="flex-shrink-0 w-[180px] md:w-[220px] rounded-xl overflow-hidden border border-neutral-800">
-                                        <LightboxImage
-                                            src={strip.src}
-                                            alt={strip.alt}
-                                            className="w-full h-auto"
-                                            draggable={false}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <p className={cn(obBody, "text-neutral-600 text-center mt-4")}>
-                            Photo-strip souvenirs generated based on each viewer&apos;s gaze path &mdash; Faces, Environments, Clothing, Occupation, and Wayne.
-                        </p>
-                    </Reveal>
-
-                    <div className="mt-16 space-y-10">
-                        <Reveal>
-                            <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
-                                    Create Space for Meaningful Engagement
-                                </h3>
-                                <p className={cn(obBody, "text-neutral-400")}>
-                                    Today&apos;s image engagement, largely through social media, often overlooks the significance of what we see. Wayne&apos;s photos, from a time when images held gravity, regain that importance in this exhibit. By presenting the large, focused photos individually, the exhibit creates an intimate setting for detailed investigation.
-                                </p>
-                            </div>
-                        </Reveal>
-                        <Reveal>
-                            <ObscuraBreakoutPlaceholder ariaLabel="A focused, large-scale photograph displayed within the exhibit" />
-                        </Reveal>
+                    <div className="space-y-10">
+                        <IntentPrincipleRow
+                            imageSrc="/assets/obscura/intent_speak_to_audience.png"
+                            imageAlt="Wayne Wong smiling in a square portrait; his name appears as text on the image"
+                        >
+                            <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
+                                Speak to the Audience While Respecting the Artist
+                            </h3>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                Wayne took hundreds of photos but didn&apos;t talk about his intent. The exhibit allows users to view his photos, tracking what parts they dwell on. An external audience views through the first viewer&apos;s eyes, collectively defining the role of intent.
+                            </p>
+                        </IntentPrincipleRow>
+                        <IntentPrincipleRow
+                            delay={0.05}
+                            imageSrc="/assets/obscura/intent_build_anticipation.png"
+                            imageAlt="Visitors in the gallery watching the projected audience view, with a historic photograph on screen"
+                        >
+                            <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
+                                Build Anticipation
+                            </h3>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                The &ldquo;Audience View&rdquo; offered a low-pressure way to engage before entering. People could wonder, &ldquo;Why are they focused on the clothing instead of the temple?&rdquo;. This turned waiting into an active, social event.
+                            </p>
+                        </IntentPrincipleRow>
+                        <IntentPrincipleRow
+                            delay={0.1}
+                            imageSrc="/assets/obscura/intent_give_people_something.png"
+                            imageAlt="Visitor holding a vertical Obscura photo-strip souvenir, examining the black-and-white frames"
+                        >
+                            <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
+                                Give People Something to Talk About
+                            </h3>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                Recognizing the value of conversation before and after an experience, I designed a photo-strip souvenir. This strip visualizes which parts of an image participants looked at most.
+                            </p>
+                        </IntentPrincipleRow>
+                        <IntentPrincipleRow
+                            delay={0.15}
+                            imageSrc="/assets/obscura/intent_create_space.png"
+                            imageAlt="Black-and-white archival photograph: a soldier in uniform stands in a crowded outdoor market in post-war Japan, surrounded by children and adults"
+                        >
+                            <h3 className="font-[family-name:var(--font-dm-sans)] text-amber-200/80 text-sm font-semibold uppercase tracking-wider mb-4">
+                                Create Space for Meaningful Engagement
+                            </h3>
+                            <p className={cn(obBody, "text-neutral-400")}>
+                                Today&apos;s image engagement, largely through social media, often overlooks the significance of what we see. Wayne&apos;s photos, from a time when images held gravity, regain that importance in this exhibit.
+                            </p>
+                        </IntentPrincipleRow>
                     </div>
                 </section>
 
@@ -701,45 +712,38 @@ export default function ObscuraPage() {
                             </p>
                         </div>
                     </Reveal>
-                    <Reveal>
-                        <ObscuraBreakoutPlaceholder ariaLabel="Testing eye tracking with a Tobii bar in the studio" />
-                        <p className={cn(obBody, "text-neutral-600 text-center -mt-4 mb-12")}>
-                            Studio testing with a Tobii eye tracker confirmed that subconscious gaze patterns surprised participants.
-                        </p>
-                    </Reveal>
 
                     <Reveal>
-                        <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8 mb-12">
-                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-red-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                The Problem
-                            </span>
-                            <p className={cn(obBody, "text-neutral-400")}>
-                                When we explored how to implement eye tracking inside a VR headset apparatus for the exhibit, an advisor from Meta Reality Labs informed us that displaying raw eye-tracking data to a public audience without explicit informed consent from every viewer violated privacy protocols. The core mechanic of the exhibit was gone.
-                            </p>
-                        </div>
-                    </Reveal>
-
-                    <Reveal>
-                        <div className="bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8 mb-10">
-                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-emerald-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
-                                The Solution
-                            </span>
-                            <p className={cn(obBody, "text-neutral-400")}>
-                                We pivoted to head tracking. Less precise &mdash; but fundamentally different in character. Where eye tracking captured involuntary, subconscious attention, head tracking required the viewer to be intentional. To look at something, you had to physically turn toward it. To accommodate this shift, we drastically increased the size of the images in the VR view, forcing users to move their heads deliberately to take in the full photograph. The constraint made the design more honest: intent became visible, physical, and performative for the audience outside.
-                            </p>
+                        <div className="flex w-full min-w-0 flex-col gap-4 mb-12">
+                            <div className="w-full min-w-0 bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
+                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-red-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                    The Problem
+                                </span>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    When we explored how to implement eye tracking inside a VR headset apparatus for the exhibit, an advisor from Meta Reality Labs informed us that displaying raw eye-tracking data to a public audience without explicit informed consent from every viewer violated privacy protocols. The core mechanic of the exhibit was gone.
+                                </p>
+                            </div>
+                            <div className="w-full min-w-0 bg-neutral-900/50 rounded-2xl border border-neutral-800 p-8">
+                                <span className="font-[family-name:var(--font-dm-sans)] text-xs text-emerald-400/70 uppercase tracking-[0.15em] font-semibold block mb-3">
+                                    The Solution
+                                </span>
+                                <p className={cn(obBody, "text-neutral-400")}>
+                                    We pivoted to head tracking. Less precise &mdash; but fundamentally different in character. Where eye tracking captured involuntary, subconscious attention, head tracking required the viewer to be intentional. To look at something, you had to physically turn toward it. To accommodate this shift, we drastically increased the size of the images in the VR view, forcing users to move their heads deliberately to take in the full photograph. The constraint made the design more honest: intent became visible, physical, and performative for the audience outside.
+                                </p>
+                            </div>
                         </div>
                     </Reveal>
 
                     {/* Eye Tracking Demo */}
                     <Reveal>
-                        <div className="mb-16">
+                        <div className="mb-16 w-full min-w-0">
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
                                 The Gaze Challenge
                             </span>
-                            <p className={cn(obBody, "text-neutral-400 max-w-[680px] mb-8")}>
+                            <p className={cn(obBody, "text-neutral-400 mb-8 w-full")}>
                                 Eye tracking produces erratic, involuntary data &mdash; saccades and micro-fixations that don&rsquo;t reflect conscious intent. Head tracking, by contrast, captures deliberate, performative movement that audiences can read from outside.
                             </p>
-                            <EyeTrackingDemo />
+                            <EyeTrackingDemo className="w-full" />
                         </div>
                     </Reveal>
 
@@ -755,11 +759,19 @@ export default function ObscuraPage() {
                         </div>
                     </Reveal>
                     <Reveal>
-                        <ObscuraBreakoutPlaceholder
-                            ariaLabel="Low-fidelity prototype of the Portola Obscura booth"
-                            aspectRatio="4/3"
-                        />
-                        <p className={cn(obBody, "text-neutral-600 text-center -mt-4 mb-0")}>
+                        <div className="rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-950">
+                            <video
+                                src="/assets/obscura/prototyping_booth_recording.mp4"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="metadata"
+                                className="w-full h-auto block"
+                                aria-label="Screen recording: low-fidelity cardboard Portola Obscura booth prototype (silent, looping)"
+                            />
+                        </div>
+                        <p className={cn(obBody, "text-neutral-600 text-center mt-4 mb-0")}>
                             Cardboard prototyping the booth to test light, shadow, and physical flow before Unity development.
                         </p>
                     </Reveal>
@@ -814,8 +826,8 @@ export default function ObscuraPage() {
                         <div className="mb-12 md:mb-16">
                             <div className="rounded-xl overflow-hidden border border-neutral-800 mb-8 aspect-video bg-neutral-950">
                                 <LightboxImage
-                                    src="/assets/obscura/CuratorIMG.png"
-                                    alt="Curator view from the Unity XR build — head-tracked photograph experience on Meta Quest 3"
+                                    src="/assets/obscura/from_concept_unity.png"
+                                    alt="Developer wearing a Meta Quest 3 at a desk; monitor shows Unity with a historical photograph and the head-tracked curator view"
                                     className="h-full w-full object-cover"
                                     draggable={false}
                                 />
@@ -845,6 +857,7 @@ export default function ObscuraPage() {
 
                     <Reveal>
                         <GazeSimulator
+                            className="w-full"
                             imageSrc="/assets/obscura/zone_breakdown_noui.png"
                             imageAlt="Wayne Wong photograph — zone breakdown for gaze-driven narrative"
                             onDwellUpdate={handleDwellUpdate}
@@ -853,8 +866,8 @@ export default function ObscuraPage() {
 
                     {/* Film Strip souvenir */}
                     <Reveal>
-                        <div className="mt-8">
-                            <FilmStrip dwellData={dwellData} />
+                        <div className="mt-8 w-full min-w-0">
+                            <FilmStrip dwellData={dwellData} className="w-full" />
                         </div>
                     </Reveal>
                 </section>
@@ -877,8 +890,8 @@ export default function ObscuraPage() {
                         </div>
                     </Reveal>
                     <Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 h-[min(52vw,320px)] md:h-[min(28vw,440px)] min-h-[240px]">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-stretch md:h-[min(28vw,440px)] md:min-h-[240px]">
+                            <div className="h-[min(52vw,320px)] min-h-[240px] w-full min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950 md:h-full md:min-h-0 md:flex-1">
                                 <LightboxImage
                                     src="/assets/obscura/exhibition_photostrips.avif"
                                     alt="Photo strip souvenirs displayed at exhibition"
@@ -886,13 +899,15 @@ export default function ObscuraPage() {
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 h-[min(52vw,320px)] md:h-[min(28vw,440px)] min-h-[240px]">
-                                <LightboxImage
-                                    src="/assets/obscura/flyer.png"
-                                    alt="Obscura instructional cards and exhibition flyer"
-                                    className="h-full w-full object-cover"
-                                    draggable={false}
-                                />
+                            <div className="flex h-[min(52vw,320px)] min-h-[240px] w-full shrink-0 justify-center md:h-full md:min-h-0 md:w-auto">
+                                <div className="h-full w-fit max-w-[min(100%,calc(100vw-3rem))] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950">
+                                    <LightboxImage
+                                        src="/assets/obscura/flyer.png"
+                                        alt="Obscura instructional cards and exhibition flyer"
+                                        className="block h-full w-auto max-h-full max-w-full object-contain"
+                                        draggable={false}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </Reveal>
@@ -905,9 +920,19 @@ export default function ObscuraPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-[#0A0A0A]" />
                     <div className={cn("relative", obscuraSectionShell)}>
                         <Reveal>
-                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-8">
+                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl text-neutral-100 mb-6">
                                 Reflection
                             </h2>
+                        </Reveal>
+                        <Reveal delay={0.05}>
+                            <div className="mb-10 w-full overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950">
+                                <LightboxImage
+                                    src="/assets/obscura/reflection_presentation.png"
+                                    alt="Obscura team presenting at Microsoft Lakefront Pavilion; projection shows the OBSCURA title slide and sponsors, audience in the foreground"
+                                    className="w-full h-auto"
+                                    draggable={false}
+                                />
+                            </div>
                         </Reveal>
                         <Reveal delay={0.1}>
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
@@ -917,12 +942,22 @@ export default function ObscuraPage() {
                                 The exhibit launched at MOHAI on September 13, 2025. The queue for the booth lasted the full duration of the event, and the atmosphere was lively &mdash; but what surprised me most was the audience outside. The projected gaze view, originally designed as a waiting mechanism, became its own destination. Groups stood watching, narrating what the person inside was doing, debating why they kept returning to the same face.
                             </p>
                         </Reveal>
-                        <Reveal delay={0.2}>
+                        <Reveal delay={0.15}>
+                            <blockquote className="border-l-2 border-amber-200/30 pl-6 py-2 mb-8 max-w-[680px]">
+                                <p className={cn(obBody, "text-neutral-300 mb-3")}>
+                                    &ldquo;As were all the audience members that I spoke with at the end of the event, I was very impressed with the project and the way it was presented. The team had a very clear rationale for the design of their exhibit, and the execution seemed flawless as far as I can tell.&rdquo;
+                                </p>
+                                <cite className={cn(obBody, "text-neutral-600 not-italic")}>
+                                    Exhibition Viewer
+                                </cite>
+                            </blockquote>
+                        </Reveal>
+                        <Reveal delay={0.25}>
                             <span className="font-[family-name:var(--font-dm-sans)] text-xs text-amber-200/60 uppercase tracking-[0.15em] font-semibold block mb-3">
                                 Key lesson
                             </span>
                             <p className={cn(obBody, "text-neutral-400 max-w-[680px]")}>
-                                If I built it again &mdash; which I intend to, at a larger scale &mdash; I would pay far more attention to the pathfinding and spatial choreography of the audience experience. Exhibition design lives in the transitions: how people approach, how they wait, how they move through, how they leave. I&apos;d like to design the external apparatus with the same care as the internal experience, and explore how the physical space can facilitate more discussion and interaction between visitors before and after they step inside. The project proved that we could bridge the gap between a soldier&apos;s 1946 reality and a modern audience&apos;s digital curiosity, simply by asking them to look closer.
+                                If I built it again &mdash; which I intend to, at a larger scale &mdash; I would pay far more attention to the pathfinding and spatial choreography of the audience experience. Exhibition design lives in the transitions: how people approach, how they wait, how they move through, how they leave. I&apos;d like to design the external apparatus with the same care as the internal experience, and explore how the physical space can facilitate more discussion and interaction between visitors before and after they step inside.
                             </p>
                         </Reveal>
                     </div>

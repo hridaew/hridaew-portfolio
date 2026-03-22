@@ -19,7 +19,7 @@
 ## Design System
 - **Color Tokens**: CSS custom properties defined in `globals.css` (light/dark mode)
 - **Typography**: `font-[family-name:var(--font-instrument-serif)]` for headings, `font-[family-name:var(--font-dm-sans)]` for body
-- **Content Blocks**: Case studies use a typed block system (`src/types/content-blocks.ts`) with renderers in `src/components/case-study/blocks/`
+- **Case Study Pages**: Each case study has a dedicated page in `src/app/{project}/page.tsx` with custom layouts and project-specific components
 - **Editorial Layouts**: Use `EditorialLayout` component with `width` prop ("text", "breakout", "full-width")
 
 ## Boris Guide Principles
@@ -69,7 +69,7 @@
 - **Border-radius mismatches**: When nesting rounded elements, inner border-radius must match the outer container's radius exactly or gaps will show at corners on small screens.
 
 ## Accessibility
-- **ARIA references**: When using `aria-labelledby`, always ensure the target `id` exists in the DOM. The modal uses `aria-labelledby="modal-title"` — both `HeroBlock.tsx` and `CaseStudyModal.tsx` (legacy path) must have `id="modal-title"` on their `<h1>`. Only one renders at a time, so no duplicate ID conflict.
+- **ARIA references**: When using `aria-labelledby`, always ensure the target `id` exists in the DOM.
 - **Color contrast**: All text must meet WCAG AA 4.5:1 contrast ratio. Dark mode `--text-subtle` was bumped from `#7a7a8c` (~4.1:1) to `#8e8ea0` (~5.0:1) for this reason. Always verify contrast when changing color tokens.
 - **Focus management**: Modal auto-focuses close button on open, restores focus to trigger on close. All interactive elements have visible `:focus-visible` outlines defined in `globals.css`.
 - **Keyboard navigation**: Modal closes on Escape. All interactive elements must be keyboard-accessible.

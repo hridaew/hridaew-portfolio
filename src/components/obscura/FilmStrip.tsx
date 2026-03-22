@@ -19,9 +19,9 @@ export function FilmStrip({ dwellData, className }: FilmStripProps) {
   const sorted = [...dwellData].sort((a, b) => b.time - a.time);
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative w-full min-w-0", className)}>
       {/* Film strip container */}
-      <div className="relative bg-neutral-950 rounded-xl overflow-hidden border border-neutral-800">
+      <div className="relative w-full bg-neutral-950 rounded-xl overflow-hidden border border-neutral-800">
         {/* Sprocket holes top */}
         <div className="flex justify-between px-4 py-2">
           {Array.from({ length: 12 }).map((_, i) => (

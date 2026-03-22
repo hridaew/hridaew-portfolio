@@ -168,7 +168,7 @@ export function GazeSimulator({
   );
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("w-full min-w-0 space-y-4", className)}>
       <div
         ref={containerRef}
         className="relative overflow-hidden rounded-2xl cursor-none group"
