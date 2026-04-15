@@ -563,7 +563,7 @@ function GalleryCard({
               loop
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
               tabIndex={-1}
               controls={false}
               controlsList="nodownload nofullscreen noremoteplayback"
@@ -575,6 +575,7 @@ function GalleryCard({
             />
           ) : (
             <img
+              loading="lazy"
               src={card.imageSrc}
               alt={card.imageAlt}
               draggable={false}
@@ -583,7 +584,7 @@ function GalleryCard({
           )}
 
           {extraImages?.map((img, i) => (
-            <img key={i} src={img.src} alt={img.alt} draggable={false} className={img.className} />
+            <img key={i} loading="lazy" src={img.src} alt={img.alt} draggable={false} className={img.className} />
           ))}
 
           {/* Dev note for future video swap — inside media layer so it never stacks above art */}

@@ -9,6 +9,7 @@ function AboutSection() {
         <div className="relative size-[128px] shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
             <img
+              loading="lazy"
               alt=""
               className="absolute left-[-22.31%] top-[-9.68%] h-[146.55%] max-w-none w-[144.63%]"
               src={img.aboutPrimary}
@@ -215,6 +216,7 @@ function SideImages() {
       <TiltFrame rotation="-rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
           <img
+            loading="lazy"
             alt=""
             className="pointer-events-none absolute inset-0 size-full max-w-none rounded-lg object-cover"
             src={img.tilt1}
@@ -224,6 +226,7 @@ function SideImages() {
       <TiltFrame rotation="rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
           <img
+            loading="lazy"
             alt=""
             className="pointer-events-none absolute inset-0 size-full max-w-none rounded-2xl object-cover"
             src={img.tilt2}
@@ -233,6 +236,7 @@ function SideImages() {
       <TiltFrame rotation="-rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
           <img
+            loading="lazy"
             alt=""
             className="pointer-events-none absolute inset-0 size-full max-w-none rounded-2xl object-cover"
             src={img.tilt3}
@@ -243,6 +247,7 @@ function SideImages() {
         <div className="relative size-32 shrink-0 rounded-2xl">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
             <img
+              loading="lazy"
               alt=""
               className="absolute left-[-20.63%] top-0 h-full max-w-none w-[153.8%]"
               src={img.tilt4}
@@ -296,6 +301,7 @@ function Top3Section() {
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
           <div className="relative h-[220px] w-[157px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <img
+              loading="lazy"
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"
               src={img.game1}
@@ -304,6 +310,7 @@ function Top3Section() {
           <div className="relative h-[220px] w-[159px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[5px]">
               <img
+                loading="lazy"
                 alt=""
                 className="absolute left-[0.73%] top-[-1.93%] h-[102.65%] max-w-none w-[100.01%]"
                 src={img.game2}
@@ -312,6 +319,7 @@ function Top3Section() {
           </div>
           <div className="relative h-[219.302px] w-[156px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <img
+              loading="lazy"
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"
               src={img.game3}
@@ -327,6 +335,7 @@ function Top3Section() {
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
           <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <img
+              loading="lazy"
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
               src={img.album1}
@@ -334,6 +343,7 @@ function Top3Section() {
           </div>
           <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <img
+              loading="lazy"
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
               src={img.album2}
@@ -341,6 +351,7 @@ function Top3Section() {
           </div>
           <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
             <img
+              loading="lazy"
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
               src={img.album3}
@@ -357,6 +368,7 @@ function Top3Section() {
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <img
+                loading="lazy"
                 alt=""
                 className="absolute left-[-1.66%] top-[-0.98%] h-[101.71%] max-w-none w-[103.88%]"
                 src={img.move1}
@@ -366,6 +378,7 @@ function Top3Section() {
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <img
+                loading="lazy"
                 alt=""
                 className="absolute left-[-0.95%] top-[-0.34%] h-[100.73%] max-w-none w-[101.59%]"
                 src={img.move2}
@@ -375,6 +388,7 @@ function Top3Section() {
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <img
+                loading="lazy"
                 alt=""
                 className="absolute left-[-1.53%] top-[-0.79%] h-[101.49%] max-w-none w-[102.7%]"
                 src={img.move3}
