@@ -190,25 +190,27 @@ interface Orb {
   color: string;
 }
 
+const ORB_DEFS = [
+  { color: "#FF5A5B", startX: 0.05, startY: 0.1 },
+  { color: "white", startX: 0.55, startY: 0.4 },
+  { color: "#EB8314", startX: 0.25, startY: 0.7 },
+  { color: "#CCBAFF", startX: 0.9, startY: 0.1 },
+] as const;
+
+/**
+ * Bouncing orbs that mutate SVG ellipse elements directly via a ref to a `<g>`.
+ * No React re-renders — only the initial mount creates DOM.
+ */
 function useBouncingOrbs(containerWidth: number, containerHeight: number) {
   const orbsRef = useRef<Orb[]>([]);
   const rafRef = useRef<number>(0);
-  const [positions, setPositions] = useState<
-    { x: number; y: number; rx: number; ry: number; color: string }[]
-  >([]);
+  const gRef = useRef<SVGGElement>(null);
 
   const w = Math.max(1, containerWidth);
   const h = Math.max(1, containerHeight);
 
   useEffect(() => {
-    const orbDefs = [
-      { color: "#FF5A5B", startX: 0.05, startY: 0.1 },
-      { color: "white", startX: 0.55, startY: 0.4 },
-      { color: "#EB8314", startX: 0.25, startY: 0.7 },
-      { color: "#CCBAFF", startX: 0.9, startY: 0.1 },
-    ];
-
-    orbsRef.current = orbDefs.map((def) => ({
+    orbsRef.current = ORB_DEFS.map((def) => ({
       x: def.startX * w,
       y: def.startY * h,
       vx: (Math.random() - 0.5) * 0.6,
@@ -220,7 +222,9 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
 
     const update = () => {
       const orbs = orbsRef.current;
-      for (const orb of orbs) {
+      const g = gRef.current;
+      for (let i = 0; i < orbs.length; i++) {
+        const orb = orbs[i];
         orb.x += orb.vx;
         orb.y += orb.vy;
 
@@ -239,25 +243,36 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
           orb.y = h - orb.ry;
           orb.vy = -Math.abs(orb.vy);
         }
+
+        // Direct DOM mutation — no React re-render
+        const el = g?.children[i] as SVGEllipseElement | undefined;
+        if (el) {
+          el.setAttribute("cx", String(orb.x));
+          el.setAttribute("cy", String(orb.y));
+        }
       }
 
-      setPositions(
-        orbs.map((o) => ({
-          x: o.x,
-          y: o.y,
-          rx: o.rx,
-          ry: o.ry,
-          color: o.color,
-        }))
-      );
       rafRef.current = requestAnimationFrame(update);
     };
+
+    // Set initial positions on ellipses
+    const g = gRef.current;
+    if (g) {
+      const orbs = orbsRef.current;
+      for (let i = 0; i < orbs.length; i++) {
+        const el = g.children[i] as SVGEllipseElement | undefined;
+        if (el) {
+          el.setAttribute("cx", String(orbs[i].x));
+          el.setAttribute("cy", String(orbs[i].y));
+        }
+      }
+    }
 
     rafRef.current = requestAnimationFrame(update);
     return () => cancelAnimationFrame(rafRef.current);
   }, [w, h]);
 
-  return positions;
+  return gRef;
 }
 
 function ExpandToggle({
@@ -383,7 +398,7 @@ export function HeroCard() {
     return () => clearTimeout(t);
   }, [openVerticalBump]);
 
-  const orbPositions = useBouncingOrbs(orbBox.w, orbBox.h);
+  const orbGRef = useBouncingOrbs(orbBox.w, orbBox.h);
 
   /** Imperative geometry so GSAP `onUpdate` can track every frame (React state batches). */
   const syncPortalPosition = useCallback(() => {
@@ -539,15 +554,15 @@ export function HeroCard() {
                 <feGaussianBlur in="SourceGraphic" stdDeviation={ORB_BLUR_STDDEV} />
               </filter>
             </defs>
-            <g filter={`url(#${orbFilterId})`}>
-              {orbPositions.map((orb, i) => (
+            <g ref={orbGRef} filter={`url(#${orbFilterId})`}>
+              {ORB_DEFS.map((def, i) => (
                 <ellipse
                   key={i}
-                  cx={orb.x}
-                  cy={orb.y}
-                  rx={orb.rx}
-                  ry={orb.ry}
-                  fill={orb.color}
+                  cx={0}
+                  cy={0}
+                  rx={35}
+                  ry={38}
+                  fill={def.color}
                   opacity={ORB_OPACITY}
                 />
               ))}
@@ -710,7 +725,7 @@ export function HeroCard() {
     >
       <motion.div
         ref={cardShellRef}
-        className="flex min-h-[192px] w-full min-w-0 max-h-[90vh] flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
+        className="flex min-h-[192px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
         style={{ transformOrigin: "50% 0" }}
         initial={false}
         animate={{
@@ -763,15 +778,15 @@ export function HeroCard() {
             <feGaussianBlur in="SourceGraphic" stdDeviation={ORB_BLUR_STDDEV} />
           </filter>
         </defs>
-        <g filter={`url(#${orbFilterId})`}>
-          {orbPositions.map((orb, i) => (
+        <g ref={orbGRef} filter={`url(#${orbFilterId})`}>
+          {ORB_DEFS.map((def, i) => (
             <ellipse
               key={i}
-              cx={orb.x}
-              cy={orb.y}
-              rx={orb.rx}
-              ry={orb.ry}
-              fill={orb.color}
+              cx={0}
+              cy={0}
+              rx={35}
+              ry={38}
+              fill={def.color}
               opacity={ORB_OPACITY}
             />
           ))}
@@ -944,7 +959,7 @@ export function HeroCard() {
                 />
                 <div
                   data-testid="hero-card-expanded-scroll"
-                  className="relative z-[2] scrollbar-hide max-h-[calc(90vh-11rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+                  className="relative z-[2] scrollbar-hide max-h-[calc(100vh-224px-11rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
                   style={{
                     WebkitMaskImage:
                       "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",

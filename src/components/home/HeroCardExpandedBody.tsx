@@ -390,33 +390,15 @@ function Top3Section() {
 /** Scrollable expanded column: divider + sections (reference `ExpandedContent` minus outer motion). */
 export function HeroCardExpandedBody() {
   return (
-    <div className="flex w-full min-w-0 flex-col items-start gap-10">
-      <div className="flex w-full min-w-0 flex-col items-start gap-8">
-        <div className="relative h-0 w-full shrink-0">
-          <div className="absolute inset-[-1px_0_0_0]">
-            <svg
-              className="block size-full"
-              fill="none"
-              preserveAspectRatio="none"
-              viewBox="0 0 592 1"
-              aria-hidden
-            >
-              <line
-                stroke="white"
-                strokeLinecap="round"
-                strokeOpacity={0.1}
-                x1="0.5"
-                x2="591.5"
-                y1="0.5"
-                y2="0.5"
-              />
-            </svg>
-          </div>
+    <div className="relative w-full min-w-0">
+      <div className="sticky top-0 z-10 h-px w-full bg-white/15" aria-hidden />
+      <div className="flex w-full min-w-0 flex-col items-start gap-10 pt-8">
+        <div className="flex w-full min-w-0 flex-col items-start gap-8">
+          <AboutSection />
         </div>
-        <AboutSection />
+        <ExperienceEducationSection />
+        <Top3Section />
       </div>
-      <ExperienceEducationSection />
-      <Top3Section />
     </div>
   );
 }
