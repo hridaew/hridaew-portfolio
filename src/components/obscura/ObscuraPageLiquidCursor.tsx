@@ -7,7 +7,10 @@ import {
   OBSCURA_LIQUID_GLASS_LENS_PX,
   ObscuraLiquidGlassFilterSvg,
 } from "@/components/home/ObscuraLiquidGlassFilterSvg";
-import { detectSvgBackdropFilterUrl } from "@/lib/obscuraLiquidGlass";
+import {
+  detectSvgBackdropFilterUrl,
+  isLikelySafari,
+} from "@/lib/obscuraLiquidGlass";
 
 /**
  * Home Obscura gallery card uses this liquid-glass puck + cursor-none on hover.
@@ -17,6 +20,7 @@ export function ObscuraPageLiquidCursor() {
   const reduceMotion = useReducedMotion();
   const [isTouch, setIsTouch] = useState(false);
   const [svgBackdrop, setSvgBackdrop] = useState(false);
+  const [safariReticle, setSafariReticle] = useState(false);
   const posRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef(0);
   const [lens, setLens] = useState({ x: 0, y: 0 });
@@ -31,7 +35,9 @@ export function ObscuraPageLiquidCursor() {
       x: Math.round(window.innerWidth / 2),
       y: Math.round(window.innerHeight / 2),
     });
-    setSvgBackdrop(detectSvgBackdropFilterUrl());
+    const svg = detectSvgBackdropFilterUrl();
+    setSvgBackdrop(svg);
+    setSafariReticle(!svg && isLikelySafari());
   }, [reduceMotion, isTouch]);
 
   const flush = useCallback(() => {
@@ -70,9 +76,13 @@ export function ObscuraPageLiquidCursor() {
         aria-hidden
       >
         <div
-          className={`rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform ${
-            svgBackdrop ? "" : "obscura-liquid-lens-fallback"
-          }`}
+          className={
+            svgBackdrop
+              ? "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
+              : safariReticle
+                ? "rounded-full will-change-transform obscura-liquid-lens-reticle"
+                : "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform obscura-liquid-lens-fallback"
+          }
           style={{
             width: OBSCURA_LIQUID_GLASS_LENS_PX,
             height: OBSCURA_LIQUID_GLASS_LENS_PX,

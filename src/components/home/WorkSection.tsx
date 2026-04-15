@@ -22,7 +22,10 @@ import {
 } from "@/data/homepage-projects";
 import { usePageTransition } from "@/components/PageTransition";
 import { playClick } from "@/lib/audio";
-import { detectSvgBackdropFilterUrl } from "@/lib/obscuraLiquidGlass";
+import {
+  detectSvgBackdropFilterUrl,
+  isLikelySafari,
+} from "@/lib/obscuraLiquidGlass";
 import { HOME_CARD_CAPTION_PAD, HOME_PROJECT_EMBLA_VIEWPORT } from "./homeGrid";
 import {
   OBSCURA_LIQUID_GLASS_FILTER_ID,
@@ -205,10 +208,13 @@ function GalleryCard({
   const [obscuraPointerOver, setObscuraPointerOver] = useState(false);
   const [obscuraLens, setObscuraLens] = useState({ x: 348, y: 196 });
   const [obscuraSvgBackdrop, setObscuraSvgBackdrop] = useState(false);
+  const [obscuraSafariReticle, setObscuraSafariReticle] = useState(false);
 
   useEffect(() => {
     if (!obscuraLiquidLens) return;
-    setObscuraSvgBackdrop(detectSvgBackdropFilterUrl());
+    const svg = detectSvgBackdropFilterUrl();
+    setObscuraSvgBackdrop(svg);
+    setObscuraSafariReticle(!svg && isLikelySafari());
   }, [obscuraLiquidLens]);
 
   const flushFoilCssVars = useCallback(() => {
@@ -575,7 +581,6 @@ function GalleryCard({
             />
           ) : (
             <img
-              loading="lazy"
               src={card.imageSrc}
               alt={card.imageAlt}
               draggable={false}
@@ -584,7 +589,7 @@ function GalleryCard({
           )}
 
           {extraImages?.map((img, i) => (
-            <img key={i} loading="lazy" src={img.src} alt={img.alt} draggable={false} className={img.className} />
+            <img key={i} src={img.src} alt={img.alt} draggable={false} className={img.className} />
           ))}
 
           {/* Dev note for future video swap — inside media layer so it never stacks above art */}
@@ -603,9 +608,13 @@ function GalleryCard({
             aria-hidden
           >
             <div
-              className={`rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform ${
-                obscuraSvgBackdrop ? "" : "obscura-liquid-lens-fallback"
-              }`}
+              className={
+                obscuraSvgBackdrop
+                  ? "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
+                  : obscuraSafariReticle
+                    ? "rounded-full will-change-transform obscura-liquid-lens-reticle"
+                    : "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform obscura-liquid-lens-fallback"
+              }
               style={{
                 width: OBSCURA_LIQUID_GLASS_LENS_PX,
                 height: OBSCURA_LIQUID_GLASS_LENS_PX,

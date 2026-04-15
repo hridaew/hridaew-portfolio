@@ -311,3 +311,15 @@ export function detectSvgBackdropFilterUrl(): boolean {
   const supports = testEl.style.backdropFilter.includes("url");
   return isChromium && supports;
 }
+
+/**
+ * Desktop/mobile Safari (WebKit) — not Chrome, Chromium, Firefox iOS, Edge iOS, etc.
+ * Used for lighter Obscura cursor fallback and WebKit-safe page reveals.
+ */
+export function isLikelySafari(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  if (!/safari/i.test(ua)) return false;
+  if (/chrome|crios|chromium|fxios|edgios|edg\/|opr\//i.test(ua)) return false;
+  return true;
+}

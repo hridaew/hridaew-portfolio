@@ -19,6 +19,9 @@ const mcesShell = SITE_COLUMN;
 export default function MemoryCarePage() {
     useEffect(() => {
         document.documentElement.classList.remove("dark");
+        return () => {
+            document.documentElement.classList.add("dark");
+        };
     }, []);
 
     return (

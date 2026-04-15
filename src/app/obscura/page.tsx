@@ -181,9 +181,6 @@ export default function ObscuraPage() {
 
     useEffect(() => {
         document.documentElement.classList.add("dark");
-        return () => {
-            document.documentElement.classList.remove("dark");
-        };
     }, []);
 
     const handleDwellUpdate = useCallback((data: DwellData[]) => {

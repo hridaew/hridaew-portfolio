@@ -153,7 +153,7 @@ function EducationSection() {
           </div>
         </div>
       </div>
-      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-white/[0.02] pt-4 pb-8">
+      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-white/[0.02] py-4">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-xl border border-white/10"
@@ -332,31 +332,43 @@ function Top3Section() {
         <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
           Albums:
         </p>
-        <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
-          <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
-            <img
-              loading="lazy"
-              alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
-              src={img.album1}
-            />
-          </div>
-          <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
-            <img
-              loading="lazy"
-              alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
-              src={img.album2}
-            />
-          </div>
-          <div className="relative size-[178px] shrink-0 rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
-            <img
-              loading="lazy"
-              alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
-              src={img.album3}
-            />
-          </div>
+        <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2 overflow-visible">
+          {(
+            [
+              {
+                title: "Kid Cudi: Man on the Moon II",
+                src: img.album1,
+              },
+              {
+                title: "Clipse: Let God Sort Em Out",
+                src: img.album2,
+              },
+              {
+                title: "Linkin Park: Reanimation",
+                src: img.album3,
+              },
+            ] as const
+          ).map((album) => (
+            <div
+              key={album.title}
+              className="group relative size-[178px] shrink-0 overflow-visible rounded-[2px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]"
+              title={album.title}
+            >
+              <span
+                className="pointer-events-none absolute bottom-full left-1/2 z-[1] mb-1 max-w-[min(280px,calc(100vw-32px))] -translate-x-1/2 text-center font-[family-name:var(--font-geist-mono)] text-[10px] font-normal uppercase leading-tight tracking-wide text-white/75 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                aria-hidden
+              >
+                {album.title}
+              </span>
+              <img
+                loading="lazy"
+                alt={album.title}
+                draggable={false}
+                className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[2px] object-cover"
+                src={album.src}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

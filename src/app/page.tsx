@@ -63,7 +63,7 @@ export default function Home() {
                 I built this portfolio website with Figma &rarr; Figma Make &rarr; Claude Code + Cursor + Antigravity (basically wherever I had tokens left)
               </p>
               <p className="shrink-0 tabular-nums text-white/20" aria-label="Site version">
-                v2.11.2
+                v2.12.0
               </p>
             </div>
           </div>

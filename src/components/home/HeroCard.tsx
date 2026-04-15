@@ -431,6 +431,37 @@ export function HeroCard() {
     return undefined;
   }, [isExpanded, syncPortalPosition, isMobile]);
 
+  /** Lock document scroll + Lenis while expanded so only the hero panel scrolls. */
+  useEffect(() => {
+    if (!isExpanded) return;
+    const lenis = (
+      window as unknown as {
+        __lenis?: { stop: () => void; start: () => void };
+      }
+    ).__lenis;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    lenis?.stop();
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      lenis?.start();
+    };
+  }, [isExpanded]);
+
+  /** Jump to top when expanding so the portaled card anchor isn’t clipped mid-page. */
+  useLayoutEffect(() => {
+    if (!isExpanded) return;
+    window.scrollTo(0, 0);
+    (
+      window as unknown as {
+        __lenis?: { scrollTo: (n: number, o: { immediate: boolean }) => void };
+      }
+    ).__lenis?.scrollTo(0, { immediate: true });
+  }, [isExpanded]);
+
   useEffect(() => {
     return () => {
       if (isExpandedRef.current) resetPageShellBlurHard();
@@ -717,12 +748,23 @@ export function HeroCard() {
   }
 
   const glassCard = (
-    <div
-      ref={portalFrameRef}
-      data-testid="hero-card-shell"
-      className="fixed w-full min-w-0 max-w-[656px]"
-      style={{ zIndex: PORTAL_Z, transformOrigin: "top left" }}
-    >
+    <>
+      {isExpanded ? (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Close expanded bio"
+          className="fixed inset-0 cursor-default touch-manipulation border-0 bg-transparent p-0 focus:outline-none"
+          style={{ zIndex: PORTAL_Z - 1 }}
+          onClick={() => setIsExpanded(false)}
+        />
+      ) : null}
+      <div
+        ref={portalFrameRef}
+        data-testid="hero-card-shell"
+        className="fixed w-full min-w-0 max-w-[656px]"
+        style={{ zIndex: PORTAL_Z, transformOrigin: "top left" }}
+      >
       <motion.div
         ref={cardShellRef}
         className="flex min-h-[192px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
@@ -991,6 +1033,7 @@ export function HeroCard() {
         />
       </motion.div>
     </div>
+    </>
   );
 
   return (
