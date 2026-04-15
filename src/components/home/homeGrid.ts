@@ -27,4 +27,4 @@ export const HOME_CARD_CAPTION_PAD = "pl-4" as const;
  * Inner `p-8` keeps copy on the same spine as Bio / Toolkit (card starts 32px left of that line).
  */
 export const HOME_HERO_BLEED =
-  "relative -mx-8 w-[calc(100%+4rem)] max-w-[656px]" as const;
+  "relative w-full md:-mx-8 md:w-[calc(100%+4rem)] md:max-w-[656px]" as const;

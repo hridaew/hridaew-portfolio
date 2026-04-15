@@ -657,6 +657,20 @@
   );
 }
 
+/* Staggered page-load reveal: blur → unblur + fade + slide-up */
+@keyframes reveal-unblur {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
 /* Glitch text effect for cyberpunk headings */
 .theme-cyberpunk h1,
 .theme-cyberpunk h2 {

@@ -309,7 +309,20 @@ function ExpandToggle({
   );
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return mobile;
+}
+
 export function HeroCard() {
+  const isMobile = useIsMobile();
   const [showCopied, setShowCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [closeVerticalBump, setCloseVerticalBump] =
@@ -387,6 +400,7 @@ export function HeroCard() {
   }, []);
 
   useEffect(() => {
+    if (isMobile) return;
     const shellOpts = {
       onUpdate: syncPortalPosition,
       /** Blur-only: scaling the shell shifts anchor rects and makes the portaled card “step” downward. */
@@ -400,7 +414,7 @@ export function HeroCard() {
     }
     tweenPageShellBlur(false, shellOpts);
     return undefined;
-  }, [isExpanded, syncPortalPosition]);
+  }, [isExpanded, syncPortalPosition, isMobile]);
 
   useEffect(() => {
     return () => {
@@ -502,6 +516,191 @@ export function HeroCard() {
 
   const orbBlurPad = Math.max(orbBox.w, orbBox.h) * 0.35;
 
+  /* ── Mobile: static inline card, collapsed only, no portal ── */
+  if (isMobile) {
+    return (
+      <div className="relative isolate w-full min-w-0">
+        <div className="flex min-h-[192px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]">
+          <svg
+            className="pointer-events-none absolute inset-0 z-0 size-full [clip-path:inset(0_round_32px)]"
+            viewBox={`0 0 ${orbBox.w} ${orbBox.h}`}
+            preserveAspectRatio="xMidYMid slice"
+            aria-hidden
+          >
+            <defs>
+              <filter
+                id={orbFilterId}
+                filterUnits="userSpaceOnUse"
+                x={-orbBlurPad}
+                y={-orbBlurPad}
+                width={orbBox.w + 2 * orbBlurPad}
+                height={orbBox.h + 2 * orbBlurPad}
+              >
+                <feGaussianBlur in="SourceGraphic" stdDeviation={ORB_BLUR_STDDEV} />
+              </filter>
+            </defs>
+            <g filter={`url(#${orbFilterId})`}>
+              {orbPositions.map((orb, i) => (
+                <ellipse
+                  key={i}
+                  cx={orb.x}
+                  cy={orb.y}
+                  rx={orb.rx}
+                  ry={orb.ry}
+                  fill={orb.color}
+                  opacity={ORB_OPACITY}
+                />
+              ))}
+            </g>
+          </svg>
+
+          <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
+            <div className="flex shrink-0 flex-col gap-10">
+              <div className="flex items-center">
+                <div className="relative h-8 w-[73px] overflow-visible opacity-80">
+                  <button
+                    type="button"
+                    onClick={replayHeroAvatarAnimation}
+                    aria-label="Replay portrait animation"
+                    title="Replay animation"
+                    className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
+                  >
+                    <motion.img
+                      key={avatarReplayTick}
+                      src={
+                        avatarReplayTick === 0
+                          ? "/assets/home/hero-avatar.gif"
+                          : `/assets/home/hero-avatar.gif?replay=${avatarReplayTick}`
+                      }
+                      alt=""
+                      draggable={false}
+                      initial={
+                        reduceMotion
+                          ? { scale: 1, opacity: 1 }
+                          : { scale: 0.88, opacity: 0.92 }
+                      }
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 560, damping: 26, mass: 0.85 }
+                      }
+                      className="pointer-events-none relative z-0 size-full object-cover select-none"
+                    />
+                    {avatarBurst ? (
+                      <span
+                        className="pointer-events-none absolute left-1/2 top-1/2 z-10 block h-0 w-0"
+                        aria-hidden
+                      >
+                        {avatarBurst.map((p) => (
+                          <AvatarBurstParticle
+                            key={`${avatarReplayTick}-b-${p.id}`}
+                            particle={p}
+                          />
+                        ))}
+                      </span>
+                    ) : null}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex min-w-0 flex-col gap-4">
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <h1
+                    className="font-[family-name:var(--font-display)] text-[22px] font-bold leading-normal text-white/80 whitespace-nowrap"
+                    style={{
+                      fontVariationSettings: "'opsz' 14, 'wdth' 100",
+                    }}
+                  >
+                    Hridae Walia
+                  </h1>
+                  <p className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal text-white/60">
+                    Product Designer
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={copyEmail}
+                      className="flex h-8 cursor-pointer items-center gap-1 rounded-[38px] bg-white/[0.03] pl-2 pr-1 transition-colors hover:bg-white/[0.06]"
+                    >
+                      <span className="font-[family-name:var(--font-geist)] text-xs leading-normal text-white/80">
+                        hridaew@gmail.com
+                      </span>
+                      <div className="flex size-6 items-center justify-center rounded-full bg-white/5">
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 10 10"
+                          fill="none"
+                          aria-hidden
+                        >
+                          <path
+                            d="M7.5 3.75V2.5C7.5 1.81 6.94 1.25 6.25 1.25H2.5C1.81 1.25 1.25 1.81 1.25 2.5V6.25C1.25 6.94 1.81 7.5 2.5 7.5H3.75M3.75 3.75H7.5C8.19 3.75 8.75 4.31 8.75 5V7.5C8.75 8.19 8.19 8.75 7.5 8.75H5C4.31 8.75 3.75 8.19 3.75 7.5V3.75Z"
+                            stroke="white"
+                            strokeOpacity="0.8"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    </button>
+                    <AnimatePresence>
+                      {showCopied && (
+                        <motion.span
+                          initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                          transition={{
+                            duration: 0.2,
+                            ease: [0.25, 1, 0.5, 1],
+                          }}
+                          className="pointer-events-none absolute -top-8 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-xl"
+                        >
+                          Copied!
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <a
+                    href={CV_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                  >
+                    <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                      CV
+                    </span>
+                  </a>
+
+                  <a
+                    href={LI_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                  >
+                    <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                      in
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-white/10"
+          />
+        </div>
+      </div>
+    );
+  }
+
   const glassCard = (
     <div
       ref={portalFrameRef}
@@ -594,8 +793,8 @@ export function HeroCard() {
                   key={avatarReplayTick}
                   src={
                     avatarReplayTick === 0
-                      ? "/assets/home/hero-avatar.webp"
-                      : `/assets/home/hero-avatar.webp?replay=${avatarReplayTick}`
+                      ? "/assets/home/hero-avatar.gif"
+                      : `/assets/home/hero-avatar.gif?replay=${avatarReplayTick}`
                   }
                   alt=""
                   draggable={false}

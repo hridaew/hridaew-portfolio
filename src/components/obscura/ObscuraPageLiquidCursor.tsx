@@ -15,19 +15,24 @@ import { detectSvgBackdropFilterUrl } from "@/lib/obscuraLiquidGlass";
  */
 export function ObscuraPageLiquidCursor() {
   const reduceMotion = useReducedMotion();
+  const [isTouch, setIsTouch] = useState(false);
   const [svgBackdrop, setSvgBackdrop] = useState(false);
   const posRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef(0);
   const [lens, setLens] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (reduceMotion) return;
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion || isTouch) return;
     setLens({
       x: Math.round(window.innerWidth / 2),
       y: Math.round(window.innerHeight / 2),
     });
     setSvgBackdrop(detectSvgBackdropFilterUrl());
-  }, [reduceMotion]);
+  }, [reduceMotion, isTouch]);
 
   const flush = useCallback(() => {
     rafRef.current = 0;
@@ -36,7 +41,7 @@ export function ObscuraPageLiquidCursor() {
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || isTouch) return;
 
     const onPointerMove = (e: PointerEvent) => {
       posRef.current = { x: e.clientX, y: e.clientY };
@@ -52,9 +57,9 @@ export function ObscuraPageLiquidCursor() {
       window.removeEventListener("pointermove", onPointerMove);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [flush, reduceMotion]);
+  }, [flush, reduceMotion, isTouch]);
 
-  if (reduceMotion) return null;
+  if (reduceMotion || isTouch) return null;
 
   return (
     <>

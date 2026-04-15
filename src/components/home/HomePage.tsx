@@ -7,6 +7,7 @@ import { ToolkitSection } from "./ToolkitSection";
 import { WorkSection } from "./WorkSection";
 import { HOME_COLUMN, HOME_HERO_BLEED } from "./homeGrid";
 import { ENABLE_WAFFLINGS_SECTION } from "@/lib/site-toggles";
+import { RevealOnLoad } from "./RevealOnLoad";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
@@ -18,32 +19,42 @@ export function HomePage() {
     <div className="min-h-screen min-w-0 bg-[#0c0c0e] text-white">
       <div className={HOME_COLUMN}>
         {/* Hero card with animated orbs */}
-        <div className="pt-[112px]">
-          <div className={HOME_HERO_BLEED}>
-            <HeroCard />
+        <RevealOnLoad delay={0.05}>
+          <div className="pt-[112px]">
+            <div className={HOME_HERO_BLEED}>
+              <HeroCard />
+            </div>
           </div>
-        </div>
+        </RevealOnLoad>
 
         {/* Bio — stays under hero slot; expanded hero overlays in z-index */}
-        <div className="relative z-0 mt-[64px]">
-          <BioSection />
-        </div>
+        <RevealOnLoad delay={0.2}>
+          <div className="relative z-0 mt-[64px]">
+            <BioSection />
+          </div>
+        </RevealOnLoad>
 
         {/* Current Toolkit */}
-        <div className="mt-[72px]">
-          <ToolkitSection />
-        </div>
+        <RevealOnLoad delay={0.35}>
+          <div className="mt-[72px]">
+            <ToolkitSection />
+          </div>
+        </RevealOnLoad>
 
-        {/* Work — project galleries (mt matches WorkSection gap between “Work” label and first project) */}
-        <div className="mt-[120px]">
-          <WorkSection />
-        </div>
+        {/* Work — project galleries (mt matches WorkSection gap between "Work" label and first project) */}
+        <RevealOnLoad delay={0.5}>
+          <div className="mt-[120px]">
+            <WorkSection />
+          </div>
+        </RevealOnLoad>
 
         {/* Wafflings */}
         {ENABLE_WAFFLINGS_SECTION && (
-          <div className="mt-[120px] min-w-0">
-            <WafflingsSection />
-          </div>
+          <RevealOnLoad delay={0.65}>
+            <div className="mt-[120px] min-w-0">
+              <WafflingsSection />
+            </div>
+          </RevealOnLoad>
         )}
       </div>
     </div>
