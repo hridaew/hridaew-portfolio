@@ -195,7 +195,7 @@ export function AnimatedCard({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="opacity-0 translate-y-2 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider font-[family-name:var(--font-dm-sans)] border backdrop-blur-md"
+              className="opacity-0 translate-y-2 inline-flex items-center px-2.5 py-1 rounded-full type-caption-medium uppercase border backdrop-blur-md text-left"
               style={{
                 background: "rgba(255, 255, 255, 0.12)",
                 borderColor: "rgba(255, 255, 255, 0.2)",

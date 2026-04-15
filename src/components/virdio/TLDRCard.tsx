@@ -1,0 +1,43 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+
+const TLDRCard = ({ className }: { className?: string }) => {
+    const items = [
+        "Home fitness users wanted engaging classes without expensive equipment, but no product delivered AR workouts across all devices.",
+        "Virdio's AR fitness tech could run on anything with a screen and camera, my role was to adapt the technology into a cross platform AR fitness subscription service.",
+        "I designed critical features across platforms: room setup, HUD, scheduling, onboarding, and a cross-platform design system.",
+        "Virdio successfully launched on all platforms, partnering with gyms and trainers to host hundreds of classes.",
+    ];
+
+    return (
+        <div className={cn("w-full min-w-0", className)}>
+            <p className="site-label mb-4 text-white/45 text-left">
+                TL;DR
+            </p>
+            <div className="flex flex-col gap-2">
+                {items.map((text, i) => (
+                    <div
+                        key={i}
+                        className={cn(
+                            "group relative text-left overflow-hidden rounded-lg",
+                            /* Opaque lift off page bg so the dot mesh does not read through */
+                            "bg-gradient-to-b from-[#16161a] to-[#121214]",
+                            "shadow-[0_8px_28px_-10px_rgba(0,0,0,0.55)]",
+                            "ring-1 ring-white/10",
+                            "transition-[box-shadow,ring-color] duration-300",
+                            "hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.65)]",
+                            "hover:ring-white/16"
+                        )}
+                    >
+                        <p className="p-6 md:p-8 site-body text-white/70 text-left">
+                            {text}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export { TLDRCard };

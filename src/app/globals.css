@@ -6,7 +6,8 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
+  /* Editorial off-white: avoids harsh #fff flashes (transitions, body chrome, gradients) */
+  --background: #fafafa;
   --foreground: #363636;
   --card: #ffffff;
   --card-foreground: #363636;
@@ -33,12 +34,13 @@
 }
 
 .dark {
-  --background: #1a1a1a;
+  /* Matches home / editorial dark shell */
+  --background: #0c0c0e;
   --foreground: #e5e5e5;
   --card: #1a1a1a;
   --card-foreground: #e5e5e5;
   --primary: #e5e5e5;
-  --primary-foreground: #1a1a1a;
+  --primary-foreground: #0c0c0e;
   --secondary: #2a2a2a;
   --secondary-foreground: #e5e5e5;
   --muted: #2a2a2a;
@@ -50,8 +52,8 @@
   --text-primary: #e5e5e5;
   --text-secondary: #d4d4d4;
   --text-muted: #a1a1a1;
-  --text-subtle: #8e8ea0;  /* ~5.0:1 on #1a1a1a */
-  --surface-modal: #1a1a1a;
+  --text-subtle: #8e8ea0;  /* ~5.0:1 on #0c0c0e */
+  --surface-modal: #0c0c0e;
   --surface-card: #2a2a2a;
   --border-card: #3a3a3a;
 }
@@ -76,9 +78,424 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-instrument: var(--font-instrument-serif);
-  --font-dm: var(--font-dm-sans);
-  --font-noto: var(--font-noto-sans);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-instrument: var(--font-display);
+}
+
+/* ===== Semantic typography (Perfect Fourth @ md+, Major Third mobile) ===== */
+
+@layer utilities {
+  .type-display {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 3.81rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  @media (min-width: 48rem) {
+    .type-display {
+      font-size: 6.85rem;
+    }
+  }
+
+  .type-display-black {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 3.81rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  @media (min-width: 48rem) {
+    .type-display-black {
+      font-size: 6.85rem;
+    }
+  }
+
+  .type-h1 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 2.44rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  @media (min-width: 48rem) {
+    .type-h1 {
+      font-size: 4.2rem;
+    }
+  }
+
+  .type-h2 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 1.95rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+  @media (min-width: 48rem) {
+    .type-h2 {
+      font-size: 3.15rem;
+    }
+  }
+
+  /* H3-level type stays Geist (sans), never Bricolage / --font-display */
+  .type-h3 {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.56rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.2;
+  }
+  @media (min-width: 48rem) {
+    .type-h3 {
+      font-size: 1.77rem;
+    }
+  }
+
+  .type-body-lg {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.55;
+  }
+  @media (min-width: 48rem) {
+    .type-body-lg {
+      font-size: 1.33rem;
+    }
+  }
+
+  .type-body {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.55;
+  }
+
+  .type-caption {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.45;
+  }
+  @media (min-width: 48rem) {
+    .type-caption {
+      font-size: 0.75rem;
+    }
+  }
+
+  .type-caption-medium {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.45;
+  }
+  @media (min-width: 48rem) {
+    .type-caption-medium {
+      font-size: 0.75rem;
+    }
+  }
+
+  /*
+   * Case-study vertical rhythm — airy whitespace with clear hierarchy.
+   * S = section band (largest). Inner steps are fixed fractions of S (8px-aligned @ 16px root).
+   *   S        = 15rem / 22rem  — section padding (top/bottom) & section-gap margins
+   *   S/2      = 7.5rem / 11rem — major blocks inside a section
+   *   S/3      = 5rem / 7.5rem  — sub-blocks, section intros
+   *   S/4      = 3.75rem / 5.5rem — tight stacks (intra-stack); prose-stack for adjacent copy
+   * Micro (hero, labels, stats): meta-line-mb, tight-trail-mb, heading-trail-mb + heading-trail-gap,
+   *   hero-copy-mb, hero-title-mb-loose, panel-heading-mb, hero-bump-mb, hero-lead-mb
+   *
+   * Usage guardrails:
+   * - section-y/section-gap are section-level only; avoid stacking adjacent full section bands unless intentional.
+   * - block-gap/subsection-gap belong on wrappers (not on h2/h3/p/blockquote/captions).
+   * - for heading -> first body line (h3 or overline stacks), use heading-trail-mb or heading-trail-gap (0.75rem).
+   * - for media -> caption, use media-caption-mt or caption-tight-mt on the caption element only.
+   */
+  .case-study-section-y {
+    padding-top: 15rem;
+    padding-bottom: 15rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-section-y {
+      padding-top: 22rem;
+      padding-bottom: 22rem;
+    }
+  }
+
+  .case-study-section-y-t {
+    padding-top: 15rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-section-y-t {
+      padding-top: 22rem;
+    }
+  }
+
+  .case-study-section-y-b {
+    padding-bottom: 15rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-section-y-b {
+      padding-bottom: 22rem;
+    }
+  }
+
+  .case-study-block-gap {
+    margin-bottom: 7.5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-block-gap {
+      margin-bottom: 11rem;
+    }
+  }
+
+  .case-study-section-gap {
+    margin-bottom: 15rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-section-gap {
+      margin-bottom: 22rem;
+    }
+  }
+
+  /* Space after a whole sub-block — not for <p>/<h3> immediately before related media; use .case-study-media-caption-mt on the next sibling instead */
+  .case-study-subsection-gap {
+    margin-bottom: 5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-subsection-gap {
+      margin-bottom: 7.5rem;
+    }
+  }
+
+  .case-study-intra-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3.75rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-intra-stack {
+      gap: 5.5rem;
+    }
+  }
+
+  /* Adjacent paragraphs / list items inside a case study (lighter than subsection-gap) */
+  .case-study-prose-stack > * + * {
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-prose-stack > * + * {
+      margin-top: 3.5rem;
+    }
+  }
+
+  /* Margin-top mirrors of block / subsection (space before a block when margin-bottom isn’t on the prior sibling) */
+  .case-study-block-mt {
+    margin-top: 7.5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-block-mt {
+      margin-top: 11rem;
+    }
+  }
+
+  .case-study-subsection-mt {
+    margin-top: 5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-subsection-mt {
+      margin-top: 7.5rem;
+    }
+  }
+
+  /* Multi-column / flex row gaps (horizontal rhythm; pair with block/subsection wrappers for vertical) */
+  .case-study-grid-gap-dense {
+    gap: 0.75rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-grid-gap-dense {
+      gap: 1rem;
+    }
+  }
+
+  .case-study-grid-gap-tight {
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-grid-gap-tight {
+      gap: 1.5rem;
+    }
+  }
+
+  .case-study-grid-gap-mid {
+    gap: 1.5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-grid-gap-mid {
+      gap: 2rem;
+    }
+  }
+
+  .case-study-grid-gap {
+    gap: 2rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-grid-gap {
+      gap: 2.5rem;
+    }
+  }
+
+  .case-study-grid-gap-wide {
+    gap: 2.5rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-grid-gap-wide {
+      gap: 3.5rem;
+    }
+  }
+
+  /* Figure caption below media (default editorial figure caption spacing) */
+  .case-study-media-caption-mt {
+    margin-top: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .case-study-media-caption-mt {
+      margin-top: 1.5rem;
+    }
+  }
+
+  /* Tighter caption spacing for compact UI/supporting figures */
+  .case-study-caption-tight-mt {
+    margin-top: 0.75rem;
+  }
+
+  /* Micro rhythm: hero intros, labels → heading, stats, panel headings (was ad-hoc mb-*) */
+  .case-study-meta-line-mb {
+    margin-bottom: 0.125rem;
+  }
+  .case-study-tight-trail-mb {
+    margin-bottom: 0.5rem;
+  }
+  .case-study-heading-trail-mb {
+    margin-bottom: 0.75rem;
+  }
+  /* Same 0.75rem as heading-trail-mb — stack copy blocks under an overline */
+  .case-study-heading-trail-gap {
+    gap: 0.75rem;
+  }
+  .case-study-hero-copy-mb {
+    margin-bottom: 1rem;
+  }
+  .case-study-hero-title-mb-loose {
+    margin-bottom: 1.5rem;
+  }
+  .case-study-panel-heading-mb {
+    margin-bottom: 1.5rem;
+  }
+  .case-study-hero-bump-mb {
+    margin-bottom: 2rem;
+  }
+  .case-study-hero-lead-mb {
+    margin-bottom: 2.5rem;
+  }
+
+  /*
+   * Site-wide copy primitives — match home Bio / Work project rows (Geist 16px / leading-6).
+   * Use inside pages wrapped with .site-editorial for consistent rhythm vs. legacy type-* scale.
+   */
+  .site-body {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .site-label {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* Home Work gallery card caption (mono xs / leading-6 / uppercase) — set color on the element */
+  .site-gallery-caption {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  /*
+   * MCES work gallery card — custom cursor.
+   * Windows (and some browsers) ignore `cursor: url()` images larger than ~32×32px; use the -32 asset.
+   */
+  .cursor-mces-gallery-card {
+    cursor: url("/assets/memory-care/mces-card-hover-cursor-32.png") 16 16, pointer;
+  }
+
+  /* Home Work row project title */
+  .site-chapter-heading {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  /* Home hero role line */
+  .site-subheading {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    letter-spacing: 0;
+  }
+}
+
+/*
+ * Case-study spacing utilities — tightened to ~home-scale whitespace when this class wraps the page.
+ * (Former virdio-rhythm / domis-rhythm; one wrapper for all case studies.)
+ */
+@layer utilities {
+  .site-editorial .case-study-section-y {
+    padding-top: 7.5rem;
+    padding-bottom: 7.5rem;
+  }
+  .site-editorial .case-study-section-y-t {
+    padding-top: 7.5rem;
+  }
+  .site-editorial .case-study-section-y-b {
+    padding-bottom: 7.5rem;
+  }
+  .site-editorial .case-study-section-gap {
+    margin-bottom: 7.5rem;
+  }
+  .site-editorial .case-study-block-gap {
+    margin-bottom: 5rem;
+  }
+  .site-editorial .case-study-subsection-gap {
+    margin-bottom: 3.75rem;
+  }
+  .site-editorial .case-study-block-mt {
+    margin-top: 5rem;
+  }
+  .site-editorial .case-study-subsection-mt {
+    margin-top: 3.75rem;
+  }
+  .site-editorial .case-study-prose-stack > * + * {
+    margin-top: 2rem;
+  }
+  .site-editorial .case-study-intra-stack {
+    gap: 3.75rem;
+  }
 }
 
 /* ===== Base Styles ===== */
@@ -106,7 +523,6 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-dm-sans), sans-serif;
   }
 
   /* Scrollbar hide utility */
@@ -117,6 +533,63 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* ─── Floating Nav Glass Effects ─── */
+  .nav-glass-pill {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.04),
+      0 4px 16px rgba(0, 0, 0, 0.06),
+      0 12px 40px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -0.5px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .nav-glass-button {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -0.5px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .dark .nav-glass-button {
+    background: rgba(30, 30, 30, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -0.5px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .nav-active-pill {
+    background: rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 0.5px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .nav-active-pill {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .home-hero-name {
+    font-family: var(--font-display), system-ui, sans-serif;
+  }
+
+  /* Tooltip parent hover */
+  .nav-glass-button:hover .nav-tooltip,
+  .nav-glass-button:focus-visible .nav-tooltip {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
   }
 
   /* Modal smooth scrolling (Safari momentum) */
@@ -149,11 +622,6 @@
   --surface-modal: #c0c0c0;
   --border-card: #808080;
   --border: #808080;
-  font-family: "Times New Roman", Times, serif !important;
-}
-
-.theme-2004 * {
-  font-family: "Times New Roman", Times, serif !important;
 }
 
 .theme-2004 img {
@@ -215,4 +683,224 @@
     clip-path: inset(0 0 0 0);
     transform: translateX(0);
   }
+}
+
+/* Home work row — Virdio cards: slow pearlescent foil (conic + soft-light).
+   Rotation is origin-centered so a parent wrapper can scale on hover. */
+@keyframes virdio-iridescent-foil-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.virdio-iridescent-foil {
+  animation: virdio-iridescent-foil-rotate 22s linear infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .virdio-iridescent-foil {
+    animation: none;
+    transform: rotate(38deg);
+    will-change: auto;
+  }
+}
+
+/* Home work gallery — inert looping clips: hide WebKit’s default video chrome on hover */
+video.work-gallery-card-video::-webkit-media-controls,
+video.work-gallery-card-video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+/* MCES / memory-care — base fog drift (isolated z-0); pointer-driven layer uses --mces-fog-* on shell */
+.mces-card-fog-base {
+  opacity: 0.32;
+  mix-blend-mode: soft-light;
+  background-image:
+    radial-gradient(ellipse 90% 65% at 18% 28%, rgba(205, 95, 38, 0.52), transparent 58%),
+    radial-gradient(ellipse 75% 55% at 88% 72%, rgba(175, 68, 22, 0.34), transparent 52%),
+    radial-gradient(ellipse 100% 45% at 52% 95%, rgba(195, 88, 42, 0.28), transparent 48%);
+  background-size: 115% 115%, 105% 105%, 130% 90%;
+  background-position: 0% 0%, 100% 100%, 50% 100%;
+  animation: mces-fog-drift 32s ease-in-out infinite;
+}
+
+.mces-card-fog-hover {
+  mix-blend-mode: soft-light;
+  opacity: calc(0.72 * var(--mces-fog-heat, 0));
+  transition: opacity 0.2s ease-out;
+  background-image:
+    radial-gradient(
+      ellipse 68% 52% at var(--mces-fog-x, 50%) var(--mces-fog-y, 50%),
+      rgba(215, 105, 48, 0.74),
+      rgba(185, 78, 32, 0.26) 48%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 48% 40% at calc(var(--mces-fog-x, 50%) + 12%) calc(var(--mces-fog-y, 50%) - 8%),
+      rgba(168, 62, 22, 0.42),
+      transparent 58%
+    );
+}
+
+@keyframes mces-fog-drift {
+  0%,
+  100% {
+    background-position: 0% 0%, 100% 100%, 50% 100%;
+  }
+  50% {
+    background-position: 10% 8%, 92% 88%, 46% 96%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mces-card-fog-base {
+    animation: none;
+    opacity: 0.3;
+  }
+
+  .mces-card-fog-hover {
+    opacity: 0 !important;
+  }
+}
+
+/* Domis work cards — wavy dot mesh (isolated z-0 decoration layer only).
+   Pointer position + --domis-dot-heat on the card shell drive the pop layer. */
+.domis-card-dot-mesh {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.13) 1.2px, transparent 1.45px),
+    radial-gradient(circle at 50% 50%, rgba(25, 0, 0, 0.07) 0.95px, transparent 1.15px);
+  background-size: 12px 12px, 12px 12px;
+  background-position: 0 0, 6px 6px;
+  opacity: 0.52;
+  mix-blend-mode: soft-light;
+  animation: domis-dot-mesh-drift 20s ease-in-out infinite;
+}
+
+/* Larger, brighter dots under the cursor (masked to a soft spot; strength = --domis-dot-heat) */
+.domis-card-dot-mesh-pop {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.42) 1.7px, transparent 2.05px),
+    radial-gradient(circle at 50% 50%, rgba(15, 0, 0, 0.16) 1.3px, transparent 1.6px);
+  background-size: 17px 17px, 17px 17px;
+  background-position: 0 0, 8.5px 8.5px;
+  mix-blend-mode: soft-light;
+  /* Full layer opacity on hover (--domis-dot-heat 0–1); dots also boosted in gradients above */
+  opacity: var(--domis-dot-heat, 0);
+  animation: domis-dot-mesh-drift 23s ease-in-out infinite reverse;
+  mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-mode: alpha;
+  transition: opacity 0.22s ease-out;
+}
+
+@keyframes domis-dot-mesh-drift {
+  0%,
+  100% {
+    background-position: 0 0, 6px 6px;
+  }
+  33% {
+    background-position: 9px 3px, 15px 9px;
+  }
+  66% {
+    background-position: 3px 11px, 9px 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-card-dot-mesh {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .domis-card-dot-mesh-pop {
+    animation: none;
+    opacity: 0 !important;
+  }
+}
+
+/* Case study pages — same idea as `.domis-card-dot-mesh*`: faint base grid,
+   larger / brighter dots only under the pointer (masked), no full-screen wash. */
+.case-study-page-dot-mesh {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07) 1.2px, transparent 1.45px),
+    radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.04) 0.95px, transparent 1.15px);
+  background-size: 12px 12px, 12px 12px;
+  background-position: 0 0, 6px 6px;
+  opacity: 0.2;
+  mix-blend-mode: soft-light;
+  animation: domis-dot-mesh-drift 22s ease-in-out infinite;
+}
+
+.case-study-page-dot-mesh-pop {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.32) 1.65px, transparent 2px),
+    radial-gradient(circle at 50% 50%, rgba(196, 181, 253, 0.16) 1.2px, transparent 1.52px);
+  background-size: 17px 17px, 17px 17px;
+  background-position: 0 0, 8.5px 8.5px;
+  mix-blend-mode: soft-light;
+  /* Hover cue is subtle: smaller mask (~½ prior radius) + lower max opacity */
+  opacity: calc(var(--csp-dot-heat, 0) * 0.38);
+  animation: domis-dot-mesh-drift 24s ease-in-out infinite reverse;
+  mask-image: radial-gradient(
+    circle 66px at var(--csp-dot-x, 50%) var(--csp-dot-y, 50%),
+    rgb(0 0 0 / 0.96) 0%,
+    rgb(0 0 0 / 0.5) 32%,
+    rgb(0 0 0 / 0.16) 58%,
+    transparent 82%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 66px at var(--csp-dot-x, 50%) var(--csp-dot-y, 50%),
+    rgb(0 0 0 / 0.96) 0%,
+    rgb(0 0 0 / 0.5) 32%,
+    rgb(0 0 0 / 0.16) 58%,
+    transparent 82%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-mode: alpha;
+  transition: opacity 0.22s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-study-page-dot-mesh {
+    animation: none;
+    opacity: 0.14;
+  }
+
+  .case-study-page-dot-mesh-pop {
+    animation: none;
+    opacity: 0 !important;
+  }
+}
+
+/* Obscura lens — Safari/Firefox: no `backdrop-filter: url(#svg)`; soft frosted puck instead */
+.obscura-liquid-lens-fallback {
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 42%,
+    rgba(0, 0, 0, 0) 62%
+  );
+  backdrop-filter: blur(14px) saturate(1.32) brightness(1.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.32) brightness(1.06);
+  box-shadow:
+    inset 0 1px 12px rgba(255, 255, 255, 0.12),
+    inset 0 -6px 18px rgba(0, 0, 0, 0.22);
 }

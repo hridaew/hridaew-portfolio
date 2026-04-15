@@ -153,7 +153,7 @@ export function HapticsFlow({ className }: HapticsFlowProps) {
             className="flex flex-col items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-5 sm:px-6 sm:py-6 shadow-sm min-w-[80px] sm:min-w-[100px]"
           >
             <div className="text-neutral-700">{node.icon}</div>
-            <span className="text-sm font-medium text-neutral-700 font-[family-name:var(--font-dm-sans)]">
+            <span className="site-gallery-caption text-center text-neutral-700">
               {node.label}
             </span>
           </div>

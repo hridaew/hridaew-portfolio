@@ -167,17 +167,17 @@ export function AboutMeSection() {
                         </Reveal>
 
                         <Reveal delay={0.1}>
-                            <p className="font-[family-name:var(--font-dm-sans)] text-base italic text-neutral-400 mb-2">
+                            <p className="type-body italic text-neutral-400 mb-2 text-left">
                                 (pronounced ri-they waliaa)
                             </p>
-                            <div className="space-y-6 font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-[var(--text-secondary)] leading-relaxed">
-                                <p>
+                            <div className="space-y-6 text-left">
+                                <p className="type-body-lg text-[var(--text-secondary)]">
                                     I am a Product Designer and Technologist with a passion for building
                                     immersive, and interactive experiences for people. I&apos;m thrilled to be a designer in
                                     the current landscape — as someone with an ambitious imagination, I&apos;ve
                                     been having a lot of fun with experimenting and building at will.
                                 </p>
-                                <p>
+                                <p className="type-body-lg text-[var(--text-secondary)]">
                                     With over 5 years of experience, I&apos;ve helped startups and
                                     museums alike bring their visions to life, from 0-to-1 product
                                     launches to interactive exhibits that make you go 😮.
@@ -196,7 +196,7 @@ export function AboutMeSection() {
                                     <Link
                                         href="https://drive.google.com/file/d/1Ha7vP0l5HG9IKC4rbd3Y58GZqCIeqGZa/view"
                                         target="_blank"
-                                        className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full overflow-hidden font-[family-name:var(--font-dm-sans)]"
+                                        className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full overflow-hidden "
                                         style={{
                                             background: "linear-gradient(170deg, #ffffff 0%, #f0f0f0 100%)",
                                             border: "1px solid rgba(255,255,255,0.9)",
@@ -224,7 +224,7 @@ export function AboutMeSection() {
                                         </svg>
 
                                         {/* Label */}
-                                        <span className="text-[#1c1c1e] text-xs font-semibold tracking-[0.1em] uppercase">
+                                        <span className="type-caption-medium uppercase text-[#1c1c1e] text-left">
                                             Download CV
                                         </span>
                                     </Link>
@@ -238,7 +238,7 @@ export function AboutMeSection() {
                         {/* Experience */}
                         <Reveal delay={0.3}>
                             <div className="space-y-4">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] font-semibold text-xs text-[var(--text-subtle)] uppercase tracking-widest">
+                                <h3 className="type-caption-medium uppercase text-[var(--text-subtle)] text-left">
                                     Experience
                                 </h3>
                                 <ul className="space-y-2">
@@ -248,14 +248,14 @@ export function AboutMeSection() {
                                                 href={item.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-foreground font-medium hover:underline underline-offset-4 transition-colors"
+                                                className="type-h3 text-foreground hover:underline underline-offset-4 transition-colors text-left"
                                             >
                                                 {item.name}
                                             </a>
-                                            <p className="font-[family-name:var(--font-dm-sans)] text-xs text-[var(--text-subtle)] tracking-wide mt-0.5">
+                                            <p className="type-caption text-[var(--text-subtle)] mt-0.5 text-left">
                                                 {item.years}
                                             </p>
-                                            <p className="font-[family-name:var(--font-dm-sans)] text-sm text-[var(--text-muted)] leading-relaxed mt-1">
+                                            <p className="type-body text-[var(--text-muted)] mt-1 text-left">
                                                 {item.subtitle}
                                             </p>
                                         </li>
@@ -267,7 +267,7 @@ export function AboutMeSection() {
                         {/* Education */}
                         <Reveal delay={0.35}>
                             <div className="space-y-4">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] font-semibold text-xs text-[var(--text-subtle)] uppercase tracking-widest">
+                                <h3 className="type-caption-medium uppercase text-[var(--text-subtle)] text-left">
                                     Education
                                 </h3>
                                 <ul className="space-y-2">
@@ -277,12 +277,12 @@ export function AboutMeSection() {
                                                 href={item.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-foreground font-medium hover:underline underline-offset-4 transition-colors"
+                                                className="type-h3 text-foreground hover:underline underline-offset-4 transition-colors text-left"
                                             >
                                                 {item.name} — {item.program}
                                             </a>
                                             {item.note && (
-                                                <span className="font-[family-name:var(--font-dm-sans)] text-sm text-[var(--text-muted)] italic ml-2">
+                                                <span className="type-body text-[var(--text-muted)] italic ml-2 text-left">
                                                     {item.note}
                                                 </span>
                                             )}
@@ -295,7 +295,7 @@ export function AboutMeSection() {
                         {/* Connect */}
                         <Reveal delay={0.4}>
                             <div className="space-y-4">
-                                <h3 className="font-[family-name:var(--font-dm-sans)] font-semibold text-xs text-[var(--text-subtle)] uppercase tracking-widest">
+                                <h3 className="type-caption-medium uppercase text-[var(--text-subtle)] text-left">
                                     Connect
                                 </h3>
                                 <div className="flex flex-wrap gap-x-8 gap-y-4">
@@ -304,7 +304,7 @@ export function AboutMeSection() {
                                             key={i}
                                             href={link.url}
                                             target="_blank"
-                                            className="font-[family-name:var(--font-dm-sans)] text-base text-[var(--text-secondary)] hover:text-foreground hover:underline underline-offset-4 transition-colors"
+                                            className="type-body text-[var(--text-secondary)] hover:text-foreground hover:underline underline-offset-4 transition-colors text-left"
                                         >
                                             {link.label}
                                         </Link>
@@ -347,7 +347,7 @@ export function AboutMeSection() {
 
                             {/* Caption text */}
                             <motion.p
-                                className="relative z-10 mt-6 font-[family-name:var(--font-dm-sans)] text-white/80 text-base md:text-lg text-center max-w-[500px] leading-relaxed"
+                                className="relative z-10 mt-6 type-body-lg text-white/80 max-w-[500px] text-left"
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}

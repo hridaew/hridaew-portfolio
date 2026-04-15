@@ -79,7 +79,7 @@ export function StickySidebar({ sections, variant = "light" }: StickySidebarProp
                             )}
                             <span
                                 className={cn(
-                                    "font-[family-name:var(--font-dm-sans)] text-[10px] font-medium transition-colors duration-300 relative z-10",
+                                    "type-caption-medium transition-colors duration-300 relative z-10 text-left",
                                     activeSection === section.id
                                         ? isDark ? "text-neutral-900" : "text-white"
                                         : isDark
@@ -94,7 +94,7 @@ export function StickySidebar({ sections, variant = "light" }: StickySidebarProp
                         <div className="overflow-hidden">
                             <span
                                 className={cn(
-                                    "block font-[family-name:var(--font-dm-sans)] text-xs font-medium transition-all duration-300",
+                                    "block type-caption-medium transition-all duration-300 text-left",
                                     activeSection === section.id
                                         ? isDark
                                             ? "translate-x-0 opacity-100 text-neutral-100"

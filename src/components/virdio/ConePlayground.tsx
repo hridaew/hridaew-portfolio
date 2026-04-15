@@ -55,7 +55,7 @@ const COLORS = {
   primaryLight: "#A78BFA",
   primaryGlow: "rgba(124, 58, 237, 0.25)",
   particleColors: ["#7C3AED", "#A78BFA", "#C4B5FD", "#8B5CF6"],
-  gridLine: "rgba(0, 0, 0, 0.04)",
+  gridLine: "rgba(255, 255, 255, 0.06)",
   calibrationLine: "#7C3AED",
 };
 
@@ -195,8 +195,8 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
         const fh = f.h * h;
 
         // Semi-transparent fill
-        ctx.fillStyle = "rgba(0, 0, 0, 0.035)";
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.06)";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
         ctx.lineWidth = 1;
 
         ctx.beginPath();
@@ -205,7 +205,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
         ctx.stroke();
 
         // Label
-        ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
         ctx.font = "10px system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -234,7 +234,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
       ctx.fill();
 
       // Outer ring (shadow)
-      ctx.fillStyle = "rgba(0,0,0,0.08)";
+      ctx.fillStyle = "rgba(0,0,0,0.45)";
       ctx.beginPath();
       ctx.arc(1, 2, CONE_RADIUS + 2, 0, Math.PI * 2);
       ctx.fill();
@@ -369,8 +369,8 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
 
     // Clear with floor gradient
     const floorGrad = ctx.createLinearGradient(0, 0, 0, h);
-    floorGrad.addColorStop(0, "#f5f5f5"); // neutral-100
-    floorGrad.addColorStop(1, "#e5e5e5"); // neutral-200
+    floorGrad.addColorStop(0, "#16161a");
+    floorGrad.addColorStop(1, "#0c0c0e");
     ctx.fillStyle = floorGrad;
     ctx.fillRect(0, 0, w, h);
 
@@ -562,12 +562,12 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="bg-neutral-50 rounded-2xl border border-neutral-200/60 overflow-hidden">
+      <div className="bg-white/[0.04] rounded-2xl border border-white/10 overflow-hidden">
         {/* Header label */}
         <div className="flex items-center justify-between px-5 py-3.5">
-          <div className="font-[family-name:var(--font-dm-sans)] text-sm">
+          <div className="type-body text-left text-white/80">
             {isCalibrated ? (
-              <span className="text-emerald-600 font-medium flex items-center gap-1.5">
+              <span className="type-caption-medium text-emerald-400 flex items-center gap-1.5">
                 <svg
                   width="16"
                   height="16"
@@ -587,9 +587,9 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
                 Calibration complete
               </span>
             ) : (
-              <span className="text-neutral-500">
+              <span className="text-white/55">
                 Tap to place cones
-                <span className="text-neutral-400 ml-1.5">
+                <span className="text-white/40 ml-1.5">
                   ({coneCount}/{MAX_CONES})
                 </span>
               </span>
@@ -597,9 +597,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
           </div>
           <button
             onClick={resetAll}
-            className="font-[family-name:var(--font-dm-sans)] text-xs text-neutral-400
-                       hover:text-neutral-600 transition-colors px-2.5 py-1 rounded-md
-                       hover:bg-neutral-100 cursor-pointer"
+            className="type-caption text-white/45 hover:text-white/75 transition-colors px-2.5 py-1 rounded-md hover:bg-white/10 cursor-pointer text-left"
           >
             Reset
           </button>
@@ -622,8 +620,8 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
         </div>
 
         {/* Footer hint */}
-        <div className="px-5 py-3 font-[family-name:var(--font-dm-sans)]">
-          <p className="text-neutral-400 text-xs text-center">
+        <div className="px-5 py-3 ">
+          <p className="type-caption text-white/40 text-left">
             {isCalibrated
               ? "Double-click a cone to remove it. Drag to reposition."
               : "Place 2 cones at opposite corners to define your workout zone. Drag to move, double-click to remove."}

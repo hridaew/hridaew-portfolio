@@ -21,8 +21,8 @@ export function ImagePlaceholder({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950",
-        fullBleed && "h-full min-h-0 rounded-none",
+        "relative overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-950",
+        fullBleed && "h-full min-h-0",
         className
       )}
       style={fullBleed ? { minHeight: "100%", height: "100%", width: "100%" } : { aspectRatio }}
@@ -44,7 +44,7 @@ export function ImagePlaceholder({
 
       {/* Variant decorations */}
       {variant === "frame" && !fullBleed && (
-        <div className="absolute inset-4 border border-neutral-700/40 rounded-lg" />
+        <div className="absolute inset-4 border border-neutral-700/40" />
       )}
 
       {variant === "viewfinder" && (
@@ -67,12 +67,12 @@ export function ImagePlaceholder({
           {/* Film sprocket holes */}
           <div className="absolute left-2 top-0 bottom-0 flex flex-col justify-between py-3">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-2.5 h-4 rounded-sm bg-neutral-800/60" />
+              <div key={i} className="h-4 w-2.5 bg-neutral-800/60" />
             ))}
           </div>
           <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-between py-3">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-2.5 h-4 rounded-sm bg-neutral-800/60" />
+              <div key={i} className="h-4 w-2.5 bg-neutral-800/60" />
             ))}
           </div>
         </>
@@ -80,7 +80,7 @@ export function ImagePlaceholder({
 
       {/* Label — fill via right/bottom + size so top/left stay unset (matches preview tweaks) */}
       <div className="absolute bottom-0 right-0 flex h-full w-full items-center justify-center">
-        <span className="text-neutral-600 text-lg leading-relaxed font-[family-name:var(--font-dm-sans)] tracking-wide">
+        <span className="type-body-lg text-neutral-600 text-left">
           {label}
         </span>
       </div>

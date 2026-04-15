@@ -13,9 +13,21 @@ interface ExpandableStackProps {
   images: StackImage[];
   className?: string;
   stackHeight?: number;
+  /** Override image sizing (fixed height caused distortion on some assets). */
+  thumbnailClassName?: string;
+  hintClassName?: string;
 }
 
-export function ExpandableStack({ images, className, stackHeight = 280 }: ExpandableStackProps) {
+const defaultThumb =
+  "max-h-[220px] md:max-h-[260px] w-auto max-w-[min(100%,360px)] object-contain rounded-lg shadow-lg border border-neutral-200/60";
+
+export function ExpandableStack({
+  images,
+  className,
+  stackHeight = 280,
+  thumbnailClassName,
+  hintClassName,
+}: ExpandableStackProps) {
   const [expanded, setExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -26,13 +38,11 @@ export function ExpandableStack({ images, className, stackHeight = 280 }: Expand
     const count = cards.length;
 
     if (!expanded) {
-      // Expand to vertical list — switch container to flow layout
       const container = containerRef.current;
       const cardHeight = cards[0]?.offsetHeight || 230;
       const gap = 12;
       const totalHeight = count * cardHeight + (count - 1) * gap;
 
-      // Animate container height
       gsap.to(container, {
         height: totalHeight,
         duration: 0.5,
@@ -40,7 +50,6 @@ export function ExpandableStack({ images, className, stackHeight = 280 }: Expand
       });
 
       cards.forEach((card, i) => {
-        // Calculate vertical position from center
         const centerOffset = (totalHeight - cardHeight) / 2;
         const yPos = i * (cardHeight + gap) - centerOffset;
 
@@ -55,7 +64,6 @@ export function ExpandableStack({ images, className, stackHeight = 280 }: Expand
         });
       });
     } else {
-      // Collapse back to stack
       const stackRotations = count === 3 ? [-4, 1.5, 5] : images.map((_, i) => (i - (count - 1) / 2) * 4);
       const stackOffsets = count === 3 ? [-20, 0, 20] : images.map((_, i) => (i - (count - 1) / 2) * 16);
 
@@ -84,11 +92,13 @@ export function ExpandableStack({ images, className, stackHeight = 280 }: Expand
   const stackRotations = images.length === 3 ? [-4, 1.5, 5] : images.map((_, i) => (i - (images.length - 1) / 2) * 4);
   const stackOffsets = images.length === 3 ? [-20, 0, 20] : images.map((_, i) => (i - (images.length - 1) / 2) * 16);
 
+  const thumbCls = thumbnailClassName ?? defaultThumb;
+
   return (
     <div className={cn("relative", className)}>
       <div
         ref={containerRef}
-        className="relative flex items-center justify-center cursor-pointer"
+        className="relative flex w-full items-center justify-center cursor-pointer"
         style={{ height: `${stackHeight}px` }}
         onClick={toggle}
       >
@@ -105,13 +115,13 @@ export function ExpandableStack({ images, className, stackHeight = 280 }: Expand
             <img
               src={img.src}
               alt={img.alt}
-              className="h-[180px] md:h-[230px] w-auto rounded-lg shadow-lg border border-neutral-200/60"
+              className={thumbCls}
               draggable={false}
             />
           </div>
         ))}
       </div>
-      <p className="text-sm text-neutral-400 text-center mt-4">
+      <p className={cn("type-caption text-neutral-400 mt-4 text-left", hintClassName)}>
         {expanded ? "Click to collapse" : "Click to expand"}
       </p>
     </div>

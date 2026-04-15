@@ -163,7 +163,7 @@ export function PunchBag({ className }: PunchBagProps) {
           className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 pointer-events-none z-10"
         >
           {celebration && (
-            <span className="font-[family-name:var(--font-dm-sans)] text-lg font-bold text-violet-500 whitespace-nowrap">
+            <span className="type-h3 text-violet-500 whitespace-nowrap text-left">
               {celebration}
             </span>
           )}
@@ -200,10 +200,10 @@ export function PunchBag({ className }: PunchBagProps) {
 
         {/* PPM Meter */}
         <div className="flex flex-col items-center gap-2 pb-2">
-          <span className="font-[family-name:var(--font-dm-sans)] text-xs text-neutral-400 uppercase tracking-wide">
+          <span className="type-caption-medium uppercase text-white/40 text-left">
             PPM
           </span>
-          <div className="relative w-5 h-[140px] rounded-full bg-neutral-100 border border-neutral-200 overflow-hidden">
+          <div className="relative w-5 h-[140px] rounded-full bg-white/10 border border-white/15 overflow-hidden">
             <div
               ref={ppmBarRef}
               className="absolute bottom-0 left-0 w-full rounded-full"
@@ -213,7 +213,7 @@ export function PunchBag({ className }: PunchBagProps) {
               }}
             />
           </div>
-          <span className="font-[family-name:var(--font-dm-sans)] text-sm font-semibold text-neutral-700 tabular-nums">
+          <span className="type-body text-white/70 tabular-nums text-left">
             {ppm}
           </span>
         </div>
@@ -221,10 +221,10 @@ export function PunchBag({ className }: PunchBagProps) {
 
       {/* Counter */}
       <div className="flex items-center gap-3">
-        <span className="font-[family-name:var(--font-instrument-serif)] text-4xl text-neutral-900">
+        <span className="type-h1 text-white text-left">
           {count}
         </span>
-        <span className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-500">
+        <span className="type-body text-white/55 text-left">
           {count === 1 ? "punch" : "punches"}
         </span>
       </div>

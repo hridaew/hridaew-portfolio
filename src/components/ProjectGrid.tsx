@@ -7,7 +7,7 @@ export function ProjectGrid() {
   return (
     <section id="projects" className="w-full px-4 md:px-8 py-24 md:py-40">
       <div className="max-w-[1558px] mx-auto">
-        <h2 className="font-[family-name:var(--font-dm-sans)] font-semibold text-base text-[var(--text-muted)] uppercase tracking-wide mb-6 md:mb-8">
+        <h2 className="type-caption-medium uppercase text-[var(--text-muted)] mb-6 md:mb-8 text-left">
           Case Studies
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

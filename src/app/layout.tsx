@@ -1,24 +1,30 @@
 import type { Metadata } from "next";
-import { DM_Sans, Instrument_Serif } from "next/font/google";
+import { Suspense } from "react";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
+import { ButterChickenRecipeDeepLink } from "@/components/butter-chicken/ButterChickenRecipeDeepLink";
+import { ButterChickenRecipeModalProvider } from "@/components/butter-chicken/ButterChickenRecipeModal";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const displayFont = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const geistSans = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
-
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Hridae Walia - Product Designer",
@@ -50,11 +56,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${instrumentSerif.variable} ${dmSans.variable} antialiased`}
+        className={`${displayFont.variable} ${geistSans.variable} ${geistMono.variable} type-body antialiased`}
       >
-        <PageTransitionProvider>
-          {children}
-        </PageTransitionProvider>
+        <ButterChickenRecipeModalProvider>
+          <PageTransitionProvider>
+            {children}
+          </PageTransitionProvider>
+          <Suspense fallback={null}>
+            <ButterChickenRecipeDeepLink />
+          </Suspense>
+        </ButterChickenRecipeModalProvider>
         <Toaster position="bottom-center" />
         <Analytics />
       </body>

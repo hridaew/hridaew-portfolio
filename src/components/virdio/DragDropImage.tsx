@@ -81,7 +81,7 @@ export function DragDropImage({ initialSrc, alt, className, onImageClick }: Drag
                 />
             ) : (
                 <div className="w-full h-full min-h-[300px] bg-neutral-100 flex items-center justify-center border-2 border-dashed border-neutral-300 text-neutral-400">
-                    <span className="text-sm font-mono uppercase tracking-widest">Drop Image Here</span>
+                    <span className="type-caption-medium font-mono uppercase text-left">Drop Image Here</span>
                 </div>
             )}
 
@@ -93,7 +93,7 @@ export function DragDropImage({ initialSrc, alt, className, onImageClick }: Drag
             )}
 
             {/* Hover Upload Hint */}
-            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur text-white flex gap-2 items-center px-3 py-1.5 rounded-full text-xs font-mono pointer-events-none z-10">
+            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur text-white flex gap-2 items-center px-3 py-1.5 rounded-full type-caption font-mono pointer-events-none z-10 text-left">
                 <Upload className="w-3 h-3" />
                 <span>Drag & Drop to Replace</span>
             </div>

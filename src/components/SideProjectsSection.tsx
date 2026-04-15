@@ -11,7 +11,7 @@ export function SideProjectsSection() {
                     {/* Section Header */}
                     <Reveal>
                         <div className="space-y-4">
-                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-4xl md:text-5xl text-foreground">
+                            <h2 className="site-chapter-heading text-foreground text-left">
                                 Side Projects
                             </h2>
                             <div className="h-px w-full bg-[var(--border-card)] opacity-50" />
@@ -34,14 +34,14 @@ export function SideProjectsSection() {
                                     </div>
                                     <div>
                                         <div className="flex justify-between items-baseline mb-1">
-                                            <h3 className="font-[family-name:var(--font-dm-sans)] text-xl text-foreground font-semibold group-hover:underline decoration-1 underline-offset-4">
+                                            <h3 className="site-subheading text-foreground group-hover:underline decoration-1 underline-offset-4 text-left">
                                                 {project.title}
                                             </h3>
-                                            <span className="font-[family-name:var(--font-dm-sans)] text-xs text-[var(--text-subtle)] uppercase tracking-wider">
+                                            <span className="site-label text-[var(--text-subtle)] text-left">
                                                 {project.year}
                                             </span>
                                         </div>
-                                        <p className="font-[family-name:var(--font-dm-sans)] text-sm text-[var(--text-muted)] leading-relaxed">
+                                        <p className="site-body text-[var(--text-muted)] text-left">
                                             {project.description}
                                         </p>
                                     </div>

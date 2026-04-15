@@ -89,12 +89,12 @@ export function DestroySequence() {
                     alt="Sad hamster"
                     className="w-48 h-48 object-contain"
                 />
-                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-600 text-lg">
+                <p className="type-body-lg text-neutral-600 text-left">
                     why would you do that
                 </p>
                 <button
                     onClick={() => window.location.reload()}
-                    className="mt-4 px-4 py-2 rounded-full border border-neutral-300 text-sm font-[family-name:var(--font-dm-sans)] text-neutral-500 hover:bg-neutral-100 transition-colors opacity-0 animate-[fadeIn_0.3s_ease_3s_forwards]"
+                    className="mt-4 px-4 py-2 rounded-full border border-neutral-300 type-body text-neutral-500 hover:bg-neutral-100 transition-colors opacity-0 animate-[fadeIn_0.3s_ease_3s_forwards] text-left"
                 >
                     reload
                 </button>
@@ -111,7 +111,7 @@ export function DestroySequence() {
         <div ref={overlayRef} className="fixed inset-0 z-[300] flex items-center justify-center pointer-events-none">
             {phase === "shake" && (
                 <div className="bg-red-600/90 text-white px-8 py-4 rounded-xl">
-                    <p className="font-mono text-6xl md:text-8xl font-bold tabular-nums">
+                    <p className="font-mono type-h1 tabular-nums text-left">
                         {countdown}
                     </p>
                 </div>

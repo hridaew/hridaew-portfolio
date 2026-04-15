@@ -66,7 +66,7 @@ export function EyeTrackingDemo({ className }: EyeTrackingDemoProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Problem: Erratic Gaze */}
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-[200px] w-full items-center justify-center overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
+          <div className="relative flex h-[200px] w-full items-center justify-center overflow-hidden border border-neutral-800 bg-neutral-950">
             <div
               ref={erraticBlobRef}
               className="will-change-transform"
@@ -88,14 +88,14 @@ export function EyeTrackingDemo({ className }: EyeTrackingDemoProps) {
               }}
             />
           </div>
-          <span className="font-[family-name:var(--font-dm-sans)] text-xs tracking-wide text-neutral-500 uppercase">
+          <span className="type-caption-medium uppercase text-neutral-500 text-left">
             Erratic Gaze (Eye Tracking)
           </span>
         </div>
 
         {/* Solution: Intentional Gaze */}
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-[200px] w-full items-center justify-center overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
+          <div className="relative flex h-[200px] w-full items-center justify-center overflow-hidden border border-neutral-800 bg-neutral-950">
             <div
               ref={intentionalBlobRef}
               className="will-change-transform"
@@ -116,7 +116,7 @@ export function EyeTrackingDemo({ className }: EyeTrackingDemoProps) {
               }}
             />
           </div>
-          <span className="font-[family-name:var(--font-dm-sans)] text-xs tracking-wide text-neutral-500 uppercase">
+          <span className="type-caption-medium uppercase text-neutral-500 text-left">
             Intentional Gaze (Head Tracking)
           </span>
         </div>

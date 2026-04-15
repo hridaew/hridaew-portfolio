@@ -64,7 +64,7 @@ export function StickySidebar() {
                             )}
                             <span
                                 className={cn(
-                                    "font-[family-name:var(--font-dm-sans)] text-[10px] font-medium transition-colors duration-300 relative z-10",
+                                    "type-caption-medium transition-colors duration-300 relative z-10 text-left",
                                     activeSection === section.id
                                         ? "text-white"
                                         : "text-neutral-400 group-hover:text-neutral-700"
@@ -77,7 +77,7 @@ export function StickySidebar() {
                         <div className="overflow-hidden">
                             <span
                                 className={cn(
-                                    "block font-[family-name:var(--font-dm-sans)] text-xs font-medium transition-all duration-300",
+                                    "block type-caption-medium transition-all duration-300 text-left",
                                     activeSection === section.id
                                         ? "translate-x-0 opacity-100 text-neutral-900"
                                         : "-translate-x-3 opacity-0 text-neutral-500 group-hover:translate-x-0 group-hover:opacity-100"

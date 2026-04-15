@@ -222,7 +222,7 @@ export function WhiteboardCanvas() {
     return (
         <section className="py-16 md:py-24 border-t border-[var(--border-card)]">
             <div className="max-w-[1558px] mx-auto px-4 md:px-8 mb-8">
-                <p className="font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] text-base">
+                <p className="type-body text-[var(--text-secondary)] text-left">
                     Things
                 </p>
             </div>

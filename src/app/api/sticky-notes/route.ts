@@ -6,7 +6,12 @@ import { Resend } from "resend";
 // Force dynamic — never cache GET responses on Vercel edge
 export const dynamic = "force-dynamic";
 
-const redis = Redis.fromEnv();
+function getRedis() {
+  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
 
 const VALID_PAGES = ["home", "virdio", "memory-care", "obscura", "domis"];
 const VALID_COLORS = ["#FFF9C4", "#F8BBD0", "#C8E6C9", "#BBDEFB", "#E1BEE7"];
@@ -61,6 +66,9 @@ async function sendNotificationEmail(note: NoteData) {
 // --- GET: Fetch notes for a user or admin ---
 
 export async function GET(request: NextRequest) {
+  const redis = getRedis();
+  if (!redis) return NextResponse.json([]);
+
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
   const admin = searchParams.get("admin");
@@ -103,6 +111,14 @@ export async function GET(request: NextRequest) {
 // --- POST: Create a new note ---
 
 export async function POST(request: NextRequest) {
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json(
+      { error: "Sticky notes storage is not configured." },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await request.json();
 
@@ -193,6 +209,14 @@ export async function POST(request: NextRequest) {
 // --- DELETE: Remove a note ---
 
 export async function DELETE(request: NextRequest) {
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json(
+      { error: "Sticky notes storage is not configured." },
+      { status: 503 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const userId = searchParams.get("userId");

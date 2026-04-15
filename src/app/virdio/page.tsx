@@ -1,565 +1,627 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import { SITE_COLUMN } from "@/components/home/homeGrid";
 import { ParallaxHero } from "@/components/virdio/ParallaxHero";
 import { StickySidebar } from "@/components/shared/StickySidebar";
 import { ScrollRevealFlow } from "@/components/virdio/ScrollRevealFlow";
 import { ConePlayground } from "@/components/virdio/ConePlayground";
-import { CloseButton } from "@/components/virdio/CloseButton";
 import { LightboxProvider, LightboxImage } from "@/components/virdio/Lightbox";
-import { ParticleIcon } from "@/components/virdio/ParticleIcon";
 import { ARMosaic } from "@/components/virdio/ARMosaic";
 import { PunchBag } from "@/components/virdio/PunchBag";
 import { TextReveal } from "@/components/TextReveal";
 import { Reveal } from "@/components/Reveal";
-import { ExpandableStack } from "@/components/shared/ExpandableStack";
 import { StickyNotes } from "@/components/StickyNotes";
+import { CaseStudyPill } from "@/components/shared/CaseStudyPill";
+import { TLDRCard } from "@/components/virdio/TLDRCard";
+import { MarketComparison } from "@/components/virdio/MarketComparison";
+import { PlatformSpectrum } from "@/components/virdio/PlatformSpectrum";
+import { DecisionCards } from "@/components/virdio/DecisionCards";
 
 export default function VirdioPage() {
+    const pageRootRef = useRef<HTMLDivElement>(null);
+
+    const onPagePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+        const el = pageRootRef.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const w = Math.max(1, r.width);
+        const h = Math.max(1, r.height);
+        const x = Math.min(100, Math.max(0, ((e.clientX - r.left) / w) * 100));
+        const y = Math.min(100, Math.max(0, ((e.clientY - r.top) / h) * 100));
+        el.style.setProperty("--csp-dot-x", `${x}%`);
+        el.style.setProperty("--csp-dot-y", `${y}%`);
+        el.style.setProperty("--csp-dot-heat", "1");
+    }, []);
+
+    const onPagePointerLeave = useCallback(() => {
+        const el = pageRootRef.current;
+        if (!el) return;
+        el.style.setProperty("--csp-dot-heat", "0");
+    }, []);
+
     useEffect(() => {
-        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("dark");
+        return () => {
+            document.documentElement.classList.remove("dark");
+        };
     }, []);
 
     return (
         <>
         <LightboxProvider>
-            <div className="bg-white min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-black font-sans antialiased text-neutral-900">
+            <div
+                ref={pageRootRef}
+                className="site-editorial isolate relative min-h-screen w-full overflow-x-hidden bg-[#0c0c0e] text-white selection:bg-white/10 selection:text-white font-sans antialiased [--csp-dot-x:50%] [--csp-dot-y:50%] [--csp-dot-heat:0]"
+                onPointerMove={onPagePointerMove}
+                onPointerLeave={onPagePointerLeave}
+            >
+                <div className="pointer-events-none absolute inset-0 -z-10 min-h-full" aria-hidden>
+                    <div className="case-study-page-dot-mesh absolute inset-0 min-h-full" />
+                    <div className="case-study-page-dot-mesh-pop absolute inset-0 min-h-full" />
+                </div>
 
-                <CloseButton />
+                <div className="relative z-[1] min-h-screen">
                 <StickySidebar
+                    variant="dark"
                     sections={[
                         { id: "hero", label: "Intro", number: "00" },
-                        { id: "setup", label: "Setup", number: "01" },
-                        { id: "resilience", label: "Resilience", number: "02" },
-                        { id: "scaling", label: "Scaling", number: "03" },
-                        { id: "reflection", label: "Reflection", number: "04" },
+                        { id: "problem", label: "Problem", number: "01" },
+                        { id: "insight", label: "Insight", number: "02" },
+                        { id: "solution", label: "Solution", number: "03" },
+                        { id: "role-impact", label: "Role & Impact", number: "04" },
                     ]}
                 />
 
-                {/* ─── HERO ─── */}
-                <div className="relative z-10 bg-white">
+                {/* ═══════════════════════════════════════════════════════
+                    SECTION 00 — HERO + TL;DR + VIDEO
+                ═══════════════════════════════════════════════════════ */}
+                <div className="relative">
                     <ParallaxHero />
                 </div>
 
-                {/* ─── YOUTUBE EMBED ─── */}
-                <section className="relative z-20 max-w-[1000px] mx-auto px-6 md:px-12 -mt-16 md:-mt-24 mb-24 md:mb-32">
-                    <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-black/10 border border-neutral-200/60">
-                        <iframe
-                            src="https://www.youtube.com/embed/3s-tfJ467pc?rel=0&modestbranding=1&controls=0&showinfo=0&iv_load_policy=3"
-                            title="Virdio — AR Fitness Platform"
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            loading="lazy"
-                        />
+                {/* TL;DR Card */}
+                <section className={cn("relative z-20 -mt-16 md:-mt-20 case-study-subsection-gap", SITE_COLUMN)}>
+                    <Reveal>
+                        <TLDRCard />
+                    </Reveal>
+                </section>
+
+                {/* Hero video — same loop + poster as Virdio card on the home page */}
+                <section className={cn("relative z-20 case-study-section-gap", SITE_COLUMN)}>
+                    <Reveal>
+                        <div className="aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
+                            <video
+                                src="/assets/home/virdio-hero-crop.mp4"
+                                poster="/assets/home/virdio-ar-desktop.png"
+                                className="work-gallery-card-video h-full w-full select-none object-cover outline-none"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="auto"
+                                tabIndex={-1}
+                                controls={false}
+                                controlsList="nodownload nofullscreen noremoteplayback"
+                                disablePictureInPicture
+                                disableRemotePlayback
+                                aria-label="Virdio AR desktop hero video"
+                                draggable={false}
+                                onContextMenu={(e) => e.preventDefault()}
+                            />
+                        </div>
+                    </Reveal>
+                </section>
+
+
+                {/* ═══════════════════════════════════════════════════════
+                    SECTION 01 — PROBLEM + CONTEXT
+                ═══════════════════════════════════════════════════════ */}
+                <div className={SITE_COLUMN}>
+                    <section id="problem" className="case-study-section-y border-t border-white/10">
+
+                        {/* Section Header */}
+                        <div className="w-full min-w-0 text-left flex flex-col case-study-heading-trail-gap case-study-subsection-gap">
+                            <Reveal>
+                                <span className="site-label text-white/40">01</span>
+                            </Reveal>
+                            <h2 className="site-chapter-heading text-white text-left">
+                                <TextReveal>Expensive hardware was the barrier to engaging home fitness</TextReveal>
+                            </h2>
+                        </div>
+
+                        <div className="w-full min-w-0 case-study-block-gap">
+                            <Reveal>
+                                <p className="site-body font-medium text-white/70 text-left">
+                                    &ldquo;How might we make AR workout overlays usable, readable, and motivating across wildly different screen sizes, processing capabilities, and home environments?&rdquo;
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        {/* Problem Narrative */}
+                        <div className="w-full min-w-0 case-study-prose-stack case-study-block-gap">
+                            <Reveal>
+                                <p className="site-body text-white/65">
+                                    In 2021, millions of people were working out at home, but the most engaging options required expensive, space-consuming equipment. Peloton needed a $1,500 bike. Mirror needed a $1,500 screen. Everyone else was stuck with pre-recorded YouTube videos and zero performance tracking.
+                                </p>
+                            </Reveal>
+                            <Reveal delay={0.05}>
+                                <p className="site-body text-white/65">
+                                    Virdio&rsquo;s leadership had machine vision technology that could detect body poses through a standard camera and simulate exercise equipment using AR. The opportunity was enormous: deliver the engagement of a Peloton class to anyone with a laptop or phone, no hardware required.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        {/* Market Comparison */}
+                        <Reveal>
+                            <MarketComparison className="case-study-block-gap px-0" />
+                        </Reveal>
+
+                        {/* ── Context Sub-section ── */}
+                        <div className="w-full min-w-0 case-study-block-gap">
+                            <Reveal>
+                                <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                    An early-stage startup, one designer, five platforms
+                                </h3>
+                            </Reveal>
+                            <div className="case-study-prose-stack flex flex-col">
+                                <Reveal delay={0.05}>
+                                    <p className="site-body text-white/65">
+                                        Virdio had been licensing its machine vision technology to gyms for remote AR classes. The next step was a direct-to-consumer subscription app, like Peloton but accessible from any device. I was brought on as the sole full-time product designer to take this from zero to launch.
+                                    </p>
+                                </Reveal>
+                                <Reveal delay={0.1}>
+                                    <p className="site-body text-white/65">
+                                        The product needed to ship on iOS, Android, web, desktop (Mac and Windows), Apple Watch, and smart TVs. The engineering team was fully remote and 12 hours ahead of me, which meant nearly all dev collaboration was asynchronous. There was no existing design system, no prior consumer-facing product, and the timeline was aggressive.
+                                    </p>
+                                </Reveal>
+                            </div>
+                        </div>
+
+                        {/* Device Mockups — Desktop (cone calibration) + Mobile (class browsing) */}
+                        <Reveal>
+                            <div className="flex flex-col items-start case-study-grid-gap md:flex-row">
+                                <div className="rounded-2xl overflow-hidden border border-white/10">
+                                    <LightboxImage
+                                        src="/assets/virdio/desktop_mockup.png"
+                                        alt="Desktop app showing room calibration: Diagonal cones step with walk-to-zone instruction"
+                                        className="w-full h-auto object-contain"
+                                        draggable={false}
+                                        hoverScale={1.03}
+                                    />
+                                </div>
+                                <div className="rounded-2xl overflow-hidden border border-white/10 md:self-stretch flex items-center">
+                                    <LightboxImage
+                                        src="/assets/virdio/mobile_mockup.png"
+                                        alt="Mobile app: class browsing with Live and On-demand tabs and category filters"
+                                        className="h-full w-auto object-contain max-h-[500px] md:max-h-none"
+                                        draggable={false}
+                                        hoverScale={1.03}
+                                    />
+                                </div>
+                            </div>
+                            <p className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
+                                Desktop is where the AR magic happens. Mobile is the browsing front door.
+                            </p>
+                        </Reveal>
+                    </section>
+                </div>
+
+
+                {/* ═══════════════════════════════════════════════════════
+                    SECTION 02 — INSIGHT + DECISION
+                ═══════════════════════════════════════════════════════ */}
+                <div className={SITE_COLUMN}>
+                    <section id="insight" className="case-study-section-y border-t border-white/10">
+
+                        {/* Section Header */}
+                        <div className="w-full min-w-0 text-left flex flex-col case-study-heading-trail-gap case-study-subsection-gap">
+                            <Reveal>
+                                <span className="site-label text-white/40">02</span>
+                            </Reveal>
+                            <h2 className="site-chapter-heading text-white text-left">
+                                <TextReveal>The most accessible device delivered the worst experience</TextReveal>
+                            </h2>
+                        </div>
+
+                        {/* Insight Narrative */}
+                        <div className="w-full min-w-0 case-study-prose-stack case-study-block-gap">
+                            <Reveal>
+                                <p className="site-body text-white/65">
+                                    I started testing prototypes with our internal advisory board of fitness trainers and physicians. What emerged was a turning point: the mobile phone, the easiest way for users to access the app, was inherently the worst platform for the core AR workout experience.
+                                </p>
+                            </Reveal>
+                            <Reveal delay={0.05}>
+                                <p className="site-body text-white/65">
+                                    On a small screen, AR overlays competed with the video feed for visibility. The pose detection needed distance from the camera, but users placed phones close or on unstable surfaces, leading to inconsistent tracking or difficult visibility. If mobile was the front door for most users, and mobile delivered the lowest-quality version of our differentiating feature, we risked first impressions that undermined the entire value proposition.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        {/* Platform Spectrum Visual */}
+                        <Reveal>
+                            <PlatformSpectrum className="case-study-section-gap" />
+                        </Reveal>
+
+                        {/* ── Decision Sub-section ── */}
+                        <div className="w-full min-w-0 case-study-block-gap">
+                            <Reveal>
+                                <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                    Platform strategy: launching everywhere vs. focusing on the best experience
+                                </h3>
+                            </Reveal>
+                            <Reveal delay={0.05}>
+                                <p className="site-body text-white/65">
+                                    This insight forced a critical strategic conversation. I advocated for a desktop-first approach: focus our limited resources on making the larger-screen experience exceptional. The CEO was adamant about launching on all platforms simultaneously. Multi-platform availability was a competitive differentiator, and mobile was the most accessible entry point for browsing and booking classes.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        {/* Decision Cards */}
+                        <Reveal>
+                            <DecisionCards />
+                        </Reveal>
+                    </section>
+                </div>
+
+
+                {/* ═══════════════════════════════════════════════════════
+                    SECTION 03 — SOLUTION
+                ═══════════════════════════════════════════════════════ */}
+                <section id="solution" className="case-study-section-y-t border-t border-white/10">
+                    <div className={SITE_COLUMN}>
+                        {/* Section Header */}
+                        <div className="w-full min-w-0 text-left flex flex-col case-study-heading-trail-gap case-study-subsection-gap">
+                            <Reveal>
+                                <span className="site-label text-white/40">03</span>
+                            </Reveal>
+                            <h2 className="site-chapter-heading text-white text-left">
+                                <TextReveal>AR workout classes anyone could set up in their living room</TextReveal>
+                            </h2>
+                            <Reveal delay={0.1}>
+                                <p className="site-body text-white/55 text-left">
+                                    I designed an end-to-end experience that made AR fitness accessible regardless of device or home environment: from browsing and booking to live workouts with AI-powered pose detection and AR equipment overlays, all through an existing camera.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        {/* ─────────────────────────────────────────────
+                            SUB-SECTION 3A — ROOM SETUP
+                        ───────────────────────────────────────────── */}
+                        <div id="solution-setup">
+                            <div className="w-full min-w-0 case-study-block-gap">
+                                <Reveal>
+                                    <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                        Room Setup & Calibration
+                                    </h3>
+                                </Reveal>
+                                <div className="case-study-prose-stack flex flex-col">
+                                    <Reveal delay={0.05}>
+                                        <p className="site-body text-white/65">
+                                            Users needed to calibrate their camera and define their play space, which sounds technical. I designed a visual experience to make it approachable. For camera alignment, I created a visual guide that asked users to center themselves on screen with clear tilt indicators.
+                                        </p>
+                                    </Reveal>
+                                    <Reveal delay={0.1}>
+                                        <p className="site-body text-white/65">
+                                            For room calibration, the system placed virtual cones and users simply walked to the corners of their space. The backend detection handled the rest. The entire setup culminated in a satisfying green checkmark confirmation.
+                                        </p>
+                                    </Reveal>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ScrollRevealFlow — Full Width (MUST stay outside max-w container for GSAP pin) */}
+                    <div className="case-study-block-gap">
+                        <ScrollRevealFlow />
+                    </div>
+
+                    <div className={SITE_COLUMN}>
+                        {/* Cone-walking moment */}
+                        <div className="case-study-block-gap">
+                            <Reveal>
+                                <div className="flex flex-col gap-4 md:gap-5">
+                                    <div className="flex w-full flex-col items-stretch case-study-grid-gap">
+                                        <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-white/10">
+                                            <LightboxImage
+                                                src="/assets/virdio/phone_setup_mid.png"
+                                                alt="Move to the other cone: directional arrows guide the user between calibration cones"
+                                                className="h-auto w-full object-contain"
+                                                draggable={false}
+                                                hoverScale={1.03}
+                                            />
+                                        </div>
+                                        <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-white/10">
+                                            <LightboxImage
+                                                src="/assets/virdio/phone_setup_end.png"
+                                                alt="Room Setup Complete: four purple cones define the workout space"
+                                                className="h-auto w-full object-contain"
+                                                draggable={false}
+                                                hoverScale={1.03}
+                                            />
+                                        </div>
+                                    </div>
+                                    <p className="site-gallery-caption w-full min-w-0 text-left text-white/45">
+                                        Mobile version of the room calibration had more prominent text and larger UI elements so the user could spot them better on a smaller screen.
+                                    </p>
+                                </div>
+                            </Reveal>
+                        </div>
+
+                        {/* What if setup fails */}
+                        <div className="case-study-block-gap">
+                            <Reveal>
+                                <div className="flex w-full flex-col gap-6 md:gap-8">
+                                    <div className="mx-auto w-full min-w-0">
+                                        <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                            What if setup fails?
+                                        </h3>
+                                    </div>
+                                    <div className="mx-auto flex w-full min-w-0 flex-col gap-4 md:gap-5">
+                                        <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950">
+                                            <LightboxImage
+                                                src="/assets/virdio/calibration_flow.png"
+                                                alt="Calibration flow: recovery paths when tracking is lost, skip setup, and in-class failure"
+                                                className="block h-auto w-full object-contain"
+                                                draggable={false}
+                                                hoverScale={1.02}
+                                            />
+                                        </div>
+                                        <p className="site-gallery-caption text-left text-white/45">
+                                            This flow covers what happens if calibration fails during a class or if a user skips setup: how the product recovers, what users see next, and when they can retry or continue with degraded AR.
+                                        </p>
+                                    </div>
+                                </div>
+                            </Reveal>
+                        </div>
+
+                        {/* No-blame UI (recovery / framing during setup issues) */}
+                        <div className="case-study-block-gap">
+                            <Reveal>
+                                <div className="mx-auto flex w-full min-w-0 flex-col gap-4 md:gap-5">
+                                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+                                        <LightboxImage
+                                            src="/assets/virdio/step_out_of_frame.png"
+                                            alt="Did you step out of frame: non-judgmental prompt with Ignore and Remind options"
+                                            className="h-auto w-full object-contain"
+                                            draggable={false}
+                                        />
+                                    </div>
+                                    <p className="site-gallery-caption text-left text-white/45">
+                                        No-blame UI: &ldquo;Did you step out of frame?&rdquo; frames it as a system state, not a user error. Options let users ignore or get reminded later.
+                                    </p>
+                                </div>
+                            </Reveal>
+                        </div>
+
+                        {/* ConePlayground interactive */}
+                        <div className="case-study-block-gap">
+                            <Reveal>
+                                <div className="flex w-full flex-col gap-6 md:gap-8">
+                                    <div className="mx-auto w-full min-w-0 text-left">
+                                        <p className="site-label case-study-tight-trail-mb text-left text-white/40">
+                                            Interactive
+                                        </p>
+                                        <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                            Try It: Calibrate Your Space
+                                        </h3>
+                                    </div>
+                                    <div className="mx-auto w-full min-w-0">
+                                        <ConePlayground />
+                                    </div>
+                                </div>
+                            </Reveal>
+                        </div>
+
+                        {/* ─────────────────────────────────────────────
+                            SUB-SECTION 3B — LIVE WORKOUT HUD
+                        ───────────────────────────────────────────── */}
+                        <div id="solution-hud" className="case-study-block-gap">
+                            <div className="w-full min-w-0 case-study-block-gap">
+                                <Reveal>
+                                    <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                        Live Workout HUD
+                                    </h3>
+                                </Reveal>
+                                <div className="case-study-prose-stack flex flex-col">
+                                    <Reveal delay={0.05}>
+                                        <p className="site-body text-white/65">
+                                            The core of the product used machine vision to read body poses in real time, counting actions like punches, squats, and jumps. AR artifacts served as both affordances showing users how to perform exercises and as hit boxes for the system to register completed reps.
+                                        </p>
+                                    </Reveal>
+                                    <Reveal delay={0.1}>
+                                        <p className="site-body text-white/65">
+                                            I designed platform-specific HUD adaptations. Desktop took advantage of landscape orientation to show more metrics, class info, and participant data simultaneously. Mobile required a dynamic HUD that collapsed and expanded contextually, preserving maximum visibility of the actual workout content on a small screen.
+                                        </p>
+                                    </Reveal>
+                                </div>
+                            </div>
+
+                            {/* Hero shot — Desktop HUD at its best */}
+                            <Reveal>
+                                <div className="case-study-hero-bump-mb flex flex-col gap-4 md:gap-5">
+                                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+                                        <LightboxImage
+                                            src="/assets/virdio/hero_ui.png"
+                                            alt="Desktop AR HUD: split squat with metrics panel, timer, and AR floor track"
+                                            className="h-auto w-full object-contain"
+                                            draggable={false}
+                                            hoverScale={1.02}
+                                        />
+                                    </div>
+                                    <p className="site-gallery-caption text-left text-white/45">
+                                        The desktop AR experience at its best: full metrics, timer, and AR equipment track visible at once.
+                                    </p>
+                                </div>
+                            </Reveal>
+
+                            {/* Desktop vs Mobile HUD comparison */}
+                            <Reveal>
+                                <div className="flex flex-col gap-4 md:gap-5">
+                                    <div className="grid grid-cols-1 items-center case-study-grid-gap md:grid-cols-[3fr_2fr]">
+                                        <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+                                            <LightboxImage
+                                                src="/assets/virdio/ar_class_live.png"
+                                                alt="Desktop HUD: full toolbar, participant buttons, Show stream controls"
+                                                className="h-auto w-full object-contain"
+                                                draggable={false}
+                                            />
+                                        </div>
+                                        <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+                                            <LightboxImage
+                                                src="/assets/virdio/mobile_ui.png"
+                                                alt="Mobile HUD: condensed metrics, hamburger menu, maximized video"
+                                                className="h-auto w-full object-contain"
+                                                draggable={false}
+                                            />
+                                        </div>
+                                    </div>
+                                    <p className="site-gallery-caption text-left text-white/45">
+                                        Desktop shows everything at once. Mobile collapses to preserve workout visibility.
+                                    </p>
+                                </div>
+                            </Reveal>
+                        </div>
+                    </div>
+
+                    {/* AR Exercise Gallery — Full Width */}
+                    <ARMosaic className="case-study-block-gap" />
+
+                    <div className={SITE_COLUMN}>
+                        {/* ─────────────────────────────────────────────
+                            SUB-SECTION 3C — SCHEDULING & DESIGN SYSTEM
+                        ───────────────────────────────────────────── */}
+                        <div id="solution-system">
+                            <div className="w-full min-w-0 case-study-block-gap">
+                                <Reveal>
+                                    <h3 className="site-subheading case-study-heading-trail-mb text-white">
+                                        Scheduling & Design System
+                                    </h3>
+                                </Reveal>
+                                <Reveal delay={0.05}>
+                                    <p className="site-body text-white/65">
+                                        I built the design system from the ground up to maintain consistency across all five platforms. It governed color, typography, button styles, and component behavior. A key design decision was using light mode for browsing and discovery surfaces and dark mode for anything related to attending a class, creating a clear psychological shift when users entered the workout experience.
+                                    </p>
+                                </Reveal>
+                            </div>
+
+                            {/* Desktop + Mobile scheduling comparison */}
+                            <Reveal>
+                                <div className="case-study-block-gap">
+                                    <div className="grid grid-cols-1 items-start case-study-grid-gap md:grid-cols-[3fr_1fr]">
+                                        <div className="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+                                            <LightboxImage
+                                                src="/assets/virdio/live_classes_filter.png"
+                                                alt="Desktop class browsing: sidebar category filters, day-grouped class list"
+                                                className="w-full h-auto object-contain"
+                                                draggable={false}
+                                            />
+                                        </div>
+                                        <div className="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+                                            <LightboxImage
+                                                src="/assets/virdio/mobile_live_classes.png"
+                                                alt="Mobile class browsing: compact class cards with inline category chips"
+                                                className="w-full h-auto object-contain"
+                                                draggable={false}
+                                            />
+                                        </div>
+                                    </div>
+                                    <p className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
+                                        Desktop exposes filters inline for power browsing. Mobile surfaces categories as compact chips.
+                                    </p>
+                                </div>
+                            </Reveal>
+
+                            {/* Schedule View */}
+                            <Reveal>
+                                <div className="mx-auto w-full min-w-0 case-study-block-gap">
+                                    <div className="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+                                        <LightboxImage
+                                            src="/assets/virdio/desktop_schedule.png"
+                                            alt="My Schedule: calendar widget with booked classes and Join Session CTA"
+                                            className="w-full h-auto object-contain"
+                                            draggable={false}
+                                        />
+                                    </div>
+                                    <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
+                                        &ldquo;My Schedule&rdquo; connects browsing to action: calendar, booked classes, and a prominent Join Session CTA.
+                                    </p>
+                                </div>
+                            </Reveal>
+                        </div>
                     </div>
                 </section>
 
-                {/* ─── THE CHALLENGE ─── */}
-                <section className="max-w-[720px] mx-auto px-6 md:px-12 pb-24 md:pb-32">
-                    <Reveal>
-                        <p className="font-[family-name:var(--font-dm-sans)] text-xl md:text-2xl text-neutral-600 leading-[1.7] font-normal">
-                            Virdio was an early stage startup that aimed to democratize home fitness by replacing expensive gym hardware with computer vision. My challenge was to design their consumer apps and reactive AR experiences that provided real-time feedback on form, while ensuring the system worked seamlessly across 5 different platforms and &ldquo;messy&rdquo; real-world living rooms.
-                        </p>
-                    </Reveal>
-                </section>
 
-                {/* ─── DEVICE MOCKUPS SIDE-BY-SIDE ─── */}
-                <section className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16 pb-24 md:pb-32">
-                    <Reveal>
-                        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center">
-                            <div className="rounded-2xl overflow-hidden border border-neutral-200/60">
-                                <LightboxImage
-                                    src="/assets/virdio/desktop_mockup.png"
-                                    alt="Virdio desktop app — laptop mockup showing class scheduling UI"
-                                    className="w-full h-auto object-contain"
-                                    draggable={false}
-                                    hoverScale={1.03}
-                                />
-                            </div>
-                            <div className="rounded-2xl overflow-hidden border border-neutral-200/60 md:self-stretch flex items-center">
-                                <LightboxImage
-                                    src="/assets/virdio/mobile_mockup_2.png"
-                                    alt="Virdio mobile app — iPhone mockup with filter button"
-                                    className="h-full w-auto object-contain max-h-[500px] md:max-h-none"
-                                    draggable={false}
-                                    hoverScale={1.03}
-                                />
-                            </div>
-                        </div>
-                    </Reveal>
-                </section>
+                {/* ═══════════════════════════════════════════════════════
+                    SECTION 04 — ROLE & IMPACT
+                ═══════════════════════════════════════════════════════ */}
+                <div className={SITE_COLUMN}>
+                    <section id="role-impact" className="case-study-section-y border-t border-white/10">
+                        <div className="w-full min-w-0">
 
-                <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-
-                    {/* ═══════════════════════════════════════════════════════
-                        SECTION 01 — REDUCING COGNITIVE LOAD IN SETUP
-                    ═══════════════════════════════════════════════════════ */}
-                    <section id="setup" className="py-24 md:py-32 border-t border-neutral-100">
-                        {/* Section Header */}
-                        <div className="max-w-[720px] mx-auto text-center mb-16 md:mb-24">
-                            <Reveal>
-                                <span className="text-neutral-400 text-sm font-medium tracking-[0.08em] uppercase">01</span>
-                            </Reveal>
-                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-4xl md:text-5xl lg:text-6xl leading-tight text-neutral-900 mt-4 mb-6">
-                                <TextReveal>Reducing Cognitive Load in Setup</TextReveal>
-                            </h2>
-                            <Reveal delay={0.1}>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-neutral-500 leading-relaxed">
-                                    Ensuring a quality experience for non-technical users across a variety of home setups.
-                                </p>
-                            </Reveal>
-                        </div>
-
-                        {/* Constraint + Solution — Two Column */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-[900px] mx-auto mb-16 md:mb-24">
-                                <div className="space-y-3">
-                                    <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Constraint</h3>
-                                    <p className="text-neutral-500 text-base leading-relaxed">
-                                        Computer vision requires a precise 2-point diagonal map to function. The backend technology was robust enough to handle &ldquo;messy&rdquo; data, but we needed a way for non-technical users to provide that data without feeling like they were performing a technical calibration.
-                                    </p>
-                                </div>
-                                <div className="space-y-3">
-                                    <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Solution</h3>
-                                    <p className="text-neutral-500 text-base leading-relaxed">
-                                        I abstracted the technical coordinate mapping into a game of &ldquo;Reach the Cone.&rdquo;
-                                    </p>
-                                </div>
-                            </div>
-                        </Reveal>
-                    </section>
-                </div>
-
-                {/* Scroll-Driven Calibration Flow — Full Width (outside container for pinning) */}
-                <ScrollRevealFlow className="mb-16 md:mb-24" />
-
-                <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-                    {/* Detail Cards with Particle Icons */}
-                    <Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 max-w-[960px] mx-auto mb-16 md:mb-24">
-                            <div className="space-y-4">
-                                <ParticleIcon shape="cone" className="mx-auto" />
-                                <h3 className="text-neutral-900 text-base font-medium text-center md:text-left">Mental Model Shift</h3>
-                                <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                    Instead of asking users to &ldquo;scan 4 meters,&rdquo; I placed 2 virtual traffic cones at diagonal corners of the room and asked users to walk to each one. The 2 cones define a rectangular workout zone. &ldquo;Cones&rdquo; are a universally understood symbol for &ldquo;boundary.&rdquo;
-                                </p>
-                            </div>
-                            <div className="space-y-4">
-                                <ParticleIcon shape="magnet" className="mx-auto" />
-                                <h3 className="text-neutral-900 text-base font-medium text-center md:text-left">Designing for Tolerance</h3>
-                                <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                    Real living rooms have couches and coffee tables. I designed the system to be &ldquo;fuzzy.&rdquo; If a user couldn&rsquo;t reach the exact spot due to furniture, the system accepted their closest attempt after it no longer detected movement.
-                                </p>
-                            </div>
-                            <div className="space-y-4">
-                                <ParticleIcon shape="speaker" className="mx-auto" />
-                                <h3 className="text-neutral-900 text-base font-medium text-center md:text-left">Feedback Loop</h3>
-                                <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                    We used a multi-sensory confirmation loop (Visual &ldquo;Pulse&rdquo; + Audio &ldquo;Ding&rdquo;) so users knew the point was registered without looking back at the screen.
-                                </p>
-                            </div>
-                        </div>
-                    </Reveal>
-
-                    {/* ConePlayground — Interactive Easter Egg (end of Section 01) */}
-                    <Reveal>
-                        <div className="max-w-[800px] mx-auto mb-24 md:mb-32">
-                            <div className="text-center mb-8">
-                                <p className="font-[family-name:var(--font-dm-sans)] text-sm text-neutral-400 tracking-wide uppercase mb-2">
-                                    Interactive
-                                </p>
-                                <h3 className="font-[family-name:var(--font-instrument-serif)] text-2xl md:text-3xl text-neutral-900">
-                                    Calibrate Your Own Space
-                                </h3>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-neutral-500 mt-2 text-sm">
-                                    Place 2 cones at opposite corners to define your workout zone. Drag to reposition, double-click to remove.
-                                </p>
-                            </div>
-                            <ConePlayground />
-                        </div>
-                    </Reveal>
-
-
-                    {/* Setup Exploration Sketches */}
-                    <Reveal>
-                        <ExpandableStack
-                            images={[
-                                { src: "/assets/virdio/sketch_angle_calibration.jpg", alt: "Angle calibration sketch" },
-                                { src: "/assets/virdio/sketch_box_jump.jpg", alt: "Box jump sketch" },
-                                { src: "/assets/virdio/sketch_setup.jpg", alt: "Setup sketch" },
-                            ]}
-                            className="max-w-[500px] mx-auto mb-24 md:mb-32"
-                        />
-                    </Reveal>
-
-                    {/* ═══════════════════════════════════════════════════════
-                        SECTION 02 — DESIGNING FOR RESILIENCE
-                    ═══════════════════════════════════════════════════════ */}
-                    <section id="resilience" className="py-24 md:py-32 border-t border-neutral-100">
-                        {/* Section Header */}
-                        <div className="max-w-[720px] mx-auto text-center mb-16 md:mb-24">
-                            <Reveal>
-                                <span className="text-neutral-400 text-sm font-medium tracking-[0.08em] uppercase">02</span>
-                            </Reveal>
-                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-4xl md:text-5xl lg:text-6xl leading-tight text-neutral-900 mt-4 mb-6">
-                                <TextReveal>Designing for Resilience</TextReveal>
-                            </h2>
-                            <Reveal delay={0.1}>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-neutral-500 leading-relaxed">
-                                    Handling the &ldquo;unhappy path&rdquo; in a live, un-pausable environment.
-                                </p>
-                            </Reveal>
-                        </div>
-
-                        {/* Two Column — Narrative + Context Image */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-start mb-16 md:mb-24">
-                                <div className="space-y-8 md:sticky md:top-24">
-                                    <div className="space-y-3">
-                                        <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Constraint</h3>
-                                        <p className="text-neutral-500 text-base leading-relaxed">
-                                            Virdio classes are live and un-pausable. If the AR tracking fails (e.g., a dog walks in frame, lighting changes), we cannot stop the video or throw a blocking modal in front of a user who is mid-workout. When tracking is lost, the AR layer silently fades away, but the class video continues uninterrupted.
-                                        </p>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Solution</h3>
-                                        <p className="text-neutral-500 text-base leading-relaxed">
-                                            I prioritized the user&rsquo;s momentum over the technology&rsquo;s perfection.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Context Image — in-context.png */}
-                                <div className="space-y-3">
-                                    <div className="bg-neutral-900 rounded-xl overflow-hidden border border-neutral-200/60">
-                                        <LightboxImage
-                                            src="/assets/virdio/in_context.png"
-                                            alt="Live AR class in action — in-gym workout with AR overlay"
-                                            className="w-full h-auto object-contain"
-                                            draggable={false}
-                                        />
-                                    </div>
-                                    <p className="text-sm text-neutral-400">A live AR class in action — the context where failures happen.</p>
-                                </div>
-                            </div>
-                        </Reveal>
-
-                        {/* Two Detail Cards — No-Blame UI + Graceful Recovery */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-[960px] mx-auto">
-                                {/* No-Blame UI */}
-                                <div className="space-y-4">
-                                    <div className="bg-neutral-50 rounded-xl overflow-hidden border border-neutral-200/60">
-                                        <LightboxImage
-                                            src="/assets/virdio/step_out_of_frame.png"
-                                            alt="No-Blame UI — passive 'Did you step out of frame?' prompt"
-                                            className="w-full h-auto object-contain"
-                                            draggable={false}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <h3 className="text-neutral-900 text-base font-medium">No-Blame UI</h3>
-                                        <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                            The error message is passive (&ldquo;Did you step out of frame?&rdquo;) rather than active (&ldquo;Please Fix This&rdquo;). It frames the issue as a system state, not a user error.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Graceful Recovery */}
-                                <div className="space-y-4">
-                                    <div className="bg-neutral-50 rounded-xl overflow-hidden border border-neutral-200/60">
-                                        <LightboxImage
-                                            src="/assets/virdio/calibration_flow_full.png"
-                                            alt="Graceful Recovery — full calibration flow showing error recovery paths"
-                                            className="w-full h-auto object-contain"
-                                            draggable={false}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <h3 className="text-neutral-900 text-base font-medium">Graceful Recovery</h3>
-                                        <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                            Users can tap &ldquo;Recalibrate&rdquo; during a rest break to restore AR, or &ldquo;Disable AR&rdquo; to finish in video-only mode.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </Reveal>
-                    </section>
-
-
-                    {/* ═══════════════════════════════════════════════════════
-                        SECTION 03 — CONTEXT-AWARE SCALING
-                    ═══════════════════════════════════════════════════════ */}
-                    <section id="scaling" className="py-24 md:py-32 border-t border-neutral-100">
-                        {/* Section Header */}
-                        <div className="max-w-[720px] mx-auto text-center mb-16 md:mb-24">
-                            <Reveal>
-                                <span className="text-neutral-400 text-sm font-medium tracking-[0.08em] uppercase">03</span>
-                            </Reveal>
-                            <h2 className="font-[family-name:var(--font-instrument-serif)] text-4xl md:text-5xl lg:text-6xl leading-tight text-neutral-900 mt-4 mb-6">
-                                <TextReveal>Context-Aware Scaling</TextReveal>
-                            </h2>
-                            <Reveal delay={0.1}>
-                                <p className="font-[family-name:var(--font-dm-sans)] text-lg md:text-xl text-neutral-500 leading-relaxed">
-                                    One library, multiple contexts.
-                                </p>
-                            </Reveal>
-                        </div>
-
-                        {/* Constraint + Solution */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-[900px] mx-auto mb-16 md:mb-24">
-                                <div className="space-y-3">
-                                    <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Constraint</h3>
-                                    <p className="text-neutral-500 text-base leading-relaxed">
-                                        As a solo designer supporting Mobile, Web, and TV simultaneously, I could not design every screen twice. I needed a scalable system that adapted to the &ldquo;thumb-first&rdquo; constraints of mobile and the &ldquo;information-dense&rdquo; capabilities of desktop.
-                                    </p>
-                                </div>
-                                <div className="space-y-3">
-                                    <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">The Solution</h3>
-                                    <p className="text-neutral-500 text-base leading-relaxed">
-                                        I built a token-based Design System that handled complexity automatically.
-                                    </p>
-                                </div>
-                            </div>
-                        </Reveal>
-
-                        {/* Hero Comparison — Mobile Mockup + Desktop Classes */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4 md:gap-6 items-stretch mb-6">
-                                <div className="rounded-2xl overflow-hidden border border-neutral-200/60 bg-neutral-100">
-                                    <LightboxImage
-                                        src="/assets/virdio/mobile_mockup_2.png"
-                                        alt="Virdio mobile — class list with floating filter button"
-                                        className="w-full h-full object-contain"
-                                        draggable={false}
-                                    />
-                                </div>
-                                <div className="rounded-2xl overflow-hidden border border-neutral-200/60 bg-neutral-100">
-                                    <LightboxImage
-                                        src="/assets/virdio/live_classes_filter.png"
-                                        alt="Virdio desktop — live classes with category and duration filters"
-                                        className="w-full h-full object-contain"
-                                        draggable={false}
-                                    />
-                                </div>
-                            </div>
-                            <p className="text-sm text-neutral-400 text-center mb-16 md:mb-24">
-                                The same &ldquo;Classes&rdquo; experience — mobile surfaces a floating filter button, while desktop exposes filters inline for power browsing.
-                            </p>
-                        </Reveal>
-
-                        {/* On-Demand Activity Comparison — Desktop vs Mobile */}
-                        <Reveal>
-                            <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center mb-6">
-                                <div className="rounded-2xl overflow-hidden border border-neutral-200/60 bg-neutral-100 flex-1 min-w-0">
-                                    <LightboxImage
-                                        src="/assets/virdio/virtual_session_mobile.png"
-                                        alt="Virdio mobile — on-demand activity view focused on video"
-                                        className="w-full h-auto object-contain"
-                                        draggable={false}
-                                    />
-                                </div>
-                                <div className="rounded-2xl overflow-hidden border border-neutral-200/60 bg-neutral-100 flex-shrink-0">
-                                    <LightboxImage
-                                        src="/assets/virdio/virtual_session_desktop.png"
-                                        alt="Virdio desktop — on-demand activity with exercise queue and session details"
-                                        className="h-auto w-auto max-h-[350px] md:max-h-[420px] object-contain"
-                                        draggable={false}
-                                    />
-                                </div>
-                            </div>
-                            <p className="text-sm text-neutral-400 text-center mb-16 md:mb-24">
-                                On-demand activity view — desktop expands to show the exercise queue and session details; mobile focuses on the video.
-                            </p>
-                        </Reveal>
-
-                        {/* Three Detail Cards */}
-                        <Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 max-w-[960px] mx-auto">
-                                <div className="space-y-3">
-                                    {/* Adaptive Components Demo — morphing layout blocks */}
-                                    <div className="h-[120px] rounded-xl bg-neutral-50 border border-neutral-200/60 overflow-hidden flex items-center justify-center p-4">
-                                        <div className="flex gap-2 items-end w-full max-w-[160px]">
-                                            <div
-                                                className="bg-neutral-300 rounded-md"
-                                                style={{
-                                                    width: "40%",
-                                                    animation: "adaptiveMorph 3s ease-in-out infinite",
-                                                }}
-                                            />
-                                            <div className="flex flex-col gap-2 flex-1">
-                                                <div
-                                                    className="bg-neutral-200 rounded-sm h-3"
-                                                    style={{ animation: "adaptiveWidth 3s ease-in-out infinite" }}
-                                                />
-                                                <div className="bg-neutral-200 rounded-sm h-3 w-3/4" />
-                                                <div
-                                                    className="bg-neutral-300 rounded-sm h-5 mt-1"
-                                                    style={{ animation: "adaptiveWidth 3s ease-in-out 0.5s infinite" }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <style>{`
-                                            @keyframes adaptiveMorph {
-                                                0%, 100% { height: 60px; border-radius: 6px; }
-                                                50% { height: 80px; border-radius: 10px; }
-                                            }
-                                            @keyframes adaptiveWidth {
-                                                0%, 100% { width: 100%; }
-                                                50% { width: 60%; }
-                                            }
-                                        `}</style>
-                                    </div>
-                                    <h3 className="text-neutral-900 text-base font-medium">Adaptive Components</h3>
-                                    <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                        A single component library where variants were tokenized for platform norms. A Class View on mobile was focused; on Desktop, the same component expanded to show &ldquo;Next Activity&rdquo; previews and music controls.
-                                    </p>
-                                </div>
-                                <div className="space-y-3">
-                                    {/* Contextual Density Demo — expanding/collapsing rows */}
-                                    <div className="h-[120px] rounded-xl bg-neutral-50 border border-neutral-200/60 overflow-hidden flex flex-col items-center justify-center gap-2 p-4">
-                                        {[0, 0.4, 0.8].map((delay) => (
-                                            <div
-                                                key={delay}
-                                                className="bg-neutral-200 rounded-sm h-3"
-                                                style={{
-                                                    width: "80%",
-                                                    animation: `densityExpand 2.5s ease-in-out ${delay}s infinite`,
-                                                }}
-                                            />
-                                        ))}
-                                        <div
-                                            className="bg-neutral-300 rounded-sm h-3"
-                                            style={{
-                                                width: "60%",
-                                                animation: "densityReveal 2.5s ease-in-out infinite",
-                                            }}
-                                        />
-                                        <style>{`
-                                            @keyframes densityExpand {
-                                                0%, 100% { width: 50%; opacity: 0.6; }
-                                                50% { width: 90%; opacity: 1; }
-                                            }
-                                            @keyframes densityReveal {
-                                                0%, 30% { opacity: 0; transform: scaleY(0); }
-                                                50% { opacity: 1; transform: scaleY(1); }
-                                                70%, 100% { opacity: 0; transform: scaleY(0); }
-                                            }
-                                        `}</style>
-                                    </div>
-                                    <h3 className="text-neutral-900 text-base font-medium">Contextual Density</h3>
-                                    <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                        While mobile required a separate screen for filtering, the Desktop sidebar included category, duration, music, and instructor filters visible alongside the class list — reducing the friction of finding the right class.
-                                    </p>
-                                </div>
-                                <div className="space-y-3">
-                                    {/* Thematic Logic Demo — light-to-dark transition */}
-                                    <div
-                                        className="h-[120px] rounded-xl border border-neutral-200/60 overflow-hidden flex items-center justify-center p-4"
-                                        style={{ animation: "themeShift 4s ease-in-out infinite" }}
-                                    >
-                                        <div className="flex flex-col gap-2 w-full max-w-[120px]">
-                                            <div
-                                                className="rounded-md h-10 w-full"
-                                                style={{ animation: "themeCard 4s ease-in-out infinite" }}
-                                            />
-                                            <div className="flex gap-2">
-                                                <div
-                                                    className="rounded-sm h-3 flex-1"
-                                                    style={{ animation: "themeText 4s ease-in-out infinite" }}
-                                                />
-                                                <div
-                                                    className="rounded-sm h-3 w-6"
-                                                    style={{ animation: "themeAccent 4s ease-in-out infinite" }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <style>{`
-                                            @keyframes themeShift {
-                                                0%, 20% { background-color: #fafafa; }
-                                                50%, 70% { background-color: #171717; }
-                                                100% { background-color: #fafafa; }
-                                            }
-                                            @keyframes themeCard {
-                                                0%, 20% { background-color: #e5e5e5; }
-                                                50%, 70% { background-color: #404040; }
-                                                100% { background-color: #e5e5e5; }
-                                            }
-                                            @keyframes themeText {
-                                                0%, 20% { background-color: #d4d4d4; }
-                                                50%, 70% { background-color: #525252; }
-                                                100% { background-color: #d4d4d4; }
-                                            }
-                                            @keyframes themeAccent {
-                                                0%, 20% { background-color: #a3a3a3; }
-                                                50%, 70% { background-color: #737373; }
-                                                100% { background-color: #a3a3a3; }
-                                            }
-                                        `}</style>
-                                    </div>
-                                    <h3 className="text-neutral-900 text-base font-medium">Thematic Logic</h3>
-                                    <p className="text-neutral-500 text-[15px] leading-relaxed">
-                                        I established a strict mode logic — Light Mode for administrative tasks (Booking, Browsing) and Dark Mode for the immersive workout experience. This helped users subconsciously switch between &ldquo;Planning&rdquo; and &ldquo;Doing.&rdquo;
-                                    </p>
-                                </div>
-                            </div>
-                        </Reveal>
-                    </section>
-
-
-                </div>
-
-                {/* ─── AR EXERCISE GALLERY ─── */}
-                <ARMosaic className="py-16 md:py-24" />
-
-                <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-
-                    {/* ═══════════════════════════════════════════════════════
-                        SECTION 04 — REFLECTIONS & IMPACT
-                    ═══════════════════════════════════════════════════════ */}
-                    <section id="reflection" className="py-24 md:py-32 border-t border-neutral-100">
-                        <div className="max-w-[720px] mx-auto space-y-16">
-                            <div className="text-center">
-                                <h2 className="font-[family-name:var(--font-instrument-serif)] text-4xl md:text-5xl lg:text-6xl leading-tight text-neutral-900 mb-6">
-                                    <TextReveal>Reflections & Impact</TextReveal>
+                            {/* Section Header */}
+                            <div className="text-left flex flex-col case-study-heading-trail-gap case-study-block-gap">
+                                <Reveal>
+                                    <span className="site-label text-white/40">04</span>
+                                </Reveal>
+                                <h2 className="site-chapter-heading text-white text-left">
+                                    <TextReveal>Role & Impact</TextReveal>
                                 </h2>
                             </div>
 
+                            {/* My Role */}
                             <Reveal>
-                                <div className="space-y-10">
-                                    <div className="space-y-3">
-                                        <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">Outcome</h3>
-                                        <p className="text-neutral-600 text-lg leading-[1.7] font-normal">
-                                            We successfully shipped a cohesive, end-to-end AR fitness platform to all the App Stores, proving that hardware-free tracking was viable on consumer devices — and paving the way for Virdio&rsquo;s pivot into the physical therapy space where they currently operate.
-                                        </p>
-                                    </div>
+                                <div className="case-study-block-gap">
+                                    <h3 className="site-subheading case-study-heading-trail-mb text-white">What I Owned</h3>
+                                    <ul className="case-study-prose-stack flex flex-col">
+                                        {[
+                                            "Sole designer from concept to launch-ready deliverables across iOS, Android, web, desktop, Apple Watch, and smart TV.",
+                                            "Built the entire design system from the ground up: color, typography, components, and platform-specific adaptations.",
+                                            "Influenced product strategy: led the platform prioritization debate and shaped the desktop-first UX compromise.",
+                                            "Created detailed interaction and animation specs for async engineering handoff across a 12-hour timezone gap, critical for AR components that static mockups couldn't convey.",
+                                        ].map((item, i) => (
+                                            <li key={i} className="case-study-grid-gap-dense flex site-body text-white/65">
+                                                <span className="text-white/35 mt-[5px] shrink-0">&#8226;</span>
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </Reveal>
 
-                                    <div className="space-y-3">
-                                        <h3 className="text-neutral-900 text-sm font-semibold uppercase tracking-[0.08em]">Key Lesson</h3>
-                                        <p className="text-neutral-600 text-lg leading-[1.7] font-normal">
-                                            Technological capability does not equal user utility. If I were to redo this, I would prioritize a Desktop-First approach for AR workouts to ensure a high quality experience to start with, then thoughtfully build out the mobile AR approach as that is not as well-suited for this kind of AR interaction.
+                            {/* Impact */}
+                            <Reveal>
+                                <div className="case-study-block-gap">
+                                    <h3 className="site-subheading case-study-heading-trail-mb text-white">Impact</h3>
+                                    <div className="case-study-prose-stack">
+                                        <p className="site-body text-white/65">
+                                            The app launched across all planned platforms in mid-2022. I was let go about a month before launch during team reductions, just after completing the final design iterations. The app received some positive reviews but did not achieve significant consumer adoption. The consumer home fitness market was cooling from its pandemic peak by the time we shipped.
+                                        </p>
+                                        <p className="site-body text-white/70">
+                                            If I could do it over, I would focus on making one platform exceptional with a limited, curated class library, and use that to wow users before expanding.
                                         </p>
                                     </div>
                                 </div>
                             </Reveal>
                         </div>
                     </section>
-
                 </div>
 
-                {/* ─── AR PUNCHING BAG INTERACTIVE ─── */}
-                <div className="max-w-[800px] mx-auto px-6 md:px-12 lg:px-16">
+                {/* ─── PUNCH BAG INTERACTIVE ─── */}
+                <div className={cn("flex justify-center", SITE_COLUMN)}>
                     <Reveal>
                         <PunchBag />
                     </Reveal>
                 </div>
 
                 {/* Bottom spacer */}
-                <div className="h-24" />
+                <div className="h-32 md:h-40" />
+                </div>
             </div>
         </LightboxProvider>
+        <CaseStudyPill projectSlug="virdio" />
         <StickyNotes page="virdio" />
         </>
     );

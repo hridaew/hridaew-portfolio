@@ -155,10 +155,10 @@ export function BeforeAfterSlider({
       </div>
 
       {/* Labels */}
-      <span className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full pointer-events-none">
+      <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-white backdrop-blur-sm site-gallery-caption">
         {beforeLabel}
       </span>
-      <span className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full pointer-events-none">
+      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-white backdrop-blur-sm site-gallery-caption">
         {afterLabel}
       </span>
     </div>

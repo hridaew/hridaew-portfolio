@@ -21,35 +21,35 @@ export function FilmStrip({ dwellData, className }: FilmStripProps) {
   return (
     <div className={cn("relative w-full min-w-0", className)}>
       {/* Film strip container */}
-      <div className="relative w-full bg-neutral-950 rounded-xl overflow-hidden border border-neutral-800">
+      <div className="relative w-full overflow-hidden border border-neutral-800 bg-neutral-950">
         {/* Sprocket holes top */}
         <div className="flex justify-between px-4 py-2">
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={`top-${i}`}
-              className="w-3 h-2 rounded-sm bg-neutral-800"
+              className="h-2 w-3 bg-neutral-800"
             />
           ))}
         </div>
 
         {/* Main content area */}
-        <div className="px-6 py-4">
-          <p className="text-neutral-500 text-xs uppercase tracking-[0.15em] mb-4">
+        <div className="px-8 py-6 md:px-10 md:py-8">
+          <p className="type-caption-medium uppercase text-neutral-500 mb-6 text-left">
             Your Gaze Profile
           </p>
 
           {/* Bars */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {sorted.map((item) => {
               const pct = Math.min(100, (item.time / totalTime) * 100);
               return (
-                <div key={item.regionId} className="flex items-center gap-3">
-                  <span className="text-neutral-400 text-xs w-20 text-right shrink-0">
+                <div key={item.regionId} className="flex items-center gap-4">
+                  <span className="type-caption text-neutral-400 w-24 text-right shrink-0">
                     {item.label}
                   </span>
-                  <div className="flex-1 h-4 bg-neutral-900 rounded-full overflow-hidden">
+                  <div className="h-4 flex-1 overflow-hidden bg-neutral-900">
                     <div
-                      className="h-full rounded-full transition-all duration-700 ease-out"
+                      className="h-full transition-all duration-700 ease-out"
                       style={{
                         width: `${pct}%`,
                         backgroundColor: item.color,
@@ -57,7 +57,7 @@ export function FilmStrip({ dwellData, className }: FilmStripProps) {
                       }}
                     />
                   </div>
-                  <span className="text-neutral-500 text-xs w-10 shrink-0">
+                  <span className="type-caption text-neutral-500 w-10 shrink-0">
                     {pct.toFixed(0)}%
                   </span>
                 </div>
@@ -68,10 +68,10 @@ export function FilmStrip({ dwellData, className }: FilmStripProps) {
           {/* Dominant path */}
           {sorted[0] && sorted[0].time > 0 && (
             <div className="mt-4 pt-4 border-t border-neutral-800/50">
-              <p className="text-neutral-500 text-xs">
+              <p className="type-caption text-neutral-500 text-left">
                 Your path:{" "}
                 <span
-                  className="font-medium"
+                  className="type-caption-medium"
                   style={{ color: sorted[0].color }}
                 >
                   {sorted[0].label}
@@ -86,7 +86,7 @@ export function FilmStrip({ dwellData, className }: FilmStripProps) {
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={`bot-${i}`}
-              className="w-3 h-2 rounded-sm bg-neutral-800"
+              className="h-2 w-3 bg-neutral-800"
             />
           ))}
         </div>

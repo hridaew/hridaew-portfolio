@@ -171,7 +171,7 @@ export function GazeSimulator({
     <div className={cn("w-full min-w-0 space-y-4", className)}>
       <div
         ref={containerRef}
-        className="relative overflow-hidden rounded-2xl cursor-none group"
+        className="relative cursor-none overflow-hidden group"
         onMouseMove={handleMouseMove}
       >
         <img
@@ -186,7 +186,7 @@ export function GazeSimulator({
           <div
             key={region.id}
             data-region={region.id}
-            className="absolute transition-opacity duration-300 rounded-lg pointer-events-none"
+            className="pointer-events-none absolute transition-opacity duration-300"
             style={{
               left: `${region.x}%`,
               top: `${region.y}%`,
@@ -217,7 +217,7 @@ export function GazeSimulator({
         </div>
 
         {/* Instruction overlay */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-neutral-300 text-xs px-4 py-2 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="pointer-events-none absolute bottom-4 left-4 max-w-[min(calc(100%-2rem),20rem)] bg-black/60 px-4 py-2 text-left text-neutral-300 opacity-0 backdrop-blur-sm transition-opacity duration-300 type-caption group-hover:opacity-100">
           Move your cursor to explore — dwell to discover
         </div>
       </div>

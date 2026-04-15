@@ -28,7 +28,7 @@ export function InspirationsGallery() {
         <section className="py-16 md:py-24 border-t border-[var(--border-card)]">
             <div className="max-w-[1558px] mx-auto px-4 md:px-8">
                 <Reveal>
-                    <p className="font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] text-base mb-10">
+                    <p className="type-body text-[var(--text-secondary)] mb-10 text-left">
                         Inspirations
                     </p>
                 </Reveal>
@@ -60,7 +60,7 @@ export function InspirationsGallery() {
                                     loading="lazy"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out">
-                                    <p className="font-[family-name:var(--font-dm-sans)] text-xs text-white">
+                                    <p className="type-caption text-white text-left">
                                         {item.caption}
                                     </p>
                                 </div>

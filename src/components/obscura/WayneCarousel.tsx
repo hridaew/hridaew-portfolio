@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { LightboxImage } from "@/components/virdio/Lightbox";
+import { ProjectCarousel } from "@/components/home/ProjectCarousel";
+import { HOME_WAFFLINGS_EMBLA_VIEWPORT } from "@/components/home/homeGrid";
 
 const WAYNE_IMAGES = [
   "/assets/obscura/wayne_archive_0dsc06003awaynemarketplace.jpg",
@@ -20,89 +21,40 @@ const WAYNE_IMAGES = [
   "/assets/obscura/wayne_archive_dsc05267awaynejapanesemotherdaughter.jpg",
   "/assets/obscura/wayne_1946.avif",
   "/assets/obscura/wayne_2019.avif",
-];
+] as const;
+
+/** Same interaction model as Virdio `ARMosaic`: Embla drag-free + wheel/trackpad. */
+const SLIDE_SHELL =
+  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden border border-neutral-800 bg-neutral-950 shadow-[0px_4px_24px_0px_rgba(0,0,0,0.35)]";
 
 interface WayneCarouselProps {
   className?: string;
 }
 
 export function WayneCarousel({ className }: WayneCarouselProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const tweenRef = useRef<gsap.core.Tween | null>(null);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    // Duplicate images for seamless loop
-    const totalWidth = track.scrollWidth / 2;
-
-    tweenRef.current = gsap.to(track, {
-      x: -totalWidth,
-      duration: 60,
-      ease: "none",
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((x: number) => {
-          return parseFloat(x as unknown as string) % totalWidth;
-        }),
-      },
-    });
-
-    return () => {
-      tweenRef.current?.kill();
-    };
-  }, []);
-
-  const handleMouseEnter = () => {
-    if (tweenRef.current) {
-      gsap.to(tweenRef.current, { timeScale: 0, duration: 0.6, ease: "power2.out" });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (tweenRef.current) {
-      gsap.to(tweenRef.current, { timeScale: 1, duration: 0.6, ease: "power2.in" });
-    }
-  };
-
-  // Double the images array for seamless looping
-  const doubledImages = [...WAYNE_IMAGES, ...WAYNE_IMAGES];
-
   return (
-    <div className={cn("w-full space-y-4", className)}>
-      <div
-        ref={containerRef}
-        className="relative w-full overflow-hidden"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-        }}
+    <div className={cn("w-full min-w-0 space-y-4", className)}>
+      <ProjectCarousel
+        className={HOME_WAFFLINGS_EMBLA_VIEWPORT}
+        trackEndPadding="inline"
+        autoplayDelayMs={3400}
       >
-        <div ref={trackRef} className="flex gap-3 will-change-transform">
-          {doubledImages.map((src, i) => (
-            <div
-              key={`${src}-${i}`}
-              className="flex-shrink-0"
-              style={{ opacity: 0.7 + Math.sin(i * 0.4) * 0.3 }}
-            >
-              <img
+        {WAYNE_IMAGES.map((src, i) => (
+          <div key={src} className="flex-[0_0_auto]">
+            <div className={SLIDE_SHELL}>
+              <LightboxImage
                 src={src}
-                alt={`Wayne Wong archive photograph ${(i % WAYNE_IMAGES.length) + 1}`}
-                className="h-[180px] w-[240px] rounded-lg object-cover"
-                loading="lazy"
+                alt={`Wayne Wong archive photograph ${i + 1}`}
+                className="h-full w-full object-cover"
                 draggable={false}
+                loading="lazy"
+                hoverScale={1.03}
               />
             </div>
-          ))}
-        </div>
-      </div>
-      <p className="text-center font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-400 italic">
+          </div>
+        ))}
+      </ProjectCarousel>
+      <p className="site-gallery-caption mt-3 text-left text-neutral-500">
         Wayne Wong&apos;s hidden archive — hundreds of unexposed 35mm photographs from post-war
         Japan, 1946
       </p>

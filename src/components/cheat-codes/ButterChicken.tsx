@@ -18,7 +18,7 @@ export function ButterChicken() {
                 }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-                <p className="font-[family-name:var(--font-instrument-serif)] text-6xl md:text-8xl text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] text-center">
+                <p className="type-display-black text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] text-left">
                     Butter Chicken
                 </p>
             </div>

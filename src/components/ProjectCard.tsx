@@ -219,7 +219,7 @@ export function ProjectCard({
     >
       {/* Top Row: Timeline + Status */}
       <div className="flex items-center justify-between mb-4">
-        <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-sm text-[var(--text-muted)] tracking-[-0.5px]">
+        <span className="type-caption-medium text-[var(--text-muted)] text-left">
           {timeline}
         </span>
         {isActive && (
@@ -228,7 +228,7 @@ export function ProjectCard({
               aria-hidden="true"
               className="w-[7px] h-[7px] rounded-full bg-[#ee6b5f]"
             />
-            <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-xs text-[#ff4c5c]">
+            <span className="type-caption-medium text-[#ff4c5c] text-left">
               Now
             </span>
           </span>
@@ -286,15 +286,15 @@ export function ProjectCard({
       {/* Info Footer */}
       <div className="flex flex-col gap-0.5 mt-4">
         <span
-          className="font-[family-name:var(--font-dm-sans)] font-semibold text-base capitalize"
+          className="type-h3 capitalize text-left"
           style={{ color: accentColor }}
         >
           {title}
         </span>
-        <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-base text-[#666] dark:text-[var(--text-secondary)]">
+        <span className="type-body-lg text-[#666] dark:text-[var(--text-secondary)] text-left">
           {role}
         </span>
-        <span className="font-[family-name:var(--font-dm-sans)] font-semibold text-base text-[#999] dark:text-[#6a6a6a] leading-relaxed">
+        <span className="type-body text-[#999] dark:text-[#6a6a6a] text-left">
           {description}
         </span>
       </div>

@@ -10,6 +10,9 @@ interface DualPerspectiveProps {
   className?: string;
 }
 
+/** Matches `ProjectCardBar` in `HomePage.tsx` — duration-500, cubic-bezier(0.25,1,0.5,1), grid expand, blur fade, 150ms delay. */
+const barEase = "duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]";
+
 export function DualPerspective({
   curatorImage,
   spectatorImage,
@@ -17,11 +20,13 @@ export function DualPerspective({
 }: DualPerspectiveProps) {
   const [active, setActive] = useState<"curator" | "spectator" | null>(null);
 
+  const curatorOpen = active === "curator";
+  const spectatorOpen = active === "spectator";
+
   return (
     <div className={cn("flex gap-3 md:gap-4 h-[400px] md:h-[500px]", className)}>
-      {/* Curator Panel */}
       <motion.div
-        className="relative overflow-hidden rounded-2xl cursor-pointer group"
+        className="relative overflow-hidden cursor-pointer group"
         animate={{
           flex: active === "curator" ? 3 : active === "spectator" ? 1 : 1,
         }}
@@ -37,26 +42,42 @@ export function DualPerspective({
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <p className="text-amber-200/80 text-xs uppercase tracking-[0.15em] font-medium mb-1">
-            First Person
-          </p>
-          <h3 className="font-[family-name:var(--font-instrument-serif)] text-2xl md:text-3xl text-white">
-            The Curator
-          </h3>
-          <motion.p
-            className="font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-300 mt-2"
-            animate={{ opacity: active === "curator" ? 1 : 0, y: active === "curator" ? 0 : 10 }}
-            transition={{ duration: 0.3 }}
+        <div
+          className={cn(
+            "absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end transition-opacity",
+            barEase,
+            active === "spectator" ? "opacity-0 pointer-events-none" : "opacity-100"
+          )}
+        >
+          <h3 className="type-h3 text-white text-left m-0">The Curator</h3>
+          <div
+            className={cn(
+              "grid transition-all",
+              barEase,
+              curatorOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            )}
           >
-            The viewer enters the booth and scans Wayne&apos;s photos through a viewfinder. Their gaze drives the narrative — dwell on faces and the story shifts to people.
-          </motion.p>
+            <div className="overflow-hidden min-h-0">
+              <div
+                className={cn(
+                  "pt-[16px] transition-all text-left",
+                  barEase,
+                  curatorOpen
+                    ? "delay-[150ms] opacity-100 blur-none"
+                    : "delay-0 opacity-0 blur-[8px]"
+                )}
+              >
+                <p className="type-body text-neutral-300 m-0 text-left">
+                  The viewer enters the booth and scans Wayne&apos;s photos through a viewfinder. Their gaze drives the narrative — dwell on faces and the story shifts to people.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Spectator Panel */}
       <motion.div
-        className="relative overflow-hidden rounded-2xl cursor-pointer group"
+        className="relative overflow-hidden cursor-pointer group"
         animate={{
           flex: active === "spectator" ? 3 : active === "curator" ? 1 : 1,
         }}
@@ -72,20 +93,37 @@ export function DualPerspective({
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <p className="text-amber-200/80 text-xs uppercase tracking-[0.15em] font-medium mb-1">
-            Third Person
-          </p>
-          <h3 className="font-[family-name:var(--font-instrument-serif)] text-2xl md:text-3xl text-white">
-            The Spectator
-          </h3>
-          <motion.p
-            className="font-[family-name:var(--font-dm-sans)] text-lg leading-relaxed text-neutral-300 mt-2"
-            animate={{ opacity: active === "spectator" ? 1 : 0, y: active === "spectator" ? 0 : 10 }}
-            transition={{ duration: 0.3 }}
+        <div
+          className={cn(
+            "absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end transition-opacity",
+            barEase,
+            active === "curator" ? "opacity-0 pointer-events-none" : "opacity-100"
+          )}
+        >
+          <h3 className="type-h3 text-white text-left m-0">The Spectator</h3>
+          <div
+            className={cn(
+              "grid transition-all",
+              barEase,
+              spectatorOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            )}
           >
-            Outside the booth, an audience watches a projection of the viewer&apos;s journey. A gaze reticle shows what they&apos;re looking at, turning &quot;looking&quot; into performance.
-          </motion.p>
+            <div className="overflow-hidden min-h-0">
+              <div
+                className={cn(
+                  "pt-[16px] transition-all text-left",
+                  barEase,
+                  spectatorOpen
+                    ? "delay-[150ms] opacity-100 blur-none"
+                    : "delay-0 opacity-0 blur-[8px]"
+                )}
+              >
+                <p className="type-body text-neutral-300 m-0 text-left">
+                  Outside the booth, an audience watches a projection of the viewer&apos;s journey. A gaze reticle shows what they&apos;re looking at, turning &quot;looking&quot; into performance.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
     </div>

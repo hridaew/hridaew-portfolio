@@ -41,10 +41,12 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
         scrollTrigger: {
           trigger: section,
           pin: pinContainer,
-          start: "top 5%",
+          start: "top top",
           end: "bottom bottom",
           scrub: 1,
           anticipatePin: 1,
+          pinSpacing: true,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -73,7 +75,6 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
           labelRefs.current[i],
           {
             opacity: 0.4,
-            color: "#a3a3a3",
             fontWeight: 400,
             duration,
             ease: "none",
@@ -86,7 +87,6 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
           labelRefs.current[i + 1],
           {
             opacity: 1,
-            color: "#171717",
             fontWeight: 500,
             duration,
             ease: "none",
@@ -116,14 +116,14 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
   return (
     <section
       ref={sectionRef}
-      className={cn("relative md:h-[500vh]", className)}
+      className={cn("relative isolate bg-[#0c0c0e] md:h-[500vh]", className)}
     >
       <div
         ref={pinContainerRef}
-        className="md:h-screen flex items-center justify-center py-16 md:py-0"
+        className="relative z-20 md:h-screen flex items-center justify-center py-16 md:py-0"
       >
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="bg-neutral-50 rounded-2xl p-6 md:p-10 overflow-hidden">
+        <div className="w-full max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
+          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 md:p-10 overflow-hidden">
             {/* Desktop: stacked images */}
             <div className="relative w-full overflow-hidden rounded-lg hidden md:block">
               {/* Invisible spacer image to set container height */}
@@ -139,7 +139,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
               {STEPS.map((step, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  key={step.label}
+                  key={step.image}
                   ref={(el) => {
                     imageRefs.current[i] = el;
                   }}
@@ -153,10 +153,10 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
             </div>
 
             {/* Mobile: horizontal scroll */}
-            <div className="md:hidden overflow-x-auto snap-x snap-mandatory flex gap-4 -mx-2 px-2 pb-4">
+            <div className="md:hidden overflow-x-auto snap-x snap-proximity flex gap-4 -mx-2 px-2 pb-4">
               {STEPS.map((step) => (
                 <div
-                  key={step.label}
+                  key={step.image}
                   className="snap-center flex-shrink-0 w-[85%]"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -166,7 +166,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
                     className="w-full h-auto object-contain rounded-lg"
                     loading="eager"
                   />
-                  <p className="font-[family-name:var(--font-dm-sans)] text-xs text-neutral-500 text-center mt-2">
+                  <p className="type-caption text-white/45 text-left mt-2">
                     {step.label}
                   </p>
                 </div>
@@ -175,26 +175,25 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
 
             {/* Progress bar (desktop only) */}
             <div className="hidden md:block mt-6">
-              <div className="h-[2px] bg-neutral-200 rounded-full overflow-hidden">
+              <div className="h-[2px] bg-white/10 rounded-full overflow-hidden">
                 <div
                   ref={progressBarRef}
-                  className="h-full bg-neutral-900 rounded-full origin-left"
+                  className="h-full bg-white/70 rounded-full origin-left"
                   style={{ transform: "scaleX(0)" }}
                 />
               </div>
 
-              {/* Step labels */}
+              {/* Step labels — !text-white keeps fill on the light text even when GSAP scrubs opacity/fontWeight */}
               <div className="flex justify-between mt-3">
                 {STEPS.map((step, i) => (
                   <span
-                    key={step.label}
+                    key={step.image}
                     ref={(el) => {
                       labelRefs.current[i] = el;
                     }}
-                    className="font-[family-name:var(--font-dm-sans)] text-xs sm:text-sm"
+                    className="type-body text-left !text-white"
                     style={{
                       opacity: i === 0 ? 1 : 0.4,
-                      color: i === 0 ? "#171717" : "#a3a3a3",
                       fontWeight: i === 0 ? 500 : 400,
                     }}
                   >
