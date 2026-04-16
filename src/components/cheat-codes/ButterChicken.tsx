@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 
-/** Light “liquid” tilt: perspective + smoothed pointer → rotate (no WebGL). */
-export function ButterChicken() {
+type ButterChickenProps = {
+  onDismiss?: () => void;
+};
+
+/** Fullscreen cheat reward: tilt plate + vignette + grain; Esc calls `onDismiss` when provided. */
+export function ButterChicken({ onDismiss }: ButterChickenProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const lx = useRef(0);
@@ -11,6 +15,19 @@ export function ButterChicken() {
   const tx = useRef(0);
   const ty = useRef(0);
   const raf = useRef<number>(0);
+
+  const dismiss = useCallback(() => {
+    onDismiss?.();
+  }, [onDismiss]);
+
+  useEffect(() => {
+    if (!onDismiss) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dismiss();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [dismiss, onDismiss]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -22,7 +39,7 @@ export function ButterChicken() {
       const k = 0.14;
       lx.current += (tx.current - lx.current) * k;
       ly.current += (ty.current - ly.current) * k;
-      img.style.transform = `perspective(1100px) rotateX(${lx.current}deg) rotateY(${ly.current}deg) scale(1.02)`;
+      img.style.transform = `perspective(1100px) rotateX(${lx.current}deg) rotateY(${ly.current}deg) scale(1.04)`;
       if (Math.abs(tx.current - lx.current) > 0.02 || Math.abs(ty.current - ly.current) > 0.02) {
         raf.current = requestAnimationFrame(tick);
       }
@@ -70,8 +87,24 @@ export function ButterChicken() {
         src="/assets/cheat-codes/butterchicken.png"
         alt=""
         className="h-full w-full object-cover will-change-transform"
-        style={{ transformOrigin: "50% 45%", transform: "perspective(1100px) rotateX(0deg) rotateY(0deg) scale(1.02)" }}
+        style={{ transformOrigin: "50% 42%", transform: "perspective(1100px) rotateX(0deg) rotateY(0deg) scale(1.04)" }}
         draggable={false}
+      />
+      {/* Vignette */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 45%, transparent 30%, rgba(0,0,0,0.55) 100%)",
+        }}
+      />
+      {/* Film grain */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
+          backgroundSize: "180px 180px",
+        }}
       />
     </div>
   );

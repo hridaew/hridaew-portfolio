@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { LightboxProvider, LightboxImage } from "@/components/virdio/Lightbox";
 import { Reveal } from "@/components/Reveal";
 import { HeroTextAnimation } from "@/components/HeroTextAnimation";
@@ -16,19 +15,21 @@ import { SITE_COLUMN } from "@/components/home/homeGrid";
 /** One horizontal shell for every MCES section */
 const mcesShell = SITE_COLUMN;
 
-export default function MemoryCarePage() {
-    useEffect(() => {
-        document.documentElement.classList.remove("dark");
-        return () => {
-            document.documentElement.classList.add("dark");
-        };
-    }, []);
+const MCES_MORTATI_PROJECT_HREF =
+    "https://mortati.com/project/san-francisco-campus-for-jewish-living-memory-care-experience-station/";
+const MCES_SFCJL_STATION_HREF =
+    "https://www.jhslf.org/innovating-dementia-care-the-memory-care-experience-station/";
 
+const mcesExternalLinkClass =
+    "underline decoration-white/35 underline-offset-[0.15em] transition-colors hover:decoration-white/70 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+export default function MemoryCarePage() {
     return (
         <>
         <LightboxProvider>
-            <div className="site-editorial bg-[#FAFAFA] min-h-screen w-full relative overflow-x-hidden selection:bg-neutral-200 selection:text-neutral-900 font-sans antialiased">
+            <div className="site-editorial relative min-h-screen w-full overflow-x-hidden bg-background text-foreground selection:bg-white/10 selection:text-white font-sans antialiased">
                 <StickySidebar
+                    variant="dark"
                     sections={[
                         { id: "hero", label: "Intro", number: "00" },
                         { id: "connection", label: "Connection", number: "01" },
@@ -41,15 +42,15 @@ export default function MemoryCarePage() {
 
                 {/* ─── HERO ─── */}
                 <section id="hero" className="relative pt-32 pb-20 md:pt-40 md:pb-28">
-                    <div className="absolute inset-0 bg-gradient-to-b from-neutral-200/30 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] to-transparent pointer-events-none" />
                     <div className={cn("relative", mcesShell)}>
                     <div className="relative w-full min-w-0 text-left">
                         <Reveal>
-                            <div className="case-study-hero-bump-mb inline-flex items-center gap-2 rounded-full border border-neutral-200/60 bg-neutral-100 px-4 py-1.5">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-500">
+                            <div className="case-study-hero-bump-mb inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-white/45">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                 </svg>
-                                <span className="site-label text-neutral-600 text-left">
+                                <span className="site-label text-left text-white/70">
                                     Fast Company &ldquo;World Changing Ideas&rdquo; Finalist
                                 </span>
                             </div>
@@ -57,29 +58,29 @@ export default function MemoryCarePage() {
 
                         <HeroTextAnimation
                             variant="typewriter"
-                            className="type-h1 case-study-hero-title-mb-loose text-left text-neutral-900"
+                            className="type-h1 case-study-hero-title-mb-loose text-left text-white"
                         >
                             Memory Care Experience Station
                         </HeroTextAnimation>
 
                         <Reveal delay={0.2}>
-                            <p className="site-body case-study-hero-lead-mb text-left text-neutral-600">
+                            <p className="site-body case-study-hero-lead-mb text-left text-white/65">
                                 A multi-sensory pilot program enabling immersive engagement for residents with sensory deprivation.
                             </p>
                         </Reveal>
 
                         <Reveal delay={0.3}>
-                            <div className="flex flex-wrap justify-start gap-x-8 gap-y-3 site-body text-neutral-600">
+                            <div className="flex flex-wrap justify-start gap-x-8 gap-y-3 site-body text-white/65">
                                 <div>
-                                    <span className="site-label text-neutral-400 case-study-meta-line-mb block text-left">Role</span>
+                                    <span className="site-label text-white/40 case-study-meta-line-mb block text-left">Role</span>
                                     Interaction Designer (Physical Prototyping & UI)
                                 </div>
                                 <div>
-                                    <span className="site-label text-neutral-400 case-study-meta-line-mb block text-left">Timeline</span>
+                                    <span className="site-label text-white/40 case-study-meta-line-mb block text-left">Timeline</span>
                                     18 Months (Pilot Program)
                                 </div>
                                 <div>
-                                    <span className="site-label text-neutral-400 case-study-meta-line-mb block text-left">Team</span>
+                                    <span className="site-label text-white/40 case-study-meta-line-mb block text-left">Team</span>
                                     Maria Mortati, Scott Minneman, SFCJL Staff
                                 </div>
                             </div>
@@ -91,7 +92,7 @@ export default function MemoryCarePage() {
                 {/* ─── Station Hero Image ─── */}
                 <section className={cn(mcesShell, "pb-12 md:pb-16")}>
                     <Reveal>
-                        <div className="rounded-2xl overflow-hidden border border-neutral-200/40">
+                        <div className="rounded-2xl overflow-hidden border border-white/10">
                             <LightboxImage
                                 src="/assets/memory-care/mces_hero.avif"
                                 alt="The Memory Care Experience Station"
@@ -106,7 +107,7 @@ export default function MemoryCarePage() {
                 {/* ─── YouTube Embed ─── */}
                 <section className={cn(mcesShell, "pb-20 md:pb-28")}>
                     <Reveal>
-                        <div className="relative w-full min-w-0 aspect-video overflow-hidden rounded-2xl border border-neutral-200/40 shadow-2xl shadow-black/10">
+                        <div className="relative w-full min-w-0 aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
                             <iframe
                                 src="https://www.youtube.com/embed/BRHRaoAjPeo?rel=0&modestbranding=1"
                                 title="Memory Care Experience Station"
@@ -123,9 +124,41 @@ export default function MemoryCarePage() {
                 {/* ─── CHALLENGE LEAD ─── */}
                 <section className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
-                        <p className="site-body font-medium text-neutral-800 text-left">
-                            Residents with mid-to-late stage dementia often face sensory deprivation and profound isolation. The San Francisco Campus for Jewish Living (SFCJL) sought to create an &ldquo;Experience Station&rdquo; to provide meaningful stimulation. While stakeholders initially explored Virtual Reality, our research indicated that headsets could cause confusion or fear in this demographic. We followed a &ldquo;Tangible Immersion&rdquo; strategy &mdash; creating a station that served as a window to the world, grounded in multisensory stimulation.
-                        </p>
+                        <div className="flex flex-col gap-5 text-left md:gap-6">
+                            <p className="site-body font-medium text-white/85">
+                                The Memory Care Experience Station (MCES) is a large-scale interactive experience from{" "}
+                                <a
+                                    href={MCES_MORTATI_PROJECT_HREF}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={mcesExternalLinkClass}
+                                >
+                                    Maria Mortati Experience Design
+                                </a>
+                                .
+                            </p>
+                            <p className="site-body text-white/65">
+                                Made for people with mid-to-late stage dementia, it is a pilot program that provides engaging experiences via bespoke multi-sensory content. It is meant for life enrichment.
+                            </p>
+                            <p className="site-body text-white/65">
+                                The current iteration is deployed and being enjoyed by residents at the{" "}
+                                <a
+                                    href={MCES_SFCJL_STATION_HREF}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={mcesExternalLinkClass}
+                                >
+                                    San Francisco Campus for Jewish Living
+                                </a>
+                                .
+                            </p>
+                            <p className="site-body text-white/65">
+                                I was brought on to build a research database for Alzheimer&apos;s.
+                            </p>
+                            <p className="site-body text-white/65">
+                                My role quickly grew to include developing proof-of-concept mock-ups, low-fidelity physical prototypes, and digital UI design, all of which were tested with residents and staff.
+                            </p>
+                        </div>
                     </Reveal>
                 </section>
 
@@ -135,13 +168,13 @@ export default function MemoryCarePage() {
                 <section id="connection" className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
                         <div className="case-study-subsection-gap flex flex-col case-study-heading-trail-gap">
-                            <span className="site-label text-neutral-400 text-left">
+                            <span className="site-label text-white/40 text-left">
                                 01
                             </span>
-                            <h2 className="site-chapter-heading text-left text-neutral-900">
+                            <h2 className="site-chapter-heading text-left text-white">
                                 Prototyping Connection
                             </h2>
-                            <p className="site-body text-left text-neutral-600">
+                            <p className="site-body text-left text-white/65">
                                 Bridging the digital-physical gap with &ldquo;hacked&rdquo; hardware.
                             </p>
                         </div>
@@ -150,10 +183,10 @@ export default function MemoryCarePage() {
                     {/* Insight */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                 The Insight
                             </span>
-                            <p className="site-body text-neutral-600 text-left">
+                            <p className="site-body text-white/65 text-left">
                                 Existing content was static and passive. We hypothesized that adding a tactile dimension &ndash; giving residents something to hold &ndash; would increase emotional grounding and immersion.
                             </p>
                         </div>
@@ -162,10 +195,10 @@ export default function MemoryCarePage() {
                     {/* Cat Petting Prototype */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                 The Prototype: The Cat Petting Experience
                             </span>
-                            <p className="site-body text-neutral-600 text-left">
+                            <p className="site-body text-white/65 text-left">
                                 I &ldquo;hacked&rdquo; three plush cats, embedding them with pressure sensors and haptic vibration motors wired to an Arduino. Petting the toy triggered a &ldquo;purr&rdquo; vibration and played a synchronized video of that cat on the screen.
                             </p>
                         </div>
@@ -181,7 +214,7 @@ export default function MemoryCarePage() {
                                 draggable={false}
                                 hoverScale={1.02}
                             />
-                            <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+                            <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
                                 The cat petting prototype &mdash; a plush toy embedded with pressure sensors and haptic vibration motors.
                             </p>
                         </div>
@@ -199,11 +232,11 @@ export default function MemoryCarePage() {
 
                     {/* Validation */}
                     <Reveal>
-                        <div className="bg-white/60 rounded-2xl border border-neutral-200/40 p-8 md:p-10">
-                            <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                        <div className="bg-card rounded-2xl border border-white/10 p-8 md:p-10">
+                            <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                 The Validation
                             </span>
-                            <p className="site-body text-neutral-600 text-left">
+                            <p className="site-body text-white/65 text-left">
                                 Early testing revealed a strong emotional response; residents instinctively tried to pick up and hold the animals. This validated the need for &ldquo;Tangible Companionship&rdquo; and informed future iterations to be wireless and robust for daily facility use.
                             </p>
                         </div>
@@ -216,13 +249,13 @@ export default function MemoryCarePage() {
                 <section id="accessibility" className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
                         <div className="case-study-subsection-gap flex flex-col case-study-heading-trail-gap">
-                            <span className="site-label text-neutral-400 text-left">
+                            <span className="site-label text-white/40 text-left">
                                 02
                             </span>
-                            <h2 className="site-chapter-heading text-left text-neutral-900">
+                            <h2 className="site-chapter-heading text-left text-white">
                                 Adapting Haptics for Accessibility
                             </h2>
-                            <p className="site-body text-left text-neutral-600">
+                            <p className="site-body text-left text-white/65">
                                 Decoupling technology from furniture to ensure universal access.
                             </p>
                         </div>
@@ -232,18 +265,18 @@ export default function MemoryCarePage() {
                     <Reveal>
                         <div className="case-study-grid-gap-wide case-study-block-gap grid grid-cols-1 md:grid-cols-2">
                             <div>
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     The Constraint
                                 </span>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     Haptic feedback is critical for sensory stimulation. However, the existing prototype was a platform placed under a chair, which was inaccessible to the majority of our residents who use wheelchairs.
                                 </p>
                             </div>
                             <div>
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     The Solution: The Haptic Footrest
                                 </span>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     I iterated on the hardware at home, aiming to further mobilize the haptics. I used an existing foot rest since it could adapt to different people and be moved with ease, and attached a strong haptic emitter to the back of it, enabling the experience of haptics without compromising on accessibility and quality.
                                 </p>
                             </div>
@@ -253,7 +286,7 @@ export default function MemoryCarePage() {
                     {/* Side-by-side — Old haptics to Footrest */}
                     <Reveal className="case-study-block-gap">
                         <div className="case-study-grid-gap-dense grid grid-cols-1 items-start md:grid-cols-2">
-                            <div className="rounded-xl overflow-hidden border border-neutral-200/40 h-fit">
+                            <div className="rounded-xl overflow-hidden border border-white/10 h-fit">
                                 <LightboxImage
                                     src="/assets/memory-care/oldhaptics.avif"
                                     alt="Original haptics platform under chair"
@@ -261,7 +294,7 @@ export default function MemoryCarePage() {
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-200/40 h-fit">
+                            <div className="rounded-xl overflow-hidden border border-white/10 h-fit">
                                 <LightboxImage
                                     src="/assets/memory-care/footrest_prototype.jpg"
                                     alt="Haptic footrest prototype"
@@ -270,7 +303,7 @@ export default function MemoryCarePage() {
                                 />
                             </div>
                         </div>
-                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
                             By changing the form factor from a floor panel to a footrest, we ensured 100% of residents could access the experience without leaving their wheelchairs.
                         </p>
                     </Reveal>
@@ -283,10 +316,10 @@ export default function MemoryCarePage() {
                     {/* Driving simulator photos */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                 The Application: Restoring Agency
                             </span>
-                            <p className="site-body case-study-hero-bump-mb text-left text-neutral-600">
+                            <p className="site-body case-study-hero-bump-mb text-left text-white/65">
                                 We paired this hardware with a Driving Simulator. I thought it would be great to give the residents a sense of control, by having them play a realistic driving game paired with a Logitech steering wheel with force feedback.
                             </p>
                         </div>
@@ -294,7 +327,7 @@ export default function MemoryCarePage() {
 
                     <Reveal className="case-study-block-gap">
                         <div className="case-study-grid-gap-dense grid grid-cols-1 md:grid-cols-2">
-                            <div className="rounded-xl overflow-hidden border border-neutral-200/40">
+                            <div className="rounded-xl overflow-hidden border border-white/10">
                                 <LightboxImage
                                     src="/assets/memory-care/img_3527.jpg"
                                     alt="Haptic footrest setup with driving simulator"
@@ -302,7 +335,7 @@ export default function MemoryCarePage() {
                                     draggable={false}
                                 />
                             </div>
-                            <div className="rounded-xl overflow-hidden border border-neutral-200/40">
+                            <div className="rounded-xl overflow-hidden border border-white/10">
                                 <LightboxImage
                                     src="/assets/memory-care/driving_simulator_desk.png"
                                     alt="Custom plywood driving simulator desk on casters with Logitech wheel, monitor, and under-desk electronics enclosure"
@@ -311,7 +344,7 @@ export default function MemoryCarePage() {
                                 />
                             </div>
                         </div>
-                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
                             The driving setup paired a Logitech force-feedback wheel with POV driving footage and the haptic footrest.
                         </p>
                     </Reveal>
@@ -319,27 +352,27 @@ export default function MemoryCarePage() {
                     {/* Pivot / Fix / Result — stacked cards */}
                     <Reveal>
                         <div className="case-study-grid-gap flex flex-col">
-                            <div className="bg-white/60 rounded-xl border border-neutral-200/40 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="bg-card rounded-xl border border-white/10 p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     The Pivot
                                 </span>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     Initial tests with a video game (Assetto Corsa) failed because it was fundamentally a commercial title, not something purpose-built for our audience. It had no guardrails, which led to confusion, and it was cumbersome to set up.
                                 </p>
                             </div>
-                            <div className="bg-white/60 rounded-xl border border-neutral-200/40 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="bg-card rounded-xl border border-white/10 p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     The Fix
                                 </span>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     I pivoted to &ldquo;Simulated Agency.&rdquo; We synced high-quality POV driving footage with the Logitech force-feedback wheel and my haptic footrest.
                                 </p>
                             </div>
-                            <div className="bg-white/60 rounded-xl border border-neutral-200/40 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="bg-card rounded-xl border border-white/10 p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     The Result
                                 </span>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     Residents got the tactile satisfaction of steering and &ldquo;feeling&rdquo; the road rumble through their feet, without the risk of failure.
                                 </p>
                             </div>
@@ -353,13 +386,13 @@ export default function MemoryCarePage() {
                 <section id="caregiver" className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
                         <div className="case-study-subsection-gap flex flex-col case-study-heading-trail-gap">
-                            <span className="site-label text-neutral-400 text-left">
+                            <span className="site-label text-white/40 text-left">
                                 03
                             </span>
-                            <h2 className="site-chapter-heading text-left text-neutral-900">
+                            <h2 className="site-chapter-heading text-left text-white">
                                 The Caregiver Interface
                             </h2>
-                            <p className="site-body text-left text-neutral-600">
+                            <p className="site-body text-left text-white/65">
                                 Transforming medical metadata into a session tool.
                             </p>
                         </div>
@@ -367,7 +400,7 @@ export default function MemoryCarePage() {
 
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <p className="site-body text-neutral-600 text-left">
+                            <p className="site-body text-white/65 text-left">
                                 The station is controlled by facility staff who are often stretched thin. If the digital interface was difficult to configure, the physical station would sit unused. Feedback indicated the original system felt like a static medical database, lacking the flexibility needed for improvised care sessions.
                             </p>
                         </div>
@@ -375,7 +408,7 @@ export default function MemoryCarePage() {
 
                     {/* Dashboard — full width */}
                     <Reveal className="case-study-block-gap">
-                        <div className="w-full min-w-0 overflow-hidden rounded-xl border border-neutral-200/40">
+                        <div className="w-full min-w-0 overflow-hidden rounded-xl border border-white/10">
                             <LightboxImage
                                 src="/assets/memory-care/simple_dash.png"
                                 alt="Caregiver dashboard: morning greeting, resident selection, session scheduling, incomplete observation forms, and layered experience guidance with engagement tips"
@@ -383,7 +416,7 @@ export default function MemoryCarePage() {
                                 draggable={false}
                             />
                         </div>
-                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+                        <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
                             The interface prioritizes &ldquo;Session Flow&rdquo; over &ldquo;Data Entry,&rdquo; empowering staff to personalize experiences in seconds.
                         </p>
                     </Reveal>
@@ -391,8 +424,8 @@ export default function MemoryCarePage() {
                     {/* Detail cards — stacked */}
                     <Reveal>
                         <div className="case-study-grid-gap case-study-block-gap flex w-full min-w-0 flex-col">
-                            <div className="w-full min-w-0 rounded-xl border border-neutral-200/40 bg-white/60 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="w-full min-w-0 rounded-xl border border-white/10 bg-card p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     Reducing Cognitive Load
                                 </span>
                                 <div className="case-study-heading-trail-mb w-full min-w-0 overflow-hidden rounded-lg">
@@ -403,12 +436,12 @@ export default function MemoryCarePage() {
                                         draggable={false}
                                     />
                                 </div>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     I removed extraneous widgets and filtered the Information Architecture to prioritize &ldquo;Engagement Tips&rdquo; and simple session controls.
                                 </p>
                             </div>
-                            <div className="w-full min-w-0 rounded-xl border border-neutral-200/40 bg-white/60 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="w-full min-w-0 rounded-xl border border-white/10 bg-card p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     Personalization
                                 </span>
                                 <div className="case-study-heading-trail-mb w-full min-w-0 overflow-hidden rounded-lg">
@@ -419,12 +452,12 @@ export default function MemoryCarePage() {
                                         draggable={false}
                                     />
                                 </div>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     I introduced &ldquo;Quick Add&rdquo; features for improvised content (e.g., specific YouTube requests) and recommended playlists based on resident history.
                                 </p>
                             </div>
-                            <div className="w-full min-w-0 rounded-xl border border-neutral-200/40 bg-white/60 p-6">
-                                <span className="site-label text-neutral-400 case-study-heading-trail-mb block text-left">
+                            <div className="w-full min-w-0 rounded-xl border border-white/10 bg-card p-6">
+                                <span className="site-label text-white/40 case-study-heading-trail-mb block text-left">
                                     Contextual Notes
                                 </span>
                                 <div className="case-study-heading-trail-mb w-full min-w-0 overflow-hidden rounded-lg">
@@ -435,7 +468,7 @@ export default function MemoryCarePage() {
                                         draggable={false}
                                     />
                                 </div>
-                                <p className="site-body text-neutral-600 text-left">
+                                <p className="site-body text-white/65 text-left">
                                     I replaced buried metadata with prominent staff notes, ensuring critical preferences (e.g., &ldquo;responds to socially interactive experiences&rdquo;) were visible at a glance.
                                 </p>
                             </div>
@@ -445,7 +478,7 @@ export default function MemoryCarePage() {
                     {/* WEBUI — video detail */}
                     <Reveal>
                         <div className="flex w-full min-w-0 flex-col">
-                            <div className="overflow-hidden rounded-xl border border-neutral-200/40">
+                            <div className="overflow-hidden rounded-xl border border-white/10">
                                 <LightboxImage
                                     src="/assets/memory-care/ui_video_player.jpg"
                                     alt="Video player interface"
@@ -453,7 +486,7 @@ export default function MemoryCarePage() {
                                     draggable={false}
                                 />
                             </div>
-                            <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+                            <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
                                 Experience content page with guidance for caregivers on how to run a session
                             </p>
                         </div>
@@ -464,31 +497,30 @@ export default function MemoryCarePage() {
                     IMPACT STATS
                 ═══════════════════════════════════════════════ */}
                 <section id="impact" className="relative case-study-section-y overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-50" />
                     <div className={cn("relative", mcesShell)}>
                         <Reveal>
                             <div className="case-study-grid-gap-wide grid grid-cols-1 text-center md:grid-cols-3">
                                 <div>
-                                    <p className="type-h1 case-study-tight-trail-mb text-left text-neutral-800">
+                                    <p className="type-h1 case-study-tight-trail-mb text-left text-white/85">
                                         194+
                                     </p>
-                                    <p className="site-body text-neutral-600 text-left">
+                                    <p className="site-body text-white/65 text-left">
                                         Recorded sessions at SFCJL
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="type-h1 case-study-tight-trail-mb text-left text-neutral-800">
+                                    <p className="type-h1 case-study-tight-trail-mb text-left text-white/85">
                                         95%
                                     </p>
-                                    <p className="site-body text-neutral-600 text-left">
+                                    <p className="site-body text-white/65 text-left">
                                         Positive sentiment (33% Very Positive, 62% Positive)
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="type-h1 case-study-tight-trail-mb text-left text-neutral-800">
+                                    <p className="type-h1 case-study-tight-trail-mb text-left text-white/85">
                                         6+
                                     </p>
-                                    <p className="site-body text-neutral-600 text-left">
+                                    <p className="site-body text-white/65 text-left">
                                         Major award recognitions
                                     </p>
                                 </div>
@@ -503,25 +535,25 @@ export default function MemoryCarePage() {
                 <section className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
                         <div className="case-study-grid-gap-wide flex w-full min-w-0 flex-col">
-                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-neutral-200/40 bg-white/70 p-8 md:p-10">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-200">
+                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-white/10 bg-card p-8 md:p-10">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-white/12">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
-                                <p className="site-body text-left text-neutral-800">
+                                <p className="site-body text-left text-white/85">
                                     &ldquo;The Experience Station helps bring residents back online. It soothes the parasympathetic nervous system and helps mitigate distressing behaviors.&rdquo;
                                 </p>
-                                <p className="site-body text-left text-neutral-500">
+                                <p className="site-body text-left text-white/45">
                                     Manager of Life Enrichment, SFCJL
                                 </p>
                             </div>
-                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-neutral-200/40 bg-white/70 p-8 md:p-10">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-200">
+                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-white/10 bg-card p-8 md:p-10">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-white/12">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
-                                <p className="site-body text-left text-neutral-800">
+                                <p className="site-body text-left text-white/85">
                                     &ldquo;The Experience Station is a way to bridge connections, foster relationships for new staff to home in on residents. As well as facilitation for family members with their desire for connection.&rdquo;
                                 </p>
-                                <p className="site-body text-left text-neutral-500">
+                                <p className="site-body text-left text-white/45">
                                     Life Enrichment Coordinator, SFCJL
                                 </p>
                             </div>
@@ -534,45 +566,53 @@ export default function MemoryCarePage() {
                 ═══════════════════════════════════════════════ */}
                 <section className={cn(mcesShell, "pb-20 md:pb-28")}>
                     <Reveal>
-                        <div className="bg-white/60 rounded-2xl border border-neutral-200/60 p-8 md:p-10">
-                            <h3 className="site-label case-study-panel-heading-mb text-left text-neutral-400">
+                        <div className="bg-card rounded-2xl border border-white/10 p-8 md:p-10">
+                            <h3 className="site-label case-study-panel-heading-mb text-left text-white/40">
                                 Recognition
                             </h3>
                             <div className="case-study-prose-stack flex flex-col">
                                 <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
+                                    <span
+                                        aria-hidden
+                                        className="flex h-[1.5rem] w-4 shrink-0 items-center justify-center leading-none text-white/40"
+                                    >
+                                        &#9733;
+                                    </span>
+                                    <p className="site-body text-white/85 text-left">
                                         CABHI (Centre for Aging + Brain Health Innovation) — 2x Award Recipient
                                     </p>
                                 </div>
                                 <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
+                                    <span
+                                        aria-hidden
+                                        className="flex h-[1.5rem] w-4 shrink-0 items-center justify-center leading-none text-white/40"
+                                    >
+                                        &#9733;
+                                    </span>
+                                    <p className="site-body text-white/85 text-left">
                                         Finalist: Fast Company 2022 World Changing Ideas (Experimental Category)
                                     </p>
                                 </div>
                                 <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
+                                    <span
+                                        aria-hidden
+                                        className="flex h-[1.5rem] w-4 shrink-0 items-center justify-center leading-none text-white/40"
+                                    >
+                                        &#9733;
+                                    </span>
+                                    <p className="site-body text-white/85 text-left">
                                         SCAN Foundation Innovation Award
                                     </p>
                                 </div>
                                 <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
+                                    <span
+                                        aria-hidden
+                                        className="flex h-[1.5rem] w-4 shrink-0 items-center justify-center leading-none text-white/40"
+                                    >
+                                        &#9733;
+                                    </span>
+                                    <p className="site-body text-white/85 text-left">
                                         Leading Age Innovation Award
-                                    </p>
-                                </div>
-                                <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
-                                        Sephardic Foundation Grant Recipient
-                                    </p>
-                                </div>
-                                <div className="case-study-grid-gap-dense flex items-start">
-                                    <span className="text-neutral-400 mt-0.5">&#9733;</span>
-                                    <p className="site-body text-neutral-800 text-left">
-                                        Invited for journal publication
                                     </p>
                                 </div>
                             </div>
@@ -585,8 +625,8 @@ export default function MemoryCarePage() {
                 ═══════════════════════════════════════════════ */}
                 <section className={cn(mcesShell, "pb-20 md:pb-28")}>
                     <Reveal>
-                        <div className="rounded-2xl border border-neutral-200/30 bg-white/50 p-8 md:p-10">
-                            <p className="site-body text-left text-neutral-600 italic">
+                        <div className="rounded-2xl border border-white/10 bg-card p-8 md:p-10">
+                            <p className="site-body text-left text-white/65 italic">
                                 Side Note: The haptic footrest prototype was so engaging to use for media consumption that I actually built a second unit to keep for myself.
                             </p>
                         </div>
@@ -598,16 +638,16 @@ export default function MemoryCarePage() {
                 ═══════════════════════════════════════════════ */}
                 <section id="reflection" className={cn(mcesShell, "pb-32 md:pb-40")}>
                     <Reveal>
-                        <h2 className="site-chapter-heading case-study-hero-bump-mb text-left text-neutral-900">
+                        <h2 className="site-chapter-heading case-study-hero-bump-mb text-left text-white">
                             Reflection
                         </h2>
                     </Reveal>
                     <Reveal delay={0.1}>
                         <div className="case-study-grid-gap-wide flex flex-col">
-                            <p className="site-body text-neutral-600 text-left">
+                            <p className="site-body text-white/65 text-left">
                                 I love to work in a hands-on capacity: screens, toys, games, physical form, all of it. This was a unique chance to stretch my skills and have the independence to create impactful experiences from scratch, as challenging as that was. This project came with a lot of special considerations for our users, and it changed my perspective as a designer to try to always consider the needs of all populations, not just the most common.
                             </p>
-                            <div className="rounded-xl overflow-hidden border border-neutral-200/40">
+                            <div className="rounded-xl overflow-hidden border border-white/10">
                                 <img
                                     src="/assets/memory-care/img_5897_720.jpg"
                                     alt="Reflection — the experience station in action"

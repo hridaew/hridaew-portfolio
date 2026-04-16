@@ -16,9 +16,9 @@ const CAT_PROTOTYPE_IMAGES = [
   },
 ] as const;
 
-/** Light editorial chrome — matches MCES case study surfaces. */
+/** Dark editorial chrome — matches MCES case study + home tokens. */
 const SLIDE_SHELL =
-  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-neutral-200/60 bg-neutral-100 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.08)]";
+  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-white/10 bg-card shadow-[0px_4px_24px_0px_rgba(0,0,0,0.45)]";
 
 interface CatPrototypeCarouselProps {
   className?: string;
@@ -47,7 +47,7 @@ export function CatPrototypeCarousel({ className }: CatPrototypeCarouselProps) {
           </div>
         ))}
       </ProjectCarousel>
-      <p className="site-gallery-caption case-study-caption-tight-mt text-left text-neutral-500">
+      <p className="site-gallery-caption case-study-caption-tight-mt text-left text-white/45">
         Prototype build — plush toy, Arduino wiring, internal sensors, and stereo hardware staged at home
       </p>
     </div>

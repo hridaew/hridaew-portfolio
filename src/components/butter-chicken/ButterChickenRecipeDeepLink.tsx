@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { scrollHomeWafflingsForDeepLinkThen } from "@/lib/scrollHomeWafflings";
 import { useButterChickenRecipeModalOptional } from "./ButterChickenRecipeModal";
 
 const WAFFLING_QUERY = "waffling";
@@ -15,19 +16,34 @@ const WAFFLING_VALUE = "butter-chicken";
 export function ButterChickenRecipeDeepLink() {
     const searchParams = useSearchParams();
     const recipe = useButterChickenRecipeModalOptional();
-    const openedForQuery = useRef(false);
+    const open = recipe?.open;
+    const isOpen = recipe?.isOpen ?? false;
+    /** True once the URL has contained `waffling=butter-chicken` while the modal was open — avoids reopening after dismiss while the query is still present for a frame. */
+    const hadQueryWhileOpenRef = useRef(false);
 
     useEffect(() => {
-        if (searchParams.get(WAFFLING_QUERY) !== WAFFLING_VALUE) {
-            openedForQuery.current = false;
+        const has = searchParams.get(WAFFLING_QUERY) === WAFFLING_VALUE;
+
+        if (!has) {
+            hadQueryWhileOpenRef.current = false;
             return;
         }
-        if (!recipe) return;
-        if (recipe.isOpen) return;
-        if (openedForQuery.current) return;
-        openedForQuery.current = true;
-        recipe.open("deeplink");
-    }, [searchParams, recipe]);
+        if (!open) return;
+
+        if (isOpen) {
+            hadQueryWhileOpenRef.current = true;
+            return;
+        }
+
+        // Modal is closed but the URL still shows the recipe query: only auto-open
+        // when navigating *into* this state (deeplink / fresh load), not after the
+        // user dismissed the modal while the query was already active (e.g. opened from card).
+        if (hadQueryWhileOpenRef.current) {
+            return;
+        }
+
+        scrollHomeWafflingsForDeepLinkThen(() => open("deeplink"));
+    }, [searchParams, isOpen, open]);
 
     return null;
 }

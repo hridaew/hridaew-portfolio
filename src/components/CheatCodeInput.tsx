@@ -19,9 +19,13 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
 
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter") handleSubmit();
+            if (e.key !== "Enter") return;
+            e.preventDefault();
+            // Stop the activating Enter from reaching a deferred global "skip intro" listener.
+            if (value.trim()) e.stopPropagation();
+            handleSubmit();
         },
-        [handleSubmit]
+        [handleSubmit, value]
     );
 
     return (

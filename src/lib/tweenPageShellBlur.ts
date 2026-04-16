@@ -14,6 +14,13 @@ export type TweenPageShellBlurOptions = {
    * portaled UI keyed to anchor rects) does not drift during the hero expand.
    */
   omitScale?: boolean;
+  /**
+   * Jump to the target blur/scale with no animation. Use when a portaled surface
+   * uses `backdrop-filter`: a tweening `filter` on the shell behind it changes what
+   * the backdrop samples, so the glass appears to “shift blur” even if the card’s
+   * own `backdrop-blur` is constant.
+   */
+  instant?: boolean;
 };
 
 /** Page shell blur + slight scale (same tuning as butter-chicken modal). */
@@ -24,9 +31,22 @@ export function tweenPageShellBlur(
   const el = document.querySelector(PAGE_TRANSITION_SHELL_SELECTOR);
   if (!el) return;
   const { blurPx, scaleDown, openDuration, closeDuration } = BUTTER_CHICKEN_SHELL_GSAP;
-  const { onUpdate, omitScale } = opts ?? {};
+  const { onUpdate, omitScale, instant } = opts ?? {};
   const useScale = !omitScale;
   gsap.killTweensOf(el);
+
+  if (instant) {
+    gsap.set(el, {
+      scale: useScale ? (active ? scaleDown : 1) : 1,
+      filter: active ? `blur(${blurPx}px)` : "blur(0px)",
+    });
+    onUpdate?.();
+    if (!active) {
+      gsap.set(el, { clearProps: "filter,scale" });
+    }
+    return;
+  }
+
   gsap.to(el, {
     scale: useScale ? (active ? scaleDown : 1) : 1,
     filter: active ? `blur(${blurPx}px)` : "blur(0px)",

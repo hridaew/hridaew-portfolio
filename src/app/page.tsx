@@ -30,8 +30,12 @@ export default function Home() {
         }
       });
     } else {
-      window.scrollTo(0, 0);
-      (window as unknown as { __lenis?: { scrollTo: (n: number, o: { immediate: boolean }) => void } }).__lenis?.scrollTo(0, { immediate: true });
+      const params = new URLSearchParams(window.location.search);
+      const butterChickenDeepLink = params.get("waffling") === "butter-chicken";
+      if (!butterChickenDeepLink) {
+        window.scrollTo(0, 0);
+        (window as unknown as { __lenis?: { scrollTo: (n: number, o: { immediate: boolean }) => void } }).__lenis?.scrollTo(0, { immediate: true });
+      }
     }
   }, []);
 
@@ -48,6 +52,7 @@ export default function Home() {
   return (
     <div
       data-cheat-theme-scope
+      data-cheat-home-shell
       className="relative min-h-screen w-full max-w-[100vw] overflow-x-clip"
     >
       {/* overflow-x-clip: only past the viewport edge—Embla track stays overflow-visible so slides peek inside the screen. */}
@@ -69,7 +74,7 @@ export default function Home() {
                 I built this portfolio website with Figma &rarr; Figma Make &rarr; Claude Code + Cursor + Antigravity (basically wherever I had tokens left)
               </p>
               <p className="shrink-0 tabular-nums text-white/20" aria-label="Site version">
-                v2.13.7
+                v2.13.8
               </p>
             </div>
           </div>

@@ -69,7 +69,7 @@ export function BioSection() {
       </p>
       <p className="mt-6">
         I studied Interaction Design at California College of the Arts, and have
-        a Master&apos;s in HCI at The University of Washington.
+        a Master&apos;s in HCI from The University of Washington.
       </p>
     </div>
   );

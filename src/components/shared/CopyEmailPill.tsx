@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { CONTACT_EMAIL } from "@/lib/contactEmail";
 
-export const CONTACT_EMAIL = "hridaew@gmail.com";
+export { CONTACT_EMAIL };
 
 const COPY_TOAST_MS = 1800;
 

@@ -32,6 +32,7 @@ export function ToolkitSection() {
         {TOOLKIT_ITEMS.map((item) => (
           <div
             key={item.file}
+            data-toolkit-icon-tile
             className="group relative flex flex-col items-center justify-end overflow-visible"
           >
             <span

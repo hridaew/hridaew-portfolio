@@ -6,6 +6,7 @@ import { homepageWafflings, type WafflingData } from "@/data/homepage-wafflings"
 import { useButterChickenRecipeModal } from "@/components/butter-chicken/ButterChickenRecipeModal";
 import { FigmaButterChickenWafflingCard } from "./FigmaButterChickenWafflingCard";
 import { HOME_WAFFLINGS_EMBLA_VIEWPORT } from "./homeGrid";
+import { HOME_WAFFLINGS_SECTION_ID } from "@/lib/scrollHomeWafflings";
 import { ProjectCarousel } from "./ProjectCarousel";
 
 function clamp(n: number, min: number, max: number) {
@@ -136,7 +137,7 @@ function WafflingCard({ waffling }: { waffling: WafflingData }) {
 
 export function WafflingsSection() {
   return (
-    <div className="flex w-full min-w-0 flex-col items-start gap-12">
+    <div id={HOME_WAFFLINGS_SECTION_ID} className="flex w-full min-w-0 flex-col items-start gap-12">
       {/* Section label */}
       <div className="flex w-full items-center gap-4 pr-8">
         <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50 whitespace-nowrap">

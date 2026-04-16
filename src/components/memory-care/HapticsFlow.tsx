@@ -150,10 +150,10 @@ export function HapticsFlow({ className }: HapticsFlowProps) {
           {/* Node card */}
           <div
             data-node
-            className="flex flex-col items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-5 sm:px-6 sm:py-6 shadow-sm min-w-[80px] sm:min-w-[100px]"
+            className="flex min-w-[80px] flex-col items-center gap-2 rounded-2xl border border-white/10 bg-card px-4 py-5 shadow-sm sm:min-w-[100px] sm:px-6 sm:py-6"
           >
-            <div className="text-neutral-700">{node.icon}</div>
-            <span className="site-gallery-caption text-center text-neutral-700">
+            <div className="text-white/75">{node.icon}</div>
+            <span className="site-gallery-caption text-center text-white/75">
               {node.label}
             </span>
           </div>
@@ -169,7 +169,7 @@ export function HapticsFlow({ className }: HapticsFlowProps) {
                 height="12"
                 viewBox="0 0 36 12"
                 fill="none"
-                className="text-neutral-400"
+                className="text-white/35"
               >
                 <path
                   d="M0 6h30"
@@ -188,7 +188,7 @@ export function HapticsFlow({ className }: HapticsFlowProps) {
               {/* Flowing pulse dot */}
               <div
                 data-pulse
-                className="absolute top-1/2 -translate-y-1/2 left-0 w-2 h-2 rounded-full bg-neutral-500 opacity-0"
+                className="absolute left-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-white/50 opacity-0"
               />
             </div>
           )}

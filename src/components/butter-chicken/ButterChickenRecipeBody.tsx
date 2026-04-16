@@ -1,11 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import type { ImageProps } from "next/image";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { Download, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
+import {
+  buildButterChickenRecipeShareUrl,
+  downloadButterChickenRecipePdf,
+} from "@/lib/butterChickenRecipePdf";
 import { cn } from "@/lib/utils";
 
 /** Same spine as `HOME_COLUMN` but slightly tighter side gutters inside the modal sheet. */
@@ -372,16 +379,142 @@ function StepImage({
 
 /* ── main body ──────────────────────────────────────────────────── */
 
+/** Hero `ExpandToggle` chrome: `rounded-full bg-white/[0.03]` + hover/active. */
+const RECIPE_CHROME_ICON_BTN =
+  "relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03] transition-colors duration-75 ease-out hover:bg-white/[0.08] active:bg-white/[0.16] disabled:pointer-events-none disabled:opacity-40" as const;
+
+function ButterChickenRecipeTitleActions() {
+  const pathname = usePathname();
+  const [pdfBusy, setPdfBusy] = useState(false);
+
+  const onShare = useCallback(async () => {
+    const url = buildButterChickenRecipeShareUrl(pathname || "/");
+    if (!url) {
+      toast.error("Could not build link");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied");
+    } catch {
+      toast.error("Could not copy link");
+    }
+  }, [pathname]);
+
+  const onDownloadPdf = useCallback(async () => {
+    setPdfBusy(true);
+    try {
+      await downloadButterChickenRecipePdf();
+    } catch {
+      toast.error("Could not create PDF");
+    } finally {
+      setPdfBusy(false);
+    }
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        className={cn(RECIPE_CHROME_ICON_BTN)}
+        aria-busy={pdfBusy}
+        aria-label={pdfBusy ? "Generating PDF" : "Download recipe as PDF"}
+        disabled={pdfBusy}
+        onClick={onDownloadPdf}
+      >
+        <Download
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-white/80"
+          strokeWidth={2}
+          aria-hidden
+        />
+      </button>
+      <button
+        type="button"
+        className={cn(RECIPE_CHROME_ICON_BTN)}
+        aria-label="Copy link to this recipe"
+        onClick={onShare}
+      >
+        <Share2
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-white/80"
+          strokeWidth={2}
+          aria-hidden
+        />
+      </button>
+    </div>
+  );
+}
+
+export const ButterChickenRecipeCloseButton = forwardRef<
+  HTMLButtonElement,
+  { onClose: () => void; className?: string }
+>(function ButterChickenRecipeCloseButton({ onClose, className }, ref) {
+  const localRef = useRef<HTMLButtonElement | null>(null);
+
+  const setButtonRef = useCallback(
+    (node: HTMLButtonElement | null) => {
+      localRef.current = node;
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        (ref as { current: HTMLButtonElement | null }).current = node;
+      }
+    },
+    [ref],
+  );
+
+  const handleClick = useCallback(() => {
+    const el = localRef.current;
+    if (el) {
+      el.style.display = "none";
+    }
+    onClose();
+  }, [onClose]);
+
+  return (
+    <button
+      ref={setButtonRef}
+      type="button"
+      aria-label="Close recipe"
+      onClick={handleClick}
+      className={cn(
+        "group relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03]",
+        "transition-colors duration-75 ease-out hover:bg-white/[0.08] active:bg-white/[0.16]",
+        "motion-reduce:transition-none",
+        className,
+      )}
+    >
+      <svg
+        className="pointer-events-none absolute inset-0 block size-full"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        viewBox="0 0 32 32"
+        aria-hidden
+      >
+        <circle cx="16" cy="16" fill="white" fillOpacity="0.03" r="16" />
+        <path
+          d="M12 12l8 8m0-8l-8 8"
+          strokeWidth="2"
+          strokeLinecap="round"
+          className="stroke-white/80 transition-none group-active:stroke-white/35 motion-reduce:transition-none"
+          style={{ mixBlendMode: "screen" }}
+        />
+      </svg>
+    </button>
+  );
+});
+
 export function ButterChickenRecipeBody() {
   return (
-    <div className={cn(RECIPE_MODAL_COLUMN, "flex flex-col gap-12 pt-24 pb-6 md:pt-24 md:pb-8")}>
-      {/* Title */}
-      <h3
-        id="butter-chicken-modal-title"
-        className="font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-white/80"
-      >
-        Butter Chicken Recipe
-      </h3>
+    <div className={cn(RECIPE_MODAL_COLUMN, "flex flex-col gap-12 pt-16 pb-6 md:pt-24 md:pb-8")}>
+      <div className="flex w-full flex-col gap-3">
+        <h3
+          id="butter-chicken-modal-title"
+          className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-white/80"
+        >
+          Butter Chicken Recipe
+        </h3>
+        <ButterChickenRecipeTitleActions />
+      </div>
 
       {/* Hero image */}
       <div className="flex items-start">

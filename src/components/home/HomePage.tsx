@@ -16,7 +16,7 @@ const WafflingsSection = dynamic(
 
 export function HomePage() {
   return (
-    <div className="min-h-screen min-w-0 bg-[#0c0c0e] text-white">
+    <div data-home-cheat-skin className="min-h-screen min-w-0 bg-[#0c0c0e] text-white">
       <div className={HOME_COLUMN}>
         {/* Hero card with animated orbs */}
         <RevealOnLoad delay={0.05}>
