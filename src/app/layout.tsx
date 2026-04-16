@@ -40,12 +40,19 @@ export const metadata: Metadata = {
     siteName: "Hridae Walia Portfolio",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/social-open-graph.png",
+        alt: "Hridae Walia — Product Designer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Hridae Walia - Product Designer",
     description:
       "Product Designer with 5+ years of experience delivering end-to-end, research-led products at scale.",
+    images: ["/social-open-graph.png"],
   },
 };
 
