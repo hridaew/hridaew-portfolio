@@ -251,7 +251,7 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
                                       maxWidth: `min(100%, ${mw}px)`,
                                       maxHeight: `min(${mhVh}dvh, ${mhCap}px)`,
                                   }}
-                                  className="pointer-events-auto relative flex min-h-0 w-full max-w-full flex-col overflow-hidden rounded-[40px] border border-white/10 bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+                                  className="pointer-events-auto relative flex min-h-0 w-full max-w-full flex-col overflow-hidden rounded-[40px] border border-white/10 bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px] shadow-[0_24px_80px_rgba(0,0,0,0.55)] outline-none focus:outline-none focus-visible:outline-none"
                                   onClick={(e) => e.stopPropagation()}
                                   onPointerDown={(e) => e.stopPropagation()}
                                   role="dialog"

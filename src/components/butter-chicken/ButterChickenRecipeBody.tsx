@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ImageProps } from "next/image";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +28,46 @@ const STEP_IMG = {
   final1: "/assets/butter-chicken/steps/final-1.jpg",
   final2: "/assets/butter-chicken/steps/final-2.jpg",
 } as const;
+
+/** Soft fade / settle once `next/image` finishes decoding (avoids harsh pop-in). */
+function RecipeImageFade({
+  frame,
+  className,
+  onLoadingComplete,
+  ...rest
+}: ImageProps & { frame: "fill" | "inline" }) {
+  const reduceMotion = useReducedMotion();
+  const [loaded, setLoaded] = useState(false);
+
+  const frameClass =
+    frame === "fill" ? "absolute inset-0 overflow-hidden" : "relative inline-block max-w-full";
+
+  if (reduceMotion) {
+    return (
+      <div className={frameClass}>
+        <Image {...rest} className={className} onLoadingComplete={onLoadingComplete} />
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      className={frameClass}
+      initial={{ opacity: 0.06, y: frame === "fill" ? 6 : 4 }}
+      animate={{ opacity: loaded ? 1 : 0.06, y: loaded ? 0 : frame === "fill" ? 6 : 4 }}
+      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <Image
+        {...rest}
+        className={className}
+        onLoadingComplete={(e) => {
+          setLoaded(true);
+          onLoadingComplete?.(e);
+        }}
+      />
+    </motion.div>
+  );
+}
 
 const ING = {
   chicken: "/assets/butter-chicken/ingredients/chicken.jpg",
@@ -62,10 +104,15 @@ function IngredientRow({
     <div className="flex w-full flex-col">
       <div className="flex w-full items-center gap-3 px-4 py-2.5">
         <div className="relative size-8 shrink-0">
-          <img
+          <RecipeImageFade
+            frame="fill"
             alt=""
             src={icon}
-            className="pointer-events-none absolute inset-0 size-full object-cover"
+            fill
+            sizes="32px"
+            quality={65}
+            className="pointer-events-none object-cover"
+            draggable={false}
           />
         </div>
         <p className="min-w-0 flex-1 truncate font-[family-name:var(--font-geist)] text-[15px] font-normal leading-[1.4] text-white/80">
@@ -221,7 +268,7 @@ function StepImage({
               aria-modal="true"
               aria-label={imgAlt}
               className={cn(
-                "fixed inset-0 flex cursor-zoom-out items-center justify-center p-4 sm:p-6 md:p-10 [padding-left:max(1rem,env(safe-area-inset-left))] [padding-right:max(1rem,env(safe-area-inset-right))] [padding-top:max(1rem,env(safe-area-inset-top))] [padding-bottom:max(1rem,env(safe-area-inset-bottom))]",
+                "fixed inset-0 flex cursor-zoom-out items-center justify-center p-4 outline-none focus-visible:outline-none sm:p-6 md:p-10 [padding-left:max(1rem,env(safe-area-inset-left))] [padding-right:max(1rem,env(safe-area-inset-right))] [padding-top:max(1rem,env(safe-area-inset-top))] [padding-bottom:max(1rem,env(safe-area-inset-bottom))]",
                 RECIPE_STEP_LIGHTBOX_Z_FRONT,
               )}
               initial={{ opacity: 0 }}
@@ -234,10 +281,15 @@ function StepImage({
                 className="flex max-h-full max-w-full cursor-default flex-col items-center gap-3"
                 onClick={(e) => e.stopPropagation()}
               >
-                <img
+                <RecipeImageFade
+                  frame="inline"
                   src={src}
                   alt={imgAlt}
-                  className="m-0 block h-auto w-auto max-h-[min(82dvh,82vh)] max-w-[min(96vw,1680px)] border-0 object-contain p-0 shadow-none outline-none ring-0"
+                  width={1680}
+                  height={1260}
+                  quality={72}
+                  sizes="(max-width: 768px) 96vw, min(96vw, 1680px)"
+                  className="m-0 block h-auto max-h-[min(82dvh,82vh)] w-auto max-w-[min(96vw,1680px)] border-0 object-contain p-0 shadow-none outline-none ring-0"
                   style={objectPosition ? { objectPosition } : undefined}
                   draggable={false}
                   decoding="async"
@@ -295,10 +347,14 @@ function StepImage({
           )}
           aria-label={enlargeLabel}
         >
-          <img
+          <RecipeImageFade
+            frame="fill"
             alt=""
             src={src}
-            className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+            fill
+            sizes="112px"
+            quality={68}
+            className="pointer-events-none object-cover"
             style={objectPosition ? { objectPosition } : undefined}
             draggable={false}
           />
@@ -330,12 +386,16 @@ export function ButterChickenRecipeBody() {
       {/* Hero image */}
       <div className="flex items-start">
         <div className="relative size-[266px] shrink-0 overflow-hidden rounded-xl shadow-[0px_4px_24px_6px_rgba(182,60,23,0.15)]">
-          <img
+          <RecipeImageFade
+            frame="fill"
             alt="Butter chicken"
             src={IMG.hero}
-            className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+            fill
+            priority
+            sizes="266px"
+            quality={75}
+            className="pointer-events-none object-cover"
             draggable={false}
-            loading="eager"
           />
         </div>
       </div>
@@ -349,10 +409,15 @@ export function ButterChickenRecipeBody() {
       <div className="flex w-full gap-4">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="relative h-[168px] w-full overflow-hidden rounded-lg">
-            <img
+            <RecipeImageFade
+              frame="fill"
               alt=""
               src={IMG.ref1}
-              className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+              fill
+              sizes="(max-width: 768px) 45vw, 400px"
+              quality={72}
+              className="pointer-events-none object-cover"
+              draggable={false}
             />
           </div>
           <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/60">
@@ -361,10 +426,15 @@ export function ButterChickenRecipeBody() {
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="relative h-[168px] w-full overflow-hidden rounded-lg">
-            <img
+            <RecipeImageFade
+              frame="fill"
               alt=""
               src={IMG.ref2}
-              className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+              fill
+              sizes="(max-width: 768px) 45vw, 400px"
+              quality={72}
+              className="pointer-events-none object-cover"
+              draggable={false}
             />
           </div>
           <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/60">
