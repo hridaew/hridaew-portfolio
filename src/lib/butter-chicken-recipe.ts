@@ -6,6 +6,17 @@ export type ParsedButterChicken = {
     butterChickenSteps: string[];
 };
 
+/** Used when `butter chicken.txt` is absent (e.g. local dev) so the API still returns 200. */
+export function emptyParsedButterChicken(): ParsedButterChicken {
+    return {
+        intro: [],
+        ingredients: [],
+        tandooriIngredients: [],
+        tandooriSteps: [],
+        butterChickenSteps: [],
+    };
+}
+
 function normalizeLines(raw: string) {
     return raw
         .replace(/\r\n/g, "\n")

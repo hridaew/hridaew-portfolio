@@ -1,12 +1,14 @@
 export interface WafflingData {
   title: string;
+  /** Small mono label above title (Figma node 16684:801 — Domis Design). */
+  eyebrow?: string;
   imageSrc?: string;
   previewText: string;
   href?: string;
   /** 1 = full, 0.5 = dimmed, 0.25 = extra-faint */
   opacity: 1 | 0.5 | 0.25;
   isPlaceholder?: boolean;
-  /** Use Figma Frame 16255 implementation (node 16535:642) */
+  /** Figma butter-chicken teaser card (Domis Design node 16684:801). */
   taperedRim?: boolean;
   /** Open in shared-layout modal instead of navigating (no `href`) */
   recipeModal?: boolean;
@@ -14,10 +16,10 @@ export interface WafflingData {
 
 export const homepageWafflings: WafflingData[] = [
   {
-    title: "Butter Chicken Recipe",
+    title: "Butter chicken",
     imageSrc: "/assets/home/waffling-butterchicken.png",
     previewText:
-      "A few people have asked me for my Butter Chicken Recipe and I don\u2019t know where else to put it, so why not here.\n\nBefore you read the ingredients you must realize this - the quality of butter chicken scales with how much butter you put in it, which is why this has enough butter to keep you lubed up for years.\n\nIngredients:",
+      "A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.\n\nBefore you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.\n\nIngredients:",
     opacity: 1,
     taperedRim: true,
     recipeModal: true,

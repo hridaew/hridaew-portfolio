@@ -48,8 +48,9 @@ export function playAlarm() {
             osc.frequency.setValueAtTime(i % 2 === 0 ? 440 : 880, t);
         }
 
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime + 1.9);
+        const vol = 0.012;
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime + 1.9);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2);
 
         osc.connect(gain);
@@ -57,6 +58,59 @@ export function playAlarm() {
 
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 2);
+    } catch {
+        // Silently fail
+    }
+}
+
+/** Real asset boom for destroy cheat; falls back to synthetic if play fails. */
+export function playDestroyBoom(preloaded?: HTMLAudioElement | null) {
+    const audio = preloaded ?? new Audio("/assets/cheat-codes/boom.wav");
+    audio.volume = 0.92;
+    audio.currentTime = 0;
+    void audio.play().catch(() => {
+        playExplosionBoom();
+    });
+}
+
+/** Short impact / explosion burst for destroy cheat (fallback when WAV missing / blocked). */
+export function playExplosionBoom() {
+    try {
+        const ctx = getContext();
+        const t0 = ctx.currentTime;
+        const duration = 0.45;
+
+        const noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+        const ch = noiseBuf.getChannelData(0);
+        for (let i = 0; i < ch.length; i++) {
+            ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / ch.length, 1.8);
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuf;
+        const band = ctx.createBiquadFilter();
+        band.type = "lowpass";
+        band.frequency.setValueAtTime(2800, t0);
+        band.frequency.exponentialRampToValueAtTime(120, t0 + duration);
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.22, t0);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+        noise.connect(band);
+        band.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start(t0);
+        noise.stop(t0 + duration);
+
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(140, t0);
+        osc.frequency.exponentialRampToValueAtTime(38, t0 + 0.35);
+        const og = ctx.createGain();
+        og.gain.setValueAtTime(0.35, t0);
+        og.gain.exponentialRampToValueAtTime(0.001, t0 + 0.4);
+        osc.connect(og);
+        og.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.42);
     } catch {
         // Silently fail
     }

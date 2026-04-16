@@ -33,6 +33,8 @@ import {
   ObscuraLiquidGlassFilterSvg,
 } from "./ObscuraLiquidGlassFilterSvg";
 import { ProjectCarousel } from "./ProjectCarousel";
+import { useBrowserEngine } from "@/lib/useBrowserEngine";
+import { ThreeGlassLensFallback } from "../obscura/ThreeGlassLensFallback";
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -94,7 +96,7 @@ function OrbField({
   return (
     <>
       <motion.div
-        className="pointer-events-none absolute left-[-69px] top-[-86px] size-[255px] rounded-[244px] blur-[100px] will-change-transform"
+        className="pointer-events-none absolute left-[-100px] top-[-115px] size-[320px] rounded-[244px] blur-[48px] opacity-80 will-change-transform"
         style={{ backgroundColor: color1 }}
         animate={
           reduceMotion
@@ -107,7 +109,7 @@ function OrbField({
         transition={driftTransition(23, 0)}
       />
       <motion.div
-        className="pointer-events-none absolute left-[79px] top-[-65px] size-[229px] rounded-[244px] blur-[100px] will-change-transform"
+        className="pointer-events-none absolute left-[50px] top-[-95px] size-[290px] rounded-[244px] blur-[48px] opacity-80 will-change-transform"
         style={{ backgroundColor: color2 }}
         animate={
           reduceMotion
@@ -132,7 +134,7 @@ function OrbField({
         transition={driftTransition(25, 0.3)}
       >
         <div
-          className="size-[255px] rounded-[244px] blur-[100px]"
+          className="size-[320px] rounded-[244px] blur-[48px] opacity-80"
           style={{ backgroundColor: color1 }}
         />
       </motion.div>
@@ -149,7 +151,7 @@ function OrbField({
         transition={driftTransition(21, 0.45)}
       >
         <div
-          className="size-[229px] rounded-[244px] blur-[100px]"
+          className="size-[290px] rounded-[244px] blur-[48px] opacity-80"
           style={{ backgroundColor: color2 }}
         />
       </motion.div>
@@ -200,6 +202,8 @@ function GalleryCard({
   const reduceTapMotion = useReducedMotion();
   const cardTapRef = useRef<{ x: number; y: number } | null>(null);
   const cardShellRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
+  const engine = useBrowserEngine();
   const foilRafRef = useRef(0);
   const foilPointerRef = useRef({ x: 50, y: 50 });
   const obscuraLensRafRef = useRef(0);
@@ -562,6 +566,7 @@ function GalleryCard({
         >
           {card.videoSrc ? (
             <video
+              ref={mediaRef as React.RefObject<HTMLVideoElement>}
               src={card.videoSrc}
               poster={card.imageSrc}
               className={`work-gallery-card-video ${card.imageClassName} pointer-events-none select-none outline-none`}
@@ -581,6 +586,7 @@ function GalleryCard({
             />
           ) : (
             <img
+              ref={mediaRef as React.RefObject<HTMLImageElement>}
               src={card.imageSrc}
               alt={card.imageAlt}
               draggable={false}
@@ -600,8 +606,8 @@ function GalleryCard({
           )}
         </div>
 
-        {/* Obscura: kube.io-style liquid glass — SVG displacement + backdrop-filter (Chrome); blur fallback elsewhere */}
-        {obscuraLiquidLens && obscuraPointerOver && (
+        {/* Obscura: kube.io-style liquid glass — SVG displacement + backdrop-filter (Chrome); WebGL fallback elsewhere */}
+        {obscuraLiquidLens && obscuraPointerOver && engine === "chromium" && (
           <div
             className="pointer-events-none absolute z-[25] h-0 w-0"
             style={{ left: obscuraLens.x, top: obscuraLens.y }}
@@ -628,6 +634,15 @@ function GalleryCard({
               }}
             />
           </div>
+        )}
+
+        {obscuraLiquidLens && obscuraPointerOver && engine !== "chromium" && (
+          <ThreeGlassLensFallback
+            x={obscuraLens.x}
+            y={obscuraLens.y}
+            mediaEl={mediaRef.current}
+            containerSelector=".relative.shrink-0.overflow-clip.rounded-2xl"
+          />
         )}
       </div>
 

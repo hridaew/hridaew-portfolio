@@ -11,7 +11,6 @@ import {
 import { createPortal } from "react-dom";
 import {
   animate,
-  AnimatePresence,
   motion,
   useMotionValue,
   useReducedMotion,
@@ -25,6 +24,7 @@ import {
   resetPageShellBlurHard,
   tweenPageShellBlur,
 } from "@/lib/tweenPageShellBlur";
+import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
 import { HeroCardExpandedBody } from "./HeroCardExpandedBody";
 
 const LI_HREF = "https://www.linkedin.com/in/hridae";
@@ -168,18 +168,6 @@ const ORB_BLUR_STDDEV = 52;
 /** Above blurred `[data-page-transition-shell]` (z-[1]), below route curtain (z-[100]). */
 const PORTAL_Z = 90;
 
-const expandedPanelVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.3, delay: 0.1 },
-  },
-  leaving: {
-    opacity: 0,
-    transition: { duration: 0.3 },
-  },
-} as const;
-
 interface Orb {
   x: number;
   y: number;
@@ -204,7 +192,7 @@ const ORB_DEFS = [
 function useBouncingOrbs(containerWidth: number, containerHeight: number) {
   const orbsRef = useRef<Orb[]>([]);
   const rafRef = useRef<number>(0);
-  const gRef = useRef<SVGGElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const w = Math.max(1, containerWidth);
   const h = Math.max(1, containerHeight);
@@ -222,7 +210,7 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
 
     const update = () => {
       const orbs = orbsRef.current;
-      const g = gRef.current;
+      const wrapper = wrapperRef.current;
       for (let i = 0; i < orbs.length; i++) {
         const orb = orbs[i];
         orb.x += orb.vx;
@@ -244,26 +232,24 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
           orb.vy = -Math.abs(orb.vy);
         }
 
-        // Direct DOM mutation — no React re-render
-        const el = g?.children[i] as SVGEllipseElement | undefined;
+        // Direct DOM mutation — hardware accelerated CSS translate3d
+        const el = wrapper?.children[i] as HTMLDivElement | undefined;
         if (el) {
-          el.setAttribute("cx", String(orb.x));
-          el.setAttribute("cy", String(orb.y));
+          el.style.transform = `translate3d(${orb.x - orb.rx}px, ${orb.y - orb.ry}px, 0)`;
         }
       }
 
       rafRef.current = requestAnimationFrame(update);
     };
 
-    // Set initial positions on ellipses
-    const g = gRef.current;
-    if (g) {
+    // Set initial positions on divs
+    const wrapper = wrapperRef.current;
+    if (wrapper) {
       const orbs = orbsRef.current;
       for (let i = 0; i < orbs.length; i++) {
-        const el = g.children[i] as SVGEllipseElement | undefined;
+        const el = wrapper.children[i] as HTMLDivElement | undefined;
         if (el) {
-          el.setAttribute("cx", String(orbs[i].x));
-          el.setAttribute("cy", String(orbs[i].y));
+          el.style.transform = `translate3d(${orbs[i].x - orbs[i].rx}px, ${orbs[i].y - orbs[i].ry}px, 0)`;
         }
       }
     }
@@ -272,7 +258,7 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
     return () => cancelAnimationFrame(rafRef.current);
   }, [w, h]);
 
-  return gRef;
+  return wrapperRef;
 }
 
 function ExpandToggle({
@@ -338,7 +324,6 @@ function useIsMobile() {
 
 export function HeroCard() {
   const isMobile = useIsMobile();
-  const [showCopied, setShowCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [closeVerticalBump, setCloseVerticalBump] =
     useState<VerticalBumpPhase>("idle");
@@ -349,7 +334,6 @@ export function HeroCard() {
   /** Bumped on avatar click so animated WebP restarts (play-once file replays from frame 0). */
   const [avatarReplayTick, setAvatarReplayTick] = useState(0);
   const [avatarBurst, setAvatarBurst] = useState<AvatarBurstParticle[] | null>(null);
-  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const burstClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduceMotion = useReducedMotion();
   /** Plain wrapper: Framer must not own `top`/`left` (it resets inline styles each render). */
@@ -406,8 +390,8 @@ export function HeroCard() {
     const frame = portalFrameRef.current;
     if (!anchor || !frame) return;
     const r = anchor.getBoundingClientRect();
-    const top = r.top;
-    const left = r.left;
+    const top = window.scrollY + r.top;
+    const left = window.scrollX + r.left;
     const width = Math.min(r.width, 656);
     frame.style.top = `${top}px`;
     frame.style.left = `${left}px`;
@@ -480,8 +464,6 @@ export function HeroCard() {
   useEffect(() => {
     if (!mounted) return;
     syncPortalPosition();
-    const onScroll = () => syncPortalPosition();
-    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
     window.addEventListener("resize", syncPortalPosition);
     const anchor = anchorRef.current;
     let ro: ResizeObserver | undefined;
@@ -489,17 +471,9 @@ export function HeroCard() {
       ro = new ResizeObserver(() => syncPortalPosition());
       ro.observe(anchor);
     }
-    const lenis = (
-      window as unknown as {
-        __lenis?: { on: (e: "scroll", fn: () => void) => () => void };
-      }
-    ).__lenis;
-    const unsubLenis = lenis?.on("scroll", syncPortalPosition);
     return () => {
-      window.removeEventListener("scroll", onScroll, { capture: true });
       window.removeEventListener("resize", syncPortalPosition);
       ro?.disconnect();
-      unsubLenis?.();
     };
   }, [mounted, syncPortalPosition]);
 
@@ -518,24 +492,6 @@ export function HeroCard() {
     ro.observe(el);
     return () => ro.disconnect();
   }, [mounted, isExpanded]);
-
-  const copyEmail = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText("hridaew@gmail.com");
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = "hridaew@gmail.com";
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
-    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
-    setShowCopied(true);
-    copiedTimerRef.current = setTimeout(() => setShowCopied(false), 1800);
-  }, []);
 
   const replayHeroAvatarAnimation = useCallback(() => {
     if (burstClearRef.current) {
@@ -567,38 +523,23 @@ export function HeroCard() {
     return (
       <div className="relative isolate w-full min-w-0">
         <div className="flex min-h-[192px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]">
-          <svg
-            className="pointer-events-none absolute inset-0 z-0 size-full [clip-path:inset(0_round_32px)]"
-            viewBox={`0 0 ${orbBox.w} ${orbBox.h}`}
-            preserveAspectRatio="xMidYMid slice"
+          <div
+            className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
             aria-hidden
           >
-            <defs>
-              <filter
-                id={orbFilterId}
-                filterUnits="userSpaceOnUse"
-                x={-orbBlurPad}
-                y={-orbBlurPad}
-                width={orbBox.w + 2 * orbBlurPad}
-                height={orbBox.h + 2 * orbBlurPad}
-              >
-                <feGaussianBlur in="SourceGraphic" stdDeviation={ORB_BLUR_STDDEV} />
-              </filter>
-            </defs>
-            <g ref={orbGRef} filter={`url(#${orbFilterId})`}>
+            <div ref={orbGRef} className="absolute inset-0 h-0 w-0">
               {ORB_DEFS.map((def, i) => (
-                <ellipse
+                <div
                   key={i}
-                  cx={0}
-                  cy={0}
-                  rx={35}
-                  ry={38}
-                  fill={def.color}
-                  opacity={ORB_OPACITY}
+                  className="absolute left-0 top-0 size-[70px] rounded-full blur-[48px] will-change-transform"
+                  style={{
+                    backgroundColor: def.color,
+                    opacity: ORB_OPACITY,
+                  }}
                 />
               ))}
-            </g>
-          </svg>
+            </div>
+          </div>
 
           <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
             <div className="flex shrink-0 flex-col gap-10">
@@ -666,51 +607,7 @@ export function HeroCard() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={copyEmail}
-                      className="flex h-8 cursor-pointer items-center gap-1 rounded-[38px] bg-white/[0.03] pl-2 pr-1 transition-colors hover:bg-white/[0.06]"
-                    >
-                      <span className="font-[family-name:var(--font-geist)] text-xs leading-normal text-white/80">
-                        hridaew@gmail.com
-                      </span>
-                      <div className="flex size-6 items-center justify-center rounded-full bg-white/5">
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 10 10"
-                          fill="none"
-                          aria-hidden
-                        >
-                          <path
-                            d="M7.5 3.75V2.5C7.5 1.81 6.94 1.25 6.25 1.25H2.5C1.81 1.25 1.25 1.81 1.25 2.5V6.25C1.25 6.94 1.81 7.5 2.5 7.5H3.75M3.75 3.75H7.5C8.19 3.75 8.75 4.31 8.75 5V7.5C8.75 8.19 8.19 8.75 7.5 8.75H5C4.31 8.75 3.75 8.19 3.75 7.5V3.75Z"
-                            stroke="white"
-                            strokeOpacity="0.8"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </button>
-                    <AnimatePresence>
-                      {showCopied && (
-                        <motion.span
-                          initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
-                          transition={{
-                            duration: 0.2,
-                            ease: [0.25, 1, 0.5, 1],
-                          }}
-                          className="pointer-events-none absolute -top-8 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-xl"
-                        >
-                          Copied!
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  <CopyEmailPill />
 
                   <a
                     href={CV_HREF}
@@ -762,7 +659,7 @@ export function HeroCard() {
       <div
         ref={portalFrameRef}
         data-testid="hero-card-shell"
-        className="fixed w-full min-w-0 max-w-[656px]"
+        className="absolute w-full min-w-0 max-w-[656px]"
         style={{ zIndex: PORTAL_Z, transformOrigin: "top left" }}
       >
       <motion.div
@@ -802,38 +699,23 @@ export function HeroCard() {
                 : { duration: 0.12, ease: MOTION_EASE },
         }}
       >
-      <svg
-        className="pointer-events-none absolute inset-0 z-0 size-full [clip-path:inset(0_round_32px)]"
-        viewBox={`0 0 ${orbBox.w} ${orbBox.h}`}
-        preserveAspectRatio="xMidYMid slice"
+      <div
+        className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
         aria-hidden
       >
-        <defs>
-          <filter
-            id={orbFilterId}
-            filterUnits="userSpaceOnUse"
-            x={-orbBlurPad}
-            y={-orbBlurPad}
-            width={orbBox.w + 2 * orbBlurPad}
-            height={orbBox.h + 2 * orbBlurPad}
-          >
-            <feGaussianBlur in="SourceGraphic" stdDeviation={ORB_BLUR_STDDEV} />
-          </filter>
-        </defs>
-        <g ref={orbGRef} filter={`url(#${orbFilterId})`}>
+        <div ref={orbGRef} className="absolute inset-0 h-0 w-0">
           {ORB_DEFS.map((def, i) => (
-            <ellipse
+            <div
               key={i}
-              cx={0}
-              cy={0}
-              rx={35}
-              ry={38}
-              fill={def.color}
-              opacity={ORB_OPACITY}
+              className="absolute left-0 top-0 size-[70px] rounded-full blur-[48px] will-change-transform"
+              style={{
+                backgroundColor: def.color,
+                opacity: ORB_OPACITY,
+              }}
             />
           ))}
-        </g>
-      </svg>
+        </div>
+      </div>
 
       <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
         <div className="flex shrink-0 flex-col gap-10">
@@ -906,51 +788,7 @@ export function HeroCard() {
             </div>
 
             <div className="flex shrink-0 items-center gap-4">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={copyEmail}
-                  className="flex h-8 cursor-pointer items-center gap-1 rounded-[38px] bg-white/[0.03] pl-2 pr-1 transition-colors hover:bg-white/[0.06]"
-                >
-                  <span className="font-[family-name:var(--font-geist)] text-xs leading-normal text-white/80">
-                    hridaew@gmail.com
-                  </span>
-                  <div className="flex size-6 items-center justify-center rounded-full bg-white/5">
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 10 10"
-                      fill="none"
-                      aria-hidden
-                    >
-                      <path
-                        d="M7.5 3.75V2.5C7.5 1.81 6.94 1.25 6.25 1.25H2.5C1.81 1.25 1.25 1.81 1.25 2.5V6.25C1.25 6.94 1.81 7.5 2.5 7.5H3.75M3.75 3.75H7.5C8.19 3.75 8.75 4.31 8.75 5V7.5C8.75 8.19 8.19 8.75 7.5 8.75H5C4.31 8.75 3.75 8.19 3.75 7.5V3.75Z"
-                        stroke="white"
-                        strokeOpacity="0.8"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </button>
-                <AnimatePresence>
-                  {showCopied && (
-                    <motion.span
-                      initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -4, scale: 0.95 }}
-                      transition={{
-                        duration: 0.2,
-                        ease: [0.25, 1, 0.5, 1],
-                      }}
-                      className="pointer-events-none absolute -top-8 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-xl"
-                    >
-                      Copied!
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </div>
+              <CopyEmailPill />
 
               <a
                 href={CV_HREF}
@@ -977,54 +815,51 @@ export function HeroCard() {
           </div>
         </div>
 
-        <AnimatePresence initial={false}>
-          {isExpanded && (
-            <motion.div
-              key="expanded"
-              id={expandedRegionId}
-              variants={expandedPanelVariants}
-              initial="hidden"
-              animate="visible"
-              exit="leaving"
-              className="relative min-h-0 w-full min-w-0"
+        <motion.div
+          id={expandedRegionId}
+          initial={false}
+          animate={{
+            opacity: isExpanded ? 1 : 0,
+            pointerEvents: isExpanded ? "auto" : "none",
+          }}
+          transition={{ duration: 0.3, delay: isExpanded ? 0.1 : 0 }}
+          className="relative min-h-0 w-full min-w-0"
+        >
+          <div className="relative isolate min-h-0 w-full min-w-0">
+            {/*
+              Mask fades scroll content to transparent; without a different tone behind it,
+              the glass card shows through and the taper disappears. This layer sits under the
+              scrollport so masked pixels read as a visible fade (page-toned, not blur).
+            */}
+            <div
+              aria-hidden
+              data-testid="hero-expanded-bottom-fade-backdrop"
+              className="pointer-events-none absolute inset-x-0 bottom-0 left-0 right-0 z-[1] h-[11rem] bg-gradient-to-t from-[rgba(0,0,0,0.01)] to-transparent"
+            />
+            <div
+              data-testid="hero-card-expanded-scroll"
+              className="relative z-[2] scrollbar-hide max-h-[calc(100vh-224px-11rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",
+                maskImage:
+                  "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",
+                WebkitMaskSize: "100% 100%",
+                maskSize: "100% 100%",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                maskMode: "alpha",
+              }}
             >
-              <div className="relative isolate min-h-0 w-full min-w-0">
-                {/*
-                  Mask fades scroll content to transparent; without a different tone behind it,
-                  the glass card shows through and the taper disappears. This layer sits under the
-                  scrollport so masked pixels read as a visible fade (page-toned, not blur).
-                */}
-                <div
-                  aria-hidden
-                  data-testid="hero-expanded-bottom-fade-backdrop"
-                  className="pointer-events-none absolute inset-x-0 bottom-0 left-0 right-0 z-[1] h-[11rem] bg-gradient-to-t from-[rgba(0,0,0,0.01)] to-transparent"
-                />
-                <div
-                  data-testid="hero-card-expanded-scroll"
-                  className="relative z-[2] scrollbar-hide max-h-[calc(100vh-224px-11rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
-                  style={{
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",
-                    maskImage:
-                      "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",
-                    WebkitMaskSize: "100% 100%",
-                    maskSize: "100% 100%",
-                    WebkitMaskRepeat: "no-repeat",
-                    maskRepeat: "no-repeat",
-                    maskMode: "alpha",
-                  }}
-                >
-                  <div
-                    data-testid="hero-expanded-scroll-inner"
-                    className="w-full min-w-0 pb-8"
-                  >
-                    <HeroCardExpandedBody />
-                  </div>
-                </div>
+              <div
+                data-testid="hero-expanded-scroll-inner"
+                className="w-full min-w-0 pb-8"
+              >
+                <HeroCardExpandedBody />
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
         <div

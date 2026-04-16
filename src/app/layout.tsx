@@ -7,6 +7,7 @@ import { ButterChickenRecipeDeepLink } from "@/components/butter-chicken/ButterC
 import { ButterChickenRecipeModalProvider } from "@/components/butter-chicken/ButterChickenRecipeModal";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
+import { BrowserEngineScript } from "@/components/BrowserEngineScript";
 
 const displayFont = Bricolage_Grotesque({
   variable: "--font-display",
@@ -55,6 +56,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <BrowserEngineScript />
+      </head>
       <body
         className={`${displayFont.variable} ${geistSans.variable} ${geistMono.variable} type-body antialiased`}
       >

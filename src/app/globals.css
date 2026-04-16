@@ -641,20 +641,45 @@
   --border: #00f0ff33;
 }
 
-/* Scanline overlay for cyberpunk */
+/* Choom: full-viewport scanline stack (no image mosaic) */
+.theme-cyberpunk::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 240, 255, 0.04) 1px,
+    rgba(0, 240, 255, 0.04) 2px
+  );
+  mix-blend-mode: overlay;
+}
+
 .theme-cyberpunk::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.1) 2px,
-    rgba(0, 0, 0, 0.1) 4px
-  );
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.22) 0px,
+      rgba(0, 0, 0, 0.22) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 0, 170, 0.02) 0px,
+      rgba(255, 0, 170, 0.02) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+  opacity: 0.85;
 }
 
 /* Staggered page-load reveal: blur → unblur + fade + slide-up */
@@ -709,6 +734,108 @@
     clip-path: inset(0 0 0 0);
     transform: translateX(0);
   }
+}
+
+/* Home shell under cheat themes (hardcoded Tailwind colors bypass CSS variables) */
+html.theme-2004 [data-cheat-theme-scope] {
+  background-color: #c0c0c0 !important;
+  color: #000080 !important;
+  font-family: "Times New Roman", Times, Georgia, serif !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="text-white"] {
+  color: #000080 !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="border-white"] {
+  border-color: #000080 !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="bg-white/"] {
+  background-color: #dcdcdc !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="rounded"] {
+  border-radius: 0 !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="backdrop-blur"],
+html.theme-2004 [data-cheat-theme-scope] [class*="backdrop-"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] [class*="blur-"] {
+  filter: none !important;
+}
+
+html.theme-2004 [data-cheat-theme-scope] a[href] {
+  color: #0000ee !important;
+  text-decoration: underline !important;
+}
+
+/* HomePage + page shell still use bg-[#0c0c0e] utilities */
+html.theme-2004 [data-cheat-theme-scope] [class*="0c0c0e"] {
+  background-color: #c0c0c0 !important;
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] {
+  background-color: #070510 !important;
+  background-image: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(40, 0, 60, 0.45), transparent 55%) !important;
+  border-radius: 0 !important;
+  color: #7efcf0 !important;
+  font-family: ui-monospace, "Cascadia Code", "Consolas", "Liberation Mono", monospace !important;
+  text-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="rounded"] {
+  border-radius: 0 !important;
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="rounded-"] {
+  border-radius: 0 !important;
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="text-white"] {
+  color: #00f0ff !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.45);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="border-white"] {
+  border-color: rgba(0, 240, 255, 0.75) !important;
+  box-shadow:
+    0 0 1px rgba(0, 240, 255, 0.9),
+    0 0 14px rgba(0, 240, 255, 0.35),
+    inset 0 0 12px rgba(255, 0, 170, 0.06);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="border-white/"] {
+  border-color: rgba(0, 240, 255, 0.55) !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="border-neutral"],
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="border-zinc"] {
+  border-color: rgba(0, 240, 255, 0.45) !important;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="bg-white/"] {
+  background-color: rgba(18, 10, 32, 0.85) !important;
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] h1,
+html.theme-cyberpunk [data-cheat-theme-scope] h2 {
+  text-shadow:
+    0 0 12px rgba(0, 240, 255, 0.6),
+    2px 0 0 rgba(255, 0, 128, 0.25),
+    -2px 0 0 rgba(0, 255, 200, 0.2);
+}
+
+html.theme-cyberpunk [data-cheat-theme-scope] [class*="0c0c0e"] {
+  background-color: rgba(12, 6, 22, 0.72) !important;
 }
 
 /* Home work row — Virdio cards: slow pearlescent foil (conic + soft-light).

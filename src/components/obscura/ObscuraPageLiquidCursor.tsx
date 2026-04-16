@@ -9,8 +9,10 @@ import {
 } from "@/components/home/ObscuraLiquidGlassFilterSvg";
 import {
   detectSvgBackdropFilterUrl,
-  isLikelySafari,
 } from "@/lib/obscuraLiquidGlass";
+
+import { useBrowserEngine } from "@/lib/useBrowserEngine";
+import { ThreeGlassLensFallback } from "./ThreeGlassLensFallback";
 
 /**
  * Home Obscura gallery card uses this liquid-glass puck + cursor-none on hover.
@@ -19,11 +21,12 @@ import {
 export function ObscuraPageLiquidCursor() {
   const reduceMotion = useReducedMotion();
   const [isTouch, setIsTouch] = useState(false);
-  const [svgBackdrop, setSvgBackdrop] = useState(false);
-  const [safariReticle, setSafariReticle] = useState(false);
+  const engine = useBrowserEngine();
   const posRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef(0);
   const [lens, setLens] = useState({ x: 0, y: 0 });
+  // Same capability check the home card uses — avoids applying a broken filter on Chrome
+  const [svgBackdropSupported, setSvgBackdropSupported] = useState(false);
 
   useEffect(() => {
     setIsTouch(window.matchMedia("(pointer: coarse)").matches);
@@ -35,10 +38,12 @@ export function ObscuraPageLiquidCursor() {
       x: Math.round(window.innerWidth / 2),
       y: Math.round(window.innerHeight / 2),
     });
-    const svg = detectSvgBackdropFilterUrl();
-    setSvgBackdrop(svg);
-    setSafariReticle(!svg && isLikelySafari());
   }, [reduceMotion, isTouch]);
+
+  // Detect whether backdropFilter: url(#…) actually composites on this browser/GPU
+  useEffect(() => {
+    setSvgBackdropSupported(detectSvgBackdropFilterUrl());
+  }, []);
 
   const flush = useCallback(() => {
     rafRef.current = 0;
@@ -70,32 +75,38 @@ export function ObscuraPageLiquidCursor() {
   return (
     <>
       <ObscuraLiquidGlassFilterSvg />
-      <div
-        className="pointer-events-none fixed left-0 top-0 z-[25] h-0 w-0"
-        style={{ left: lens.x, top: lens.y }}
-        aria-hidden
-      >
+      {engine === "chromium" ? (
         <div
-          className={
-            svgBackdrop
-              ? "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
-              : safariReticle
-                ? "rounded-full will-change-transform obscura-liquid-lens-reticle"
-                : "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform obscura-liquid-lens-fallback"
-          }
-          style={{
-            width: OBSCURA_LIQUID_GLASS_LENS_PX,
-            height: OBSCURA_LIQUID_GLASS_LENS_PX,
-            transform: "translate(-50%, -50%) scale(1.14)",
-            ...(svgBackdrop
-              ? {
-                  backdropFilter: `url(#${OBSCURA_LIQUID_GLASS_FILTER_ID})`,
-                  WebkitBackdropFilter: `url(#${OBSCURA_LIQUID_GLASS_FILTER_ID})`,
-                }
-              : {}),
-          }}
-        />
-      </div>
+          className="pointer-events-none fixed left-0 top-0 z-[25] h-0 w-0"
+          style={{ left: lens.x, top: lens.y }}
+          aria-hidden
+        >
+          <div
+            className="rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
+            style={{
+              width: OBSCURA_LIQUID_GLASS_LENS_PX,
+              height: OBSCURA_LIQUID_GLASS_LENS_PX,
+              transform: "translate(-50%, -50%) scale(1.14)",
+              ...(svgBackdropSupported
+                ? {
+                    backdropFilter: `url(#${OBSCURA_LIQUID_GLASS_FILTER_ID})`,
+                    WebkitBackdropFilter: `url(#${OBSCURA_LIQUID_GLASS_FILTER_ID})`,
+                  }
+                : {}),
+            }}
+          />
+        </div>
+      ) : (
+        <div className="pointer-events-none fixed left-0 top-0 z-[25] h-0 w-0">
+          <ThreeGlassLensFallback
+            x={lens.x}
+            y={lens.y}
+            imageSrc="/assets/obscura/wayne_1946.avif"
+            isFixed
+            diameter={OBSCURA_LIQUID_GLASS_LENS_PX / 2}
+          />
+        </div>
+      )}
     </>
   );
 }

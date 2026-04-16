@@ -46,9 +46,15 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-clip">
+    <div
+      data-cheat-theme-scope
+      className="relative min-h-screen w-full max-w-[100vw] overflow-x-clip"
+    >
       {/* overflow-x-clip: only past the viewport edge—Embla track stays overflow-visible so slides peek inside the screen. */}
-      <div className="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-[#0c0c0e] transition-colors duration-500">
+      <div
+        data-cheat-theme-scope
+        className="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-[#0c0c0e] transition-colors duration-500"
+      >
         <HomePage />
 
         {ENABLE_HOME_CHEAT_CODES && <HomeCheatEasterEggs />}
@@ -63,7 +69,7 @@ export default function Home() {
                 I built this portfolio website with Figma &rarr; Figma Make &rarr; Claude Code + Cursor + Antigravity (basically wherever I had tokens left)
               </p>
               <p className="shrink-0 tabular-nums text-white/20" aria-label="Site version">
-                v2.12.0
+                v2.13.0
               </p>
             </div>
           </div>

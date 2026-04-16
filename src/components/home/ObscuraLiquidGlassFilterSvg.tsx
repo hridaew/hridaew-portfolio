@@ -7,12 +7,14 @@ import {
   type ObscuraLiquidGlassMaps,
 } from "@/lib/obscuraLiquidGlass";
 
+import { useBrowserEngine } from "@/lib/useBrowserEngine";
+
 /** Stable id so every Obscura card can reference the same filter (single SVG in the tree). */
 export const OBSCURA_LIQUID_GLASS_FILTER_ID = "obscura-home-liquid-glass-filter";
 
 let cachedMaps: ObscuraLiquidGlassMaps | null = null;
 
-function getOrBuildMaps(): ObscuraLiquidGlassMaps {
+export function getOrBuildMaps(): ObscuraLiquidGlassMaps {
   if (!cachedMaps) {
     cachedMaps = buildObscuraLiquidGlassMaps();
   }
@@ -26,12 +28,13 @@ function getOrBuildMaps(): ObscuraLiquidGlassMaps {
  */
 export function ObscuraLiquidGlassFilterSvg() {
   const [maps, setMaps] = useState<ObscuraLiquidGlassMaps | null>(null);
+  const engine = useBrowserEngine();
 
   useEffect(() => {
     setMaps(getOrBuildMaps());
   }, []);
 
-  if (!maps) return null;
+  if (!maps || engine !== "chromium") return null;
 
   const { mapSize, displacementDataUrl, specularDataUrl, displacementScale } =
     maps;

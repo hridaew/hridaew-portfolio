@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import { parseButterChicken } from "@/lib/butter-chicken-recipe";
+import { emptyParsedButterChicken, parseButterChicken } from "@/lib/butter-chicken-recipe";
 
 export async function GET() {
     try {
@@ -10,6 +10,6 @@ export async function GET() {
         const parsed = parseButterChicken(raw);
         return NextResponse.json(parsed);
     } catch {
-        return NextResponse.json({ error: "Recipe unavailable" }, { status: 500 });
+        return NextResponse.json(emptyParsedButterChicken());
     }
 }

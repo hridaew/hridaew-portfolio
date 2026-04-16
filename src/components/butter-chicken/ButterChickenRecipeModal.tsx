@@ -13,9 +13,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import type { ParsedButterChicken } from "@/lib/butter-chicken-recipe";
 import { ButterChickenRecipeBody } from "./ButterChickenRecipeBody";
-import { HOME_COLUMN } from "@/components/home/homeGrid";
 import { cn } from "@/lib/utils";
 import {
   buildButterChickenModalMotion,
@@ -90,8 +88,6 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
     );
 
     const [isOpen, setIsOpen] = useState(false);
-    const [parsed, setParsed] = useState<ParsedButterChicken | null>(null);
-    const [loadError, setLoadError] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     const sheetRef = useRef<HTMLDivElement | null>(null);
@@ -139,7 +135,6 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
     const open = useCallback(
         (src: ButterChickenOpenSource = "card") => {
             closingLockRef.current = false;
-            setLoadError(false);
             setIsOpen(true);
             if (src === "card") {
                 syncWafflingQuery(router, pathname, "set");
@@ -155,24 +150,6 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
         setIsOpen(false);
         scheduleRestoreFallback();
     }, [scheduleRestoreFallback]);
-
-    /** Prefetch on `/` for stable sheet height on first paint; otherwise fetch when modal opens. */
-    useEffect(() => {
-        if (parsed || loadError) return;
-        if (pathname !== "/" && !isOpen) return;
-        let cancelled = false;
-        fetch("/api/butter-chicken")
-            .then((r) => (r.ok ? r.json() : Promise.reject()))
-            .then((data: ParsedButterChicken) => {
-                if (!cancelled) setParsed(data);
-            })
-            .catch(() => {
-                if (!cancelled) setLoadError(true);
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, [parsed, loadError, pathname, isOpen]);
 
     useEffect(() => {
         if (!isOpen) {
@@ -274,42 +251,16 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
                                       maxWidth: `min(100%, ${mw}px)`,
                                       maxHeight: `min(${mhVh}dvh, ${mhCap}px)`,
                                   }}
-                                  className={cn(
-                                      "pointer-events-auto relative flex min-h-0 w-full max-w-full flex-col overflow-hidden rounded-[40px] border border-white/10 bg-[#292929] shadow-[0_24px_80px_rgba(0,0,0,0.55)]",
-                                      !parsed && !loadError && "min-h-[min(58dvh,520px)]",
-                                  )}
+                                  className="pointer-events-auto relative flex min-h-0 w-full max-w-full flex-col overflow-hidden rounded-[40px] border border-white/10 bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
                                   onClick={(e) => e.stopPropagation()}
                                   onPointerDown={(e) => e.stopPropagation()}
                                   role="dialog"
                                   aria-modal="true"
                                   aria-labelledby="butter-chicken-modal-title"
                               >
-                                  {(loadError || !parsed) && (
-                                      <span id="butter-chicken-modal-title" className="sr-only">
-                                          Butter Chicken Recipe
-                                      </span>
-                                  )}
                                   <div className="scrollbar-hide relative z-0 min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-                                      {loadError ? (
-                                          <div className={cn(HOME_COLUMN, "site-body pt-24 text-white/70 md:pt-32")}>
-                                              Could not load the recipe. Please try again later.
-                                          </div>
-                                      ) : parsed ? (
-                                          <ButterChickenRecipeBody parsed={parsed} />
-                                      ) : (
-                                          <div className={cn(HOME_COLUMN, "site-body pt-24 text-white/50 md:pt-32")}>
-                                              Loading…
-                                          </div>
-                                      )}
+                                      <ButterChickenRecipeBody />
                                   </div>
-                                  <div
-                                      aria-hidden
-                                      className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-36 bg-gradient-to-t from-black/70 via-black/18 to-transparent"
-                                  />
-                                  <div
-                                      aria-hidden
-                                      className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-32 backdrop-blur-xl backdrop-saturate-125 [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.2)_35%,rgba(0,0,0,0.55)_78%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.2)_35%,rgba(0,0,0,0.55)_78%,black_100%)]"
-                                  />
                               </motion.div>
                           </motion.div>,
                       ]
