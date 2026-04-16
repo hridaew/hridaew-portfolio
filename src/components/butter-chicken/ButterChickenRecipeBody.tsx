@@ -499,7 +499,7 @@ export function ButterChickenRecipeBody() {
           <IngredientDivider />
           <IngredientRow icon={ING.sugar} name="Sugar" amount="2 tbsp" />
           <IngredientDivider />
-          <IngredientRow icon={ING.greenChili} name="Green Chilies (no seeds)" amount="5" />
+          <IngredientRow icon={ING.greenChili} name="Thai Green Chilies (no seeds)" amount="5" />
           <IngredientDivider />
           <IngredientRow icon={ING.gingerGarlic} name="Ginger Garlic Paste" amount="1 tbsp" />
         </IngredientCard>
@@ -555,7 +555,7 @@ export function ButterChickenRecipeBody() {
           <div className="flex w-full items-start gap-8">
             <div className="flex min-w-0 flex-1 flex-col gap-3">
               <Instruction n={1}>
-                In a large pan, add some butter, and green chilies.
+                In a large pan, add some butter, and Thai Green Chilies.
               </Instruction>
               <Instruction n={2}>
                 Add pureed tomatoes with the Kashmiri Chili Powder, ginger garlic
