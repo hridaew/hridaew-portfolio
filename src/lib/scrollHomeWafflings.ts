@@ -15,6 +15,12 @@ function getLenis(): LenisScroll | undefined {
   return (window as unknown as { __lenis?: LenisScroll }).__lenis;
 }
 
+/** Instant jump to document top; pairs `window` scroll with Lenis when present. */
+export function scrollHomeToTopImmediate(): void {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  getLenis()?.scrollTo(0, { immediate: true });
+}
+
 export function getHomeWafflingsSection(): HTMLElement | null {
   return document.getElementById(HOME_WAFFLINGS_SECTION_ID);
 }

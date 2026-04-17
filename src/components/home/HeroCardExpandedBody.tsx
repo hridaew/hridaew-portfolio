@@ -1,4 +1,10 @@
+import { Fragment } from "react";
 import { heroExpandedAssets } from "@/data/hero-expanded-assets";
+import {
+  playBiochipMalfunctionHeroGame,
+  playGame3HeroCover,
+  playHalfLife2HeroGameCover,
+} from "@/lib/choomUiAudio";
 import { AlbumArt } from "./AlbumArt";
 
 const img = heroExpandedAssets;
@@ -158,53 +164,47 @@ function EducationSection() {
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-xl border border-white/10"
         />
-        <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-2">
-          <div className="relative w-full shrink-0">
-            <div className="flex size-full flex-row items-center justify-center">
-              <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-                <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-white/80">
-                  University of Washington, Seattle
-                </p>
-                <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-white/60">
-                  2024
-                </p>
+        {(
+          [
+            {
+              school: "University of Washington, Seattle",
+              year: "2024",
+              degree: "Master of Human Computer Interaction + Design",
+            },
+            {
+              school: "California College of the Arts, San Francisco",
+              year: "2020",
+              degree: "BFA Interaction Design",
+            },
+          ] as const
+        ).map((block, i) => (
+          <Fragment key={block.school}>
+            {i > 0 ? <ExpDivider /> : null}
+            <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-2">
+              <div className="relative w-full shrink-0">
+                <div className="flex size-full flex-row items-center justify-center">
+                  <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
+                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-white/80">
+                      {block.school}
+                    </p>
+                    <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-white/60">
+                      {block.year}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative w-full shrink-0">
+                <div className="flex size-full flex-row items-center justify-center">
+                  <div className="relative flex size-full items-center justify-center px-4">
+                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/60">
+                      {block.degree}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="relative w-full shrink-0">
-            <div className="flex size-full flex-row items-center justify-center">
-              <div className="relative flex size-full items-center justify-center px-4">
-                <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/60">
-                  Master of Human Computer Interaction + Design
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <ExpDivider />
-        <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-2">
-          <div className="relative w-full shrink-0">
-            <div className="flex size-full flex-row items-center justify-center">
-              <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-                <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-white/80">
-                  California College of the Arts, San Francisco
-                </p>
-                <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-white/60">
-                  2020
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="relative w-full shrink-0">
-            <div className="flex size-full flex-row items-center justify-center">
-              <div className="relative flex size-full items-center justify-center px-4">
-                <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/60">
-                  BFA Interaction Design
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+          </Fragment>
+        ))}
       </div>
     </div>
   );
@@ -295,14 +295,36 @@ function Top3Section() {
           Games:
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
-          <div className="relative h-[220px] w-[157px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Cyberpunk 2077 cover"
+            className="relative h-[220px] w-[157px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            onClick={() => playBiochipMalfunctionHeroGame()}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault();
+              playBiochipMalfunctionHeroGame();
+            }}
+          >
             <img
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"
               src={img.game1}
             />
           </div>
-          <div className="relative h-[220px] w-[159px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Half-Life 2 cover"
+            className="relative h-[220px] w-[159px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            onClick={() => playHalfLife2HeroGameCover()}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault();
+              playHalfLife2HeroGameCover();
+            }}
+          >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[5px]">
               <img
                 alt=""
@@ -311,7 +333,18 @@ function Top3Section() {
               />
             </div>
           </div>
-          <div className="relative h-[219.302px] w-[156px] shrink-0 rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)]">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Third game cover"
+            className="relative h-[219.302px] w-[156px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            onClick={() => playGame3HeroCover()}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault();
+              playGame3HeroCover();
+            }}
+          >
             <img
               alt=""
               className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"

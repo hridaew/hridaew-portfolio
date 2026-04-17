@@ -2,12 +2,15 @@
 
 import { useState, useCallback } from "react";
 import { SkeuomorphicRim } from "@/components/shared/SkeuomorphicRim";
+import { CHOOM } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 interface CheatCodeInputProps {
     onActivate: (code: string) => void;
 }
 
 export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
+    const choom = useChoomLingo();
     const [value, setValue] = useState("");
 
     const handleSubmit = useCallback(() => {
@@ -37,7 +40,9 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="ENTER CHEAT CODE:"
+                    placeholder={
+                        choom ? CHOOM.cheatPlaceholder : "ENTER CHEAT CODE:"
+                    }
                     className="bg-transparent font-[family-name:var(--font-geist-mono)] text-xs text-white placeholder:text-white/50 focus:outline-none w-full uppercase"
                     autoComplete="off"
                     spellCheck={false}
@@ -50,10 +55,18 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
                     </span>
                     <div className="absolute bottom-full right-0 mb-2 w-[240px] px-3 py-2.5 rounded-lg bg-[#1d1d1d] border border-white/10 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 text-left z-10">
                         <p className="font-[family-name:var(--font-geist-mono)] text-[10px] text-white/60 space-y-1 text-left">
-                            <span className="block">Clue 1: The greatest food on the planet</span>
-                            <span className="block">Clue 2: Slang word for &ldquo;friend&rdquo; in the year 2077</span>
-                            <span className="block">Clue 3: Year of the Invincibles</span>
-                            <span className="block">Clue 4: &ldquo;Destroy&rdquo;</span>
+                            <span className="block">
+                                {choom ? CHOOM.cheatClue1 : "Clue 1: Slang word for \u201cfriend\u201d in the year 2077"}
+                            </span>
+                            <span className="block">
+                                {choom ? CHOOM.cheatClue2 : "Clue 2: Year of the Invincibles"}
+                            </span>
+                            <span className="block">
+                                {choom ? CHOOM.cheatClue3 : "Clue 3: The greatest food on the planet"}
+                            </span>
+                            <span className="block">
+                                {choom ? CHOOM.cheatClue4 : "Clue 4: \u201cDestroy\u201d"}
+                            </span>
                         </p>
                     </div>
                 </div>
@@ -67,7 +80,7 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
             >
                 <SkeuomorphicRim className="z-0" />
                 <span className="relative z-[1] font-[family-name:var(--font-geist-mono)] text-xs uppercase whitespace-nowrap text-white">
-                    Confirm
+                    {choom ? CHOOM.cheatConfirm : "Confirm"}
                 </span>
             </button>
         </div>

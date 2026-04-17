@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { CONTACT_EMAIL } from "@/lib/contactEmail";
+import { CHOOM } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 export { CONTACT_EMAIL };
 
@@ -14,6 +16,7 @@ type CopyEmailPillProps = {
 };
 
 export function CopyEmailPill({ className }: CopyEmailPillProps) {
+  const choom = useChoomLingo();
   const [showCopied, setShowCopied] = useState(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -47,7 +50,9 @@ export function CopyEmailPill({ className }: CopyEmailPillProps) {
       <button
         type="button"
         onClick={copyEmail}
-        aria-label={`Copy ${CONTACT_EMAIL}`}
+        aria-label={
+          choom ? CHOOM.copyEmailAria : `Copy ${CONTACT_EMAIL}`
+        }
         className="flex h-8 cursor-pointer items-center gap-1 rounded-[38px] bg-white/[0.03] pl-2 pr-1 transition-colors hover:bg-white/[0.06]"
       >
         <span className="font-[family-name:var(--font-geist)] text-xs leading-normal text-white/80">

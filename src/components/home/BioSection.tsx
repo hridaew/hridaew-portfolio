@@ -2,6 +2,8 @@
 
 import { useCallback } from "react";
 import { playClick } from "@/lib/audio";
+import { CHOOM } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 function scrollToHomeProject(slug: string) {
   const el = document.getElementById(slug);
@@ -51,26 +53,37 @@ function BioProjectAnchor({
 }
 
 export function BioSection() {
+  const choom = useChoomLingo();
   return (
     <div className="w-full font-[family-name:var(--font-geist)] text-base leading-6 text-white/80">
-      <p>
-        Based in San Francisco, I&apos;m currently the Founding Product Designer
-        at <BioProjectAnchor slug="domis">Domis</BioProjectAnchor> &ndash; building
-        consumer experiences from 0-1, leveraging multi-modal AI to help people
-        take better care of their homes.
-      </p>
-      <p className="mt-6">
-        In the last 5+ years I&apos;ve designed AR consumer experiences at{" "}
-        <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, designed and
-        hosted a VR museum exhibit at MOHAI &ndash;{" "}
-        <BioProjectAnchor slug="obscura">OBSCURA</BioProjectAnchor>, and created
-        multi-sensory experiences for people with Alzheimer&apos;s, via the{" "}
-        <BioProjectAnchor slug="memory-care">MCES</BioProjectAnchor>.
-      </p>
-      <p className="mt-6">
-        I studied Interaction Design at California College of the Arts, and have
-        a Master&apos;s in HCI from The University of Washington.
-      </p>
+      {choom ? (
+        <>
+          <p>{CHOOM.bioP1}</p>
+          <p className="mt-6">{CHOOM.bioP2}</p>
+          <p className="mt-6">{CHOOM.bioP3}</p>
+        </>
+      ) : (
+        <>
+          <p>
+            Based in San Francisco, I&apos;m currently the Founding Product Designer
+            at <BioProjectAnchor slug="domis">Domis</BioProjectAnchor> &ndash; building
+            consumer experiences from 0-1, leveraging multi-modal AI to help people
+            take better care of their homes.
+          </p>
+          <p className="mt-6">
+            In the last 5+ years I&apos;ve designed AR consumer experiences at{" "}
+            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, designed and
+            hosted a VR museum exhibit at MOHAI &ndash;{" "}
+            <BioProjectAnchor slug="obscura">OBSCURA</BioProjectAnchor>, and created
+            multi-sensory experiences for people with Alzheimer&apos;s, via the{" "}
+            <BioProjectAnchor slug="memory-care">MCES</BioProjectAnchor>.
+          </p>
+          <p className="mt-6">
+            I studied Interaction Design at California College of the Arts, and have
+            a Master&apos;s in HCI from The University of Washington.
+          </p>
+        </>
+      )}
     </div>
   );
 }

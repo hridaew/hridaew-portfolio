@@ -16,6 +16,7 @@ import {
   type CheatThemeClass,
 } from "@/lib/homeCheats";
 import { playClick } from "@/lib/audio";
+import { playChoomThemeReady } from "@/lib/choomUiAudio";
 
 type ThemeIntroState = { theme: CheatThemeClass; variant: "2004" | "choom" };
 
@@ -25,17 +26,26 @@ export function HomeCheatEasterEggs() {
   const themeIntroRef = useRef<ThemeIntroState | null>(null);
   themeIntroRef.current = themeIntro;
 
-  const completeThemeIntro = useCallback((theme: CheatThemeClass) => {
+  const applyThemeAfterIntro = useCallback((theme: CheatThemeClass) => {
     applyDocumentTheme(theme);
+    if (theme === "theme-cyberpunk") {
+      playChoomThemeReady();
+    }
     setThemeIntro(null);
   }, []);
+
+  const completeThemeIntro = useCallback(
+    (theme: CheatThemeClass) => {
+      applyThemeAfterIntro(theme);
+    },
+    [applyThemeAfterIntro],
+  );
 
   const skipThemeIntro = useCallback(() => {
     const cur = themeIntroRef.current;
     if (!cur) return;
-    applyDocumentTheme(cur.theme);
-    setThemeIntro(null);
-  }, []);
+    applyThemeAfterIntro(cur.theme);
+  }, [applyThemeAfterIntro]);
 
   useThemeIntroEnterSkip(!!themeIntro, skipThemeIntro);
 

@@ -1,3 +1,5 @@
+import { isChoomThemeDocument, playChoomClick } from "@/lib/choomUiAudio";
+
 let audioCtx: AudioContext | null = null;
 
 function getContext(): AudioContext {
@@ -11,6 +13,10 @@ function getContext(): AudioContext {
 }
 
 export function playClick() {
+    if (typeof document !== "undefined" && isChoomThemeDocument()) {
+        playChoomClick();
+        return;
+    }
     try {
         const ctx = getContext();
         const osc = ctx.createOscillator();

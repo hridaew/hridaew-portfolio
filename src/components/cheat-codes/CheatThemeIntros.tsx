@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CheatThemeClass } from "@/lib/homeCheats";
+import { playChoomLoadingStart } from "@/lib/choomUiAudio";
 
 const QUICKHACK_DURATION_MS = 2800;
 
@@ -171,6 +172,10 @@ export function ChoomNetrunIntro({ onComplete, onSkip, theme }: IntroBaseProps) 
   const doneRef = useRef(false);
   const fillRef = useRef<HTMLDivElement>(null);
   const lastShownPct = useRef(-1);
+
+  useEffect(() => {
+    playChoomLoadingStart();
+  }, []);
 
   const finish = useCallback(() => {
     if (doneRef.current) return;

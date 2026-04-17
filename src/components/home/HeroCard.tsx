@@ -25,7 +25,18 @@ import {
   tweenPageShellBlur,
 } from "@/lib/tweenPageShellBlur";
 import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
+import {
+  playChoomClickClosing,
+  playChoomHeroExpand,
+} from "@/lib/choomUiAudio";
 import { HeroCardExpandedBody } from "./HeroCardExpandedBody";
+import {
+  HeroEmojiField,
+  type HeroEmojiFieldHandle,
+} from "./HeroCardEmojiField";
+import { cn } from "@/lib/utils";
+import { CHOOM } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 const LI_HREF = "https://www.linkedin.com/in/hridae";
 const CV_HREF =
@@ -168,6 +179,28 @@ const ORB_BLUR_STDDEV = 52;
 /** Above blurred `[data-page-transition-shell]` (z-[1]), below route curtain (z-[100]). */
 const PORTAL_Z = 90;
 
+/** Desktop-only: random pick when tapping empty glass on the collapsed hero. */
+const HERO_DESKTOP_EMOJIS = [
+  "🎨",
+  "🎹",
+  "🖥️",
+  "✨",
+  "🎮",
+  "🐱",
+  "📐",
+  "🔭",
+  "🎧",
+  "🧪",
+] as const;
+
+function isHeroInteractiveTarget(el: Element | null): boolean {
+  if (!el) return true;
+  if (el.closest('[data-testid="hero-card-expanded-scroll"]')) return true;
+  return Boolean(
+    el.closest("button, a, [role='link'], input, textarea, select"),
+  );
+}
+
 interface Orb {
   x: number;
   y: number;
@@ -265,10 +298,14 @@ function ExpandToggle({
   isExpanded,
   onToggle,
   controlsId,
+  ariaLabelExpanded = "Hide full bio",
+  ariaLabelCollapsed = "Show full bio",
 }: {
   isExpanded: boolean;
   onToggle: () => void;
   controlsId: string;
+  ariaLabelExpanded?: string;
+  ariaLabelCollapsed?: string;
 }) {
   return (
     <button
@@ -277,7 +314,7 @@ function ExpandToggle({
       aria-expanded={isExpanded}
       aria-controls={controlsId}
       className="relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03] transition-colors hover:bg-white/[0.08]"
-      aria-label={isExpanded ? "Hide full bio" : "Show full bio"}
+      aria-label={isExpanded ? ariaLabelExpanded : ariaLabelCollapsed}
     >
       <svg
         className="absolute inset-0 block size-full"
@@ -323,6 +360,7 @@ function useIsMobile() {
 }
 
 export function HeroCard() {
+  const choom = useChoomLingo();
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(false);
   const [closeVerticalBump, setCloseVerticalBump] =
@@ -336,6 +374,11 @@ export function HeroCard() {
   const [avatarBurst, setAvatarBurst] = useState<AvatarBurstParticle[] | null>(null);
   const burstClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduceMotion = useReducedMotion();
+  const [showPronunciation, setShowPronunciation] = useState(false);
+  const [blankShellPressed, setBlankShellPressed] = useState(false);
+  const blankTapRef = useRef<{ x: number; y: number } | null>(null);
+  const blankShellPressEndRef = useRef<(() => void) | null>(null);
+  const emojiFieldRef = useRef<HeroEmojiFieldHandle>(null);
   /** Plain wrapper: Framer must not own `top`/`left` (it resets inline styles each render). */
   const portalFrameRef = useRef<HTMLDivElement>(null);
   const cardShellRef = useRef<HTMLDivElement>(null);
@@ -348,6 +391,13 @@ export function HeroCard() {
 
   useLayoutEffect(() => {
     const was = prevExpandedRef.current;
+    if (choom) {
+      if (!was && isExpanded) {
+        playChoomHeroExpand();
+      } else if (was && !isExpanded) {
+        playChoomClickClosing();
+      }
+    }
     if (was && !isExpanded) {
       setCloseVerticalBump("playing");
     }
@@ -360,7 +410,7 @@ export function HeroCard() {
       setOpenVerticalBump("idle");
     }
     prevExpandedRef.current = isExpanded;
-  }, [isExpanded]);
+  }, [isExpanded, choom]);
 
   useEffect(() => {
     if (closeVerticalBump !== "playing") return;
@@ -510,6 +560,82 @@ export function HeroCard() {
     setAvatarReplayTick((n) => n + 1);
   }, [reduceMotion]);
 
+  const onHeroShellPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (isExpanded || reduceMotion) return;
+      if (e.button !== 0) return;
+      const t = e.target as Element | null;
+      if (!e.currentTarget.contains(t)) return;
+      if (isHeroInteractiveTarget(t)) return;
+      blankShellPressEndRef.current?.();
+      blankShellPressEndRef.current = null;
+      blankTapRef.current = { x: e.clientX, y: e.clientY };
+      setBlankShellPressed(true);
+      const endBlankPress = () => {
+        blankShellPressEndRef.current = null;
+        setBlankShellPressed(false);
+        window.removeEventListener("pointerup", endBlankPress);
+        window.removeEventListener("pointercancel", endBlankPress);
+      };
+      blankShellPressEndRef.current = () => {
+        window.removeEventListener("pointerup", endBlankPress);
+        window.removeEventListener("pointercancel", endBlankPress);
+      };
+      window.addEventListener("pointerup", endBlankPress);
+      window.addEventListener("pointercancel", endBlankPress);
+    },
+    [isExpanded, reduceMotion],
+  );
+
+  const onHeroShellPointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const s = blankTapRef.current;
+      blankTapRef.current = null;
+      blankShellPressEndRef.current?.();
+      blankShellPressEndRef.current = null;
+      setBlankShellPressed(false);
+      if (!s || isExpanded || reduceMotion) return;
+      if (e.button !== 0 && e.pointerType === "mouse") return;
+      if (Math.hypot(e.clientX - s.x, e.clientY - s.y) > 14) return;
+      const t = e.target as Element | null;
+      if (!e.currentTarget.contains(t)) return;
+      if (isHeroInteractiveTarget(t)) return;
+      const shell = cardShellRef.current;
+      if (!shell) return;
+      const pick =
+        HERO_DESKTOP_EMOJIS[
+          Math.floor(Math.random() * HERO_DESKTOP_EMOJIS.length)
+        ] ?? "✨";
+      emojiFieldRef.current?.spawnFromCard(shell, pick, {
+        cardTopBounce: !isExpanded,
+      });
+    },
+    [isExpanded, reduceMotion],
+  );
+
+  const onHeroShellPointerCancel = useCallback(() => {
+    blankTapRef.current = null;
+    blankShellPressEndRef.current?.();
+    blankShellPressEndRef.current = null;
+    setBlankShellPressed(false);
+  }, []);
+
+  useEffect(() => {
+    if (isExpanded) {
+      blankShellPressEndRef.current?.();
+      blankShellPressEndRef.current = null;
+      setBlankShellPressed(false);
+    }
+  }, [isExpanded]);
+
+  useEffect(
+    () => () => {
+      blankShellPressEndRef.current?.();
+      blankShellPressEndRef.current = null;
+    },
+    [],
+  );
+
   useEffect(() => {
     return () => {
       if (burstClearRef.current) clearTimeout(burstClearRef.current);
@@ -548,8 +674,10 @@ export function HeroCard() {
                   <button
                     type="button"
                     onClick={replayHeroAvatarAnimation}
-                    aria-label="Replay portrait animation"
-                    title="Replay animation"
+                    aria-label={
+                      choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
+                    }
+                    title={choom ? CHOOM.heroReplayTitle : "Replay animation"}
                     className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
                   >
                     <motion.img
@@ -599,10 +727,10 @@ export function HeroCard() {
                       fontVariationSettings: "'opsz' 14, 'wdth' 100",
                     }}
                   >
-                    Hridae Walia
+                    {choom ? CHOOM.heroName : "Hridae Walia"}
                   </h1>
                   <p className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal text-white/60">
-                    Product Designer
+                    {choom ? CHOOM.heroRole : "Product Designer"}
                   </p>
                 </div>
 
@@ -616,7 +744,7 @@ export function HeroCard() {
                     className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
                   >
                     <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
-                      CV
+                      {choom ? CHOOM.cvLabel : "CV"}
                     </span>
                   </a>
 
@@ -627,7 +755,7 @@ export function HeroCard() {
                     className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
                   >
                     <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
-                      in
+                      {choom ? CHOOM.liLabel : "in"}
                     </span>
                   </a>
                 </div>
@@ -650,7 +778,9 @@ export function HeroCard() {
         <button
           type="button"
           tabIndex={-1}
-          aria-label="Close expanded bio"
+          aria-label={
+            choom ? CHOOM.heroCloseExpanded : "Close expanded bio"
+          }
           className="fixed inset-0 cursor-default touch-manipulation border-0 bg-transparent p-0 focus:outline-none"
           style={{ zIndex: PORTAL_Z - 1 }}
           onClick={() => setIsExpanded(false)}
@@ -664,9 +794,12 @@ export function HeroCard() {
       >
       <motion.div
         ref={cardShellRef}
-        className="flex min-h-[192px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
+        className="flex min-h-[192px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px]"
         style={{ transformOrigin: "50% 0" }}
         initial={false}
+        onPointerDown={onHeroShellPointerDown}
+        onPointerUp={onHeroShellPointerUp}
+        onPointerCancel={onHeroShellPointerCancel}
         animate={{
           height: isExpanded ? "auto" : 192,
           y:
@@ -699,6 +832,23 @@ export function HeroCard() {
                 : { duration: 0.12, ease: MOTION_EASE },
         }}
       >
+      <motion.div
+        className="flex min-h-0 h-full w-full min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
+        style={{ transformOrigin: "50% 9%" }}
+        initial={false}
+        animate={{
+          scale:
+            reduceMotion || isExpanded ? 1 : blankShellPressed ? 0.97 : 1,
+        }}
+        transition={{
+          scale: {
+            type: "spring",
+            stiffness: 400,
+            damping: 27,
+            mass: 0.95,
+          },
+        }}
+      >
       <div
         className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
         aria-hidden
@@ -724,8 +874,10 @@ export function HeroCard() {
               <button
                 type="button"
                 onClick={replayHeroAvatarAnimation}
-                aria-label="Replay portrait animation"
-                title="Replay animation"
+                aria-label={
+                  choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
+                }
+                title={choom ? CHOOM.heroReplayTitle : "Replay animation"}
                 className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
               >
                 <motion.img
@@ -769,21 +921,77 @@ export function HeroCard() {
               isExpanded={isExpanded}
               onToggle={() => setIsExpanded((v) => !v)}
               controlsId={expandedRegionId}
+              ariaLabelExpanded={
+                choom ? CHOOM.heroExpandHide : "Hide full bio"
+              }
+              ariaLabelCollapsed={
+                choom ? CHOOM.heroExpandShow : "Show full bio"
+              }
             />
           </div>
 
           <div className="flex min-w-0 items-end justify-between gap-4">
             <div className="flex min-w-0 flex-col gap-1.5 pr-2">
               <h1
-                className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80 whitespace-nowrap"
+                className={cn(
+                  "grid min-w-0 items-baseline gap-x-1.5 font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80",
+                  showPronunciation
+                    ? "grid-cols-[auto_minmax(0,1fr)]"
+                    : "grid-cols-[auto_0fr]",
+                )}
                 style={{
                   fontVariationSettings: "'opsz' 14, 'wdth' 100",
                 }}
               >
-                Hridae Walia
+                <button
+                  type="button"
+                  id="hero-pronunciation-trigger"
+                  aria-expanded={showPronunciation}
+                  aria-controls="hero-pronunciation-panel"
+                  aria-label={
+                    showPronunciation
+                      ? choom
+                        ? CHOOM.heroPronHide
+                        : "Hridae Walia, hide pronunciation"
+                      : choom
+                        ? CHOOM.heroPronShow
+                        : "Hridae Walia, show pronunciation"
+                  }
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setShowPronunciation((v) => !v);
+                  }}
+                  className="min-w-0 border-0 bg-transparent p-0 text-left font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
+                  style={{
+                    fontVariationSettings: "'opsz' 14, 'wdth' 100",
+                  }}
+                >
+                  {choom ? CHOOM.heroName : "Hridae Walia"}
+                </button>
+                <span
+                  id="hero-pronunciation-panel"
+                  className="min-w-0 overflow-hidden whitespace-nowrap"
+                >
+                  <motion.span
+                    initial={false}
+                    aria-hidden={!showPronunciation}
+                    animate={{
+                      opacity: showPronunciation ? 1 : 0,
+                      x: showPronunciation ? 0 : reduceMotion ? 0 : -8,
+                    }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : { duration: 0.48, ease: [0.15, 1, 0.38, 1] }
+                    }
+                    className="inline-block font-[family-name:var(--font-dm-sans)] text-[15px] font-semibold tracking-wide text-white/45"
+                  >
+                    · ri-they waaliaa
+                  </motion.span>
+                </span>
               </h1>
               <p className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal text-white/60">
-                Product Designer
+                {choom ? CHOOM.heroRole : "Product Designer"}
               </p>
             </div>
 
@@ -797,7 +1005,7 @@ export function HeroCard() {
                 className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
               >
                 <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
-                  CV
+                  {choom ? CHOOM.cvLabel : "CV"}
                 </span>
               </a>
 
@@ -808,7 +1016,7 @@ export function HeroCard() {
                 className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
               >
                 <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
-                  in
+                  {choom ? CHOOM.liLabel : "in"}
                 </span>
               </a>
             </div>
@@ -867,6 +1075,7 @@ export function HeroCard() {
           className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-white/10"
         />
       </motion.div>
+      </motion.div>
     </div>
     </>
   );
@@ -877,6 +1086,12 @@ export function HeroCard() {
       className="relative isolate z-[25] min-h-[192px] w-full min-w-0 max-w-[656px]"
     >
       {mounted && createPortal(glassCard, document.body)}
+      {mounted && !isMobile
+        ? createPortal(
+            <HeroEmojiField ref={emojiFieldRef} reduceMotion={!!reduceMotion} />,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

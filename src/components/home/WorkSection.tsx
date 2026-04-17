@@ -35,6 +35,14 @@ import {
 import { ProjectCarousel } from "./ProjectCarousel";
 import { useBrowserEngine } from "@/lib/useBrowserEngine";
 import { ThreeGlassLensFallback } from "../obscura/ThreeGlassLensFallback";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
+import {
+  CHOOM,
+  CHOOM_MEMORY_CHIPS,
+  choomCardCaption,
+  choomProjectTitle,
+  choomProjectDescription,
+} from "@/lib/homeChoomCopy";
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -44,9 +52,19 @@ function projectPath(slug: string) {
   return `/${slug}`;
 }
 
-function ProjectTitleLink({ slug, title }: { slug: string; title: string }) {
+function ProjectTitleLink({
+  slug,
+  title,
+  displayTitle,
+}: {
+  slug: string;
+  title: string;
+  /** Visible title (e.g. choom lingo); falls back to `title`. */
+  displayTitle?: string;
+}) {
   const href = projectPath(slug);
   const { transitionTo } = usePageTransition();
+  const label = displayTitle ?? title;
 
   return (
     <Link
@@ -59,7 +77,7 @@ function ProjectTitleLink({ slug, title }: { slug: string; title: string }) {
       }}
       className="group inline-flex min-w-0 max-w-full items-center gap-2 rounded-sm font-[family-name:var(--font-geist)] text-base font-bold leading-normal text-white transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0e]"
     >
-      <span className="min-w-0 text-balance">{title}</span>
+      <span className="min-w-0 text-balance">{label}</span>
       <ArrowRight
         className="size-[1.05rem] shrink-0 -translate-x-1.5 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
         aria-hidden
@@ -175,6 +193,7 @@ function GalleryCard({
   obscuraLiquidLens = false,
   mcesFog = false,
   fluid = false,
+  captionOverride,
 }: {
   card: ProjectCardData;
   bgColor: string;
@@ -187,6 +206,8 @@ function GalleryCard({
   projectHref: string;
   /** Accessible name for the clickable card stack */
   projectTitle: string;
+  /** Replaces `card.caption` when set (e.g. choom lingo). */
+  captionOverride?: string;
   /** Pearlescent foil overlay on the home work row (Virdio only) */
   virdioIridescent?: boolean;
   /** Subtle animated dot mesh on card bg (Domis only; stays in isolated decoration layer) */
@@ -652,7 +673,7 @@ function GalleryCard({
         data-carousel-allow-select
       >
         <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50">
-          {card.caption}
+          {captionOverride ?? card.caption}
         </p>
       </div>
     </motion.div>
@@ -662,6 +683,11 @@ function GalleryCard({
 /* ── Project group: title + description + horizontal gallery ── */
 
 function ProjectGroup({ project }: { project: HomepageProject }) {
+  const choom = useChoomLingo();
+  const displayTitle = choom
+    ? choomProjectTitle(project.slug, project.title)
+    : project.title;
+
   return (
     <section
       id={project.slug}
@@ -670,10 +696,14 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
       {/* Title + description — same left spine as Bio / Toolkit (parent HOME_COLUMN padding) */}
       <div className="flex w-full flex-col gap-8 text-white/80">
         <div>
-          <ProjectTitleLink slug={project.slug} title={project.title} />
+          <ProjectTitleLink
+            slug={project.slug}
+            title={project.title}
+            displayTitle={displayTitle}
+          />
         </div>
         <p className="font-[family-name:var(--font-geist)] text-base leading-6">
-          {project.slug === "memory-care" ? (
+          {project.slug === "memory-care" && !choom ? (
             <>
               R&amp;D for the MCES, a multi-modal interactive installation by{" "}
               <a
@@ -687,6 +717,8 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
               aiming to provide life enrichment for people living with
               mid-to-late stage dementia.
             </>
+          ) : choom ? (
+            choomProjectDescription(project.slug, project.description)
           ) : (
             project.description
           )}
@@ -696,14 +728,16 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
             className="m-0 flex list-none flex-wrap gap-2 p-0"
             aria-label="Recognition"
           >
-            {project.recognitionChips.map((chip) => (
+            {project.recognitionChips.map((chip, i) => (
               <li key={chip.label}>
                 <span
                   className="inline-flex max-w-full rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/80 backdrop-blur-sm"
                   title={chip.title ?? chip.label}
                   aria-label={chip.title ?? chip.label}
                 >
-                  {chip.label}
+                  {choom && project.slug === "memory-care"
+                    ? (CHOOM_MEMORY_CHIPS[i] ?? chip.label)
+                    : chip.label}
                 </span>
               </li>
             ))}
@@ -721,7 +755,12 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
           orbColor2={project.orbColor2}
           orbDriftDelay={project.slug.length * 0.08}
           projectHref={projectPath(project.slug)}
-          projectTitle={project.title}
+          projectTitle={displayTitle}
+          captionOverride={
+            choom
+              ? choomCardCaption(project.slug, 0, project.cards[0].caption)
+              : undefined
+          }
           virdioIridescent={project.slug === "virdio"}
           domisDotMatrix={project.slug === "domis"}
           obscuraLiquidLens={project.slug === "obscura"}
@@ -752,7 +791,16 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
                   orbDriftDelay={i * 0.55 + project.slug.length * 0.08}
                   extraImages={extraImages}
                   projectHref={projectPath(project.slug)}
-                  projectTitle={project.title}
+                  projectTitle={displayTitle}
+                  captionOverride={
+                    choom
+                      ? choomCardCaption(
+                          project.slug,
+                          i as 0 | 1 | 2,
+                          card.caption,
+                        )
+                      : undefined
+                  }
                   virdioIridescent={project.slug === "virdio"}
                   domisDotMatrix={project.slug === "domis"}
                   obscuraLiquidLens={project.slug === "obscura"}
@@ -801,10 +849,14 @@ function SectionLabel({ label }: { label: string }) {
 /* ── Work Section (main export) ── */
 
 export function WorkSection() {
+  const choom = useChoomLingo();
   return (
-    <div className="flex w-full flex-col items-stretch gap-[120px]">
+    <div
+      data-home-work-section
+      className="flex w-full flex-col items-stretch gap-[120px]"
+    >
       <ObscuraLiquidGlassFilterSvg />
-      <SectionLabel label="Work" />
+      <SectionLabel label={choom ? CHOOM.workSectionLabel : "Work"} />
 
       {homepageProjects.map((project) => (
         <ProjectGroup key={project.slug} project={project} />

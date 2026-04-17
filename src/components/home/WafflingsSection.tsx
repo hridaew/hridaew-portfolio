@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { CHOOM, CHOOM_WAFFLINGS } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 import Link from "next/link";
 import { homepageWafflings, type WafflingData } from "@/data/homepage-wafflings";
 import { useButterChickenRecipeModal } from "@/components/butter-chicken/ButterChickenRecipeModal";
@@ -13,12 +15,29 @@ function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
 
-function WafflingCard({ waffling }: { waffling: WafflingData }) {
+function WafflingCard({
+  waffling,
+  choomIndex,
+}: {
+  waffling: WafflingData;
+  choomIndex: number;
+}) {
+  const choom = useChoomLingo();
+  const choomRow = CHOOM_WAFFLINGS[choomIndex];
+  const displayTitle =
+    choom && choomRow ? choomRow.title : waffling.title;
+  const displayPreview =
+    choom && choomRow ? choomRow.preview : waffling.previewText;
+
   const isClickable = !!waffling.href && !waffling.isPlaceholder && waffling.opacity === 1;
   const { open: openRecipeModal } = useButterChickenRecipeModal();
 
   if (waffling.taperedRim) {
-    const card = <FigmaButterChickenWafflingCard waffling={waffling} />;
+    const wafflingForFigma =
+      choom && choomRow
+        ? { ...waffling, title: displayTitle, previewText: displayPreview }
+        : waffling;
+    const card = <FigmaButterChickenWafflingCard waffling={wafflingForFigma} />;
     if (waffling.recipeModal) {
       return (
         <button
@@ -77,7 +96,7 @@ function WafflingCard({ waffling }: { waffling: WafflingData }) {
           waffling.isPlaceholder ? "text-white/50" : "text-white/80"
         }`}
       >
-        {waffling.title}
+        {displayTitle}
       </p>
 
       {/* Optional thumbnail */}
@@ -92,11 +111,11 @@ function WafflingCard({ waffling }: { waffling: WafflingData }) {
       )}
 
       {/* Preview text */}
-      {waffling.previewText && (
+      {displayPreview ? (
         <p className="font-[family-name:var(--font-geist)] text-[8px] leading-normal text-white/80 whitespace-pre-wrap">
-          {waffling.previewText}
+          {displayPreview}
         </p>
-      )}
+      ) : null}
 
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1] h-[136px] bg-gradient-to-b from-transparent to-[#1b1b1b]" />
 
@@ -117,7 +136,7 @@ function WafflingCard({ waffling }: { waffling: WafflingData }) {
             transform: "translate(-50%, calc(-100% - 10px))",
           }}
         >
-          WIP
+          {choom ? CHOOM.wipBadge : "WIP"}
         </div>
       </div>
     </div>
@@ -136,12 +155,13 @@ function WafflingCard({ waffling }: { waffling: WafflingData }) {
 }
 
 export function WafflingsSection() {
+  const choom = useChoomLingo();
   return (
     <div id={HOME_WAFFLINGS_SECTION_ID} className="flex w-full min-w-0 flex-col items-start gap-12">
       {/* Section label */}
       <div className="flex w-full items-center gap-4 pr-8">
         <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50 whitespace-nowrap">
-          Wafflings
+          {choom ? CHOOM.wafflingsSectionLabel : "Wafflings"}
         </p>
         <div className="w-[80px] h-px">
           <svg
@@ -171,7 +191,7 @@ export function WafflingsSection() {
       >
         {homepageWafflings.map((waffling, i) => (
           <div key={i} className="flex-[0_0_auto]">
-            <WafflingCard waffling={waffling} />
+            <WafflingCard waffling={waffling} choomIndex={i} />
           </div>
         ))}
       </ProjectCarousel>

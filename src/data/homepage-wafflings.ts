@@ -16,7 +16,7 @@ export interface WafflingData {
 
 export const homepageWafflings: WafflingData[] = [
   {
-    title: "Butter chicken",
+    title: "Butter Chicken Recipe",
     imageSrc: "/assets/home/waffling-butterchicken.png",
     previewText:
       "A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.\n\nBefore you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.\n\nIngredients:",

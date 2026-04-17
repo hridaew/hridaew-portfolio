@@ -3,6 +3,8 @@
  * `document.documentElement` until a full page refresh.
  */
 
+import { scrollHomeToTopImmediate } from "@/lib/scrollHomeWafflings";
+
 export type CheatThemeClass = "theme-2004" | "theme-cyberpunk";
 
 export type CheatOverlayId = "destroy" | "butter-chicken";
@@ -23,7 +25,18 @@ export function resolveHomeCheatCode(raw: string): ResolvedHomeCheat | null {
   return TABLE[code] ?? null;
 }
 
+/** Fired on `window` after `documentElement` theme classes update (home choom copy, etc.). */
+export const HOME_CHEAT_THEME_CHANGE_EVENT = "home-cheat-theme-change" as const;
+
+export type HomeCheatThemeChangeDetail = { theme: CheatThemeClass };
+
 export function applyDocumentTheme(theme: CheatThemeClass): void {
   document.documentElement.classList.remove("theme-2004", "theme-cyberpunk");
   document.documentElement.classList.add(theme);
+  scrollHomeToTopImmediate();
+  window.dispatchEvent(
+    new CustomEvent(HOME_CHEAT_THEME_CHANGE_EVENT, {
+      detail: { theme } satisfies HomeCheatThemeChangeDetail,
+    }),
+  );
 }

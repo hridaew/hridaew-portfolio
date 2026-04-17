@@ -3,6 +3,9 @@
 /**
  * Icons live in `/public/tool-icons` (copied from repo `tool-icons/`).
  */
+import { CHOOM } from "@/lib/homeChoomCopy";
+import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
+
 const TOOLKIT_ITEMS = [
   { name: "Figma", file: "Frame 16256.png" },
   { name: "Figma Make", file: "9dd7913d750d5e2519330ccdbdbc0e24ba58c93e-24x24 1.png" },
@@ -19,10 +22,11 @@ function iconSrc(file: string) {
 }
 
 export function ToolkitSection() {
+  const choom = useChoomLingo();
   return (
     <div className="flex w-full flex-col items-start gap-[16px] overflow-visible">
       <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50">
-        Current Toolkit
+        {choom ? CHOOM.toolkitLabel : "Current Toolkit"}
       </p>
       <div
         role="toolbar"
