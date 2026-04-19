@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@hyperframes/player": "^0.4.6",
     "@types/three": "^0.182.0",
     "@upstash/redis": "^1.36.2",
     "@vercel/analytics": "^1.6.1",
