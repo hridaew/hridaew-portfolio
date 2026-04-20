@@ -16,8 +16,8 @@ function AboutSection() {
         <div className="relative size-[128px] shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
             <img
-              alt=""
-              className="absolute left-[-22.31%] top-[-9.68%] h-[146.55%] max-w-none w-[144.63%]"
+              alt="Portrait at Valve Software"
+              className="block h-full w-full object-cover object-top"
               src={img.aboutPrimary}
             />
           </div>

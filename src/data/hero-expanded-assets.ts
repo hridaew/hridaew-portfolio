@@ -2,7 +2,7 @@ const base = "/assets/home/hero-card-expanded";
 
 /** WebP exports (see `scripts/compress-hero-assets.mjs`). */
 export const heroExpandedAssets = {
-  aboutPrimary: `${base}/about-primary.webp`,
+  aboutPrimary: `${base}/about-primary.jpg`,
   tilt1: `${base}/tilt-1.webp`,
   tilt2: `${base}/tilt-2.webp`,
   tilt3: `${base}/tilt-3.webp`,
