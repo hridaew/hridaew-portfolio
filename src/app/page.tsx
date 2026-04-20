@@ -95,7 +95,7 @@ export default function Home() {
               >
                 <HomeBuildFooterNote />
                 <p className="shrink-0 tabular-nums text-white/20" aria-label="Site version">
-                  v3.0.0
+                  v3.0.1
                 </p>
               </div>
             </div>

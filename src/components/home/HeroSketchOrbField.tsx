@@ -177,6 +177,7 @@ function mountOrb(
     "overflow:hidden",
     "box-shadow:0 14px 32px rgba(0,0,0,0.48),inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -14px 28px rgba(0,0,0,0.3)",
     "border:1px solid rgba(255,255,255,0.2)",
+    "background:radial-gradient(120% 120% at 30% 22%,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 34%,rgba(0,0,0,0.22) 100%)",
     noSelect,
   ].join(";");
 
@@ -190,6 +191,8 @@ function mountOrb(
     "object-fit:cover",
     "display:block",
     "pointer-events:none",
+    "opacity:0",
+    "transition:opacity 180ms ease-out",
     noSelect,
     "-webkit-user-drag:none",
   ].join(";");
@@ -223,6 +226,19 @@ function mountOrb(
   glass.appendChild(shade);
   glass.appendChild(spec);
   wrap.appendChild(glass);
+
+  // Fade in once decoded/loaded to avoid a black flash on first fetch.
+  const showImg = () => {
+    img.style.opacity = "1";
+  };
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  img
+    .decode?.()
+    .then(showImg)
+    .catch(() => {
+      if (img.complete) showImg();
+    });
+  img.addEventListener("load", showImg, { once: true });
 
   let gesturePointerId: number | null = null;
 

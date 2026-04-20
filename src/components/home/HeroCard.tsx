@@ -36,6 +36,7 @@ import {
 } from "./HeroSketchOrbField";
 import { pickNextSketchOrbImage } from "@/lib/sketchOrbPick";
 import { playHeroSketchPop, preloadHeroSketchPop } from "@/lib/audio";
+import { preloadSketchOrbImages } from "@/lib/preloadSketchOrbs";
 import { cn } from "@/lib/utils";
 import {
   burstBezierPoint,
@@ -458,6 +459,7 @@ export function HeroCard() {
   useEffect(() => {
     if (!mounted || isMobile) return;
     preloadHeroSketchPop();
+    preloadSketchOrbImages({ limit: 12 });
   }, [mounted, isMobile]);
 
   useLayoutEffect(() => {
