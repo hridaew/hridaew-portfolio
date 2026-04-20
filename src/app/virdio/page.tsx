@@ -130,9 +130,11 @@ export default function VirdioPage() {
 
                         <div className="w-full min-w-0 case-study-block-gap">
                             <Reveal>
-                                <p className="site-body font-medium text-white/70 text-left">
-                                    &ldquo;How might we make AR workout overlays usable, readable, and motivating across wildly different screen sizes, processing capabilities, and home environments?&rdquo;
-                                </p>
+                                <div className="rounded-2xl bg-gradient-to-b from-[#16161a] to-[#121214] ring-1 ring-white/10 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.55)] p-6 md:p-8">
+                                    <p className="site-body text-white/75 text-left">
+                                        &ldquo;<span className="font-bold text-white">How might we</span> make AR workout overlays usable, readable, and motivating across wildly different screen sizes, processing capabilities, and home environments?&rdquo;
+                                    </p>
+                                </div>
                             </Reveal>
                         </div>
 
@@ -140,12 +142,12 @@ export default function VirdioPage() {
                         <div className="w-full min-w-0 case-study-prose-stack case-study-block-gap">
                             <Reveal>
                                 <p className="site-body text-white/65">
-                                    In 2021, millions of people were working out at home, but the most engaging options required expensive, space-consuming equipment. Peloton needed a $1,500 bike. Mirror needed a $1,500 screen. Everyone else was stuck with pre-recorded YouTube videos and zero performance tracking.
+                                    In 2021, the most engaging home fitness options were gated by expensive equipment. Peloton needed a $1,500 bike, Mirror needed a $1,500 screen, and everyone else was stuck with passive YouTube videos and zero performance tracking.
                                 </p>
                             </Reveal>
                             <Reveal delay={0.05}>
                                 <p className="site-body text-white/65">
-                                    Virdio&rsquo;s leadership had machine vision technology that could detect body poses through a standard camera and simulate exercise equipment using AR. The opportunity was enormous: deliver the engagement of a Peloton class to anyone with a laptop or phone, no hardware required.
+                                    Virdio&rsquo;s machine vision could read body poses through a standard camera and simulate exercise equipment in AR. That meant we could deliver Peloton-grade engagement to anyone with a laptop or phone, no hardware required.
                                 </p>
                             </Reveal>
                         </div>
@@ -165,12 +167,12 @@ export default function VirdioPage() {
                             <div className="case-study-prose-stack flex flex-col">
                                 <Reveal delay={0.05}>
                                     <p className="site-body text-white/65">
-                                        Virdio had been licensing its machine vision technology to gyms for remote AR classes. The next step was a direct-to-consumer subscription app, like Peloton but accessible from any device. I was brought on as the sole full-time product designer to take this from zero to launch.
+                                        Virdio had been licensing its machine vision tech to gyms for remote AR classes. I was brought on as the product designer to turn that capability into a direct-to-consumer subscription app, accessible from any device.
                                     </p>
                                 </Reveal>
                                 <Reveal delay={0.1}>
                                     <p className="site-body text-white/65">
-                                        The product needed to ship on iOS, Android, web, desktop (Mac and Windows), Apple Watch, and smart TVs. The engineering team was fully remote and 12 hours ahead of me, which meant nearly all dev collaboration was asynchronous. There was no existing design system, no prior consumer-facing product, and the timeline was aggressive.
+                                        I had to ship across iOS, Android, web, desktop, Apple Watch, and smart TV on an aggressive timeline, with no existing design system and an engineering team 12 hours ahead of me on async collaboration.
                                     </p>
                                 </Reveal>
                             </div>
@@ -218,7 +220,7 @@ export default function VirdioPage() {
                                 <span className="site-label text-white/40">02</span>
                             </Reveal>
                             <h2 className="site-chapter-heading text-white text-left">
-                                <TextReveal>The most accessible device delivered the worst experience</TextReveal>
+                                <TextReveal>The most accessible device delivered the most compromised experience</TextReveal>
                             </h2>
                         </div>
 
@@ -226,12 +228,17 @@ export default function VirdioPage() {
                         <div className="w-full min-w-0 case-study-prose-stack case-study-block-gap">
                             <Reveal>
                                 <p className="site-body text-white/65">
-                                    I started testing prototypes with our internal advisory board of fitness trainers and physicians. What emerged was a turning point: the mobile phone, the easiest way for users to access the app, was inherently the worst platform for the core AR workout experience.
+                                    I tested prototypes with our internal advisory board of fitness trainers and physicians. The turning point: the mobile phone, our easiest entry point, was inherently the worst platform for the core AR workout.
                                 </p>
                             </Reveal>
                             <Reveal delay={0.05}>
                                 <p className="site-body text-white/65">
-                                    On a small screen, AR overlays competed with the video feed for visibility. The pose detection needed distance from the camera, but users placed phones close or on unstable surfaces, leading to inconsistent tracking or difficult visibility. If mobile was the front door for most users, and mobile delivered the lowest-quality version of our differentiating feature, we risked first impressions that undermined the entire value proposition.
+                                    On a small screen, AR overlays competed with the video feed, and pose detection needed distance from a camera that users typically placed close or on unstable surfaces.
+                                </p>
+                            </Reveal>
+                            <Reveal delay={0.1}>
+                                <p className="site-body text-white/65">
+                                    If mobile was the front door and mobile delivered the lowest-quality version of our differentiator, first impressions would undermine the whole value proposition.
                                 </p>
                             </Reveal>
                         </div>
@@ -248,11 +255,18 @@ export default function VirdioPage() {
                                     Platform strategy: launching everywhere vs. focusing on the best experience
                                 </h3>
                             </Reveal>
-                            <Reveal delay={0.05}>
-                                <p className="site-body text-white/65">
-                                    This insight forced a critical strategic conversation. I advocated for a desktop-first approach: focus our limited resources on making the larger-screen experience exceptional. The CEO was adamant about launching on all platforms simultaneously. Multi-platform availability was a competitive differentiator, and mobile was the most accessible entry point for browsing and booking classes.
-                                </p>
-                            </Reveal>
+                            <div className="case-study-prose-stack flex flex-col">
+                                <Reveal delay={0.05}>
+                                    <p className="site-body text-white/65">
+                                        I pushed for a desktop-first approach, focusing our limited resources on making the larger-screen experience exceptional.
+                                    </p>
+                                </Reveal>
+                                <Reveal delay={0.1}>
+                                    <p className="site-body text-white/65">
+                                        The CEO was adamant about launching on all platforms at once. Multi-platform availability was a competitive differentiator, and mobile was still the most accessible entry point for browsing and booking.
+                                    </p>
+                                </Reveal>
+                            </div>
                         </div>
 
                         {/* Decision Cards */}
@@ -296,12 +310,12 @@ export default function VirdioPage() {
                                 <div className="case-study-prose-stack flex flex-col">
                                     <Reveal delay={0.05}>
                                         <p className="site-body text-white/65">
-                                            Users needed to calibrate their camera and define their play space, which sounds technical. I designed a visual experience to make it approachable. For camera alignment, I created a visual guide that asked users to center themselves on screen with clear tilt indicators.
+                                            Users had to calibrate their camera and define their play space. I made it approachable: a visual guide asks users to center themselves on screen with clear tilt indicators.
                                         </p>
                                     </Reveal>
                                     <Reveal delay={0.1}>
                                         <p className="site-body text-white/65">
-                                            For room calibration, the system placed virtual cones and users simply walked to the corners of their space. The backend detection handled the rest. The entire setup culminated in a satisfying green checkmark confirmation.
+                                            For room calibration, virtual cones appear on screen and users simply walk to the corners of their space, ending in a satisfying green checkmark confirmation.
                                         </p>
                                     </Reveal>
                                 </div>
@@ -424,12 +438,12 @@ export default function VirdioPage() {
                                 <div className="case-study-prose-stack flex flex-col">
                                     <Reveal delay={0.05}>
                                         <p className="site-body text-white/65">
-                                            The core of the product used machine vision to read body poses in real time, counting actions like punches, squats, and jumps. AR artifacts served as both affordances showing users how to perform exercises and as hit boxes for the system to register completed reps.
+                                            Machine vision read body poses in real time, counting actions like punches, squats, and jumps. AR artifacts doubled as affordances that showed users the move, and as hit boxes that registered each completed rep.
                                         </p>
                                     </Reveal>
                                     <Reveal delay={0.1}>
                                         <p className="site-body text-white/65">
-                                            I designed platform-specific HUD adaptations. Desktop took advantage of landscape orientation to show more metrics, class info, and participant data simultaneously. Mobile required a dynamic HUD that collapsed and expanded contextually, preserving maximum visibility of the actual workout content on a small screen.
+                                            I designed platform-specific HUDs. Desktop used the landscape canvas to surface metrics, class info, and participant data at once. Mobile collapsed and expanded contextually to preserve workout visibility on a small screen.
                                         </p>
                                     </Reveal>
                                 </div>
@@ -496,11 +510,18 @@ export default function VirdioPage() {
                                         Scheduling & Design System
                                     </h3>
                                 </Reveal>
-                                <Reveal delay={0.05}>
-                                    <p className="site-body text-white/65">
-                                        I built the design system from the ground up to maintain consistency across all five platforms. It governed color, typography, button styles, and component behavior. A key design decision was using light mode for browsing and discovery surfaces and dark mode for anything related to attending a class, creating a clear psychological shift when users entered the workout experience.
-                                    </p>
-                                </Reveal>
+                                <div className="case-study-prose-stack flex flex-col">
+                                    <Reveal delay={0.05}>
+                                        <p className="site-body text-white/65">
+                                            I built the design system from the ground up so it stayed consistent across all five platforms, governing color, typography, button styles, and component behavior.
+                                        </p>
+                                    </Reveal>
+                                    <Reveal delay={0.1}>
+                                        <p className="site-body text-white/65">
+                                            I used light mode for browsing and discovery, and dark mode for anything class-related. The contrast created a clear psychological shift when users entered the workout.
+                                        </p>
+                                    </Reveal>
+                                </div>
                             </div>
 
                             {/* Desktop + Mobile scheduling comparison */}
@@ -574,10 +595,10 @@ export default function VirdioPage() {
                                     <h3 className="site-subheading case-study-heading-trail-mb text-white">What I Owned</h3>
                                     <ul className="case-study-prose-stack flex flex-col">
                                         {[
-                                            "Sole designer from concept to launch-ready deliverables across iOS, Android, web, desktop, Apple Watch, and smart TV.",
-                                            "Built the entire design system from the ground up: color, typography, components, and platform-specific adaptations.",
-                                            "Influenced product strategy: led the platform prioritization debate and shaped the desktop-first UX compromise.",
-                                            "Created detailed interaction and animation specs for async engineering handoff across a 12-hour timezone gap, critical for AR components that static mockups couldn't convey.",
+                                            "Product designer from concept to launch across iOS, Android, web, desktop, Apple Watch, and smart TV.",
+                                            "Built the cross-platform design system from scratch: color, typography, components, and platform-specific adaptations.",
+                                            "Led the platform prioritization debate and shaped the desktop-first UX compromise.",
+                                            "Wrote detailed interaction and animation specs for async engineering handoff across a 12-hour timezone gap.",
                                         ].map((item, i) => (
                                             <li key={i} className="case-study-grid-gap-dense flex site-body text-white/65">
                                                 <span className="text-white/35 mt-[5px] shrink-0">&#8226;</span>
@@ -594,10 +615,10 @@ export default function VirdioPage() {
                                     <h3 className="site-subheading case-study-heading-trail-mb text-white">Impact</h3>
                                     <div className="case-study-prose-stack">
                                         <p className="site-body text-white/65">
-                                            The app launched across all planned platforms in mid-2022. I was let go about a month before launch during team reductions, just after completing the final design iterations. The app received some positive reviews but did not achieve significant consumer adoption. The consumer home fitness market was cooling from its pandemic peak by the time we shipped.
+                                            The app launched across all planned platforms in mid-2022 to some positive reviews, though consumer adoption stayed modest as the home fitness market cooled from its pandemic peak.
                                         </p>
                                         <p className="site-body text-white/70">
-                                            If I could do it over, I would focus on making one platform exceptional with a limited, curated class library, and use that to wow users before expanding.
+                                            If I could do it over, I would focus on making one platform exceptional with a curated class library, and use that to wow users before expanding.
                                         </p>
                                     </div>
                                 </div>

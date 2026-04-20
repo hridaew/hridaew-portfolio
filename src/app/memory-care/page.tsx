@@ -399,9 +399,15 @@ export default function MemoryCarePage() {
                     </Reveal>
 
                     <Reveal>
-                        <div className="case-study-subsection-gap">
+                        <div className="case-study-subsection-gap case-study-prose-stack flex flex-col">
                             <p className="site-body text-white/65 text-left">
-                                The station is controlled by facility staff who are often stretched thin. If the digital interface was difficult to configure, the physical station would sit unused. Feedback indicated the original system felt like a static medical database, lacking the flexibility needed for improvised care sessions.
+                                The station is controlled by facility staff who are often stretched thin. If the digital interface was difficult to configure, the physical station would sit unused.
+                            </p>
+                            <p className="site-body text-white/65 text-left">
+                                Maria Mortati had consulted a group of students from CCA&rsquo;s MDes program to design the first iteration and lay the foundations for this part of the project.
+                            </p>
+                            <p className="site-body text-white/65 text-left">
+                                I built off their work to create a simplified IA, design system, and set of high fidelity wireframes ready for dev handoff.
                             </p>
                         </div>
                     </Reveal>

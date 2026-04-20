@@ -30,7 +30,6 @@ import { HOME_CARD_CAPTION_PAD, HOME_PROJECT_EMBLA_VIEWPORT } from "./homeGrid";
 import {
   OBSCURA_LIQUID_GLASS_FILTER_ID,
   OBSCURA_LIQUID_GLASS_LENS_PX,
-  ObscuraLiquidGlassFilterSvg,
 } from "./ObscuraLiquidGlassFilterSvg";
 import { ProjectCarousel } from "./ProjectCarousel";
 import { useBrowserEngine } from "@/lib/useBrowserEngine";
@@ -855,7 +854,6 @@ export function WorkSection() {
       data-home-work-section
       className="flex w-full flex-col items-stretch gap-[120px]"
     >
-      <ObscuraLiquidGlassFilterSvg />
       <SectionLabel label={choom ? CHOOM.workSectionLabel : "Work"} />
 
       {homepageProjects.map((project) => (

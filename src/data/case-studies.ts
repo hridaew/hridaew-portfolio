@@ -100,7 +100,7 @@ export const caseStudies: CaseStudy[] = [
     subtitle: "Democratizing AR Fitness",
     description: "Designing a hardware-free, cross-platform workout ecosystem (iOS, Android, Web, TV)",
     image: "/images/virdio.png",
-    role: "Sole Product Designer",
+    role: "Product Designer",
     timeline: "2021–2022",
     platforms: "iOS, Android, Web, TV",
     rotation: 2.2,

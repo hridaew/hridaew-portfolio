@@ -31,10 +31,20 @@ import {
 } from "@/lib/choomUiAudio";
 import { HeroCardExpandedBody } from "./HeroCardExpandedBody";
 import {
-  HeroEmojiField,
-  type HeroEmojiFieldHandle,
-} from "./HeroCardEmojiField";
+  HeroSketchOrbField,
+  type HeroSketchOrbFieldHandle,
+} from "./HeroSketchOrbField";
+import { pickNextSketchOrbImage } from "@/lib/sketchOrbPick";
+import { playHeroSketchPop, preloadHeroSketchPop } from "@/lib/audio";
 import { cn } from "@/lib/utils";
+import {
+  burstBezierPoint,
+  createBurstParticleSpecs,
+  DEFAULT_BURST_COLORS,
+  HERO_BURST_DURATION_S,
+  HERO_BURST_EASE,
+  type BurstParticleSpec,
+} from "@/lib/burstBezier";
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
@@ -66,61 +76,14 @@ const CARD_END_BUMP_EASE: [number, number, number, number] = [0.15, 1, 0.38, 1];
 
 type VerticalBumpPhase = "idle" | "playing" | "done";
 
-const AVATAR_BURST_COLORS = ["#ffffff", "#FF5A5B", "#EB8314", "#CCBAFF"] as const;
+const AVATAR_BURST_CLEAR_MS = Math.ceil(HERO_BURST_DURATION_S * 1000) + 120;
 
-type AvatarBurstParticle = {
-  id: number;
-  angle: number;
-  dist: number;
-  /** Perpendicular lift (px) on the quadratic curve — reads as an arc. */
-  arch: number;
-  archSign: number;
-  size: number;
-  color: string;
-};
-
-/** Quadratic bezier from origin to (ex,ey) with control point biased perpendicular for an arc. */
-function burstBezierPoint(
-  angle: number,
-  dist: number,
-  arch: number,
-  archSign: number,
-  u: number,
-): { x: number; y: number } {
-  const cosA = Math.cos(angle);
-  const sinA = Math.sin(angle);
-  const ex = cosA * dist;
-  const ey = sinA * dist;
-  const perpX = -sinA * archSign;
-  const perpY = cosA * archSign;
-  const cx = ex * 0.5 + perpX * arch;
-  const cy = ey * 0.5 + perpY * arch;
-  const t = u;
-  const o = 1 - t;
-  return {
-    x: 2 * o * t * cx + t * t * ex,
-    y: 2 * o * t * cy + t * t * ey,
-  };
+function createAvatarBurst(): BurstParticleSpec[] {
+  return createBurstParticleSpecs(DEFAULT_BURST_COLORS);
 }
-
-function createAvatarBurst(): AvatarBurstParticle[] {
-  const n = 18;
-  return Array.from({ length: n }, (_, i) => ({
-    id: i,
-    angle: (Math.PI * 2 * i) / n + (Math.random() - 0.5) * 0.35,
-    dist: 56 + Math.random() * 44,
-    arch: 16 + Math.random() * 18,
-    archSign: i % 2 === 0 ? 1 : -1,
-    size: 1.15 + Math.random() * 1.15,
-    color: AVATAR_BURST_COLORS[i % AVATAR_BURST_COLORS.length] ?? "#ffffff",
-  }));
-}
-
-const AVATAR_BURST_DURATION_S = 1.22;
-const AVATAR_BURST_CLEAR_MS = Math.ceil(AVATAR_BURST_DURATION_S * 1000) + 120;
 
 /** One continuous tween (no Framer keyframe arrays) — progress drives arc + late fade. */
-function AvatarBurstParticle({ particle }: { particle: AvatarBurstParticle }) {
+function AvatarBurstParticle({ particle }: { particle: BurstParticleSpec }) {
   const p = particle;
   const progress = useMotionValue(0);
 
@@ -146,8 +109,8 @@ function AvatarBurstParticle({ particle }: { particle: AvatarBurstParticle }) {
   useEffect(() => {
     progress.set(0);
     const controls = animate(progress, 1, {
-      duration: AVATAR_BURST_DURATION_S,
-      ease: [0.2, 0.95, 0.24, 1],
+      duration: HERO_BURST_DURATION_S,
+      ease: HERO_BURST_EASE,
     });
     return () => controls.stop();
   }, [progress]);
@@ -178,20 +141,6 @@ const ORB_BLUR_STDDEV = 52;
 
 /** Above blurred `[data-page-transition-shell]` (z-[1]), below route curtain (z-[100]). */
 const PORTAL_Z = 90;
-
-/** Desktop-only: random pick when tapping empty glass on the collapsed hero. */
-const HERO_DESKTOP_EMOJIS = [
-  "🎨",
-  "🎹",
-  "🖥️",
-  "✨",
-  "🎮",
-  "🐱",
-  "📐",
-  "🔭",
-  "🎧",
-  "🧪",
-] as const;
 
 function isHeroInteractiveTarget(el: Element | null): boolean {
   if (!el) return true;
@@ -371,14 +320,14 @@ export function HeroCard() {
   const [mounted, setMounted] = useState(false);
   /** Bumped on avatar click so animated WebP restarts (play-once file replays from frame 0). */
   const [avatarReplayTick, setAvatarReplayTick] = useState(0);
-  const [avatarBurst, setAvatarBurst] = useState<AvatarBurstParticle[] | null>(null);
+  const [avatarBurst, setAvatarBurst] = useState<BurstParticleSpec[] | null>(null);
   const burstClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduceMotion = useReducedMotion();
   const [showPronunciation, setShowPronunciation] = useState(false);
   const [blankShellPressed, setBlankShellPressed] = useState(false);
   const blankTapRef = useRef<{ x: number; y: number } | null>(null);
   const blankShellPressEndRef = useRef<(() => void) | null>(null);
-  const emojiFieldRef = useRef<HeroEmojiFieldHandle>(null);
+  const sketchOrbFieldRef = useRef<HeroSketchOrbFieldHandle>(null);
   /** Plain wrapper: Framer must not own `top`/`left` (it resets inline styles each render). */
   const portalFrameRef = useRef<HTMLDivElement>(null);
   const cardShellRef = useRef<HTMLDivElement>(null);
@@ -506,6 +455,11 @@ export function HeroCard() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted || isMobile) return;
+    preloadHeroSketchPop();
+  }, [mounted, isMobile]);
+
   useLayoutEffect(() => {
     if (!mounted) return;
     syncPortalPosition();
@@ -602,13 +556,11 @@ export function HeroCard() {
       if (isHeroInteractiveTarget(t)) return;
       const shell = cardShellRef.current;
       if (!shell) return;
-      const pick =
-        HERO_DESKTOP_EMOJIS[
-          Math.floor(Math.random() * HERO_DESKTOP_EMOJIS.length)
-        ] ?? "✨";
-      emojiFieldRef.current?.spawnFromCard(shell, pick, {
+      const pick = pickNextSketchOrbImage();
+      sketchOrbFieldRef.current?.spawnFromCard(shell, pick, {
         cardTopBounce: !isExpanded,
       });
+      playHeroSketchPop();
     },
     [isExpanded, reduceMotion],
   );
@@ -1088,7 +1040,7 @@ export function HeroCard() {
       {mounted && createPortal(glassCard, document.body)}
       {mounted && !isMobile
         ? createPortal(
-            <HeroEmojiField ref={emojiFieldRef} reduceMotion={!!reduceMotion} />,
+            <HeroSketchOrbField ref={sketchOrbFieldRef} reduceMotion={!!reduceMotion} />,
             document.body,
           )
         : null}

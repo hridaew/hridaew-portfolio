@@ -6,6 +6,7 @@ import { HeroCard } from "./HeroCard";
 import { BioSection } from "./BioSection";
 import { ToolkitSection } from "./ToolkitSection";
 import { WorkSection } from "./WorkSection";
+import { ObscuraLiquidGlassFilterSvg } from "./ObscuraLiquidGlassFilterSvg";
 import { HOME_COLUMN, HOME_HERO_BLEED } from "./homeGrid";
 import { ENABLE_WAFFLINGS_SECTION } from "@/lib/site-toggles";
 import { RevealOnLoad } from "./RevealOnLoad";
@@ -50,6 +51,8 @@ export function HomePage() {
         <div className="home-page-dot-mesh-pop absolute inset-0 min-h-full" />
       </div>
       <div className="relative z-[1] min-w-0">
+        {/* One shared SVG filter for Obscura liquid lens + hero sketch orbs (Chromium). */}
+        <ObscuraLiquidGlassFilterSvg />
         <div className={HOME_COLUMN}>
           {/* Hero card with animated orbs */}
           <RevealOnLoad delay={0.05}>

@@ -29,7 +29,7 @@ const DecisionCards = ({ className }: { className?: string }) => {
                         All Platforms Simultaneously
                     </h3>
                     <p className="type-body text-white/55 text-left">
-                        Launch everywhere at once to maximize accessibility and differentiate from hardware-locked competitors. Mobile is the most accessible entry point.
+                        Launch everywhere at once to maximize accessibility and differentiate from hardware-locked competitors.
                     </p>
                 </div>
             </div>
@@ -42,7 +42,7 @@ const DecisionCards = ({ className }: { className?: string }) => {
                             What we chose
                         </p>
                         <p className="type-body text-white/80 text-left">
-                            We shipped on all platforms but designed the UX to guide users toward the desktop/laptop experience as the recommended way to attend AR classes. Mobile retained full functionality but onboarding, class setup, and messaging nudged users toward larger screens.
+                            We shipped on all platforms but the UX guided users toward desktop and laptop as the recommended way to attend AR classes.
                         </p>
                     </div>
                     <div className="flex-1 md:border-l md:border-white/10 md:pl-12">
@@ -50,7 +50,7 @@ const DecisionCards = ({ className }: { className?: string }) => {
                             What I gave up
                         </p>
                         <p className="type-body text-white/55 text-left">
-                            The ability to ship a deeply polished single-platform experience. I spread my effort across five platforms, which meant every surface got less iteration time than I wanted.
+                            The chance to build one deeply focused experience.
                         </p>
                     </div>
                 </div>

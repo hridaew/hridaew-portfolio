@@ -31,9 +31,9 @@ export interface HomepageProject {
 export const homepageProjects: HomepageProject[] = [
   {
     slug: "domis",
-    title: "Building Domis",
+    title: "Designing an AI-powered home maintenance app",
     description:
-      "Designing a home maintenance app from scratch, leveraging AI to make the inventory and task tracking experience a joy rather than a pain.",
+      "Leveraging AI to make the inventory and task tracking experience a joy rather than a pain.",
     bgColor: "#ff5a5b",
     orbColor1: "rgba(211,153,153,0.6)",
     orbColor2: "rgba(255,37,37,0.8)",

@@ -12,6 +12,28 @@ function getContext(): AudioContext {
     return audioCtx;
 }
 
+let heroSketchPopAudio: HTMLAudioElement | null = null;
+
+/** Preload hero sketch-orb pop (call once on home mount; play only inside user gestures). */
+export function preloadHeroSketchPop() {
+  if (typeof window === "undefined") return;
+  if (heroSketchPopAudio) return;
+  heroSketchPopAudio = new Audio("/assets/home/hero-sketch-pop.mp3");
+  heroSketchPopAudio.volume = 0.38;
+  heroSketchPopAudio.preload = "auto";
+  heroSketchPopAudio.load();
+}
+
+export function playHeroSketchPop() {
+  if (typeof window === "undefined") return;
+  if (!heroSketchPopAudio) {
+    heroSketchPopAudio = new Audio("/assets/home/hero-sketch-pop.mp3");
+    heroSketchPopAudio.volume = 0.38;
+  }
+  heroSketchPopAudio.currentTime = 0;
+  void heroSketchPopAudio.play().catch(() => {});
+}
+
 export function playClick() {
     if (typeof document !== "undefined" && isChoomThemeDocument()) {
         playChoomClick();

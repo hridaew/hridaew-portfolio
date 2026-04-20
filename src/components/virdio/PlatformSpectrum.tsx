@@ -21,8 +21,8 @@ const PlatformSpectrum = ({ className }: { className?: string }) => {
                     <div className="text-left">
                         <p className="site-body text-white">Mobile</p>
                         <p className="site-body text-sm font-medium text-emerald-400 mt-0.5">Most accessible</p>
-                        <p className="type-caption text-white/50 mt-1.5">
-                            Small screen, unstable placement, AR overlays compete for visibility.
+                        <p className="site-gallery-caption mt-1.5 text-left text-white/45">
+                            Unstable placement, AR overlays compete for visibility.
                         </p>
                     </div>
                 </div>
@@ -41,13 +41,13 @@ const PlatformSpectrum = ({ className }: { className?: string }) => {
                     <div className="text-left">
                         <p className="site-body text-white">Desktop</p>
                         <p className="site-body text-sm font-medium text-violet-300 mt-0.5">Best AR quality</p>
-                        <p className="type-caption text-white/50 mt-1.5">
+                        <p className="site-gallery-caption mt-1.5 text-left text-white/45">
                             Larger screen, stable camera, overlays complement the experience.
                         </p>
                     </div>
                 </div>
             </div>
-            <p className="type-caption text-white/45 mt-6 md:mt-8 text-left w-full min-w-0">
+            <p className="site-gallery-caption mt-6 text-left text-white/45 md:mt-8 w-full min-w-0">
                 More accessible devices tended to deliver lower-quality AR; desktop was the best place for the core workout experience.
             </p>
         </div>

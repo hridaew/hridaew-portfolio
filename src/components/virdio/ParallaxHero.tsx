@@ -54,7 +54,7 @@ const ParallaxHero = () => {
                         {/* Metadata */}
                         <div className="flex w-full flex-wrap justify-start gap-x-10 gap-y-4 border-t border-white/10 pt-6">
                             {[
-                                { label: "Role", val: "Sole Product Designer" },
+                                { label: "Role", val: "Product Designer" },
                                 { label: "Timeline", val: "2021 – 2022" },
                                 { label: "Platforms", val: "iOS, Android, Web, TV" },
                             ].map((item, i) => (
