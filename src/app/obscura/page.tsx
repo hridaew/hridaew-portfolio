@@ -1004,6 +1004,45 @@ export default function ObscuraPage() {
                                 If I built it again, which I intend to do at a larger scale, I would pay far more attention to the pathfinding and spatial choreography of the audience experience. Exhibition design lives in the transitions: how people approach, how they wait, how they move through, how they leave. I&apos;d like to design the external apparatus with the same care as the internal experience, and explore how the physical space can facilitate more discussion and interaction between visitors before and after they step inside.
                             </p>
                         </Reveal>
+                        <Reveal delay={0.3} className="case-study-media-caption-mt">
+                            <div className="w-full text-left">
+                                <p className="site-label mb-6 text-amber-200/60">
+                                    Gratitude
+                                </p>
+                                <div className="flex flex-col gap-5 md:gap-6">
+                                    <div>
+                                        <p className="mb-1.5 text-sm font-medium text-neutral-300">Wong Family</p>
+                                        <p className={cn(obBody, "text-neutral-500")}>
+                                            Wayne Wong, Curtis Wong, Anne Rudden
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="mb-1.5 text-sm font-medium text-neutral-300">Teammates</p>
+                                        <p className={cn(obBody, "text-neutral-500")}>
+                                            Asa Symons, Caiya Wiltshire, Nick Hallin
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="mb-1.5 text-sm font-medium text-neutral-300">MOHAI</p>
+                                        <p className={cn(obBody, "text-neutral-500")}>
+                                            Leonard Garfield, Devorah Romanek, Sorana Nance, Rachel Spence
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="mb-1.5 text-sm font-medium text-neutral-300">UW</p>
+                                        <p className={cn(obBody, "text-neutral-500")}>
+                                            Ana Pinto Da Silva, Matt Bartels, Dukes Wooters, Axel Roesler, Kristin N Dew, John Zošák
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="mb-1.5 text-sm font-medium text-neutral-300">External Advisors</p>
+                                        <p className={cn(obBody, "text-neutral-500")}>
+                                            Saransh Solanki (Meta), Sam Stubblefield, Harri Lin, Maria Mortati
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Reveal>
                     </div>
                 </section>
 
