@@ -27,7 +27,6 @@ export const homepageWafflings: WafflingData[] = [
   },
   {
     title: "Recorder-Proto",
-    eyebrow: "Side Project",
     imageSrc: "/assets/recorder/card.png",
     imageHero: true,
     previewText: "I wanted to make something cool from a mundane task.",
