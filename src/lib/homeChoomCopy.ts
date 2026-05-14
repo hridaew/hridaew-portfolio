@@ -96,6 +96,10 @@ export const CHOOM_WAFFLINGS: {
       "Runners keep asking for my spice stack. It’s a vibes-build: amounts drift like heat in the sprawl. More Kashmiri red if you want pain. If taste reads flat, it’s salt or butter — butter scales linear, choom. That’s nova.",
   },
   {
+    title: "Recorder-Proto — vinyl scratch deck, pocket build",
+    preview: "Forged chrome from a gonk routine — preem side gig, choom.",
+  },
+  {
     title: "Experiment — claws on the smart slab",
     preview:
       "Smart slabs answer then forget — stateless ghosts. I’m wiring persistent memory so the box holds your thoughts like gear, not gomi.",

@@ -11,7 +11,10 @@ import {
   useChoomLingo,
 } from "@/components/home/HomeChoomLingoContext";
 import { CHOOM } from "@/lib/homeChoomCopy";
-import { scrollHomeToTopImmediate } from "@/lib/scrollHomeWafflings";
+import {
+  consumeWafflingReturnScroll,
+  scrollHomeToTopImmediate,
+} from "@/lib/scrollHomeWafflings";
 
 const HomeCheatEasterEggs = dynamic(
   () =>
@@ -44,7 +47,7 @@ export default function Home() {
       requestAnimationFrame(() => {
         const el = document.getElementById(pendingHash.replace("#", ""));
         if (el) {
-          const lenis = (window as unknown as { __lenis?: { scrollTo: (t: HTMLElement, o: { offset: number; duration: number }) => void } }).__lenis;
+          const lenis = (window as unknown as { __lenis?: { scrollTo: (t: HTMLElement | number, o: { offset?: number; duration?: number; immediate?: boolean }) => void } }).__lenis;
           if (lenis) {
             lenis.scrollTo(el, { offset: -80, duration: 1.2 });
           } else {
@@ -52,13 +55,27 @@ export default function Home() {
           }
         }
       });
-    } else {
-      const params = new URLSearchParams(window.location.search);
-      const butterChickenDeepLink = params.get("waffling") === "butter-chicken";
-      if (!butterChickenDeepLink) {
-        scrollHomeToTopImmediate();
-      }
+      return;
     }
+
+    // Returning from a waffling — restore the exact scroll the user left at,
+    // instead of snapping to top. Pair window + Lenis writes so the smooth-scroll
+    // engine doesn't trample our restoration on its next tick.
+    const wafflingReturnY = consumeWafflingReturnScroll();
+    if (wafflingReturnY !== null) {
+      const apply = () => {
+        window.scrollTo({ top: wafflingReturnY, left: 0, behavior: "auto" });
+        const lenis = (window as unknown as { __lenis?: { scrollTo: (t: HTMLElement | number, o: { offset?: number; duration?: number; immediate?: boolean }) => void } }).__lenis;
+        lenis?.scrollTo(wafflingReturnY, { immediate: true });
+      };
+      apply();
+      // Re-apply on the next frame so any same-tick layout from page-transition / Lenis
+      // restart doesn't undo us.
+      requestAnimationFrame(apply);
+      return;
+    }
+
+    scrollHomeToTopImmediate();
   }, []);
 
   useEffect(() => {
@@ -95,7 +112,7 @@ export default function Home() {
               >
                 <HomeBuildFooterNote />
                 <p className="shrink-0 tabular-nums text-white/20" aria-label="Site version">
-                  v3.0.1
+                  v3.1.0
                 </p>
               </div>
             </div>

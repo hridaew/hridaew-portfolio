@@ -1,16 +1,10 @@
 import type { jsPDF } from "jspdf";
 import { CONTACT_EMAIL } from "@/lib/contactEmail";
 
-const WAFFLING_QUERY = "waffling";
-const WAFFLING_VALUE = "butter-chicken";
-
-/** Shareable URL that opens the recipe modal via `ButterChickenRecipeDeepLink`. */
-export function buildButterChickenRecipeShareUrl(pathname: string): string {
+/** Shareable URL that opens the recipe page (`/butter-chicken`). */
+export function buildButterChickenRecipeShareUrl(): string {
   if (typeof window === "undefined") return "";
-  const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  const u = new URL(path, window.location.origin);
-  u.searchParams.set(WAFFLING_QUERY, WAFFLING_VALUE);
-  return u.toString();
+  return new URL("/butter-chicken", window.location.origin).toString();
 }
 
 const MARGIN_PT = 48;

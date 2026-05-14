@@ -10,8 +10,9 @@ export interface WafflingData {
   isPlaceholder?: boolean;
   /** Figma butter-chicken teaser card (Domis Design node 16684:801). */
   taperedRim?: boolean;
-  /** Open in shared-layout modal instead of navigating (no `href`) */
-  recipeModal?: boolean;
+  /** Render `imageSrc` as the dominant content of the card (large, centered,
+   * `object-contain`) instead of the tiny default 64×64 thumbnail. */
+  imageHero?: boolean;
 }
 
 export const homepageWafflings: WafflingData[] = [
@@ -20,9 +21,19 @@ export const homepageWafflings: WafflingData[] = [
     imageSrc: "/assets/home/waffling-butterchicken.png",
     previewText:
       "A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.\n\nBefore you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.\n\nIngredients:",
+    href: "/butter-chicken",
     opacity: 1,
     taperedRim: true,
-    recipeModal: true,
+  },
+  {
+    title: "Recorder-Proto",
+    eyebrow: "Side Project",
+    imageSrc: "/assets/recorder/card.png",
+    imageHero: true,
+    previewText: "I wanted to make something cool from a mundane task.",
+    href: "/waffling/recorder",
+    opacity: 1,
+    taperedRim: true,
   },
   {
     title: "Experiment - Giving Claws to my Google Home",

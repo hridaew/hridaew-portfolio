@@ -2,7 +2,6 @@
 
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import type { ImageProps } from "next/image";
-import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -384,11 +383,10 @@ const RECIPE_CHROME_ICON_BTN =
   "relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03] transition-colors duration-75 ease-out hover:bg-white/[0.08] active:bg-white/[0.16] disabled:pointer-events-none disabled:opacity-40" as const;
 
 function ButterChickenRecipeTitleActions() {
-  const pathname = usePathname();
   const [pdfBusy, setPdfBusy] = useState(false);
 
   const onShare = useCallback(async () => {
-    const url = buildButterChickenRecipeShareUrl(pathname || "/");
+    const url = buildButterChickenRecipeShareUrl();
     if (!url) {
       toast.error("Could not build link");
       return;
@@ -399,7 +397,7 @@ function ButterChickenRecipeTitleActions() {
     } catch {
       toast.error("Could not copy link");
     }
-  }, [pathname]);
+  }, []);
 
   const onDownloadPdf = useCallback(async () => {
     setPdfBusy(true);

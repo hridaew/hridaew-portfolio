@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
-import { ButterChickenRecipeDeepLink } from "@/components/butter-chicken/ButterChickenRecipeDeepLink";
-import { ButterChickenRecipeModalProvider } from "@/components/butter-chicken/ButterChickenRecipeModal";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserEngineScript } from "@/components/BrowserEngineScript";
@@ -125,14 +122,9 @@ export default function RootLayout({
             </filter>
           </defs>
         </svg>
-        <ButterChickenRecipeModalProvider>
-          <PageTransitionProvider>
-            {children}
-          </PageTransitionProvider>
-          <Suspense fallback={null}>
-            <ButterChickenRecipeDeepLink />
-          </Suspense>
-        </ButterChickenRecipeModalProvider>
+        <PageTransitionProvider>
+          {children}
+        </PageTransitionProvider>
         <Toaster position="bottom-center" />
         <Analytics />
       </body>

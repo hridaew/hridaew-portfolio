@@ -1529,3 +1529,57 @@ video.work-gallery-card-video::-webkit-media-controls-enclosure {
   width: 38%;
   height: 1px;
 }
+
+/* Waffling page entrance — content emerges from blur as the PageTransition
+   curtain wipes off. Pure CSS so SSR/initial paint already shows the blurred
+   "from" state (no FOUC of clear content before JS hydrates), and the
+   animation runs once on mount.
+
+   Timing is intentionally offset (0.1s delay) so it overlaps the tail of the
+   curtain reveal — the content materializes *as* the curtain leaves, not
+   after. Filter, opacity, and transform share one keyframe set for a single
+   coherent motion. Respects prefers-reduced-motion. */
+@keyframes waffling-page-entrance {
+  from {
+    opacity: 0;
+    filter: blur(24px);
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.waffling-page-entrance {
+  animation: waffling-page-entrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  will-change: filter, opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waffling-page-entrance {
+    animation: none;
+  }
+}
+
+/* Recorder-Proto waffling — pop-in for the Delete/Save buttons after recording. */
+@keyframes recorder-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-popIn {
+  animation: recorder-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}

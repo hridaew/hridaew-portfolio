@@ -4,14 +4,28 @@ import type { WafflingData } from "@/data/homepage-wafflings";
 import { SkeuomorphicRim } from "@/components/shared/SkeuomorphicRim";
 import { cn } from "@/lib/utils";
 
+/**
+ * Shared chrome for "real" waffling cards (Butter Chicken, Recorder-Proto, …):
+ * dark frosted glass + `SkeuomorphicRim` outline + bottom fade. Content slot
+ * adapts based on `imageHero`:
+ *   - `imageHero: false` (Butter Chicken) — 64×64 thumbnail + paragraphs
+ *   - `imageHero: true`  (Recorder-Proto) — full-width image + short caption
+ *
+ * The bg uses `bg-neutral-900/55` (instead of the old `bg-white/10`) layered
+ * with a strong `backdrop-blur-2xl`: at 12px dot spacing the original 12px md-blur
+ * couldn't blot out the home dot-mesh, so the cards read as sitting underneath
+ * the grid. The darker tint + 40px blur lifts them clearly above it while
+ * keeping the frosted-glass feel.
+ */
 export function FigmaButterChickenWafflingCard({ waffling }: { waffling: WafflingData }) {
   const paragraphs = waffling.previewText.split(/\n\n+/).filter((p) => p.trim().length > 0);
+  const isHero = !!waffling.imageHero && !!waffling.imageSrc;
 
   return (
     <div
       data-carousel-allow-select
       className={cn(
-        "relative flex h-[272px] w-[176px] shrink-0 flex-col overflow-hidden rounded-3xl bg-white/10 pt-6 px-4 pb-3 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-md backdrop-saturate-150",
+        "relative flex h-[272px] w-[176px] shrink-0 flex-col overflow-hidden rounded-3xl bg-neutral-900/55 pt-6 px-4 pb-3 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-2xl backdrop-saturate-150",
       )}
       style={{ opacity: waffling.opacity }}
     >
@@ -27,23 +41,46 @@ export function FigmaButterChickenWafflingCard({ waffling }: { waffling: Wafflin
         {waffling.title}
       </p>
 
-      {waffling.imageSrc ? (
-        <div className="relative z-0 mt-4 size-[64px] shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15">
-          <img
-            src={waffling.imageSrc}
-            alt=""
-            className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
-          />
-        </div>
-      ) : null}
+      {isHero ? (
+        <>
+          {/* Hero image — `object-contain object-left` so the mockup sits flush with
+              the card's left padding and is never cropped. */}
+          <div className="relative z-0 mt-4 w-full shrink-0" style={{ height: 132 }}>
+            <img
+              src={waffling.imageSrc}
+              alt=""
+              className="pointer-events-none absolute inset-0 size-full max-w-none object-contain object-left"
+            />
+          </div>
 
-      <div className="relative z-0 mt-4 min-h-0 w-full min-w-0 flex-1 overflow-hidden font-[family-name:var(--font-geist)] text-[8px] font-normal leading-[1.35] text-white/80">
-        {paragraphs.map((block, i) => (
-          <p key={i} className="mb-2 whitespace-pre-wrap last:mb-0">
-            {block}
-          </p>
-        ))}
-      </div>
+          {/* Short caption — same type spec as butter chicken's paragraphs */}
+          {waffling.previewText ? (
+            <p className="relative z-0 mt-3 min-w-full font-[family-name:var(--font-geist)] text-[8px] font-normal leading-[1.35] text-white/80 whitespace-pre-wrap">
+              {waffling.previewText}
+            </p>
+          ) : null}
+        </>
+      ) : (
+        <>
+          {waffling.imageSrc ? (
+            <div className="relative z-0 mt-4 size-[64px] shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15">
+              <img
+                src={waffling.imageSrc}
+                alt=""
+                className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+              />
+            </div>
+          ) : null}
+
+          <div className="relative z-0 mt-4 min-h-0 w-full min-w-0 flex-1 overflow-hidden font-[family-name:var(--font-geist)] text-[8px] font-normal leading-[1.35] text-white/80">
+            {paragraphs.map((block, i) => (
+              <p key={i} className="mb-2 whitespace-pre-wrap last:mb-0">
+                {block}
+              </p>
+            ))}
+          </div>
+        </>
+      )}
 
       <div
         aria-hidden

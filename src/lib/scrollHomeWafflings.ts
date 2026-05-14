@@ -4,6 +4,36 @@
  */
 export const HOME_WAFFLINGS_SECTION_ID = "wafflings";
 
+/** sessionStorage key set on home when opening a waffling, read on home re-mount to
+ * restore the exact scroll position the user left from (so close → home doesn't
+ * snap to top or to the wafflings rail). One-shot — consumed and cleared on read. */
+export const WAFFLING_RETURN_Y_KEY = "wafflingReturnY";
+
+/** Call from a waffling-card click handler to remember where the user was on home. */
+export function rememberHomeScrollForWafflingReturn(): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(WAFFLING_RETURN_Y_KEY, String(window.scrollY));
+  } catch {
+    // sessionStorage may be unavailable in privacy modes; navigation still works.
+  }
+}
+
+/** Reads and consumes the saved Y. Returns the number, or `null` if absent/invalid. */
+export function consumeWafflingReturnScroll(): number | null {
+  if (typeof window === "undefined") return null;
+  let raw: string | null = null;
+  try {
+    raw = sessionStorage.getItem(WAFFLING_RETURN_Y_KEY);
+    if (raw !== null) sessionStorage.removeItem(WAFFLING_RETURN_Y_KEY);
+  } catch {
+    return null;
+  }
+  if (raw === null) return null;
+  const n = Number.parseInt(raw, 10);
+  return Number.isFinite(n) ? n : null;
+}
+
 type LenisScroll = {
   scrollTo: (
     target: HTMLElement | number,
