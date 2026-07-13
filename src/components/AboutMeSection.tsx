@@ -194,7 +194,7 @@ export function AboutMeSection() {
                                     transition={{ duration: 0.18, ease: "easeOut" }}
                                 >
                                     <Link
-                                        href="https://drive.google.com/file/d/1Ha7vP0l5HG9IKC4rbd3Y58GZqCIeqGZa/view"
+                                        href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing"
                                         target="_blank"
                                         className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full overflow-hidden "
                                         style={{
