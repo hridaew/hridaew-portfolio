@@ -7,26 +7,21 @@ import { memoryCare } from "./memory-care";
 const domis: LegacyCaseStudy = {
   slug: "domis",
   title: "Domis",
-  subtitle: "Home maintenance platform",
-  description: "Leading product design to make home maintenance approachable and enjoyable for homeowners",
+  subtitle: "AI-powered home maintenance",
+  description:
+    "Founding design for an AI home-maintenance app that turns the chaos of owning a home into calm, personalized action.",
   image: "/images/domis.png",
   href: "/domis",
   role: "Founding Product Designer",
   timeline: "2024 —",
-  team: "2 Designers, 4 Engineers, 1 PM",
   rotation: -3.5,
   yOffset: 8,
   tags: ["Consumer App", "AI"],
   challenge:
-    "Creating intuitive interfaces for managing home maintenance services while building trust with homeowners.",
+    "Homeowners drown in unstructured information — inspection reports, manuals, warranties, seasonal upkeep — and end up doing nothing until something breaks.",
   solution:
-    "Developed a clean, task-focused design system that prioritizes service scheduling, provider matching, and transparent pricing.",
-  outcome: "40% increase in user engagement and 25% reduction in support tickets.",
-  stats: [
-    { value: "40%", label: "Increase in user engagement" },
-    { value: "25%", label: "Reduction in support tickets" },
-    { value: "4.8", label: "App store rating" },
-  ],
+    "An AI product that turns scattered, unstructured inputs into trustworthy, personalized, low-effort action — using AI only where it genuinely removes work.",
+  stats: [],
 };
 
 export const caseStudies: AnyCaseStudy[] = [domis, virdio, obscura, memoryCare];
