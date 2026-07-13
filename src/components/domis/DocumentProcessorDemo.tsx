@@ -167,13 +167,13 @@ export function DocumentProcessorDemo({
   if (forceFallback) {
     if (fallbackFailed) {
       return (
-        <div className={cn("w-full overflow-hidden border border-neutral-800", className)}>
+        <div className={cn("glass-panel-media w-full", className)}>
           <ImagePlaceholder label="Document processor — asset coming" aspectRatio="16/10" />
         </div>
       );
     }
     return (
-      <div className={cn("w-full overflow-hidden border border-neutral-800 bg-neutral-950", className)}>
+      <div className={cn("glass-panel-media w-full bg-black/20", className)}>
         <LightboxImage
           src={fallbackSrc}
           alt={fallbackAlt}
@@ -186,26 +186,21 @@ export function DocumentProcessorDemo({
   }
 
   return (
-    <div
-      className={cn(
-        "w-full overflow-hidden border border-neutral-800 bg-neutral-950",
-        className
-      )}
-    >
+    <div className={cn("glass-panel-media w-full bg-black/20", className)}>
       <div className="flex flex-col gap-0 lg:grid lg:grid-cols-2">
         {/* Report side */}
-        <div className="border-b border-neutral-800 p-5 md:p-7 lg:border-b-0 lg:border-r">
+        <div className="border-b border-white/[0.06] p-5 md:p-7 lg:border-b-0 lg:border-r">
           <div className="mb-4 flex items-center justify-between gap-3">
             <span className="site-label text-neutral-500">Inspection Report · 32 pp</span>
-            <span className="site-label text-teal-300/70">Source PDF</span>
+            <span className="site-label text-white/40">Source PDF</span>
           </div>
-          <div className="space-y-3 rounded-sm border border-neutral-800/80 bg-[#121214] p-4 md:p-5">
+          <div className="space-y-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 md:p-5">
             <p className="type-caption text-neutral-600">
               PROPERTY INSPECTION — SAMPLE RESIDENCE
               <br />
               Exterior · Electrical · HVAC · Foundation
             </p>
-            <div className="h-px bg-neutral-800" />
+            <div className="h-px bg-white/[0.06]" />
             {REPORT_HIGHLIGHTS.map((h) => {
               const lit = activeHighlight === h.id || visibleTasks.includes(h.taskId);
               return (
@@ -215,7 +210,7 @@ export function DocumentProcessorDemo({
                   className={cn(
                     "type-caption",
                     lit
-                      ? "rounded-sm bg-teal-400/15 px-2 py-1.5 text-teal-100 ring-1 ring-teal-400/35"
+                      ? "rounded-xl bg-teal-400/15 px-2 py-1.5 text-teal-100 ring-1 ring-teal-400/30"
                       : "px-2 py-1.5 text-neutral-500"
                   )}
                   animate={
@@ -259,9 +254,9 @@ export function DocumentProcessorDemo({
                     damping: 28,
                     delay: Math.min(i * 0.02, 0.08),
                   }}
-                  className="rounded-lg border border-neutral-800 bg-neutral-900/70 p-3.5 md:p-4"
+                  className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-3.5 md:p-4"
                 >
-                  <div className="mb-2 flex items-center gap-2">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span
                       className={cn(
                         "site-label rounded-full border px-2 py-0.5",
@@ -283,7 +278,7 @@ export function DocumentProcessorDemo({
             </AnimatePresence>
 
             {phase === "idle" && (
-              <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-neutral-800 bg-neutral-900/30 px-4 py-10 text-center">
+              <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] px-4 py-10 text-center">
                 <p className="site-body max-w-[260px] text-neutral-500">
                   Watch AI lift findings out of the report and assemble them into
                   prioritized, editable tasks.
@@ -292,7 +287,7 @@ export function DocumentProcessorDemo({
             )}
 
             {phase === "processing" && visibleTasks.length === 0 && (
-              <div className="flex flex-1 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900/30 px-4 py-10">
+              <div className="flex flex-1 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-10">
                 <span className="site-label animate-pulse text-teal-300/70">
                   Reading report&hellip;
                 </span>
@@ -319,7 +314,7 @@ export function DocumentProcessorDemo({
                   setVisibleTasks(DEFAULT_TASKS.map((t) => t.id));
                   setPhase("done");
                 }}
-                className="site-label rounded-full border border-neutral-700 px-4 py-2 text-neutral-400 transition-colors hover:border-neutral-500 hover:text-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400/50"
+                className="site-label rounded-full border border-white/10 px-4 py-2 text-neutral-400 transition-colors hover:border-white/20 hover:text-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400/50"
               >
                 Skip to result
               </button>
