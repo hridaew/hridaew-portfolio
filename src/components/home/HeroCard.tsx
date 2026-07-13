@@ -51,7 +51,7 @@ import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 const LI_HREF = "https://www.linkedin.com/in/hridae";
 const CV_HREF =
-  "https://drive.google.com/file/d/1Ha7vP0l5HG9IKC4rbd3Y58GZqCIeqGZa/view";
+  "https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing";
 
 const MOTION_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const MOTION_DURATION = 0.4;
