@@ -593,6 +593,148 @@
       0 16px 48px -24px rgba(0, 0, 0, 0.55);
   }
 
+  /* Domis case study — Figma 19616:6448 typography tokens */
+  .domis-cs .df-hero-title {
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 600;
+    color: #fafafa;
+  }
+  .domis-cs .df-hero-sub {
+    font-size: 18px;
+    line-height: 21.6px;
+    font-weight: 500;
+    color: #a1a1aa;
+  }
+  .domis-cs .df-tag {
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: -0.15px;
+  }
+  .domis-cs .df-click {
+    font-size: 14px;
+    letter-spacing: 0.14px;
+    color: #a1a1aa;
+  }
+  .domis-cs .df-h2 {
+    font-size: 16px;
+    line-height: 19.2px;
+    font-weight: 500;
+    color: #000;
+  }
+  .domis-cs .df-body {
+    font-size: 16px;
+    line-height: 19.2px;
+    color: #4d4d4d;
+  }
+  .domis-cs .df-impact-label {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 15px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .domis-cs .df-impact-row-label {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: 0.84px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .domis-cs .df-impact-row-body {
+    font-size: 17px;
+    line-height: 20.4px;
+    color: #fafafa;
+  }
+  .domis-cs .df-caption {
+    font-size: 13px;
+    color: #71717a;
+  }
+  .domis-cs .df-card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #000;
+  }
+  .domis-cs .df-card-body {
+    font-size: 15px;
+    line-height: 1.35;
+    color: #4d4d4d;
+  }
+  .domis-cs .df-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+  }
+  .domis-cs .df-final {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #000;
+  }
+  .domis-cs .df-cta {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .domis-cs .df-proto {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fafafa;
+  }
+  .domis-cs .df-trust-chip {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    color: #d4bcff;
+  }
+  .domis-cs .df-placeholder {
+    font-size: 13px;
+    letter-spacing: -0.02em;
+    color: #a1a1aa;
+  }
+
+  /* Document processor demo (light shell) */
+  .domis-demo-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #3f3f46;
+  }
+  .domis-demo-doc {
+    font-size: 13px;
+    line-height: 1.625;
+  }
+  .domis-demo-btn {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .domis-demo-meta {
+    font-size: 12px;
+    color: #a1a1aa;
+  }
+  .domis-demo-hint {
+    font-size: 13px;
+    color: #a1a1aa;
+  }
+  .domis-demo-field-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+  }
+  .domis-demo-field-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #18181b;
+  }
+  .domis-demo-source {
+    font-size: 11px;
+    line-height: 1.625;
+    color: #71717a;
+  }
+
   .nav-active-pill {
     background: rgba(0, 0, 0, 0.06);
     box-shadow: inset 0 0.5px 0 rgba(0, 0, 0, 0.04);

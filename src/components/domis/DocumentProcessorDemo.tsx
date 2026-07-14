@@ -1,323 +1,405 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  FileText,
+  Check,
+  Loader2,
+  Sparkles,
+  Copy,
+  ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ImagePlaceholder } from "@/components/obscura/ImagePlaceholder";
-import { LightboxImage } from "@/components/virdio/Lightbox";
 
-type Severity = "high" | "medium" | "low";
+type Phase = "idle" | "scanning" | "extracting" | "complete";
 
-type ExtractedTask = {
-  id: string;
-  title: string;
-  detail: string;
+interface ExtractedField {
+  label: string;
+  value: string;
   source: string;
-  severity: Severity;
-};
-
-const DEFAULT_TASKS: ExtractedTask[] = [
-  {
-    id: "t1",
-    title: "Repair roof flashing at chimney",
-    detail: "Evidence of water intrusion near chimney base — address before next rain.",
-    source: "Found in Exterior — Roof",
-    severity: "high",
-  },
-  {
-    id: "t2",
-    title: "Replace GFCI outlet in kitchen",
-    detail: "Outlet fails trip test; safety hazard near water sources.",
-    source: "Found in Electrical — Kitchen",
-    severity: "high",
-  },
-  {
-    id: "t3",
-    title: "Service furnace before winter",
-    detail: "Filter overdue; heat exchanger needs professional inspection.",
-    source: "Found in HVAC — Heating",
-    severity: "medium",
-  },
-  {
-    id: "t4",
-    title: "Seal basement window wells",
-    detail: "Minor gaps allowing moisture; cosmetic now, structural later.",
-    source: "Found in Foundation — Windows",
-    severity: "low",
-  },
-];
-
-const REPORT_HIGHLIGHTS = [
-  {
-    id: "h1",
-    text: "Evidence of water staining and deteriorated flashing at the chimney base.",
-    taskId: "t1",
-  },
-  {
-    id: "h2",
-    text: "Kitchen GFCI receptacle fails to trip under test conditions.",
-    taskId: "t2",
-  },
-  {
-    id: "h3",
-    text: "Furnace filter heavily soiled; last service date unknown.",
-    taskId: "t3",
-  },
-  {
-    id: "h4",
-    text: "Window well seals show minor gaps with early moisture marks.",
-    taskId: "t4",
-  },
-];
-
-const SEVERITY_STYLES: Record<Severity, string> = {
-  high: "border-rose-400/30 bg-rose-400/10 text-rose-300",
-  medium: "border-amber-400/30 bg-amber-400/10 text-amber-200",
-  low: "border-sky-400/30 bg-sky-400/10 text-sky-300",
-};
-
-const SEVERITY_LABEL: Record<Severity, string> = {
-  high: "Urgent",
-  medium: "Soon",
-  low: "Monitor",
-};
-
-interface DocumentProcessorDemoProps {
-  className?: string;
-  /** Static fallback when interactive demo shouldn't run */
-  fallbackSrc?: string;
-  fallbackAlt?: string;
-  /** Prefer static composite instead of interactive demo */
-  forceFallback?: boolean;
-  /** Stagger delay between task card reveals (seconds) */
-  staggerDelay?: number;
-  /** Highlight lift duration (seconds) */
-  highlightDuration?: number;
+  page: number;
+  highlight: string;
 }
 
-export function DocumentProcessorDemo({
-  className,
-  fallbackSrc = "/assets/home/domis-card1-tasks-composite.png",
-  fallbackAlt = "Inspection report processed into prioritized Domis tasks",
-  forceFallback = false,
-  staggerDelay = 0.12,
-  highlightDuration = 0.28,
-}: DocumentProcessorDemoProps) {
-  const [phase, setPhase] = useState<"idle" | "processing" | "done">("idle");
-  const [activeHighlight, setActiveHighlight] = useState<string | null>(null);
-  const [visibleTasks, setVisibleTasks] = useState<string[]>([]);
-  const [fallbackFailed, setFallbackFailed] = useState(false);
-  const timersRef = useRef<number[]>([]);
-  const reducedMotionRef = useRef(false);
+const FIELDS: ExtractedField[] = [
+  {
+    label: "Manufacturer",
+    value: "Bosch",
+    source: "User Manual — Bosch SHPM78W55N",
+    page: 1,
+    highlight: "Bosch",
+  },
+  {
+    label: "Model Number",
+    value: "SHPM78W55N",
+    source: "User Manual — Specs Plate",
+    page: 1,
+    highlight: "SHPM78W55N",
+  },
+  {
+    label: "Serial Number",
+    value: "FD 8801 234 567",
+    source: "User Manual — Specs Plate",
+    page: 1,
+    highlight: "FD 8801 234 567",
+  },
+  {
+    label: "Warranty Period",
+    value: "1 Year Limited",
+    source: "Warranty Certificate — Coverage Terms",
+    page: 2,
+    highlight: "1 Year Limited",
+  },
+  {
+    label: "Purchase Date",
+    value: "March 15, 2024",
+    source: "Purchase Receipt — Order #48291",
+    page: 1,
+    highlight: "March 15, 2024",
+  },
+  {
+    label: "Retailer",
+    value: "Home Depot",
+    source: "Purchase Receipt — Store Info",
+    page: 1,
+    highlight: "Home Depot",
+  },
+];
 
-  useEffect(() => {
-    reducedMotionRef.current =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
+const DOC_PAGES = [
+  {
+    title: "User Manual",
+    lines: [
+      "Bosch SHPM78W55N",
+      "Dishwasher — Installation Guide",
+      "",
+      "Model: SHPM78W55N",
+      "Serial: FD 8801 234 567",
+      "Voltage: 120V / 60Hz",
+      "",
+      "Important Safety Instructions",
+      "Read all instructions before use.",
+    ],
+  },
+  {
+    title: "Warranty",
+    lines: [
+      "Limited Warranty Certificate",
+      "",
+      "Coverage: 1 Year Limited",
+      "Parts & Labor included",
+      "",
+      "Valid from date of purchase",
+      "Non-transferable",
+    ],
+  },
+  {
+    title: "Receipt",
+    lines: [
+      "Home Depot — Order #48291",
+      "",
+      "Bosch Dishwasher SHPM78W55N",
+      "Qty: 1    $849.00",
+      "",
+      "Purchase Date: March 15, 2024",
+      "Store #4521 — Austin, TX",
+      "Payment: Visa ****4821",
+    ],
+  },
+];
+
+const spring = { type: "spring" as const, stiffness: 300, damping: 28 };
+
+export function DocumentProcessorDemo() {
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [visibleFields, setVisibleFields] = useState(0);
+  const [activeCitation, setActiveCitation] = useState<number | null>(null);
+  const [docPage, setDocPage] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach((id) => window.clearTimeout(id));
-    timersRef.current = [];
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
   }, []);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  const runDemo = useCallback(() => {
-    if (phase === "processing") return;
+  const startProcessing = useCallback(() => {
+    if (phase !== "idle") return;
     clearTimers();
-    setPhase("processing");
-    setVisibleTasks([]);
-    setActiveHighlight(null);
+    setPhase("scanning");
+    setVisibleFields(0);
+    setActiveCitation(null);
+    setDocPage(0);
 
-    const reduce = reducedMotionRef.current;
-    const stepMs = reduce ? 40 : highlightDuration * 1000;
-    const cardMs = reduce ? 40 : staggerDelay * 1000;
-
-    REPORT_HIGHLIGHTS.forEach((h, i) => {
-      const t1 = window.setTimeout(() => {
-        setActiveHighlight(h.id);
-      }, i * (stepMs + cardMs));
-      timersRef.current.push(t1);
-
-      const t2 = window.setTimeout(() => {
-        setVisibleTasks((prev) =>
-          prev.includes(h.taskId) ? prev : [...prev, h.taskId]
-        );
-      }, i * (stepMs + cardMs) + stepMs);
-      timersRef.current.push(t2);
-    });
-
-    const doneAt =
-      REPORT_HIGHLIGHTS.length * (stepMs + cardMs) + (reduce ? 80 : 200);
-    const tDone = window.setTimeout(() => {
-      setActiveHighlight(null);
-      setPhase("done");
-    }, doneAt);
-    timersRef.current.push(tDone);
-  }, [phase, clearTimers, highlightDuration, staggerDelay]);
+    timers.current.push(
+      setTimeout(() => {
+        setPhase("extracting");
+        FIELDS.forEach((_, i) => {
+          timers.current.push(
+            setTimeout(() => {
+              setVisibleFields(i + 1);
+              if (i === 3) setDocPage(1);
+              if (i === 4) setDocPage(2);
+              if (i === FIELDS.length - 1) {
+                timers.current.push(
+                  setTimeout(() => setPhase("complete"), 400)
+                );
+              }
+            }, (i + 1) * 450)
+          );
+        });
+      }, 1800)
+    );
+  }, [phase, clearTimers]);
 
   const reset = useCallback(() => {
     clearTimers();
     setPhase("idle");
-    setActiveHighlight(null);
-    setVisibleTasks([]);
+    setVisibleFields(0);
+    setActiveCitation(null);
+    setDocPage(0);
+    setCopied(false);
   }, [clearTimers]);
 
-  if (forceFallback) {
-    if (fallbackFailed) {
-      return (
-        <div className={cn("glass-panel-media w-full", className)}>
-          <ImagePlaceholder label="Document processor — asset coming" aspectRatio="16/10" />
-        </div>
-      );
-    }
-    return (
-      <div className={cn("glass-panel-media w-full bg-black/20", className)}>
-        <LightboxImage
-          src={fallbackSrc}
-          alt={fallbackAlt}
-          className="block h-auto w-full object-contain"
-          draggable={false}
-          onError={() => setFallbackFailed(true)}
-        />
-      </div>
-    );
-  }
+  const handleCitationClick = (index: number) => {
+    setActiveCitation(activeCitation === index ? null : index);
+    if (index >= 4) setDocPage(2);
+    else if (index >= 3) setDocPage(1);
+    else setDocPage(0);
+  };
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   return (
-    <div className={cn("glass-panel-media w-full bg-black/20", className)}>
-      <div className="flex flex-col gap-0 lg:grid lg:grid-cols-2">
-        {/* Report side */}
-        <div className="border-b border-white/[0.06] p-5 md:p-7 lg:border-b-0 lg:border-r">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="site-label text-neutral-500">Inspection Report · 32 pp</span>
-            <span className="site-label text-white/40">Source PDF</span>
-          </div>
-          <div className="space-y-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 md:p-5">
-            <p className="type-caption text-neutral-600">
-              PROPERTY INSPECTION — SAMPLE RESIDENCE
-              <br />
-              Exterior · Electrical · HVAC · Foundation
-            </p>
-            <div className="h-px bg-white/[0.06]" />
-            {REPORT_HIGHLIGHTS.map((h) => {
-              const lit = activeHighlight === h.id || visibleTasks.includes(h.taskId);
-              return (
-                <motion.p
-                  key={h.id}
-                  layout
-                  className={cn(
-                    "type-caption",
-                    lit
-                      ? "rounded-xl bg-teal-400/15 px-2 py-1.5 text-teal-100 ring-1 ring-teal-400/30"
-                      : "px-2 py-1.5 text-neutral-500"
-                  )}
-                  animate={
-                    activeHighlight === h.id
-                      ? { scale: 1.02, y: -2 }
-                      : { scale: 1, y: 0 }
-                  }
-                  transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                >
-                  {h.text}
-                </motion.p>
-              );
-            })}
-            <p className="type-caption px-2 text-neutral-700">
-              Remaining pages contain standard disclosures, glossary, and inspector
-              credentials&hellip;
-            </p>
-          </div>
-        </div>
-
-        {/* Tasks side */}
-        <div className="flex flex-col p-5 md:p-7">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="site-label text-neutral-500">Tasks Found</span>
-            <span className="site-label text-neutral-600">
-              {visibleTasks.length}/{DEFAULT_TASKS.length}
-            </span>
-          </div>
-
-          <div className="flex min-h-[280px] flex-1 flex-col gap-2.5">
-            <AnimatePresence mode="popLayout">
-              {DEFAULT_TASKS.filter((t) => visibleTasks.includes(t.id)).map((task, i) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 340,
-                    damping: 28,
-                    delay: Math.min(i * 0.02, 0.08),
-                  }}
-                  className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-3.5 md:p-4"
-                >
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span
-                      className={cn(
-                        "site-label rounded-full border px-2 py-0.5",
-                        SEVERITY_STYLES[task.severity]
-                      )}
-                    >
-                      {SEVERITY_LABEL[task.severity]}
-                    </span>
-                    <span className="site-label text-neutral-600">{task.source}</span>
-                  </div>
-                  <p className="site-body text-neutral-200">
-                    {task.title}
-                  </p>
-                  <p className="type-caption mt-1 text-neutral-500">
-                    {task.detail}
-                  </p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            {phase === "idle" && (
-              <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] px-4 py-10 text-center">
-                <p className="site-body max-w-[260px] text-neutral-500">
-                  Watch AI lift findings out of the report and assemble them into
-                  prioritized, editable tasks.
-                </p>
-              </div>
-            )}
-
-            {phase === "processing" && visibleTasks.length === 0 && (
-              <div className="flex flex-1 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-10">
-                <span className="site-label animate-pulse text-teal-300/70">
-                  Reading report&hellip;
+    <div className="space-y-5">
+      <div className="overflow-hidden rounded-[24px] border border-black/[0.06] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+        <div className="grid lg:grid-cols-2">
+          <div className="relative border-b border-black/[0.06] bg-[#f7f5f2] p-5 lg:border-b-0 lg:border-r lg:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-[#71717a]" />
+                <span className="domis-demo-label">
+                  {DOC_PAGES[docPage].title}
                 </span>
               </div>
+              <div className="flex gap-1">
+                {DOC_PAGES.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setDocPage(i)}
+                    className={cn(
+                      "h-1.5 w-1.5 rounded-full transition-colors",
+                      docPage === i ? "bg-[#18181b]" : "bg-[#d4d4d8]"
+                    )}
+                    aria-label={`Page ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="relative min-h-[280px] overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-5 shadow-sm">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={docPage}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {DOC_PAGES[docPage].lines.map((line, i) => {
+                    const isHighlighted =
+                      activeCitation !== null &&
+                      line.includes(FIELDS[activeCitation].highlight);
+                    return (
+                      <p
+                        key={i}
+                        className={cn(
+                          "domis-demo-doc transition-all duration-300",
+                          line === ""
+                            ? "h-3"
+                            : isHighlighted
+                              ? "rounded bg-[#ffa1a8]/25 px-1 font-semibold text-[#18181b]"
+                              : i === 0
+                                ? "font-semibold text-[#18181b]"
+                                : "text-[#52525b]"
+                        )}
+                      >
+                        {line || "\u00A0"}
+                      </p>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+
+              {phase === "scanning" && (
+                <motion.div
+                  className="pointer-events-none absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-[#ffa1a8] to-transparent"
+                  initial={{ top: "0%" }}
+                  animate={{ top: "100%" }}
+                  transition={{
+                    duration: 1.6,
+                    ease: "linear",
+                    repeat: Infinity,
+                  }}
+                />
+              )}
+            </div>
+
+            {phase === "idle" && (
+              <motion.button
+                type="button"
+                onClick={startProcessing}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#18181b] px-4 py-3 domis-demo-btn text-white transition-opacity hover:opacity-90"
+                whileTap={{ scale: 0.98 }}
+              >
+                <Sparkles className="h-4 w-4" />
+                Process Documents
+              </motion.button>
+            )}
+
+            {phase === "scanning" && (
+              <div className="mt-4 flex items-center justify-center gap-2 py-3 domis-demo-hint text-[#71717a]">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Scanning documents…
+              </div>
+            )}
+
+            {(phase === "extracting" || phase === "complete") && (
+              <button
+                type="button"
+                onClick={reset}
+                className="mt-4 w-full py-2 text-center domis-demo-meta transition-colors hover:text-[#52525b]"
+              >
+                Reset demo
+              </button>
             )}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            {phase !== "processing" ? (
-              <button
-                type="button"
-                onClick={phase === "done" ? reset : runDemo}
-                className="site-label rounded-full border border-teal-400/30 bg-teal-400/10 px-4 py-2 text-teal-200 transition-colors hover:bg-teal-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300/60"
+          <div className="bg-white p-5 lg:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="domis-demo-label">
+                Extracted Data
+              </span>
+              {phase === "complete" && (
+                <motion.button
+                  type="button"
+                  onClick={handleCopy}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-1.5 rounded-lg bg-[#f4f4f5] px-2.5 py-1 domis-demo-meta text-[#3f3f46] transition-colors hover:bg-[#e4e4e7]"
+                >
+                  {copied ? (
+                    <Check className="h-3 w-3 text-emerald-600" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
+                  {copied ? "Copied" : "Copy all"}
+                </motion.button>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <AnimatePresence>
+                {FIELDS.slice(0, visibleFields).map((field, i) => (
+                  <motion.button
+                    key={field.label}
+                    type="button"
+                    onClick={() => handleCitationClick(i)}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...spring, delay: 0.05 }}
+                    className={cn(
+                      "group flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-all",
+                      activeCitation === i
+                        ? "border-[#ffa1a8]/50 bg-[#fff5f6]"
+                        : "border-black/[0.06] bg-[#fafafa] hover:border-black/[0.1] hover:bg-white"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                        activeCitation === i
+                          ? "bg-[#ffa1a8]/30"
+                          : "bg-emerald-500/15"
+                      )}
+                    >
+                      <Check
+                        className={cn(
+                          "h-3 w-3",
+                          activeCitation === i
+                            ? "text-[#be123c]"
+                            : "text-emerald-600"
+                        )}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="domis-demo-field-label">
+                          {field.label}
+                        </span>
+                        <ExternalLink
+                          className={cn(
+                            "h-3 w-3 shrink-0 transition-opacity",
+                            activeCitation === i
+                              ? "opacity-100 text-[#be123c]"
+                              : "opacity-0 text-[#a1a1aa] group-hover:opacity-60"
+                          )}
+                        />
+                      </div>
+                      <p className="mt-0.5 domis-demo-field-value">
+                        {field.value}
+                      </p>
+                      <AnimatePresence>
+                        {activeCitation === i && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-1.5 overflow-hidden domis-demo-source"
+                          >
+                            Source: {field.source} · p.{field.page}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.button>
+                ))}
+              </AnimatePresence>
+
+              {phase === "idle" && (
+                <div className="flex h-[280px] items-center justify-center">
+                  <p className="domis-demo-hint">
+                    Extracted fields appear here
+                  </p>
+                </div>
+              )}
+
+              {phase === "scanning" && (
+                <div className="flex h-[280px] flex-col items-center justify-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-[#a1a1aa]" />
+                  <p className="domis-demo-hint">
+                    Reading document contents…
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {phase === "complete" && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="mt-4 text-center domis-demo-meta"
               >
-                {phase === "done" ? "Run again" : "Process report"}
-              </button>
-            ) : (
-              <span className="site-label px-2 py-2 text-neutral-600">Processing&hellip;</span>
-            )}
-            {phase === "idle" && (
-              <button
-                type="button"
-                onClick={() => {
-                  setVisibleTasks(DEFAULT_TASKS.map((t) => t.id));
-                  setPhase("done");
-                }}
-                className="site-label rounded-full border border-white/10 px-4 py-2 text-neutral-400 transition-colors hover:border-white/20 hover:text-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400/50"
-              >
-                Skip to result
-              </button>
+                Click any field to trace it back to the source document
+              </motion.p>
             )}
           </div>
         </div>

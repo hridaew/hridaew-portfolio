@@ -27,7 +27,7 @@ export function ApplianceScannerDemo({
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="glass-panel-media bg-black/20">
+      <div className="overflow-hidden rounded-2xl bg-transparent">
         {failed ? (
           <ImagePlaceholder
             label="Appliance scanner — screenshot coming"
