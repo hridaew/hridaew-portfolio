@@ -1,688 +1,635 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import Link from "next/link";
+import { GrainOverlay } from "@/components/virdio/GrainOverlay";
 import { LightboxProvider, LightboxImage } from "@/components/virdio/Lightbox";
 import { Reveal } from "@/components/Reveal";
+import { HeroTextAnimation } from "@/components/HeroTextAnimation";
+import { StickySidebar } from "@/components/shared/StickySidebar";
 import { StickyNotes } from "@/components/StickyNotes";
 import { CaseStudyPill } from "@/components/shared/CaseStudyPill";
-import { DocumentProcessorDemo } from "@/components/domis/DocumentProcessorDemo";
-import { ApplianceScannerDemo } from "@/components/domis/ApplianceScannerDemo";
-import { PersonalizationShowcase } from "@/components/domis/PersonalizationShowcase";
-import {
-  SimonyTag,
-  MediaPlaceholder,
-  GradientShell,
-} from "@/components/domis/CaseStudyChrome";
+import { ImagePlaceholder } from "@/components/obscura/ImagePlaceholder";
+import { AmbientLight } from "@/components/domis/AmbientLight";
+import { MediaFrame, PhoneSlot } from "@/components/domis/MediaFrame";
+import { ApplianceConsensusDemo } from "@/components/domis/ApplianceConsensusDemo";
 import { cn } from "@/lib/utils";
-import {
-  Brush,
-  Layers,
-  Code2,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
+import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 /**
- * Domis case study — implemented from Figma
- * https://www.figma.com/design/X8X9ZDIa0LBabstsDgxPRX/Domis-Design?node-id=19616-6448
- * Layout: Cam Simony / Kajabi structure. Content + media: Domis.
- * Paragraphs ≤ 3 lines. Missing media → placeholders.
+ * Domis case study — Build Brief v2.
+ * One idea: the system learns the home instead of asking.
+ * Peak: Section 05, designing for non-deterministic AI.
  */
+
+const shell = SITE_COLUMN;
+const breakout =
+  "w-full min-w-0 md:-mx-[104px] md:w-[calc(100%+208px)]";
+const body = "site-body text-white/70";
+const caption =
+  "site-gallery-caption case-study-media-caption-mt text-left text-white/45";
 
 const APP_STORE_URL =
   "https://apps.apple.com/us/app/domis-home-maintenance/id6746832568";
 
-const FIGMA = "/assets/domis/figma";
+const sidebarSections = [
+  { id: "hero", label: "Intro", number: "00" },
+  { id: "overview", label: "Overview", number: "01" },
+  { id: "product", label: "The Product", number: "02" },
+  { id: "address", label: "Address", number: "03" },
+  { id: "appliance", label: "Appliance", number: "04" },
+  { id: "trust", label: "Trust", number: "05" },
+  { id: "now", label: "Now", number: "06" },
+];
 
-const prose = "mx-auto w-full max-w-[580px]";
-const wide = "mx-auto w-full max-w-[1200px] px-5 sm:px-8";
-
-const GRADIENTS = [
-  "linear-gradient(180deg, #ff3e14 0%, #bdb2ff 100%)",
-  "linear-gradient(180deg, #ff98b0 0%, #5342b2 100%)",
-  "linear-gradient(180deg, #ebf47e 0%, #005f48 100%)",
-  "linear-gradient(180deg, #bdb2ff 0%, #006282 100%)",
+const TLDR_ITEMS = [
+  "Domis only works if it knows your home. Nobody wants to fill out a form about their house, so the profile that makes the product useful is the exact thing that never gets built.",
+  "I'm the founding product designer. The bet I made was that the system should learn the home instead of asking about it.",
+  "I designed and shipped three versions of that idea: address intelligence at the scale of a house, appliance intelligence at the scale of an object, and progressive profiling at the scale of a single interaction.",
+  "The hard part wasn't the features. It was designing around a model that gives you a different answer every time you ask.",
 ] as const;
 
-const ICON_SRC = Array.from({ length: 12 }, (_, i) => `${FIGMA}/icon-${i}.png`);
+const ROLE_ITEMS = [
+  "Owning product design end to end across iOS and web",
+  "Designing and prototyping AI features in code, then driving them to production",
+  "Defining how AI behavior surfaces in the interface: confidence, correction, and failure",
+  "Working directly with the founders on what to build and what to cut",
+] as const;
 
-function RoleRow({ Icon, children }: { Icon: LucideIcon; children: ReactNode }) {
-  return (
-    <li className="flex items-center gap-4">
-      <span className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f0f0f0] text-[#635974]">
-        <Icon className="size-5" strokeWidth={1.75} aria-hidden />
-        <span className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[#e6e6e6]" />
-      </span>
-      <span className="df-body">{children}</span>
-    </li>
-  );
-}
+const TAGS = [
+  "Consumer App",
+  "AI-Native",
+  "0-to-1",
+  "iOS + Web",
+  "Shipped",
+] as const;
 
-function Quote({ children, cite }: { children: ReactNode; cite: string }) {
+function AppStoreButton({ className }: { className?: string }) {
   return (
-    <blockquote className="border-l-2 border-[#7c6cf0] py-1 pl-5">
-      <p className="df-body">{children}</p>
-      <cite className="df-caption mt-2 block not-italic text-[#a1a1aa]">{cite}</cite>
-    </blockquote>
-  );
-}
-
-function CardShell({
-  children,
-  className,
-  bg = "#1a1a1a",
-}: {
-  children: ReactNode;
-  className?: string;
-  bg?: string;
-}) {
-  return (
-    <div
+    <a
+      href={APP_STORE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
       className={cn(
-        "relative overflow-hidden rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.78)]",
+        "glass-panel inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-white transition-colors hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40",
         className
       )}
-      style={{ background: bg }}
     >
-      {children}
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_1px_1px_rgba(77,77,77,0.61)]" />
-    </div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+      </svg>
+      <span className="site-body">Download on the App Store</span>
+    </a>
   );
 }
 
-function ImpactRow({ label, children }: { label: string; children: ReactNode }) {
+function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
-    <div className="relative w-full overflow-hidden rounded-[20px] bg-white/[0.05] shadow-[0_2px_6px_rgba(0,0,0,0.78)]">
-      <div className="flex flex-col items-start justify-center gap-1.5 p-5">
-        <p className="df-impact-row-label">{label}</p>
-        <div className="df-impact-row-body">{children}</div>
+    <span className="site-label case-study-heading-trail-mb block text-left text-white/45">
+      {children}
+    </span>
+  );
+}
+
+function PrincipleBlock({
+  title,
+  children,
+  after,
+}: {
+  title: string;
+  children: ReactNode;
+  after?: ReactNode;
+}) {
+  return (
+    <div className="w-full min-w-0">
+      <div className="glass-panel rounded-3xl p-6 md:p-8">
+        <h3 className="site-body case-study-heading-trail-mb text-white">{title}</h3>
+        <div className="case-study-prose-stack flex flex-col">{children}</div>
       </div>
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_1px_1px_rgba(77,77,77,0.61)]" />
+      {after}
     </div>
   );
 }
 
 export default function DomisPage() {
   useEffect(() => {
-    document.documentElement.classList.remove("dark");
-    return () => {
-      document.documentElement.classList.add("dark");
-    };
+    document.documentElement.classList.add("dark");
   }, []);
 
   return (
     <>
       <LightboxProvider>
-        <div className="domis-cs min-h-screen w-full overflow-x-hidden bg-black font-sans antialiased selection:bg-[#fd9e7b]/35 selection:text-white">
-          {/* ═══════════════ DARK HERO (Figma 19616:6450) ═══════════════ */}
-          <header className="relative flex flex-col items-center gap-16 px-5 pb-[120px] pt-[100px]">
-            <div className="relative w-full max-w-[580px]">
-              <Link
-                href="/"
-                aria-label="Back to home"
-                className="absolute -left-[54px] top-[-5px] flex size-[30px] items-center justify-center rounded-[10px] bg-[#292929] shadow-[0_2px_6px_rgba(0,0,0,0.78)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 max-[700px]:static max-[700px]:mb-4"
-              >
-                <img src={`${FIGMA}/back.png`} alt="" className="size-5" />
-                <span className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_1px_1px_rgba(77,77,77,0.61)]" />
-              </Link>
+        <div className="site-editorial relative min-h-screen w-full overflow-x-hidden bg-[#0c0c0e] font-sans antialiased selection:bg-amber-900/35 selection:text-amber-100">
+          <AmbientLight className="pointer-events-none absolute inset-0 z-0 overflow-hidden" />
+          <GrainOverlay />
 
-              <Reveal>
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-2">
-                    <h1 className="df-hero-title">
-                      Designing Domis from first principles
-                    </h1>
-                    <p className="df-hero-sub">
-                      2024 · AI-native home maintenance, built in code
+          <StickySidebar sections={sidebarSections} variant="dark" />
+
+          {/* ─── 00 · HERO ─── */}
+          <section
+            id="hero"
+            className="relative z-10 flex min-h-[92vh] items-center overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28"
+          >
+            <div className={cn("relative w-full text-left", shell)}>
+              <div className="grid w-full min-w-0 items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">
+                <div className="case-study-prose-stack flex w-full min-w-0 max-w-[560px] flex-col">
+                  <Reveal>
+                    <img
+                      src="/assets/domis/domis_icon.png"
+                      alt="Domis app icon"
+                      className="size-20 shrink-0 rounded-[22%] object-cover object-center shadow-lg ring-1 ring-white/10 md:size-24"
+                      draggable={false}
+                    />
+                  </Reveal>
+
+                  <HeroTextAnimation
+                    variant="wave"
+                    className="type-h1 text-left text-white"
+                  >
+                    Domis
+                  </HeroTextAnimation>
+
+                  <Reveal delay={0.2}>
+                    <p className={cn(body, "text-balance")}>
+                      An AI-native home maintenance app that learns your home instead of
+                      interrogating you about it.
                     </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <SimonyTag tone="coral">Product design</SimonyTag>
-                    <SimonyTag tone="violet">AI</SimonyTag>
-                    <SimonyTag tone="mint">0-to-1</SimonyTag>
-                  </div>
+                  </Reveal>
+
+                  <Reveal delay={0.3}>
+                    <div className="flex flex-wrap justify-start gap-x-8 gap-y-3 site-body text-white/70">
+                      <div>
+                        <span className="site-label case-study-meta-line-mb block text-left text-white/40">
+                          Role
+                        </span>
+                        Founding Product Designer
+                      </div>
+                      <div>
+                        <span className="site-label case-study-meta-line-mb block text-left text-white/40">
+                          Timeline
+                        </span>
+                        2024 —
+                      </div>
+                    </div>
+                  </Reveal>
+
+                  <Reveal delay={0.35}>
+                    <div className="flex flex-wrap gap-2">
+                      {TAGS.map((tag) => (
+                        <span
+                          key={tag}
+                          className="site-label rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-left text-white/60"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </Reveal>
                 </div>
-              </Reveal>
+
+                {/* Decorative composition — atmosphere, not explanation */}
+                <Reveal delay={0.25} className="relative hidden min-h-[320px] w-full lg:block">
+                  <div className="relative mx-auto aspect-[5/4] w-full max-w-xl">
+                    <div className="absolute left-[8%] top-[18%] z-[1] w-[38%] overflow-hidden rounded-2xl border border-white/10 bg-[#121214] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.75)]">
+                      <ImagePlaceholder
+                        label="Home (mobile)"
+                        aspectRatio="9/16"
+                        variant="frame"
+                        className="rounded-2xl border-0"
+                      />
+                    </div>
+                    <div className="absolute bottom-[6%] left-[28%] z-[2] w-[36%] overflow-hidden rounded-2xl border border-white/10 bg-[#121214] shadow-[0_28px_70px_-18px_rgba(0,0,0,0.8)]">
+                      <ImagePlaceholder
+                        label="Spaces (mobile)"
+                        aspectRatio="9/16"
+                        variant="frame"
+                        className="rounded-2xl border-0"
+                      />
+                    </div>
+                    <div className="absolute right-[2%] top-[8%] z-0 w-[58%] overflow-hidden rounded-2xl border border-white/10 bg-[#121214] opacity-90 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.7)]">
+                      <ImagePlaceholder
+                        label="Web onboarding"
+                        aspectRatio="16/10"
+                        variant="frame"
+                        className="rounded-2xl border-0"
+                      />
+                    </div>
+                  </div>
+                </Reveal>
+              </div>
             </div>
+          </section>
 
-            <Reveal delay={0.08}>
-              <div className="flex w-full max-w-[1005px] flex-col gap-4">
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col gap-6 md:flex-row">
-                    <div className="flex gap-6 md:w-[615px]">
-                      <div className="flex w-[54px] shrink-0 flex-col justify-between gap-4">
-                        {GRADIENTS.map((g, i) => (
-                          <div
-                            key={g}
-                            className={cn(
-                              "aspect-square w-full rounded-[14px] border-4 border-black",
-                              (i === 1 || i === 2) && "scale-[1.1]"
-                            )}
-                            style={{ background: g }}
-                          />
-                        ))}
-                      </div>
-                      <CardShell bg="#070707" className="min-h-[256px] flex-1">
-                        <div className="relative flex h-full min-h-[256px] items-center justify-center">
-                          <div
-                            className="absolute inset-x-0 bottom-0 h-2/3 opacity-80"
-                            style={{
-                              background:
-                                "radial-gradient(ellipse at 50% 100%, rgba(255,90,95,0.5), transparent 65%)",
-                            }}
-                          />
-                          <img
-                            src="/assets/domis/domis_icon.png"
-                            alt="Domis"
-                            className="relative z-[1] h-16 w-auto drop-shadow-[0_8px_24px_rgba(255,90,95,0.45)] md:h-[72px]"
-                            draggable={false}
-                          />
-                        </div>
-                      </CardShell>
-                    </div>
-                    <CardShell className="min-h-[256px] overflow-hidden md:w-[366px]">
-                      <div className="relative flex h-full min-h-[256px] items-center justify-center overflow-hidden">
-                        <LightboxImage
-                          src="/assets/home/domis-home-screen.png"
-                          alt="Domis home screen"
-                          className="absolute left-1/2 top-[-8%] h-[160%] w-auto max-w-none -translate-x-1/2 object-cover"
-                          draggable={false}
-                        />
-                      </div>
-                    </CardShell>
-                  </div>
-
-                  <div className="flex flex-col gap-6 md:flex-row">
-                    <CardShell className="relative min-h-[256px] md:w-[261px]">
-                      <div className="grid grid-cols-4 gap-0 p-6 pt-10">
-                        {ICON_SRC.map((src, i) => (
-                          <div
-                            key={src}
-                            className={cn(
-                              "relative flex aspect-square items-center justify-center",
-                              i === 1 && "z-[1]"
-                            )}
-                          >
-                            {i === 1 && (
-                              <>
-                                <span className="df-trust-chip absolute -top-7 left-1/2 z-[2] -translate-x-1/2 whitespace-nowrap rounded-lg border border-[#635974] bg-[rgba(212,188,255,0.2)] px-1.5 py-[3px]">
-                                  ❖ trust
-                                </span>
-                                <span className="absolute inset-[10%] rounded-sm border border-[#d4bcff] bg-[rgba(212,188,255,0.1)]" />
-                                <span className="absolute -left-0.5 -top-0.5 size-1.5 rounded-full border border-[#d4bcff] bg-white" />
-                                <span className="absolute -right-0.5 -top-0.5 size-1.5 rounded-full border border-[#d4bcff] bg-white" />
-                                <span className="absolute -bottom-0.5 -left-0.5 size-1.5 rounded-full border border-[#d4bcff] bg-white" />
-                                <span className="absolute -bottom-0.5 -right-0.5 size-1.5 rounded-full border border-[#d4bcff] bg-white" />
-                              </>
-                            )}
-                            <img
-                              src={src}
-                              alt=""
-                              className="relative z-[1] size-7 object-contain invert"
-                              draggable={false}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </CardShell>
-
-                    <CardShell className="min-h-[256px] flex-1 overflow-hidden md:w-[412px]">
-                      <LightboxImage
-                        src="/assets/home/domis-document-scan.png"
-                        alt="Document scan atmosphere"
-                        className="h-full min-h-[256px] w-full object-cover"
-                        draggable={false}
-                      />
-                    </CardShell>
-
-                    <CardShell className="min-h-[256px] overflow-hidden md:w-[281px]">
-                      <LightboxImage
-                        src="/assets/domis/docproc.png"
-                        alt="Document processor marketing frame"
-                        className="h-full min-h-[256px] w-full object-cover object-top"
-                        draggable={false}
-                      />
-                    </CardShell>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-2 pr-1">
-                  <img src={`${FIGMA}/cursor.png`} alt="" className="size-4" />
-                  <span className="df-click">Click around…</span>
-                </div>
-              </div>
-            </Reveal>
-          </header>
-
-          {/* ═══════════════ LIGHT BODY (Figma 19616:6584) ═══════════════ */}
-          <div className="relative rounded-t-[32px] bg-[#fafafa] pb-24 pt-24 text-black">
-            <div className={cn(wide, "flex flex-col items-center gap-[100px]")}>
-              <div className="flex w-full flex-col items-center gap-16">
-                <Reveal>
-                  <div className="relative w-full max-w-[638px] overflow-hidden rounded-[30px] border border-[#272b2d] bg-[#131415] p-5 shadow-[0_4px_4px_rgba(0,0,0,0.45)] sm:p-[30px]">
-                    <div className="mb-6 flex items-center gap-4">
-                      <span className="df-impact-label">Impact</span>
-                      <span
-                        className="h-0 flex-1 border-t-2 border-dashed border-white/30"
-                        aria-hidden
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <ImpactRow label="Ownership">
-                        Founding design for a shipped consumer AI product — research
-                        through on-device SwiftUI prototypes.
-                      </ImpactRow>
-                      <ImpactRow label="Trust layer">
-                        Designed transparency, editability, and failure states so AI
-                        outputs feel believable, not magical.
-                      </ImpactRow>
-                      <ImpactRow label="Method">
-                        Built interactions on-device to judge latency and confidence
-                        before engineering scaled them.
-                      </ImpactRow>
-                    </div>
-                  </div>
-                </Reveal>
-
-                <section className={cn(prose, "flex flex-col gap-2")}>
-                  <Reveal>
-                    <h2 className="df-h2">Context</h2>
-                  </Reveal>
-                  <Reveal delay={0.04}>
-                    <div className="flex flex-col gap-4">
-                      <p className="df-body">
-                        Owning a home dumps unstructured information on people all at
-                        once — inspection reports, manuals, warranties, seasonal upkeep.
-                      </p>
-                      <p className="df-body">
-                        Most people file it away and hope. The small deferred fix becomes
-                        the expensive emergency.
-                      </p>
-                      <p className="df-body">That&apos;s where I came in.</p>
-                      <p className="df-body">
-                        The design problem wasn&apos;t a nicer to-do list. It was turning
-                        scattered inputs into trustworthy, low-effort action — using AI
-                        only where it removes work.
-                      </p>
-                    </div>
-                  </Reveal>
-                </section>
-
-                <section className={cn(prose, "flex flex-col gap-2")}>
-                  <Reveal>
-                    <h2 className="df-h2">My role</h2>
-                  </Reveal>
-                  <Reveal delay={0.04}>
-                    <div className="flex flex-col gap-4">
-                      <p className="df-body">
-                        As{" "}
-                        <span className="font-medium text-black">founding designer</span>{" "}
-                        I own the work end to end — and I prototype AI interactions in
-                        SwiftUI, not just Figma.
-                      </p>
-                      <p className="df-body">This meant:</p>
-                      <ul className="flex flex-col gap-4">
-                        <RoleRow Icon={Brush}>
-                          Research, product, and interaction design for core AI surfaces
-                        </RoleRow>
-                        <RoleRow Icon={Layers}>
-                          Design system setup the shipped product runs on
-                        </RoleRow>
-                        <RoleRow Icon={Code2}>
-                          Functional on-device prototypes for trust, latency, and failure
-                        </RoleRow>
-                        <RoleRow Icon={Users}>
-                          Day-to-day partnership with founders and engineering
-                        </RoleRow>
-                      </ul>
-                    </div>
-                  </Reveal>
-                </section>
-              </div>
-
+          {/* ─── 01 · OVERVIEW ─── */}
+          <section id="overview" className={cn("relative z-10", shell, "case-study-section-y-b")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
+              {/* TL;DR */}
               <Reveal>
-                <GradientShell
-                  from="#ffa1a8"
-                  to="#faf7f2"
-                  caption="On-device SwiftUI prototype — feel the AI before engineering commits."
-                >
-                  <video
-                    src="/assets/home/domis-card2-anim.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="metadata"
-                    className="block h-auto w-full"
-                    aria-label="Domis product animation"
-                  />
-                </GradientShell>
-              </Reveal>
-
-              <section className={cn(prose, "flex flex-col gap-2")}>
-                <Reveal>
-                  <h2 className="df-h2">A trust layer, not a gimmick</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-4">
-                    <p className="df-body">
-                      With AI features the experience{" "}
-                      <strong className="font-medium text-black">is</strong> the
-                      model&apos;s behavior. You can&apos;t judge trust from a static
-                      mockup.
-                    </p>
-                    <p className="df-body">
-                      So I built interactions on-device and used how they felt to decide
-                      what shipped. The model does the tedious work — my job was making
-                      people trust it.
-                    </p>
-                  </div>
-                </Reveal>
-              </section>
-
-              <Reveal>
-                <div className="grid w-full max-w-[580px] grid-cols-1 gap-4 sm:grid-cols-2">
-                  {[
-                    { src: `${FIGMA}/ds-1.png`, alt: "Color system reference" },
-                    { src: `${FIGMA}/ds-2.png`, alt: "Typography reference" },
-                    { src: `${FIGMA}/ds-3.png`, alt: "Form and control states" },
-                    { src: `${FIGMA}/ds-4.png`, alt: "Component library" },
-                  ].map((img) => (
-                    <LightboxImage
-                      key={img.src}
-                      src={img.src}
-                      alt={img.alt}
-                      className="w-full rounded-[20px] border border-[#e6e6e6] bg-white shadow-sm"
-                      draggable={false}
-                    />
-                  ))}
-                </div>
-                <p className="df-caption mt-3 text-center">
-                  System craft references — Domis-specific sheets swap in when ready.
-                </p>
-              </Reveal>
-
-              <section className={cn(prose, "flex flex-col gap-2")}>
-                <Reveal>
-                  <h2 className="df-h2">Document processor</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-4">
-                    <p className="df-body">
-                      The inspection report is where other tools give up — long,
-                      jargon-dense, and silent on what&apos;s urgent versus cosmetic.
-                    </p>
-                    <p className="df-body">
-                      I designed an AI flow that reads the PDF and returns prioritized,
-                      plain-language tasks for that specific home.
-                    </p>
-                    <p className="df-body">
-                      Trust was the hinge: every task shows its source line, carries
-                      severity, and stays fully editable.
-                    </p>
-                  </div>
-                </Reveal>
-              </section>
-
-              <Reveal>
-                <GradientShell
-                  from="#ffa1a8"
-                  to="#faf7f2"
-                  framed={false}
-                  showPrototype={false}
-                  caption='Tap "Process Documents" in the demo.'
-                >
-                  <DocumentProcessorDemo />
-                </GradientShell>
-              </Reveal>
-
-              <Reveal>
-                <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="overflow-hidden rounded-[20px] border border-[#e6e6e6] bg-white shadow-sm">
-                    <LightboxImage
-                      src="/assets/home/domis-tasks-found.png"
-                      alt="Tasks found from inspection report"
-                      className="w-full object-contain"
-                      draggable={false}
-                    />
-                  </div>
-                  <div className="overflow-hidden rounded-[20px] border border-[#e6e6e6] bg-white shadow-sm">
-                    <LightboxImage
-                      src="/assets/home/domis-task-detail.png"
-                      alt="Task detail with source citation"
-                      className="w-full object-contain"
-                      draggable={false}
-                    />
-                  </div>
-                </div>
-              </Reveal>
-
-              <section className={cn(prose, "flex flex-col gap-2")}>
-                <Reveal>
-                  <h2 className="df-h2">Appliance scanner</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-4">
-                    <p className="df-body">
-                      Logging appliances is tedious enough that nobody does it — so smart
-                      maintenance data never gets captured.
-                    </p>
-                    <p className="df-body">
-                      One photo identifies the appliance and auto-researches the guide.
-                      Design work lived in auto-fill vs. confirm, confidence, and graceful
-                      failure.
-                    </p>
-                    <p className="df-body">
-                      I pressure-tested the agent against consumer LLMs before we committed
-                      to building it.
-                    </p>
-                  </div>
-                </Reveal>
-              </section>
-
-              <Reveal>
-                <GradientShell from="#a1dce5" to="#faf7f2">
-                  <div className="grid grid-cols-1 gap-4 p-2 md:grid-cols-2 md:gap-6 md:p-4">
-                    <ApplianceScannerDemo />
-                    <MediaPlaceholder
-                      label="Annotated scanner flow — coming"
-                      aspectClass="min-h-[420px] aspect-[9/16]"
-                    />
-                  </div>
-                </GradientShell>
-              </Reveal>
-
-              <Reveal>
-                <GradientShell
-                  from="#a1dce5"
-                  to="#faf7f2"
-                  framed={false}
-                  showPrototype={false}
-                >
-                  <div className="flex flex-col items-center justify-center gap-4 py-2 md:flex-row md:gap-5">
-                    {[
-                      {
-                        src: "/assets/home/domis-home-screen.png",
-                        alt: "Domis home",
-                      },
-                      {
-                        src: "/assets/home/domis-tasks-found.png",
-                        alt: "Tasks found",
-                      },
-                      {
-                        src: "/assets/home/domis-task-detail.png",
-                        alt: "Task detail",
-                      },
-                    ].map((phone) => (
+                <div className="w-full min-w-0">
+                  <p className="site-label mb-4 text-left text-white/45">TL;DR</p>
+                  <div className="flex flex-col gap-2">
+                    {TLDR_ITEMS.map((text) => (
                       <div
-                        key={phone.src}
-                        className="w-full max-w-[260px] overflow-hidden rounded-[30px] border border-black/[0.05] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]"
+                        key={text.slice(0, 32)}
+                        className="glass-panel overflow-hidden rounded-3xl"
                       >
-                        <LightboxImage
-                          src={phone.src}
-                          alt={phone.alt}
-                          className="block h-auto w-full object-cover"
-                          draggable={false}
-                        />
+                        <p className={cn(body, "p-6 text-left md:p-8")}>{text}</p>
                       </div>
                     ))}
                   </div>
-                </GradientShell>
-              </Reveal>
-
-              <section className={cn(prose, "flex flex-col gap-2")}>
-                <Reveal>
-                  <h2 className="df-h2">Personalization</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-4">
-                    <p className="df-body">
-                      Maintenance apps feel generic. Generic means low attachment — and
-                      low engagement.
-                    </p>
-                    <p className="df-body">
-                      AI image translation generates a home identity from a real input —
-                      an avatar that recurs quietly so the app reads as theirs.
-                    </p>
-                    <p className="df-body">
-                      The line was delight versus gimmick. Keep it earned, small, and
-                      consistent.
-                    </p>
-                  </div>
-                </Reveal>
-              </section>
-
-              <Reveal>
-                <GradientShell from="#bdb2ff" to="#faf7f2">
-                  <div className="grid grid-cols-1 gap-4 p-2 md:grid-cols-2 md:gap-6 md:p-4">
-                    <PersonalizationShowcase />
-                    <MediaPlaceholder
-                      label="Generated home gallery — coming"
-                      aspectClass="min-h-[420px] aspect-[9/16]"
-                    />
-                  </div>
-                </GradientShell>
-              </Reveal>
-
-              <section className={cn(prose, "flex flex-col gap-6")}>
-                <Reveal>
-                  <h2 className="df-h2">What I kept hearing</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-8">
-                    <Quote cite="Design principle">
-                      Extracted tasks are worthless if people don&apos;t believe them —
-                      show the source, show severity, stay editable.
-                    </Quote>
-                    <Quote cite="Build method">
-                      You can&apos;t judge trust, latency, or a failure state from a
-                      static mockup. Build it on-device.
-                    </Quote>
-                  </div>
-                </Reveal>
-              </section>
-
-              <section className={cn(prose, "flex flex-col gap-2")}>
-                <Reveal>
-                  <h2 className="df-h2">What&apos;s next</h2>
-                </Reveal>
-                <Reveal delay={0.04}>
-                  <p className="df-body">
-                    Roadmap — not shipped. Each item still has a live design tension.
-                  </p>
-                </Reveal>
-              </section>
-
-              <Reveal>
-                <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-                  {[
-                    {
-                      title: "Proactive prep",
-                      body: "Weather + location surfaces prep before damage.",
-                      tension: "Proactive without noise.",
-                    },
-                    {
-                      title: "Onboarding autofill",
-                      body: "Home details from an address via Maps / APIs.",
-                      tension: "Autofill vs. confirm; privacy.",
-                    },
-                    {
-                      title: "Cross-platform system",
-                      body: "Tokens so iOS and web share one language.",
-                      tension: "Consistency plus velocity.",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.title}
-                      className="rounded-[20px] border border-[#e6e6e6] bg-white p-5 shadow-sm"
-                    >
-                      <span className="df-eyebrow">In progress</span>
-                      <h3 className="df-card-title mt-2">{item.title}</h3>
-                      <p className="df-card-body mt-2">{item.body}</p>
-                      <p className="df-caption mt-2 text-[#a1a1aa]">{item.tension}</p>
-                      <div className="mt-4">
-                        <MediaPlaceholder
-                          label="Mock coming"
-                          aspectClass="aspect-[16/10]"
-                        />
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </Reveal>
 
-              <section className={cn(prose, "flex flex-col gap-2")}>
+              {/* Context */}
+              <div className="case-study-subsection-mt w-full min-w-0">
                 <Reveal>
-                  <h2 className="df-h2">Final thoughts</h2>
+                  <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                    Context
+                  </h2>
                 </Reveal>
-                <Reveal delay={0.04}>
-                  <div className="flex flex-col gap-4">
-                    <p className="df-body">
-                      Domis reset how I think about AI in consumer products. The hard part
-                      was never the model — it was the trust layer around it.
+                <div className="case-study-prose-stack flex flex-col">
+                  <Reveal delay={0.04}>
+                    <p className={body}>
+                      Domis helps homeowners keep track of their homes. What needs fixing,
+                      what&apos;s about to break, and what that appliance in the garage
+                      actually is.
                     </p>
-                    <p className="df-body">
-                      How much to automate, how much control to leave, how to show the
-                      seams so people believe a result instead of second-guessing it.
+                  </Reveal>
+                  <Reveal delay={0.06}>
+                    <p className={body}>
+                      All of that depends on the app knowing your home. Setting up a home
+                      profile means answering questions about square footage, build year,
+                      and every appliance you own, and that is close to the least appealing
+                      task imaginable.
                     </p>
-                    <p className="df-body">
-                      Features that worked shared a shape: AI does the tedious 80% and
-                      hands over a confident, editable draft for the last 20%.
+                  </Reveal>
+                  <Reveal delay={0.07}>
+                    <p className={body}>
+                      So people don&apos;t, and then the product has nothing to work with.
                     </p>
-                    <p className="df-final">
-                      Good design isn&apos;t just making things look better. It&apos;s
-                      making the model&apos;s behavior feel trustworthy.
+                  </Reveal>
+                  <Reveal delay={0.08}>
+                    <p className={body}>
+                      The bet was that the system should learn the home instead of asking
+                      about it.
                     </p>
-                  </div>
-                </Reveal>
-              </section>
+                  </Reveal>
+                </div>
+              </div>
 
+              {/* My role */}
+              <div className="case-study-subsection-mt w-full min-w-0">
+                <Reveal>
+                  <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                    My role
+                  </h2>
+                </Reveal>
+                <div className="case-study-prose-stack flex flex-col">
+                  <Reveal delay={0.04}>
+                    <p className={body}>
+                      I&apos;m the founding product designer at Domis. I own product design
+                      across iOS and web, and I design AI features in code rather than in
+                      static mockups, because you can&apos;t evaluate an AI feature from a
+                      static frame.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={0.05}>
+                    <p className={body}>
+                      Trust and failure only show up once the thing is running.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={0.06}>
+                    <p className="site-body text-white">This meant:</p>
+                  </Reveal>
+                  <Reveal delay={0.08}>
+                    <ul className="flex flex-col gap-4">
+                      {ROLE_ITEMS.map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                          <span
+                            className="mt-2 size-1.5 shrink-0 rounded-full bg-white/30"
+                            aria-hidden
+                          />
+                          <span className={body}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Reveal>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 02 · THE PRODUCT ─── */}
+          <section id="product" className={cn("relative z-10", shell, "case-study-section-y-b")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
               <Reveal>
-                <a
-                  href={APP_STORE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="df-cta inline-flex items-center gap-2 rounded-full bg-[#18181b] px-6 py-3 text-[#fafafa] shadow-[0_2px_6px_rgba(0,0,0,0.25)] transition-transform hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18181b]/40"
-                >
-                  Download on the App Store
-                </a>
+                <SectionEyebrow>The Product</SectionEyebrow>
+                <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                  Low effort in
+                </h2>
               </Reveal>
+              <div className="case-study-prose-stack flex flex-col">
+                <Reveal delay={0.04}>
+                  <p className={body}>
+                    Domis is iOS first, web now. You log an issue, track a repair, and keep
+                    a record of the things in your home.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.06}>
+                  <p className={body}>
+                    You never go somewhere to set up your home, because the app learns it
+                    while you use it. Log an issue in a room that doesn&apos;t exist yet
+                    and the room gets created out of the task, instead of out of a settings
+                    screen you had to go find.
+                  </p>
+                </Reveal>
+              </div>
 
-              <Reveal>
-                <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
-                  <MediaPlaceholder
-                    label="Before / after — coming"
-                    aspectClass="aspect-[16/10] min-h-[240px]"
-                  />
-                  <MediaPlaceholder
-                    label="Prototype recording — coming"
-                    aspectClass="aspect-[16/10] min-h-[240px]"
-                  />
+              <Reveal delay={0.08}>
+                <div className={breakout}>
+                  <MediaFrame
+                    stagger
+                    caption="Home, tasks, and spaces. Progressive profiling means the home profile fills itself in as you use the app."
+                  >
+                    <PhoneSlot offset="up" className="h-[78%]">
+                      <ImagePlaceholder
+                        label="Home + FAB"
+                        aspectRatio="9/16"
+                        variant="frame"
+                        className="h-full rounded-2xl border-0"
+                        fullBleed
+                      />
+                    </PhoneSlot>
+                    <PhoneSlot offset="none" className="h-[86%]">
+                      <ImagePlaceholder
+                        label="Task page"
+                        aspectRatio="9/16"
+                        variant="frame"
+                        className="h-full rounded-2xl border-0"
+                        fullBleed
+                      />
+                    </PhoneSlot>
+                    <PhoneSlot offset="down" className="h-[78%]">
+                      <ImagePlaceholder
+                        label="Spaces"
+                        aspectRatio="9/16"
+                        variant="frame"
+                        className="h-full rounded-2xl border-0"
+                        fullBleed
+                      />
+                    </PhoneSlot>
+                  </MediaFrame>
                 </div>
               </Reveal>
             </div>
-          </div>
+          </section>
+
+          {/* ─── 03 · ADDRESS ─── */}
+          <section id="address" className={cn("relative z-10", shell, "case-study-section-y-b")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
+              <Reveal>
+                <SectionEyebrow>0-to-1 · The house</SectionEyebrow>
+                <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                  Address intelligence
+                </h2>
+              </Reveal>
+              <div className="case-study-prose-stack flex flex-col">
+                <Reveal delay={0.04}>
+                  <p className={body}>
+                    Onboarding used to mean typing in everything you know about your home.
+                    Most people don&apos;t know most of it, and the ones who do aren&apos;t
+                    going to type it.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.06}>
+                  <p className={body}>
+                    Now you type an address. Google Places resolves it, then an agentic
+                    search runs through Gemini to enrich it: bedrooms, bathrooms, square
+                    footage, year built, and whatever else is out there and reliable.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.07}>
+                  <p className={body}>
+                    You get a filled-in home profile before you&apos;ve done anything.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.08}>
+                  <p className={body}>
+                    I designed this flow, prototyped it in code, and shipped it.
+                  </p>
+                </Reveal>
+              </div>
+
+              <Reveal delay={0.1}>
+                <div className={breakout}>
+                  <div className="glass-panel overflow-hidden rounded-3xl">
+                    <div className="relative aspect-video w-full bg-gradient-to-br from-white/[0.03] to-transparent">
+                      {/* Recording placeholder until asset lands; swap for <video> */}
+                      <ImagePlaceholder
+                        label="Web onboarding recording: address to enriched profile"
+                        aspectRatio="16/9"
+                        variant="frame"
+                        className="rounded-none border-0"
+                        fullBleed
+                      />
+                    </div>
+                  </div>
+                  <p className={caption}>
+                    AI-assisted home profile creation, web. Address in, structured home
+                    profile out.
+                  </p>
+                </div>
+              </Reveal>
+            </div>
+          </section>
+
+          {/* ─── 04 · APPLIANCE ─── */}
+          <section id="appliance" className={cn("relative z-10", shell, "case-study-section-y-b")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
+              <Reveal>
+                <SectionEyebrow>Multimodal · The object</SectionEyebrow>
+                <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                  Appliance intelligence
+                </h2>
+              </Reveal>
+
+              {/* Side-by-side: copy + phones (not another 16:9 single frame) */}
+              <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[2fr_1fr] md:gap-10">
+                <div className="case-study-prose-stack flex flex-col">
+                  <Reveal delay={0.04}>
+                    <p className={body}>
+                      Same idea, smaller scale. Photograph an appliance and it gets logged.
+                      An agentic search runs in the background and comes back with model
+                      details, warranty information, manuals, and support docs.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={0.06}>
+                    <p className={body}>
+                      The alternative was asking people to type a serial number off a
+                      sticker behind their fridge. That was never going to happen.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={0.08}>
+                    <p className={caption}>
+                      Capture, then an agentic search fills in the record.
+                    </p>
+                  </Reveal>
+                </div>
+
+                <Reveal delay={0.1}>
+                  <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
+                    <div className="glass-panel overflow-hidden rounded-3xl p-2">
+                      <div className="overflow-hidden rounded-2xl">
+                        <ImagePlaceholder
+                          label="Capture state"
+                          aspectRatio="9/16"
+                          variant="viewfinder"
+                          className="rounded-2xl border-0"
+                        />
+                      </div>
+                    </div>
+                    <div className="glass-panel overflow-hidden rounded-3xl p-2">
+                      <div className="overflow-hidden rounded-2xl">
+                        <ImagePlaceholder
+                          label="Enriched record"
+                          aspectRatio="9/16"
+                          variant="frame"
+                          className="rounded-2xl border-0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 05 · TRUST (centerpiece) ─── */}
+          <section id="trust" className={cn("relative z-10", shell, "case-study-section-y-b")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col gap-8 md:gap-10">
+              <div>
+                <Reveal>
+                  <SectionEyebrow>Trust</SectionEyebrow>
+                  <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                    The model is wrong sometimes. Design for that.
+                  </h2>
+                </Reveal>
+                <Reveal delay={0.04}>
+                  <p className={body}>
+                    Scan the same appliance three times and you can get three different
+                    answers. A different model year. A warranty date that appeared out of
+                    nowhere. A manual link that looks right and goes nowhere.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.05}>
+                  <p className={body}>
+                    This is the part of AI work that never shows up in the demo.
+                  </p>
+                </Reveal>
+              </div>
+
+              <Reveal delay={0.06}>
+                <PrincipleBlock
+                  title="1. Consensus over confidence"
+                  after={
+                    <div className="mt-4 md:mt-5">
+                      <ApplianceConsensusDemo />
+                    </div>
+                  }
+                >
+                  <p className={body}>
+                    Search calls are cheap, so there&apos;s no reason to only ask once. The
+                    backend runs several searches in parallel and reconciles the results,
+                    and only the data that survives across passes makes it into the record.
+                  </p>
+                </PrincipleBlock>
+              </Reveal>
+
+              <Reveal delay={0.08}>
+                <PrincipleBlock title="2. A confidence floor">
+                  <p className={body}>
+                    Anything below 70% confidence doesn&apos;t render at all. An empty field
+                    is honest. A wrong field is expensive.
+                  </p>
+                </PrincipleBlock>
+              </Reveal>
+
+              <Reveal delay={0.1}>
+                <PrincipleBlock title="3. The AI fills the form the same way you would">
+                  <p className={body}>
+                    No sparkle, no separate AI panel, no special surface. The model writes
+                    into the same editable fields a person types into. Correcting it costs
+                    nothing, and there&apos;s no second mental model to learn.
+                  </p>
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-white/[0.08]">
+                    <ImagePlaceholder
+                      label="Enriched field + inline edit (optional)"
+                      aspectRatio="16/7"
+                      variant="frame"
+                      className="rounded-2xl border-0"
+                    />
+                  </div>
+                </PrincipleBlock>
+              </Reveal>
+
+              <Reveal delay={0.12}>
+                <PrincipleBlock title="4. Ship to the reliable edge">
+                  <p className={body}>
+                    Search was consistently bad at finding a specific product manual and
+                    kept returning dead links. Rather than ship a broken promise, the link
+                    goes to the product support page. That&apos;s one click further from
+                    the goal and it actually works.
+                  </p>
+                </PrincipleBlock>
+              </Reveal>
+            </div>
+          </section>
+
+          {/* ─── 06 · NOW ─── */}
+          <section id="now" className={cn("relative z-10", shell, "pb-20 md:pb-28")}>
+            <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
+              <Reveal>
+                <SectionEyebrow>Now</SectionEyebrow>
+                <h2 className="site-chapter-heading case-study-heading-trail-mb text-white">
+                  Still shipping
+                </h2>
+              </Reveal>
+              <Reveal delay={0.04}>
+                <p className={body}>
+                  Domis is out and we ship constantly. Right now I&apos;m working on a
+                  generated 3D home avatar, built from the same enriched profile data the
+                  address intelligence produces. You give it an address and it gives you
+                  your house back.
+                </p>
+              </Reveal>
+
+              <Reveal delay={0.08}>
+                <MediaFrame className="max-w-2xl">
+                  <PhoneSlot className="h-[82%]" offset="up">
+                    <ImagePlaceholder
+                      label="Home avatar"
+                      aspectRatio="9/16"
+                      variant="frame"
+                      className="h-full rounded-2xl border-0"
+                      fullBleed
+                    />
+                  </PhoneSlot>
+                  <PhoneSlot className="h-[82%]" offset="down">
+                    <ImagePlaceholder
+                      label="Avatar detail"
+                      aspectRatio="9/16"
+                      variant="frame"
+                      className="h-full rounded-2xl border-0"
+                      fullBleed
+                    />
+                  </PhoneSlot>
+                </MediaFrame>
+              </Reveal>
+
+              <Reveal delay={0.12}>
+                <AppStoreButton />
+              </Reveal>
+            </div>
+          </section>
         </div>
       </LightboxProvider>
       <CaseStudyPill projectSlug="domis" />

@@ -7,20 +7,20 @@ import { memoryCare } from "./memory-care";
 const domis: LegacyCaseStudy = {
   slug: "domis",
   title: "Domis",
-  subtitle: "AI-powered home maintenance",
+  subtitle: "AI-native home maintenance",
   description:
-    "Founding design for an AI home-maintenance app that turns the chaos of owning a home into calm, personalized action.",
+    "Founding design for an AI-native home maintenance app that learns your home instead of asking about it.",
   image: "/images/domis.png",
   href: "/domis",
   role: "Founding Product Designer",
   timeline: "2024 —",
   rotation: -3.5,
   yOffset: 8,
-  tags: ["Consumer App", "AI"],
+  tags: ["Consumer App", "AI-Native", "0-to-1"],
   challenge:
-    "Homeowners drown in unstructured information — inspection reports, manuals, warranties, seasonal upkeep — and end up doing nothing until something breaks.",
+    "Domis only works if it knows your home, and nobody wants to fill out a form about their house.",
   solution:
-    "An AI product that turns scattered, unstructured inputs into trustworthy, personalized, low-effort action — using AI only where it genuinely removes work.",
+    "Address intelligence, appliance intelligence, and progressive profiling so the system learns the home instead of asking.",
   stats: [],
 };
 

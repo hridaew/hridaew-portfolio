@@ -1,0 +1,79 @@
+# Domis Case Study — Source of Truth
+
+Synced from Domis_Case_Study_Brief_v2. Do not invent metrics. Do not add Impact blocks.
+
+## One idea
+
+Domis only works if it knows your home, and nobody wants to tell it. So the system learns the home instead of asking.
+
+- Address intelligence = that idea at the scale of a house
+- Appliance intelligence = that idea at the scale of an object
+- Progressive profiling = that idea at the scale of a single interaction
+
+Peak of the page: designing for non-deterministic AI (consensus, confidence floor, human-in-the-loop fields, ship to the reliable edge).
+
+## Structure
+
+00 Intro · 01 Overview (TL;DR, Context, My role) · 02 The Product · 03 Address · 04 Appliance · 05 Trust · 06 Now
+
+## Copy rules
+
+No em dashes. No startup poetry. Max 3 rendered lines per block. First person, matter of fact. No invented numbers.
+
+## TL;DR
+
+1. Domis only works if it knows your home. Nobody wants to fill out a form about their house, so the profile that makes the product useful is the exact thing that never gets built.
+2. I'm the founding product designer. The bet I made was that the system should learn the home instead of asking about it.
+3. I designed and shipped three versions of that idea: address intelligence at the scale of a house, appliance intelligence at the scale of an object, and progressive profiling at the scale of a single interaction.
+4. The hard part wasn't the features. It was designing around a model that gives you a different answer every time you ask.
+
+## Context
+
+Domis helps homeowners keep track of their homes. What needs fixing, what's about to break, and what that appliance in the garage actually is.
+
+All of that depends on the app knowing your home. Setting up a home profile means answering questions about square footage, build year, and every appliance you own, and that is close to the least appealing task imaginable. So people don't, and then the product has nothing to work with.
+
+The bet was that the system should learn the home instead of asking about it.
+
+## My role
+
+I'm the founding product designer at Domis. I own product design across iOS and web, and I design AI features in code rather than in static mockups, because you can't evaluate an AI feature from a static frame. Trust and failure only show up once the thing is running.
+
+This meant:
+- Owning product design end to end across iOS and web
+- Designing and prototyping AI features in code, then driving them to production
+- Defining how AI behavior surfaces in the interface: confidence, correction, and failure
+- Working directly with the founders on what to build and what to cut
+
+## The Product — Low effort in
+
+Domis is iOS first, web now. You log an issue, track a repair, and keep a record of the things in your home.
+
+You never go somewhere to set up your home, because the app learns it while you use it. Log an issue in a room that doesn't exist yet and the room gets created out of the task, instead of out of a settings screen you had to go find.
+
+## Address intelligence
+
+Onboarding used to mean typing in everything you know about your home. Most people don't know most of it, and the ones who do aren't going to type it.
+
+Now you type an address. Google Places resolves it, then an agentic search runs through Gemini to enrich it: bedrooms, bathrooms, square footage, year built, and whatever else is out there and reliable. You get a filled-in home profile before you've done anything.
+
+I designed this flow, prototyped it in code, and shipped it.
+
+## Appliance intelligence
+
+Same idea, smaller scale. Photograph an appliance and it gets logged. An agentic search runs in the background and comes back with model details, warranty information, manuals, and support docs.
+
+The alternative was asking people to type a serial number off a sticker behind their fridge. That was never going to happen.
+
+## Trust — The model is wrong sometimes. Design for that.
+
+Scan the same appliance three times and you can get three different answers. A different model year. A warranty date that appeared out of nowhere. A manual link that looks right and goes nowhere. This is the part of AI work that never shows up in the demo.
+
+1. Consensus over confidence
+2. A confidence floor (below 70% does not render)
+3. The AI fills the form the same way you would
+4. Ship to the reliable edge (support page over dead manual links)
+
+## Now — Still shipping
+
+Domis is out and we ship constantly. Right now I'm working on a generated 3D home avatar, built from the same enriched profile data the address intelligence produces. You give it an address and it gives you your house back.
