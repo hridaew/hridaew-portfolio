@@ -1,0 +1,1018 @@
+/* Domis case-study body — prototype mockups scoped for the dark editorial page */
+.domis-cs {
+  --dcs-text: #f4f4f5;
+  --dcs-muted: rgba(255, 255, 255, 0.45);
+  --dcs-faint: rgba(255, 255, 255, 0.28);
+  --dcs-line: rgba(255, 255, 255, 0.12);
+  --dcs-surface: rgba(255, 255, 255, 0.05);
+  --dcs-surface-2: rgba(255, 255, 255, 0.08);
+  --dcs-ai: #5b8cff;
+  --dcs-ai-soft: rgba(91, 140, 255, 0.18);
+  --dcs-mock: #ffffff;
+  --dcs-mock-text: #16181c;
+  --dcs-mock-muted: #8a8f98;
+  --dcs-mock-faint: #b6bac1;
+  --dcs-mock-line: #e4e6ea;
+  --dcs-mock-surface: #f4f5f7;
+  --dcs-mock-surface-2: #eceef1;
+  --dcs-col-text: 620px;
+  --dcs-col-media: 780px;
+  --dcs-step: 1.625rem;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-col {
+  width: 100%;
+  max-width: var(--dcs-col-text);
+  margin: 0 auto;
+  text-align: left;
+}
+
+.domis-cs .dcs-col p {
+  margin: 0 0 var(--dcs-step);
+}
+
+.domis-cs .dcs-col p:last-child {
+  margin-bottom: 0;
+}
+
+.domis-cs .dcs-block {
+  margin-bottom: 4.25rem;
+}
+
+.domis-cs .dcs-heading {
+  margin-bottom: var(--dcs-step);
+}
+
+.domis-cs .dcs-rule {
+  width: 100%;
+  max-width: var(--dcs-col-media);
+  margin: 5.75rem auto;
+  height: 1px;
+  background: var(--dcs-line);
+  border: 0;
+}
+
+.domis-cs .dcs-roles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.domis-cs .dcs-roles li {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.domis-cs .dcs-roles li:last-child {
+  margin-bottom: 0;
+}
+
+.domis-cs .dcs-roles svg {
+  flex: none;
+  margin-top: 0.3rem;
+}
+
+.domis-cs .dcs-callout {
+  border-left: 2px solid rgba(255, 255, 255, 0.55);
+  padding-left: 1.5rem;
+}
+
+.domis-cs .dcs-em {
+  font-style: normal;
+  color: var(--dcs-muted);
+}
+
+.domis-cs figure.dcs-figure {
+  width: 100%;
+  max-width: var(--dcs-col-media);
+  margin: 3.25rem auto;
+}
+
+.domis-cs .dcs-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--dcs-surface);
+  border: 1px solid var(--dcs-line);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.75rem;
+}
+
+.domis-cs figcaption.dcs-caption {
+  width: 100%;
+  margin-top: 0.875rem;
+  color: var(--dcs-muted);
+}
+
+/* mockup primitives (light product UI) */
+.domis-cs .dcs-card {
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 9px;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-lbl {
+  color: var(--dcs-mock-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.domis-cs .dcs-val {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-bar {
+  height: 6px;
+  border-radius: 4px;
+  background: var(--dcs-mock-surface-2);
+}
+
+.domis-cs .dcs-aidot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--dcs-ai);
+  flex: none;
+}
+
+.domis-cs .dcs-cursor {
+  position: absolute;
+  width: 13px;
+  height: 19px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.domis-cs .dcs-touch {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  border: 1.5px solid var(--dcs-ai);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.domis-cs .dcs-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 14px;
+  background: var(--dcs-ai);
+  vertical-align: -2px;
+  animation: dcs-blink 1s steps(1) infinite;
+}
+
+@keyframes dcs-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.domis-cs .dcs-io {
+  display: flex;
+  align-items: center;
+  gap: 1.625rem;
+  width: 100%;
+}
+
+.domis-cs .dcs-io .dcs-in {
+  flex: 0 0 30%;
+}
+
+.domis-cs .dcs-io .dcs-out {
+  flex: 1;
+}
+
+.domis-cs .dcs-io-arrow {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4375rem;
+}
+
+.domis-cs .dcs-io-arrow .dcs-stem {
+  width: 1px;
+  height: 26px;
+  background: var(--dcs-line);
+}
+
+.domis-cs .dcs-io-arrow .dcs-mstep {
+  color: var(--dcs-faint);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.domis-cs .dcs-io-arrow .dcs-tip {
+  color: var(--dcs-faint);
+  font-size: 12px;
+}
+
+/* editable field loop */
+.domis-cs .dcs-fieldloop {
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.domis-cs .dcs-fieldloop .dcs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--dcs-mock-line);
+}
+
+.domis-cs .dcs-fieldloop .dcs-row:last-child {
+  border-bottom: 0;
+}
+
+.domis-cs .dcs-fieldloop .dcs-val {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.domis-cs .dcs-fieldloop .dcs-row.dcs-tgt {
+  background: #e9effd;
+}
+
+.domis-cs .dcs-fl-cursor {
+  left: 50%;
+  top: 50%;
+  margin: -24px 0 0 100px;
+  animation: dcs-flcur 6s ease-in-out infinite;
+}
+
+@keyframes dcs-flcur {
+  0%,
+  8% {
+    transform: translate(52px, 78px);
+  }
+  26%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.domis-cs .dcs-fl-swap {
+  position: relative;
+  display: inline-block;
+  min-width: 9px;
+  text-align: right;
+}
+
+.domis-cs .dcs-fl-swap .dcs-a {
+  animation: dcs-swapA 6s infinite;
+}
+
+.domis-cs .dcs-fl-swap .dcs-b {
+  position: absolute;
+  right: 0;
+  top: 0;
+  animation: dcs-swapB 6s infinite;
+}
+
+@keyframes dcs-swapA {
+  0%,
+  30% {
+    opacity: 1;
+  }
+  38%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes dcs-swapB {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  48%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* address */
+.domis-cs .dcs-addrfield {
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 8px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-type {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  animation: dcs-type 7s steps(22, end) infinite;
+}
+
+@keyframes dcs-type {
+  0% {
+    width: 0;
+  }
+  38%,
+  100% {
+    width: 100%;
+  }
+}
+
+.domis-cs .dcs-addr-cursor {
+  left: 44px;
+  top: 44px;
+  animation: dcs-addrcur 7s ease-in-out infinite;
+}
+
+@keyframes dcs-addrcur {
+  0%,
+  5% {
+    transform: translate(96px, 120px);
+  }
+  15%,
+  100% {
+    transform: translate(44px, 62px);
+  }
+}
+
+.domis-cs .dcs-profile .dcs-prow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 15px;
+  border-bottom: 1px solid var(--dcs-mock-line);
+  opacity: 0;
+  animation: dcs-rise 7s ease-out infinite;
+}
+
+.domis-cs .dcs-profile .dcs-prow:last-child {
+  border-bottom: 0;
+}
+
+.domis-cs .dcs-profile .dcs-prow:nth-child(1) {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(2) {
+  animation-delay: 0.07s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(3) {
+  animation-delay: 0.14s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(4) {
+  animation-delay: 0.21s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(5) {
+  animation-delay: 0.28s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(6) {
+  animation-delay: 0.35s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(7) {
+  animation-delay: 0.42s;
+}
+.domis-cs .dcs-profile .dcs-prow:nth-child(8) {
+  animation-delay: 0.49s;
+}
+
+@keyframes dcs-rise {
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  56%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* self consistency */
+.domis-cs .dcs-sc {
+  width: 100%;
+  max-width: 500px;
+}
+
+.domis-cs .dcs-sc .dcs-answers {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 8px;
+}
+
+.domis-cs .dcs-sc .dcs-answers .dcs-who {
+  width: 42px;
+  color: var(--dcs-mock-faint);
+  font-size: 11px;
+  padding-top: 7px;
+  flex: none;
+}
+
+.domis-cs .dcs-chip {
+  flex: 1;
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 6px;
+  padding: 7px 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-chip.dcs-drop {
+  color: var(--dcs-mock-faint);
+}
+
+.domis-cs .dcs-sc .dcs-lands {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--dcs-mock-line);
+}
+
+.domis-cs .dcs-sc .dcs-lands .dcs-who {
+  color: var(--dcs-mock-muted);
+}
+
+.domis-cs .dcs-landed {
+  flex: 1;
+  border-radius: 6px;
+  padding: 7px 4px;
+  text-align: center;
+  font-size: 12px;
+  border: 1px solid var(--dcs-ai);
+  background: #e9effd;
+  color: #3b6cf0;
+}
+
+.domis-cs .dcs-landed.dcs-ask {
+  color: var(--dcs-mock-muted);
+  border: 1px dashed var(--dcs-mock-faint);
+  background: var(--dcs-mock);
+}
+
+/* icon vs satellite */
+.domis-cs .dcs-versus {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.domis-cs .dcs-thumb {
+  width: 138px;
+  height: 138px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.domis-cs .dcs-thumb.dcs-sat {
+  background:
+    radial-gradient(circle at 28% 38%, #b9c2ae 0 22%, transparent 23%),
+    linear-gradient(115deg, #9aa48f 0 40%, #8e9a86 40% 62%, #a8b09b 62% 100%);
+  filter: blur(1.2px) saturate(0.65);
+}
+
+.domis-cs .dcs-thumb.dcs-sat::after {
+  content: "";
+  position: absolute;
+  inset: 38% 42% 34% 34%;
+  background: #6f7466;
+  border-radius: 2px;
+  transform: rotate(8deg);
+}
+
+.domis-cs .dcs-thumb.dcs-icon {
+  background: linear-gradient(160deg, #eef1f6, #dee3ec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* phone */
+.domis-cs .dcs-phone {
+  width: 190px;
+  border-radius: 24px;
+  border: 1px solid var(--dcs-mock-line);
+  background: var(--dcs-mock);
+  overflow: hidden;
+  position: relative;
+}
+
+.domis-cs .dcs-viewfinder {
+  height: 190px;
+  background: linear-gradient(150deg, #4f555f, #2b2f36);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-cs .dcs-plate {
+  width: 104px;
+  height: 52px;
+  border-radius: 3px;
+  background: #9aa0a8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 8px;
+  transform: rotate(-1.5deg);
+}
+
+.domis-cs .dcs-plate .dcs-bar {
+  background: #6e747c;
+  height: 4px;
+}
+
+.domis-cs .dcs-shutter {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-cs .dcs-shutter .dcs-ring {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--dcs-mock-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-cs .dcs-shutter .dcs-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--dcs-mock-text);
+  animation: dcs-press 6s ease-out infinite;
+}
+
+@keyframes dcs-press {
+  0%,
+  18% {
+    transform: scale(1);
+  }
+  24% {
+    transform: scale(0.8);
+  }
+  32%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+.domis-cs .dcs-ph-touch {
+  left: 50%;
+  top: 219px;
+  animation: dcs-phtouch 6s ease-out infinite;
+}
+
+@keyframes dcs-phtouch {
+  0%,
+  10% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  20% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.domis-cs .dcs-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  animation: dcs-flash 6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes dcs-flash {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.domis-cs .dcs-appl .dcs-arow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--dcs-mock-line);
+  opacity: 0;
+  animation: dcs-rise2 6s ease-out infinite;
+}
+
+.domis-cs .dcs-appl .dcs-arow:last-child {
+  border-bottom: 0;
+}
+
+.domis-cs .dcs-appl .dcs-arow:nth-child(1) {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-appl .dcs-arow:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.domis-cs .dcs-appl .dcs-arow:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.domis-cs .dcs-appl .dcs-arow:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.domis-cs .dcs-appl .dcs-arow:nth-child(5) {
+  animation-delay: 0.32s;
+}
+
+@keyframes dcs-rise2 {
+  0%,
+  32% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  44%,
+  95% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* terminal */
+.domis-cs .dcs-artifact {
+  width: 100%;
+  max-width: 470px;
+}
+
+.domis-cs .dcs-term {
+  background: #14161a;
+  border-radius: 7px;
+  padding: 18px 20px;
+  color: #c8ccd4;
+  font-size: 11.5px;
+  line-height: 1.9;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.domis-cs .dcs-term .dcs-c {
+  color: #6d7480;
+}
+
+.domis-cs .dcs-term .dcs-g {
+  color: #7fc98f;
+}
+
+.domis-cs .dcs-term .dcs-y {
+  color: #d7b45f;
+}
+
+/* v1 v2 */
+.domis-cs .dcs-twoup {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.domis-cs .dcs-pane {
+  flex: 1;
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 9px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-pane .dcs-ph {
+  padding-bottom: 11px;
+  margin-bottom: 13px;
+  border-bottom: 1px solid var(--dcs-mock-line);
+}
+
+.domis-cs .dcs-kv {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.domis-cs .dcs-link {
+  color: #3b6cf0;
+  font-size: 12px;
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.domis-cs .dcs-pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--dcs-mock-surface-2);
+  color: var(--dcs-mock-muted);
+  font-size: 10px;
+}
+
+.domis-cs .dcs-pill.dcs-hi {
+  background: #e9effd;
+  color: #3b6cf0;
+}
+
+/* report */
+.domis-cs .dcs-dropzone {
+  border: 1.5px dashed var(--dcs-mock-faint);
+  border-radius: 9px;
+  padding: 24px 14px;
+  text-align: center;
+  background: var(--dcs-mock);
+}
+
+.domis-cs .dcs-rep-cursor {
+  left: 44px;
+  top: 44px;
+  animation: dcs-repcur 6s ease-in-out infinite;
+}
+
+@keyframes dcs-repcur {
+  0%,
+  8% {
+    transform: translate(20px, 172px);
+  }
+  26%,
+  100% {
+    transform: translate(74px, 108px);
+  }
+}
+
+.domis-cs .dcs-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domis-cs .dcs-cat {
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 9px;
+  padding: 13px 15px;
+  opacity: 0;
+  animation: dcs-rise3 6s ease-out infinite;
+  color: var(--dcs-mock-text);
+}
+
+.domis-cs .dcs-cat:nth-child(1) {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-cat:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.domis-cs .dcs-cat:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes dcs-rise3 {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  44%,
+  95% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+/* affinity */
+.domis-cs .dcs-affinity {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.domis-cs .dcs-cluster {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.domis-cs .dcs-cluster .dcs-ch {
+  font-size: 11px;
+  color: var(--dcs-mock-muted);
+  margin-bottom: 2px;
+}
+
+.domis-cs .dcs-note {
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 3px;
+  padding: 9px;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #4a4f57;
+}
+
+.domis-cs .dcs-note:nth-child(3n) {
+  transform: rotate(-0.6deg);
+}
+
+.domis-cs .dcs-note:nth-child(4n) {
+  transform: rotate(0.5deg);
+}
+
+.domis-cs .dcs-note.dcs-fact {
+  color: #3b6cf0;
+  border-color: #e9effd;
+  background: #e9effd;
+}
+
+/* contact sheet */
+.domis-cs .dcs-sheet {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}
+
+.domis-cs .dcs-tile {
+  background: var(--dcs-mock);
+  border: 1px solid var(--dcs-mock-line);
+  border-radius: 7px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.domis-cs .dcs-tile .dcs-tl {
+  font-size: 10.5px;
+  color: var(--dcs-mock-muted);
+}
+
+.domis-cs .dcs-swatches {
+  display: flex;
+  gap: 4px;
+}
+
+.domis-cs .dcs-sw {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+
+.domis-cs .dcs-io-label {
+  margin: 0 0 9px;
+}
+
+.domis-cs .dcs-media-note {
+  margin: 14px 0 0;
+}
+
+@media (max-width: 760px) {
+  .domis-cs .dcs-media {
+    padding: 18px;
+    border-radius: 8px;
+  }
+
+  .domis-cs figure.dcs-figure {
+    margin: 2.125rem auto;
+  }
+
+  .domis-cs .dcs-rule {
+    margin: 3.875rem auto;
+  }
+
+  .domis-cs figcaption.dcs-caption {
+    font-size: 0.875rem;
+  }
+
+  .domis-cs .dcs-io {
+    gap: 10px;
+  }
+
+  .domis-cs .dcs-io .dcs-in {
+    flex: 0 0 34%;
+  }
+
+  .domis-cs .dcs-io-arrow .dcs-mstep {
+    display: none;
+  }
+
+  .domis-cs .dcs-versus {
+    gap: 18px;
+  }
+
+  .domis-cs .dcs-thumb {
+    width: 96px;
+    height: 96px;
+  }
+
+  .domis-cs .dcs-phone {
+    width: 100%;
+    max-width: 130px;
+  }
+
+  .domis-cs .dcs-viewfinder {
+    height: 130px;
+  }
+
+  .domis-cs .dcs-twoup,
+  .domis-cs .dcs-affinity {
+    gap: 9px;
+  }
+
+  .domis-cs .dcs-pane {
+    padding: 10px;
+  }
+
+  .domis-cs .dcs-note {
+    font-size: 9px;
+    padding: 6px;
+  }
+
+  .domis-cs .dcs-sheet {
+    gap: 8px;
+  }
+
+  .domis-cs .dcs-cursor {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-cs * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .domis-cs .dcs-profile .dcs-prow,
+  .domis-cs .dcs-appl .dcs-arow,
+  .domis-cs .dcs-cat {
+    opacity: 1;
+  }
+
+  .domis-cs .dcs-type {
+    width: 100%;
+  }
+
+  .domis-cs .dcs-fl-swap .dcs-a {
+    opacity: 0;
+  }
+
+  .domis-cs .dcs-fl-swap .dcs-b {
+    opacity: 1;
+  }
+}
