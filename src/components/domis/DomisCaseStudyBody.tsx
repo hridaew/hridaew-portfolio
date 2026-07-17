@@ -570,7 +570,7 @@ export function DomisCaseStudyBody() {
             Address Intelligence also pulls photos of the property and generates
             a clean icon for it. Small thing, but a recognizable avatar matters
             when someone manages more than one property, and it is better than a
-            blurry satellite crop. It is replaceable if they would rather use
+            blurry street view crop. It is replaceable if they would rather use
             their own.
           </p>
         </Reveal>
