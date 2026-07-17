@@ -12,6 +12,14 @@ export type InspectionTask = {
   priority: InspectionTaskPriority;
   title: string;
   description: string;
+  /** Location chip (TagBadge + location_on), mirrors Flutter locations */
+  location?: string;
+  /** Local thumb for TaskCard (56px) — zero network */
+  thumbSrc?: string;
+  /** Completed-date chip when dismissed (MM/dd/yyyy, Flutter format) */
+  completedAtLabel?: string;
+  /** Domis Recommends chip (systemTaskId path in Flutter) */
+  recommends?: boolean;
   /** Dismissed / muted styling on the page */
   muted?: boolean;
 };
@@ -21,6 +29,8 @@ export const INSPECTION_ASSETS = {
   docProcessing: "/assets/domis/live/docproc.png",
   /** Inspection mascot / blippy */
   inspectionBlippy: "/assets/domis/live/inspection-blippy.png",
+  /** Shared task thumb fallback */
+  taskThumb: "/assets/domis/live/item-placeholder.png",
 } as const;
 
 /** Source doc shown on the input side of the demo */
@@ -41,6 +51,9 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     priority: "high",
     title: "Roof flashing, north side",
     description: "Water can get in where the roof meets the chimney.",
+    location: "Roof",
+    recommends: true,
+    thumbSrc: "/assets/domis/live/item-placeholder.png",
   },
   {
     id: "water-heater-age",
@@ -48,6 +61,8 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     priority: "monitor",
     title: "Water heater, age",
     description: "Near the end of a typical lifespan. Not urgent.",
+    location: "Utility",
+    thumbSrc: "/assets/domis/live/scan-item-demo.png",
   },
   {
     id: "kitchen-gfci",
@@ -55,7 +70,10 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     priority: "dismissed",
     title: "Kitchen GFCI outlets",
     description: "Already fixed. Removed by you, Mar 2025.",
+    location: "Kitchen",
+    completedAtLabel: "03/01/2025",
     muted: true,
+    thumbSrc: "/assets/domis/live/item-placeholder.png",
   },
 ] as const;
 

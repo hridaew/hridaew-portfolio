@@ -10,33 +10,14 @@ import {
   ApplianceV1V2Compare,
   ConsensusRunsPanel,
   HomeAvatarConversion,
+  InspectionToTasksDemo,
   WebCreateHomeDemo,
 } from "@/components/domis/live";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
-function PointerCursor({ className }: { className?: string }) {
-  return (
-    <svg className={`dcs-cursor ${className ?? ""}`} aria-hidden="true">
-      <use href="#dcs-ptr" />
-    </svg>
-  );
-}
-
 export function DomisCaseStudyBody() {
   return (
     <div className={`domis-cs ${SITE_COLUMN} pb-16 md:pb-24`}>
-      <svg className="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
-        <symbol id="dcs-ptr" viewBox="0 0 13 19">
-          <path
-            d="M1.5 1.2 L1.5 15.4 L5.2 11.9 L7.6 17.4 L10 16.4 L7.6 11 L12 11 Z"
-            fill="#fff"
-            stroke="#16181c"
-            strokeWidth="1.3"
-            strokeLinejoin="round"
-          />
-        </symbol>
-      </svg>
-
       {/* Intro — top padding mirrors hero pb-16/md:pb-24 for even spacing around the divider */}
       <section id="overview" className="dcs-col dcs-block pt-16 md:pt-24">
         <Reveal>
@@ -685,105 +666,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Restyle as the actual task UI from Domis, with this same
-              inspection report thing on the left but restyle the cards on the
-              right to look like task cards from the Domis app.
-            </p>
-            <div className="dcs-io">
-              <div className="dcs-in">
-                <p className="dcs-lbl dcs-io-label">The user gives</p>
-                <div className="dcs-dropzone">
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                    style={{ marginBottom: 8 }}
-                  >
-                    <path
-                      d="M6 2.5 H13.5 L18.5 7.5 V21.5 H6 Z"
-                      stroke="#b6bac1"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M13.5 2.5 V7.5 H18.5"
-                      stroke="#b6bac1"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M8.5 12.5 H16 M8.5 15.5 H16 M8.5 18.5 H13"
-                      stroke="#b6bac1"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <p className="dcs-lbl" style={{ margin: 0 }}>
-                    inspection.pdf
-                  </p>
-                  <p
-                    className="dcs-lbl"
-                    style={{ margin: "2px 0 0", color: "var(--dcs-mock-faint)" }}
-                  >
-                    64 pages
-                  </p>
-                </div>
-              </div>
-
-              <div className="dcs-io-arrow">
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Read</span>
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Group</span>
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Translate</span>
-                <div className="dcs-stem" />
-                <span className="dcs-tip">→</span>
-              </div>
-
-              <div className="dcs-out">
-                <p className="dcs-lbl dcs-io-label">Domis returns</p>
-                <div className="dcs-cats">
-                  <div className="dcs-cat">
-                    <span className="dcs-pill dcs-hi">High priority</span>
-                    <p className="dcs-val" style={{ margin: "9px 0 0" }}>
-                      Roof flashing, north side
-                    </p>
-                    <p className="dcs-lbl" style={{ margin: "2px 0 0" }}>
-                      Water can get in where the roof meets the chimney.
-                    </p>
-                  </div>
-                  <div className="dcs-cat">
-                    <span className="dcs-pill">Monitor</span>
-                    <p className="dcs-val" style={{ margin: "9px 0 0" }}>
-                      Water heater, age
-                    </p>
-                    <p className="dcs-lbl" style={{ margin: "2px 0 0" }}>
-                      Near the end of a typical lifespan. Not urgent.
-                    </p>
-                  </div>
-                  <div className="dcs-cat">
-                    <span className="dcs-pill">Dismissed</span>
-                    <p
-                      className="dcs-val"
-                      style={{ margin: "9px 0 0", color: "var(--dcs-mock-muted)" }}
-                    >
-                      Kitchen GFCI outlets
-                    </p>
-                    <p className="dcs-lbl" style={{ margin: "2px 0 0" }}>
-                      Already fixed. Removed by you, Mar 2025.
-                    </p>
-                  </div>
-                  <p className="dcs-lbl" style={{ margin: "2px 0 0" }}>
-                    Pull any of these into tasks. Or don&rsquo;t.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <PointerCursor className="dcs-rep-cursor" />
+            <InspectionToTasksDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             One PDF in. From 64 pages of construction and real estate lingo to

@@ -68,3 +68,15 @@ export {
   ApplianceV1V2Compare,
   type ApplianceV1V2CompareProps,
 } from "./ApplianceV1V2Compare";
+
+export {
+  InspectionToTasksDemo,
+  type InspectionToTasksDemoProps,
+} from "./InspectionToTasksDemo";
+
+export {
+  TaskCard,
+  type TaskCardProps,
+  type TaskCardChip,
+  type TaskCardChipVariant,
+} from "./mobile/TaskCard";

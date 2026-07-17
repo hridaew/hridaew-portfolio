@@ -1,0 +1,218 @@
+/* Inspection PDF → Domis TaskCard list — autoplay demo. */
+
+.domis-live.itt {
+  --itt-font: "Outfit", system-ui, sans-serif;
+  --itt-mock: #ffffff;
+  --itt-mock-text: #16181c;
+  --itt-mock-muted: #6b6f76;
+  --itt-mock-faint: #b6bac1;
+  --itt-mock-line: #e6e7ea;
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 22px 24px;
+  font-family: var(--itt-font);
+}
+
+.domis-live.itt .itt-stage {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  width: 100%;
+}
+
+.domis-live.itt .itt-in {
+  flex: 0 0 30%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domis-live.itt .itt-out {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domis-live.itt .itt-lbl {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.domis-live.itt .itt-dropzone {
+  border: 1.5px dashed var(--itt-mock-faint);
+  border-radius: 9px;
+  padding: 24px 14px;
+  text-align: center;
+  background: var(--itt-mock);
+  color: var(--itt-mock-text);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.domis-live.itt .itt-dropzone[data-engaged="true"] {
+  transform: scale(1.02);
+  border-color: #8a8f98;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.domis-live.itt .itt-dropzone svg {
+  display: block;
+  margin: 0 auto 8px;
+  color: var(--itt-mock-faint);
+}
+
+.domis-live.itt .itt-file {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--itt-mock-muted);
+}
+
+.domis-live.itt .itt-pages {
+  margin: 2px 0 0;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--itt-mock-faint);
+}
+
+.domis-live.itt .itt-arrow {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  opacity: 0.4;
+  transform: translateX(-3px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.domis-live.itt .itt-arrow[data-active="true"] {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.domis-live.itt .itt-stem {
+  width: 1px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.domis-live.itt .itt-mstep {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.domis-live.itt .itt-tip {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+}
+
+.domis-live.itt .itt-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domis-live.itt .itt-card-slot {
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.domis-live.itt .itt-card-slot[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.domis-live.itt .itt-hint {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.domis-live.itt-demo .domis-live-cursor {
+  --domis-cursor-w: 28px;
+  --domis-cursor-h: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-live.itt .itt-dropzone,
+  .domis-live.itt .itt-arrow,
+  .domis-live.itt .itt-card-slot,
+  .domis-live.itt .dtc {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .domis-live.itt {
+    padding: 20px 14px 18px;
+  }
+
+  .domis-live.itt .itt-stage {
+    gap: 14px;
+  }
+
+  .domis-live.itt .itt-in {
+    flex-basis: 28%;
+  }
+
+  .domis-live.itt .itt-dropzone {
+    padding: 18px 10px;
+  }
+
+  .domis-live.itt .dtc {
+    padding: 16px;
+  }
+
+  .domis-live.itt .dtc .dtc-title {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .domis-live.itt .itt-stage {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .domis-live.itt .itt-in,
+  .domis-live.itt .itt-out {
+    flex: none;
+    width: 100%;
+  }
+
+  .domis-live.itt .itt-arrow {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .domis-live.itt .itt-stem {
+    width: 18px;
+    height: 1px;
+  }
+}

@@ -1,0 +1,185 @@
+/* TaskCard — pixel port from Flutter task_card.dart + custom_card.dart + AppShadows. */
+
+.domis-live.dtc {
+  --dtc-surface: #ffffff;
+  --dtc-ink: #525252;
+  --dtc-tag-bg: rgba(194, 194, 194, 0.16);
+  --dtc-tag-ink: #49454f;
+  --dtc-border: rgba(156, 156, 156, 0.5);
+  --dtc-thumb-border: #f7f7f7;
+  --dtc-primary-light: rgba(255, 90, 95, 0.16);
+  --dtc-star-bg: #fff1dc;
+  --dtc-star: #ffa726;
+  --dtc-font: "Outfit", system-ui, sans-serif;
+  --dtc-radius-card: 24px;
+  --dtc-radius-thumb: 8px;
+  --dtc-thumb: 56px;
+  --dtc-chip-gap: 6px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 24px;
+  background: var(--dtc-surface);
+  border: 1px solid var(--dtc-border);
+  border-radius: var(--dtc-radius-card);
+  /* AppShadows.card */
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.06),
+    0 4px 14px rgba(17, 24, 39, 0.08),
+    0 12px 24px rgba(17, 24, 39, 0.04);
+  font-family: var(--dtc-font);
+  color: var(--dtc-ink);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    box-shadow 0.35s ease;
+}
+
+.domis-live.dtc *,
+.domis-live.dtc *::before,
+.domis-live.dtc *::after {
+  box-sizing: border-box;
+}
+
+.domis-live.dtc[data-muted="true"] {
+  opacity: 0.55;
+}
+
+.domis-live.dtc[data-highlighted="true"] {
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.08),
+    0 6px 18px rgba(17, 24, 39, 0.12),
+    0 14px 28px rgba(17, 24, 39, 0.08);
+  transform: translateY(-1px);
+}
+
+.domis-live.dtc .dtc-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.domis-live.dtc .dtc-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--dtc-ink);
+}
+
+.domis-live.dtc .dtc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--dtc-chip-gap);
+}
+
+/* TagBadge — height 24, pill radius 40 */
+.domis-live.dtc .dtc-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  height: 24px;
+  max-width: 100%;
+  padding: 0 8px;
+  border-radius: 40px;
+  background: var(--dtc-tag-bg);
+  color: var(--dtc-tag-ink);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.domis-live.dtc .dtc-chip[data-has-icon="true"] {
+  padding: 0 8px 0 3px;
+}
+
+.domis-live.dtc .dtc-chip[data-variant="location"] {
+  padding: 2px 7px 2px 0;
+}
+
+.domis-live.dtc .dtc-chip[data-variant="recommends"] {
+  padding: 0 8px 0 2px;
+  background: var(--dtc-primary-light);
+  color: var(--dtc-ink);
+}
+
+.domis-live.dtc .dtc-chip[data-variant="priority-high"] {
+  background: var(--dtc-primary-light);
+  color: var(--dtc-ink);
+}
+
+.domis-live.dtc .dtc-chip .material-symbols-rounded {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: inherit;
+  flex: none;
+}
+
+.domis-live.dtc .dtc-chip[data-variant="location"] .material-symbols-rounded {
+  transform: translateX(1px);
+}
+
+.domis-live.dtc .dtc-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Category / pin — circular 24×24 icon badge */
+.domis-live.dtc .dtc-chip-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--dtc-tag-bg);
+  color: var(--dtc-tag-ink);
+}
+
+.domis-live.dtc .dtc-chip-circle[data-variant="pin"] {
+  background: var(--dtc-star-bg);
+  color: var(--dtc-star);
+}
+
+.domis-live.dtc .dtc-chip-circle .material-symbols-rounded {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+/* Thumb — 56×56, AppRadius.sm, AppShadows.cardThumb */
+.domis-live.dtc .dtc-thumb {
+  flex: none;
+  width: var(--dtc-thumb);
+  height: var(--dtc-thumb);
+  border-radius: var(--dtc-radius-thumb);
+  border: 1px solid var(--dtc-thumb-border);
+  overflow: hidden;
+  background: var(--dtc-thumb-border);
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.08),
+    0 4px 14px rgba(17, 24, 39, 0.12),
+    0 10px 20px rgba(17, 24, 39, 0.06);
+}
+
+.domis-live.dtc .dtc-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
