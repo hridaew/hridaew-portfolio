@@ -32,8 +32,7 @@
 /* Non-text blocks: slight emphasis over the text column */
 .domis-cs figure.dcs-figure,
 .domis-cs .dcs-img-block,
-.domis-cs .dcs-more,
-.domis-cs .dcs-roles {
+.domis-cs .dcs-more {
   width: 100%;
   max-width: none;
 }
@@ -41,8 +40,7 @@
 @media (min-width: 768px) {
   .domis-cs figure.dcs-figure,
   .domis-cs .dcs-img-block,
-  .domis-cs .dcs-more,
-  .domis-cs .dcs-roles {
+  .domis-cs .dcs-more {
     width: calc(100% + (var(--dcs-breakout) * 2));
     max-width: none;
     margin-left: calc(var(--dcs-breakout) * -1);
