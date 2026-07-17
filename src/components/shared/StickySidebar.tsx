@@ -15,37 +15,91 @@ interface StickySidebarProps {
     variant?: "light" | "dark";
 }
 
+type LenisScroll = {
+    scrollTo: (
+        target: HTMLElement | number,
+        opts?: { offset?: number; duration?: number; immediate?: boolean },
+    ) => void;
+    on: (event: "scroll", cb: () => void) => void;
+    off: (event: "scroll", cb: () => void) => void;
+};
+
+function getLenis(): LenisScroll | undefined {
+    if (typeof window === "undefined") return undefined;
+    return (window as unknown as { __lenis?: LenisScroll }).__lenis;
+}
+
+/** Last section whose top has crossed ~38% of the viewport — works for short sections. */
+function resolveActiveSection(sectionIds: string[]): string {
+    const marker = window.innerHeight * 0.38;
+    let active = sectionIds[0] ?? "";
+
+    for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= marker) {
+            active = id;
+        }
+    }
+
+    return active;
+}
+
 export function StickySidebar({ sections, variant = "light" }: StickySidebarProps) {
     const [activeSection, setActiveSection] = useState(sections[0]?.id ?? "");
 
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActiveSection(entry.target.id);
-                    }
-                });
-            },
-            {
-                rootMargin: "-45% 0px -45% 0px",
-                threshold: 0,
+        const ids = sections.map((s) => s.id);
+
+        const update = () => {
+            const next = resolveActiveSection(ids);
+            setActiveSection((prev) => (prev === next ? prev : next));
+        };
+
+        update();
+
+        // Lenis drives scroll on this site — native scroll listeners alone miss updates.
+        let lenis = getLenis();
+        const onLenisScroll = () => update();
+
+        const attachLenis = () => {
+            lenis = getLenis();
+            if (!lenis) return false;
+            lenis.on("scroll", onLenisScroll);
+            return true;
+        };
+
+        // SmoothScroll mounts in parallel; retry briefly if Lenis isn't ready yet.
+        let tries = 0;
+        const retryId = window.setInterval(() => {
+            tries += 1;
+            if (attachLenis() || tries > 20) {
+                window.clearInterval(retryId);
             }
-        );
+        }, 50);
 
-        sections.forEach(({ id }) => {
-            const el = document.getElementById(id);
-            if (el) observer.observe(el);
-        });
+        window.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
 
-        return () => observer.disconnect();
+        return () => {
+            window.clearInterval(retryId);
+            window.removeEventListener("scroll", update);
+            window.removeEventListener("resize", update);
+            getLenis()?.off("scroll", onLenisScroll);
+        };
     }, [sections]);
 
     const scrollToSection = (id: string) => {
         const el = document.getElementById(id);
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth" });
+        if (!el) return;
+
+        const lenis = getLenis();
+        if (lenis) {
+            lenis.scrollTo(el, { offset: -24, duration: 1.1 });
+            return;
         }
+
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     const isDark = variant === "dark";
@@ -63,6 +117,7 @@ export function StickySidebar({ sections, variant = "light" }: StickySidebarProp
                 {sections.map((section) => (
                     <button
                         key={section.id}
+                        type="button"
                         onClick={() => scrollToSection(section.id)}
                         className="group relative flex items-center gap-2.5 text-left"
                     >
