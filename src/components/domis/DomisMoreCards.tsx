@@ -136,7 +136,7 @@ const cards: MoreCard[] = [
   },
   {
     id: "recommendations",
-    title: "Recommendations",
+    title: "Recommended Tasks",
     description:
       "Location and season aware nudges so the right upkeep surfaces at the right time, without the owner having to remember.",
     pastel: "#6b9ee8",
