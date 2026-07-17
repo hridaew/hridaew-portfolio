@@ -563,10 +563,6 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
-            Three answers. Only agreement survives. Disagreement arrives as an
-            empty field.
-          </figcaption>
         </figure>
       </Reveal>
 
