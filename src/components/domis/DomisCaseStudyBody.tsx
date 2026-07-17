@@ -57,12 +57,9 @@ export function DomisCaseStudyBody() {
             </p>
             <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
-              <strong className="text-white">
-                The problem I keep returning to is ingestion.
-              </strong>{" "}
-              A house holds a large amount of information and almost none of it
-              exists anywhere the owner can use. Asking someone to type it in is
-              asking for work they will not do.
+              The biggest challenge for Domis is to ingest information. Domis is
+              most helpful when it knows a user&rsquo;s home, and a lot of that
+              is work the user would otherwise have to do manually (unlikely).
             </p>
             <p>
               <strong className="text-white">
