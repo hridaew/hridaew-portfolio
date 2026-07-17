@@ -671,12 +671,9 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               <strong className="text-white">
-                I started by loading a cheap model against appliance labels to
-                see what it could actually read.
-              </strong>{" "}
-              It read them well. That test became v1: an AI-assisted label
-              scanner that captures what is printed on the plate, which every
-              appliance has.
+                I started by asking my Google Gemini app about appliance labels
+                to see what it could give me.
+              </strong>
             </p>
           </div>
         </Reveal>
