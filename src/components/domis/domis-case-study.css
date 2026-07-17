@@ -360,25 +360,6 @@
   padding: 2.75rem;
 }
 
-.domis-cs .dcs-replace-tag {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  right: 0.75rem;
-  z-index: 3;
-  margin: 0;
-  padding: 0.55rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.28);
-  color: #fff;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  letter-spacing: 0.01em;
-  text-align: left;
-  pointer-events: none;
-}
-
 /* Labels / chrome sitting on the red media field (not inside white mock cards) */
 /* White chrome on the red field only — leave mock UI text untouched */
 .domis-cs .dcs-media .dcs-io-label,

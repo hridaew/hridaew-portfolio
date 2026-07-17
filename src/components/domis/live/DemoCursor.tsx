@@ -3,7 +3,7 @@
 import { forwardRef, type CSSProperties } from "react";
 import "./domis-live.css";
 
-/** Same path as DomisCaseStudyBody `#dcs-ptr`, scaled up via CSS. */
+/** Large demo pointer path (scaled via CSS on `.domis-live-cursor`). */
 export const DEMO_CURSOR_PATH =
   "M1.5 1.2 L1.5 15.4 L5.2 11.9 L7.6 17.4 L10 16.4 L7.6 11 L12 11 Z";
 

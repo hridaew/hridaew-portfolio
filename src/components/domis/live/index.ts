@@ -14,11 +14,7 @@ export {
   type BrowserFrameProps,
 } from "./BrowserFrame";
 
-export {
-  DemoCursor,
-  DEMO_CURSOR_PATH,
-  type DemoCursorProps,
-} from "./DemoCursor";
+export { DemoCursor, type DemoCursorProps } from "./DemoCursor";
 
 export {
   useAutoplayDemo,
@@ -31,12 +27,6 @@ export {
   WebCreateHomeDemo,
   type WebCreateHomeDemoProps,
 } from "./web/WebCreateHomeDemo";
-
-export {
-  CreateHomePanel,
-  type CreateHomePanelProps,
-  type CreateHomeManual,
-} from "./web/CreateHomePanel";
 
 export {
   ConsensusRunsPanel,
@@ -54,17 +44,6 @@ export {
 } from "./ApplianceCaptureDemo";
 
 export {
-  ItemScannerScreen,
-  type ItemScannerScreenProps,
-  type ItemScannerMode,
-} from "./mobile/ItemScannerScreen";
-
-export {
-  ItemFieldsPanel,
-  type ItemFieldsPanelProps,
-} from "./mobile/ItemFieldsPanel";
-
-export {
   ApplianceV1V2Compare,
   type ApplianceV1V2CompareProps,
 } from "./ApplianceV1V2Compare";
@@ -73,10 +52,3 @@ export {
   InspectionToTasksDemo,
   type InspectionToTasksDemoProps,
 } from "./InspectionToTasksDemo";
-
-export {
-  TaskCard,
-  type TaskCardProps,
-  type TaskCardChip,
-  type TaskCardChipVariant,
-} from "./mobile/TaskCard";

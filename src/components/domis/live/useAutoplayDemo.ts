@@ -66,39 +66,40 @@ export function useAutoplayDemo(
   const reducedMotionRef = useRef(false);
   const pausedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
+  const wasPausedRef = useRef(false);
 
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  phasesRef.current = phases;
-  enabledRef.current = enabled;
-  pauseOnHoverRef.current = pauseOnHover;
-  thresholdRef.current = visibilityThreshold;
+  const paused =
+    !enabled ||
+    reducedMotion ||
+    !inView ||
+    (pauseOnHover && hoverPaused);
 
-  const computePaused = useCallback(() => {
-    return (
-      !enabledRef.current ||
-      reducedMotionRef.current ||
-      !inViewRef.current ||
-      (pauseOnHoverRef.current && hoverPausedRef.current)
-    );
-  }, []);
+  // Keep latest option values available to the rAF ticker / observers.
+  useEffect(() => {
+    phasesRef.current = phases;
+    enabledRef.current = enabled;
+    pauseOnHoverRef.current = pauseOnHover;
+    thresholdRef.current = visibilityThreshold;
+  }, [phases, enabled, pauseOnHover, visibilityThreshold]);
 
-  const applyPaused = useCallback(() => {
-    const next = computePaused();
-    if (pausedRef.current === next) return;
-    // When resuming, rebase the phase clock so progress continues smoothly.
-    if (pausedRef.current && !next) {
+  // Mirror derived pause into refs and rebase the phase clock on resume.
+  useEffect(() => {
+    if (wasPausedRef.current && !paused) {
       const list = phasesRef.current;
       const current = list[phaseIndexRef.current];
       const duration = current?.durationMs ?? 0;
       phaseStartedAtRef.current =
         performance.now() - progressRef.current * duration;
     }
-    pausedRef.current = next;
-    setPaused(next);
-  }, [computePaused]);
+    wasPausedRef.current = paused;
+    pausedRef.current = paused;
+  }, [paused]);
 
   const jumpToFinalPhase = useCallback(() => {
     const list = phasesRef.current;
@@ -114,7 +115,6 @@ export function useAutoplayDemo(
     // Reduced motion: stay on the final static frame; never restart the loop.
     if (reducedMotionRef.current) {
       jumpToFinalPhase();
-      applyPaused();
       return;
     }
     phaseIndexRef.current = 0;
@@ -122,8 +122,7 @@ export function useAutoplayDemo(
     phaseStartedAtRef.current = performance.now();
     setPhaseIndex(0);
     setProgress(0);
-    applyPaused();
-  }, [applyPaused, jumpToFinalPhase]);
+  }, [jumpToFinalPhase]);
 
   // rAF ticker + reduced-motion listener (no ticker while reduced motion is on)
   useEffect(() => {
@@ -147,6 +146,15 @@ export function useAutoplayDemo(
 
       const list = phasesRef.current;
       if (!list.length) return;
+
+      if (phaseIndexRef.current >= list.length) {
+        phaseIndexRef.current = 0;
+        progressRef.current = 0;
+        phaseStartedAtRef.current = now;
+        setPhaseIndex(0);
+        setProgress(0);
+        return;
+      }
 
       const current = list[phaseIndexRef.current];
       if (!current || current.durationMs <= 0) {
@@ -196,13 +204,13 @@ export function useAutoplayDemo(
 
     const applyMotionPreference = (reduce: boolean) => {
       reducedMotionRef.current = reduce;
+      setReducedMotion(reduce);
       if (reduce) {
         jumpToFinalPhase();
         stopTicker();
       } else {
         startTicker();
       }
-      applyPaused();
     };
 
     applyMotionPreference(mq.matches);
@@ -216,7 +224,7 @@ export function useAutoplayDemo(
       mq.removeEventListener("change", onMotionChange);
       stopTicker();
     };
-  }, [applyPaused, jumpToFinalPhase]);
+  }, [jumpToFinalPhase]);
 
   // Visibility pause
   useEffect(() => {
@@ -226,10 +234,11 @@ export function useAutoplayDemo(
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
-        inViewRef.current =
+        const nextInView =
           entry.isIntersecting &&
           entry.intersectionRatio >= thresholdRef.current;
-        applyPaused();
+        inViewRef.current = nextInView;
+        setInView(nextInView);
       },
       {
         threshold: [0, visibilityThreshold, 1],
@@ -238,24 +247,20 @@ export function useAutoplayDemo(
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [applyPaused, visibilityThreshold]);
+  }, [visibilityThreshold]);
 
-  // Hover pause
+  // Hover pause (when pauseOnHover is false, hoverPaused is ignored in `paused`)
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || !pauseOnHover) {
-      hoverPausedRef.current = false;
-      applyPaused();
-      return;
-    }
+    if (!el || !pauseOnHover) return;
 
     const onEnter = () => {
       hoverPausedRef.current = true;
-      applyPaused();
+      setHoverPaused(true);
     };
     const onLeave = () => {
       hoverPausedRef.current = false;
-      applyPaused();
+      setHoverPaused(false);
     };
 
     el.addEventListener("pointerenter", onEnter);
@@ -264,31 +269,12 @@ export function useAutoplayDemo(
       el.removeEventListener("pointerenter", onEnter);
       el.removeEventListener("pointerleave", onLeave);
     };
-  }, [applyPaused, pauseOnHover]);
+  }, [pauseOnHover]);
 
-  // enabled / phases identity updates
-  useEffect(() => {
-    applyPaused();
-  }, [enabled, applyPaused]);
-
-  useEffect(() => {
-    // If phases list shrinks past the current index, wrap safely.
-    if (!phases.length) {
-      phaseIndexRef.current = 0;
-      setPhaseIndex(0);
-      setProgress(0);
-      return;
-    }
-    if (phaseIndexRef.current >= phases.length) {
-      phaseIndexRef.current = 0;
-      progressRef.current = 0;
-      phaseStartedAtRef.current = performance.now();
-      setPhaseIndex(0);
-      setProgress(0);
-    }
-  }, [phases]);
-
-  const phase = phases[phaseIndex]?.id ?? phases[0]?.id ?? "";
+  // Clamp display index if the phases list shrinks (ticker also guards refs).
+  const safePhaseIndex =
+    phases.length === 0 ? 0 : Math.min(phaseIndex, phases.length - 1);
+  const phase = phases[safePhaseIndex]?.id ?? phases[0]?.id ?? "";
 
   return {
     phase,
