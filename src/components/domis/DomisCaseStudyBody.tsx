@@ -1121,6 +1121,9 @@ export function DomisCaseStudyBody() {
 
       <section id="more" className="dcs-col dcs-block">
         <Reveal>
+          <p className="dcs-heading site-subheading text-white">
+            And more!
+          </p>
           <div className="site-body text-white/65">
             <p>
               There is more: a location-based recommendation system,
