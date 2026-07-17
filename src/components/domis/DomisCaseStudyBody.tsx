@@ -340,9 +340,7 @@ export function DomisCaseStudyBody() {
             <p>
               So I designed for that one action to return as much as possible.
               The address resolves the property through Google Places, which
-              hands off to a search agent that goes and researches the house. A
-              second model sorts what comes back into what it is confident about
-              and what should be dropped.
+              hands off to a search agent that goes and researches the house.
             </p>
             <ol
               className="dcs-process"
