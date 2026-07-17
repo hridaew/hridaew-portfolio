@@ -94,152 +94,164 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             My responsibilities
           </p>
-          <ul className="dcs-roles site-body text-white/65">
-            <li>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 20 20"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M10 2.5 L17.5 6.5 L10 10.5 L2.5 6.5 Z"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2.5 10.5 L10 14.5 L17.5 10.5"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2.5 14 L10 18 L17.5 14"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>
+          <ul className="dcs-roles">
+            <li className="dcs-role-card">
+              <span className="dcs-role-icon dcs-role-icon-layers" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <path
+                    className="dcs-role-layer dcs-role-layer-1"
+                    d="M14 3.5 L24.5 9 L14 14.5 L3.5 9 Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    className="dcs-role-layer dcs-role-layer-2"
+                    d="M3.5 14 L14 19.5 L24.5 14"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    className="dcs-role-layer dcs-role-layer-3"
+                    d="M3.5 18.5 L14 24 L24.5 18.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span className="site-body text-white/65">
                 Own product design end to end, along with the design system it
                 ships on.
               </span>
             </li>
-            <li>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 20 20"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M2.5 16.5 L2.5 3.5"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-                <rect
-                  x="5.5"
-                  y="4.5"
-                  width="5"
-                  height="4"
-                  rx="1"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                />
-                <rect
-                  x="10"
-                  y="11.5"
-                  width="7.5"
-                  height="4"
-                  rx="1"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M10.5 6.5 L17.5 6.5"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M2.5 13.5 L10 13.5"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span>
+            <li className="dcs-role-card">
+              <span className="dcs-role-icon dcs-role-icon-phases" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <path
+                    className="dcs-role-axis"
+                    d="M4 24 V4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  <rect
+                    className="dcs-role-bar dcs-role-bar-1"
+                    x="8"
+                    y="5"
+                    width="7"
+                    height="5.5"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <rect
+                    className="dcs-role-bar dcs-role-bar-2"
+                    x="14"
+                    y="15.5"
+                    width="10"
+                    height="5.5"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    className="dcs-role-tick dcs-role-tick-1"
+                    d="M15 7.75 H24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    className="dcs-role-tick dcs-role-tick-2"
+                    d="M4 18.25 H14"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="site-body text-white/65">
                 Define the phases of design and development, and what gets built
                 when.
               </span>
             </li>
-            <li>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 20 20"
-                fill="none"
-                aria-hidden="true"
-              >
-                <circle
-                  cx="10"
-                  cy="4"
-                  r="2.2"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                />
-                <circle
-                  cx="4"
-                  cy="15"
-                  r="2.2"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                />
-                <circle
-                  cx="16"
-                  cy="15"
-                  r="2.2"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M8.4 5.9 L5.6 13.1 M11.6 5.9 L14.4 13.1 M6.2 15 L13.8 15"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span>
+            <li className="dcs-role-card">
+              <span className="dcs-role-icon dcs-role-icon-collab" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <circle
+                    className="dcs-role-node dcs-role-node-1"
+                    cx="14"
+                    cy="6"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <circle
+                    className="dcs-role-node dcs-role-node-2"
+                    cx="6"
+                    cy="21"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <circle
+                    className="dcs-role-node dcs-role-node-3"
+                    cx="22"
+                    cy="21"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    className="dcs-role-link dcs-role-link-1"
+                    d="M11.8 8.4 L7.8 18.2"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    className="dcs-role-link dcs-role-link-2"
+                    d="M16.2 8.4 L20.2 18.2"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    className="dcs-role-link dcs-role-link-3"
+                    d="M9 21 H19"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="site-body text-white/65">
                 Work directly with leadership and engineering on how the product
                 takes shape.
               </span>
             </li>
-            <li>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 20 20"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M7.5 2.5 L8.9 6.6 L13 8 L8.9 9.4 L7.5 13.5 L6.1 9.4 L2 8 L6.1 6.6 Z"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M14.5 11.5 L15.3 13.7 L17.5 14.5 L15.3 15.3 L14.5 17.5 L13.7 15.3 L11.5 14.5 L13.7 13.7 Z"
-                  stroke="rgba(255,255,255,0.4)"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>
+            <li className="dcs-role-card">
+              <span className="dcs-role-icon dcs-role-icon-spark" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <path
+                    className="dcs-role-spark dcs-role-spark-1"
+                    d="M10.5 3.5 L12.4 9 L17.5 10.9 L12.4 12.8 L10.5 18.3 L8.6 12.8 L3.5 10.9 L8.6 9 Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    className="dcs-role-spark dcs-role-spark-2"
+                    d="M20.5 15 L21.7 18.2 L25 19.4 L21.7 20.6 L20.5 23.8 L19.3 20.6 L16 19.4 L19.3 18.2 Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span className="site-body text-white/65">
                 Define how Domis uses AI, and design and prototype those
                 implementations myself.
               </span>

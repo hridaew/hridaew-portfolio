@@ -66,22 +66,235 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  display: grid;
+  gap: 12px;
 }
 
-.domis-cs .dcs-roles li {
+.domis-cs .dcs-role-card {
   display: flex;
-  gap: 0.875rem;
+  gap: 1rem;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--dcs-line);
+  background: rgba(255, 255, 255, 0.04);
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.domis-cs .dcs-roles li:last-child {
-  margin-bottom: 0;
+.domis-cs .dcs-role-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
 }
 
-.domis-cs .dcs-roles svg {
+.domis-cs .dcs-role-icon {
   flex: none;
-  margin-top: 0.3rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: visible;
+}
+
+.domis-cs .dcs-role-icon svg {
+  display: block;
+  overflow: visible;
+}
+
+/* layers: stacked sheets lift in sequence */
+.domis-cs .dcs-role-layer {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dcs-role-layers 2.8s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-layer-1 {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-role-layer-2 {
+  animation-delay: 0.18s;
+}
+.domis-cs .dcs-role-layer-3 {
+  animation-delay: 0.36s;
+}
+
+@keyframes dcs-role-layers {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  40% {
+    transform: translateY(-2.5px);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(0.5px);
+    opacity: 0.75;
+  }
+}
+
+/* phases: bars breathe / sequence in */
+.domis-cs .dcs-role-bar {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: dcs-role-bar 2.6s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-bar-1 {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-role-bar-2 {
+  animation-delay: 0.35s;
+}
+
+.domis-cs .dcs-role-tick {
+  stroke-dasharray: 12;
+  stroke-dashoffset: 12;
+  animation: dcs-role-draw 2.6s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-tick-1 {
+  animation-delay: 0.15s;
+}
+.domis-cs .dcs-role-tick-2 {
+  animation-delay: 0.5s;
+}
+
+@keyframes dcs-role-bar {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scaleX(0.82);
+  }
+  45% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes dcs-role-draw {
+  0%,
+  15% {
+    stroke-dashoffset: 12;
+    opacity: 0.35;
+  }
+  45%,
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.45;
+  }
+}
+
+/* collab: nodes pulse, links draw */
+.domis-cs .dcs-role-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dcs-role-node 2.4s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-node-1 {
+  animation-delay: 0s;
+}
+.domis-cs .dcs-role-node-2 {
+  animation-delay: 0.2s;
+}
+.domis-cs .dcs-role-node-3 {
+  animation-delay: 0.4s;
+}
+
+.domis-cs .dcs-role-link {
+  stroke-dasharray: 18;
+  stroke-dashoffset: 18;
+  animation: dcs-role-link 2.4s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-link-1 {
+  animation-delay: 0.1s;
+}
+.domis-cs .dcs-role-link-2 {
+  animation-delay: 0.25s;
+}
+.domis-cs .dcs-role-link-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes dcs-role-node {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes dcs-role-link {
+  0%,
+  20% {
+    stroke-dashoffset: 18;
+    opacity: 0.25;
+  }
+  55%,
+  75% {
+    stroke-dashoffset: 0;
+    opacity: 0.95;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+}
+
+/* spark: twinkle + soft spin */
+.domis-cs .dcs-role-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.domis-cs .dcs-role-spark-1 {
+  animation: dcs-role-spark-a 2.2s ease-in-out infinite;
+}
+
+.domis-cs .dcs-role-spark-2 {
+  animation: dcs-role-spark-b 2.2s ease-in-out infinite;
+}
+
+@keyframes dcs-role-spark-a {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(0.92);
+    opacity: 0.55;
+  }
+  50% {
+    transform: rotate(12deg) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes dcs-role-spark-b {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(0.85);
+    opacity: 0.35;
+  }
+  50% {
+    transform: rotate(-16deg) scale(1.15);
+    opacity: 1;
+  }
 }
 
 .domis-cs .dcs-callout {
