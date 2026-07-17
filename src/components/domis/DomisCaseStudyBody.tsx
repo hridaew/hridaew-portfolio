@@ -69,10 +69,14 @@ export function DomisCaseStudyBody() {
               </p>
               <div className="site-body text-white/65">
                 <p>
-                  The biggest challenge for Domis is to ingest information.
-                  Domis is most helpful when it knows a user&rsquo;s home, and a
-                  lot of that is work the user would otherwise have to do
-                  manually (unlikely).
+                  A successful Domis experience depends on the app knowing your
+                  home. Setting up a home profile means answering questions
+                  about square footage, build year, and every appliance you own,
+                  and that is close to the least appealing task imaginable.
+                </p>
+                <p>
+                  So people don&rsquo;t, and then the product has nothing to
+                  work with.
                 </p>
                 <p>
                   <strong className="text-white">
