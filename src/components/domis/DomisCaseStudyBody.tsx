@@ -318,10 +318,6 @@ export function DomisCaseStudyBody() {
               software. A filled property. Appliances tagged. Tasks pulled from
               the report.
             </p>
-            <p>
-              The three features below answer how it got that way, and each one
-              has an obvious reason to exist.
-            </p>
           </div>
         </Reveal>
       </section>
