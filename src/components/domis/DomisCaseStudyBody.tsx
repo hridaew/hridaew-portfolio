@@ -689,44 +689,13 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-figure">
-          <div className="dcs-media">
-            <div className="dcs-artifact">
-              <div className="dcs-term">
-                <div>
-                  <span className="dcs-c">$</span> python label_test.py --img
-                  water_heater_01.jpg
-                </div>
-                <div className="dcs-c">reading label…</div>
-                <div>&nbsp;</div>
-                <div>
-                  <span className="dcs-y">brand</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rheem
-                </div>
-                <div>
-                  <span className="dcs-y">model</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XE50M06ST45U1
-                </div>
-                <div>
-                  <span className="dcs-y">serial</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;Q451812345
-                </div>
-                <div>
-                  <span className="dcs-y">capacity</span>
-                  &nbsp;&nbsp;50 gal
-                </div>
-                <div>
-                  <span className="dcs-y">mfg_date</span>
-                  &nbsp;&nbsp;2018-11
-                </div>
-                <div>&nbsp;</div>
-                <div className="dcs-g">6/6 fields legible.</div>
-                <div className="dcs-c"># ok. this is the feature.</div>
-              </div>
-              <p className="dcs-lbl dcs-media-note">
-                Not a design yet. Just the question of whether there was anything
-                to design.
-              </p>
-            </div>
+          <div
+            className="dcs-media dcs-media-placeholder"
+            aria-label="Placeholder: Gemini screenshot of appliance label test"
+          >
+            <p className="dcs-placeholder-label">
+              Gemini screenshot — appliance label test that became the feature
+            </p>
           </div>
           <figcaption className="dcs-caption site-body">
             The test that became the feature, before it looked like anything.
