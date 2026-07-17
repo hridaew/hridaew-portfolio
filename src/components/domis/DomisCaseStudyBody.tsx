@@ -108,9 +108,9 @@ export function DomisCaseStudyBody() {
                   </strong>
                 </p>
                 <p>
-                  So getting information into Domis is also the act of learning
-                  it. That reframed the goal: not a filled database, but an
-                  owner who understands the house they live in.
+                  Getting information into Domis is also the act of learning it.
+                  That reframed the goal: not a filled database, but an owner
+                  who understands the house they live in.
                 </p>
                 <p>
                   In order to maximize the information we get and reduce the
