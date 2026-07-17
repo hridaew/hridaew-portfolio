@@ -391,12 +391,12 @@ export function DomisCaseStudyBody() {
                       cx="7"
                       cy="7"
                       r="5"
-                      stroke="#b6bac1"
+                      stroke="#6e7684"
                       strokeWidth="1.5"
                     />
                     <path
                       d="M10.7 10.7 L14.5 14.5"
-                      stroke="#b6bac1"
+                      stroke="#6e7684"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
@@ -612,14 +612,14 @@ export function DomisCaseStudyBody() {
                   >
                     <path
                       d="M9 30 L32 11 L55 30"
-                      stroke="#4a5261"
+                      stroke="#2f3540"
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M15 27 V52 H49 V27"
-                      stroke="#4a5261"
+                      stroke="#2f3540"
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -629,13 +629,13 @@ export function DomisCaseStudyBody() {
                       y="38"
                       width="10"
                       height="14"
-                      stroke="#4a5261"
+                      stroke="#2f3540"
                       strokeWidth="3"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M43 15 V23"
-                      stroke="#4a5261"
+                      stroke="#2f3540"
                       strokeWidth="3"
                       strokeLinecap="round"
                     />
@@ -911,7 +911,7 @@ export function DomisCaseStudyBody() {
                   style={{
                     fontSize: 11,
                     lineHeight: 1.5,
-                    color: "#4a4f57",
+                    color: "#2a2f38",
                     paddingTop: 6,
                   }}
                 >
@@ -1078,19 +1078,19 @@ export function DomisCaseStudyBody() {
                   >
                     <path
                       d="M6 2.5 H13.5 L18.5 7.5 V21.5 H6 Z"
-                      stroke="#b6bac1"
+                      stroke="#6e7684"
                       strokeWidth="1.5"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M13.5 2.5 V7.5 H18.5"
-                      stroke="#b6bac1"
+                      stroke="#6e7684"
                       strokeWidth="1.5"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M8.5 12.5 H16 M8.5 15.5 H16 M8.5 18.5 H13"
-                      stroke="#b6bac1"
+                      stroke="#6e7684"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
