@@ -105,9 +105,7 @@ export function DomisCaseStudyBody() {
                     My research and interviews with homeowners revealed that
                     this isn&rsquo;t just an information issue for Domis. Most
                     people don&rsquo;t know their own homes.
-                  </strong>{" "}
-                  Owners couldn&rsquo;t name the manufacturer of their water
-                  heater or say when the roof was last serviced.
+                  </strong>
                 </p>
                 <p>
                   So getting information into Domis is also the act of learning
