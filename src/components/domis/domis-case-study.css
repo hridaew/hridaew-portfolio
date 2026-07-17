@@ -1327,7 +1327,8 @@
   }
 
   .domis-cs figure.dcs-figure {
-    margin: 2.125rem auto;
+    margin-top: 2.125rem;
+    margin-bottom: 2.125rem;
   }
 
   .domis-cs .dcs-rule {
