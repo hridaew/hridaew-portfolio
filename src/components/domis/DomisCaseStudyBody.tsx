@@ -982,10 +982,6 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
-            People skip the report because it describes a house that no longer
-            exists.
-          </figcaption>
         </figure>
       </Reveal>
 
