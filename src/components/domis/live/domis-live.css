@@ -71,13 +71,16 @@
   /* scale() applied inline */
 }
 
+/* Bezel via outer box-shadow (not border) so the canvas stays exactly designW×designH. */
 .domis-live-phone-canvas {
   width: var(--domis-design-w, 390px);
   height: var(--domis-design-h, 844px);
+  border: 0;
   border-radius: var(--domis-phone-radius);
   background: var(--domis-live-surface);
-  border: 3px solid var(--domis-phone-bezel);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 0 0 3px var(--domis-phone-bezel),
+    0 12px 40px rgba(0, 0, 0, 0.18);
 }
 
 .domis-live-phone-screen {
@@ -85,20 +88,23 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: calc(var(--domis-phone-radius) - 3px);
+  border-radius: var(--domis-phone-radius);
   background: var(--domis-live-bg);
   font-family: var(--domis-live-font);
 }
 
+/* Window edge via outer box-shadow so stage stays exactly designW×designH. */
 .domis-live-browser-stage {
   width: var(--domis-design-w, 720px);
   height: var(--domis-design-h, 640px);
   display: flex;
   flex-direction: column;
+  border: 0;
   border-radius: var(--domis-browser-radius);
   background: var(--domis-live-surface);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.14);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 16px 48px rgba(0, 0, 0, 0.14);
   overflow: hidden;
 }
 

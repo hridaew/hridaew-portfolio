@@ -36,11 +36,6 @@ export type UseAutoplayDemoResult = {
   replay: () => void;
 };
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 /**
  * Loops scripted demo phases. Pauses when off-screen (~20% visible),
  * on hover (optional), or when the user prefers reduced motion
@@ -116,13 +111,19 @@ export function useAutoplayDemo(
   }, []);
 
   const replay = useCallback(() => {
+    // Reduced motion: stay on the final static frame; never restart the loop.
+    if (reducedMotionRef.current) {
+      jumpToFinalPhase();
+      applyPaused();
+      return;
+    }
     phaseIndexRef.current = 0;
     progressRef.current = 0;
     phaseStartedAtRef.current = performance.now();
     setPhaseIndex(0);
     setProgress(0);
     applyPaused();
-  }, [applyPaused]);
+  }, [applyPaused, jumpToFinalPhase]);
 
   // rAF ticker + reduced-motion listener (no ticker while reduced motion is on)
   useEffect(() => {
