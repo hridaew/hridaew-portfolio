@@ -300,7 +300,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-fieldloop dcs-card">
               <div className="dcs-row">
@@ -374,7 +374,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in">
@@ -489,7 +489,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-sc">
               <div className="dcs-answers">
@@ -545,7 +545,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-versus">
               <div>
@@ -638,7 +638,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-artifact">
               <div className="dcs-term">
@@ -685,7 +685,7 @@ export function DomisCaseStudyBody() {
       </Reveal>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in" style={{ position: "relative" }}>
@@ -771,7 +771,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-twoup">
               <div className="dcs-pane">
@@ -967,7 +967,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media dcs-media-fit">
             <div className="dcs-affinity">
               <div className="dcs-cluster">
@@ -1042,7 +1042,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
+        <figure className="dcs-figure">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in">

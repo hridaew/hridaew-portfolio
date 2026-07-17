@@ -16,7 +16,8 @@
   --dcs-mock-surface: #f4f5f7;
   --dcs-mock-surface-2: #eceef1;
   --dcs-col-text: 620px;
-  --dcs-col-media: 780px;
+  /* Media/interactive sits slightly wider than prose (each side) */
+  --dcs-breakout: 2.5rem;
   --dcs-step: 1.625rem;
   color: var(--dcs-text);
 }
@@ -26,6 +27,27 @@
   max-width: var(--dcs-col-text);
   margin: 0 auto;
   text-align: left;
+}
+
+/* Non-text blocks: slight emphasis over the text column */
+.domis-cs figure.dcs-figure,
+.domis-cs .dcs-img-block,
+.domis-cs .dcs-more,
+.domis-cs .dcs-roles {
+  width: 100%;
+  max-width: none;
+}
+
+@media (min-width: 768px) {
+  .domis-cs figure.dcs-figure,
+  .domis-cs .dcs-img-block,
+  .domis-cs .dcs-more,
+  .domis-cs .dcs-roles {
+    width: calc(100% + (var(--dcs-breakout) * 2));
+    max-width: none;
+    margin-left: calc(var(--dcs-breakout) * -1);
+    margin-right: calc(var(--dcs-breakout) * -1);
+  }
 }
 
 .domis-cs .dcs-col .site-body {
@@ -70,7 +92,7 @@
 
 .domis-cs .dcs-rule {
   width: 100%;
-  max-width: var(--dcs-col-media);
+  max-width: var(--dcs-col-text);
   margin: 5.75rem auto;
   height: 1px;
   background: var(--dcs-line);
@@ -78,7 +100,6 @@
 }
 
 .domis-cs .dcs-roles {
-  margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
@@ -322,9 +343,8 @@
 }
 
 .domis-cs figure.dcs-figure {
-  width: 100%;
-  max-width: var(--dcs-col-media);
-  margin: 3.25rem auto;
+  margin-top: 3.25rem;
+  margin-bottom: 3.25rem;
 }
 
 .domis-cs .dcs-media {
@@ -352,8 +372,8 @@
 }
 
 .domis-cs .dcs-img-block {
-  width: 100%;
-  margin: 0 0 var(--dcs-step);
+  margin-top: 0;
+  margin-bottom: var(--dcs-step);
 }
 
 .domis-cs .dcs-media.dcs-media-image {
@@ -1135,9 +1155,8 @@
 
 /* more cards — flip tiles (no media container) */
 .domis-cs .dcs-more {
-  width: 100%;
-  max-width: var(--dcs-col-media);
-  margin: 3.25rem auto;
+  margin-top: 3.25rem;
+  margin-bottom: 3.25rem;
 }
 
 .domis-cs .dcs-sheet {
@@ -1388,7 +1407,8 @@
   }
 
   .domis-cs .dcs-more {
-    margin: 2.125rem auto;
+    margin-top: 2.125rem;
+    margin-bottom: 2.125rem;
   }
 
   .domis-cs .dcs-cursor {
