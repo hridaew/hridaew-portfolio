@@ -17,10 +17,10 @@ export function DomisHomeFeatureCard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative w-full min-w-0 aspect-[696/392] overflow-clip rounded-2xl",
+        "dcs-home-feature-card relative w-full min-w-0 aspect-[696/392] overflow-clip rounded-2xl",
         className
       )}
-      style={{ backgroundColor: domis.bgColor }}
+      style={{ backgroundColor: "var(--dcs-media-bg, #ff5a5b)" }}
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 isolate overflow-hidden rounded-2xl"

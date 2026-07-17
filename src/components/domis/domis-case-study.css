@@ -16,6 +16,8 @@
   --dcs-mock-surface: #f4f5f7;
   --dcs-mock-surface-2: #eceef1;
   --dcs-col-text: 620px;
+  /* Same Domis red as the home gallery / Report Processor card */
+  --dcs-media-bg: #ff5a5b;
   /* Media/interactive sits slightly wider than prose (each side) */
   --dcs-breakout: 2.5rem;
   --dcs-step: 1.625rem;
@@ -348,9 +350,9 @@
 .domis-cs .dcs-media {
   position: relative;
   aspect-ratio: 4 / 3;
-  background: var(--dcs-surface);
-  border: 1px solid var(--dcs-line);
-  border-radius: 10px;
+  background: var(--dcs-media-bg);
+  border: 0;
+  border-radius: 16px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -367,14 +369,34 @@
   margin: 0;
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  border: 1px solid rgba(255, 90, 91, 0.45);
-  background: rgba(255, 90, 91, 0.16);
-  color: #ffd0d1;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  color: #fff;
   font-size: 0.78rem;
   line-height: 1.4;
   letter-spacing: 0.01em;
   text-align: left;
   pointer-events: none;
+}
+
+/* Labels / chrome sitting on the red media field (not inside white mock cards) */
+.domis-cs .dcs-media .dcs-io-label,
+.domis-cs .dcs-media .dcs-io-arrow .dcs-mstep,
+.domis-cs .dcs-media .dcs-io-arrow .dcs-tip,
+.domis-cs .dcs-media .dcs-versus > div > .dcs-lbl,
+.domis-cs .dcs-media .dcs-media-note,
+.domis-cs .dcs-media .dcs-sc .dcs-answers .dcs-who,
+.domis-cs .dcs-media .dcs-sc .dcs-lands .dcs-who,
+.domis-cs .dcs-media .dcs-sc .dcs-lands > .dcs-lbl {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.domis-cs .dcs-media .dcs-io-arrow .dcs-stem {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.domis-cs .dcs-media .dcs-sc .dcs-lands {
+  border-top-color: rgba(255, 255, 255, 0.28);
 }
 
 .domis-cs .dcs-process {
@@ -463,7 +485,7 @@
 
 .domis-cs .dcs-placeholder-label {
   margin: 0;
-  color: var(--dcs-muted);
+  color: rgba(255, 255, 255, 0.9);
   text-align: center;
   font-size: 0.9375rem;
   letter-spacing: 0.01em;
@@ -512,7 +534,7 @@
 
 .domis-cs .dcs-known-slide-title {
   margin: 0;
-  color: var(--dcs-text);
+  color: #fff;
   font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1311,10 +1333,13 @@
   background: #e9effd;
 }
 
-/* more cards — flip tiles (no media container) */
+/* more cards — flip tiles on the Domis red media field */
 .domis-cs .dcs-more {
   margin-top: 3.25rem;
   margin-bottom: 3.25rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--dcs-media-bg);
 }
 
 .domis-cs .dcs-sheet {
