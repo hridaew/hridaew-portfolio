@@ -391,7 +391,8 @@
 .domis-cs .dcs-media .dcs-sc .dcs-lands > .dcs-lbl,
 .domis-cs .dcs-media .dcs-placeholder-label,
 .domis-cs .dcs-media .dcs-known-slide-title,
-.domis-cs .dcs-media .dcs-affinity .dcs-ch {
+.domis-cs .dcs-media .dcs-affinity .dcs-ch,
+.domis-cs .dcs-media .dcs-cats > .dcs-lbl {
   color: #fff;
 }
 
