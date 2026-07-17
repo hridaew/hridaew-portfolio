@@ -706,6 +706,10 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Replace with real UI from Domis — capture mode on the left,
+              updated fields on the right.
+            </p>
             <div className="dcs-io">
               <div className="dcs-in" style={{ position: "relative" }}>
                 <p className="dcs-lbl dcs-io-label">The user gives</p>
