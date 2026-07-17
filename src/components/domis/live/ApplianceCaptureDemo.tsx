@@ -232,7 +232,7 @@ export function ApplianceCaptureDemo({
           <span className="acd-arrow-tip">→</span>
         </div>
 
-        <div className="acd-col">
+        <div className="acd-col acd-col-fields">
           <p className="acd-lbl">Domis returns</p>
           <div className="acd-phone">
             <PhoneFrame aria-label="Domis item fields">

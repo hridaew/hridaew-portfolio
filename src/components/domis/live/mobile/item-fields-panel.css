@@ -1,13 +1,17 @@
-/* Item creation form field rows — AdditionalDetailsItem look. */
+/* Item creation form — pixel port from item_creation_form.dart chrome. */
 
 .domis-live.ifp {
   --ifp-bg: #f7f7f7;
   --ifp-surface: #ffffff;
   --ifp-ink: #525252;
+  --ifp-active: #1a1c1e;
   --ifp-muted: #818181;
   --ifp-faint: #c8c8c8;
   --ifp-line: #f4f4f4;
-  --ifp-border: rgba(0, 0, 0, 0.06);
+  --ifp-chip: #f7f7f7;
+  --ifp-unselected: #efefef;
+  --ifp-teal: #005750;
+  --ifp-teal-light: #dcefee;
   --ifp-font: "Outfit", system-ui, sans-serif;
   position: relative;
   width: 100%;
@@ -23,8 +27,20 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 20px 0 40px;
-  overflow: hidden;
+  padding: 16px 0 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.domis-live.ifp .ifp-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.domis-live.ifp .ifp-scroll-pad {
+  flex: none;
+  height: 168px;
 }
 
 .domis-live.ifp .ifp-header {
@@ -37,17 +53,18 @@
   color: var(--ifp-ink);
 }
 
+/* SharedSuggestionInput — 32 / w600 */
 .domis-live.ifp .ifp-name {
   margin: 0 24px 24px;
   padding: 12px;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: var(--ifp-surface);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
   line-height: 1.15;
   color: var(--ifp-ink);
-  min-height: 64px;
+  min-height: 72px;
   display: flex;
   align-items: center;
 }
@@ -56,21 +73,38 @@
   color: #cacaca;
 }
 
+/* FormImageSection — 100×100 */
 .domis-live.ifp .ifp-photo-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin: 0 24px 24px;
 }
 
 .domis-live.ifp .ifp-photo {
+  position: relative;
   flex: none;
-  width: 88px;
-  height: 88px;
+  width: 100px;
+  height: 100px;
   border-radius: 12px;
   overflow: hidden;
-  background: #ececec;
-  border: 1px solid var(--ifp-line);
+  background: #f7f7f7;
+}
+
+.domis-live.ifp .ifp-photo-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  border: 0.5px dashed var(--ifp-faint);
+  color: var(--ifp-muted);
+  background: #f7f7f7;
+}
+
+.domis-live.ifp .ifp-photo-scanned {
+  border-radius: 16px;
+  border: 4px solid var(--ifp-teal-light);
+  box-sizing: border-box;
 }
 
 .domis-live.ifp .ifp-photo img {
@@ -78,6 +112,20 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 12px;
+}
+
+.domis-live.ifp .ifp-photo-ai {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 4px;
+  border-radius: 6px;
+  background: var(--ifp-teal-light);
+  color: var(--ifp-teal);
 }
 
 .domis-live.ifp .ifp-photo-hint {
@@ -93,8 +141,34 @@
   visibility: hidden;
 }
 
+/* Notes — TaskFormNoteSection */
+.domis-live.ifp .ifp-notes {
+  margin: 0 24px 24px;
+  padding: 16px;
+  border-radius: 24px;
+  background: var(--ifp-unselected);
+}
+
+.domis-live.ifp .ifp-notes-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+  color: var(--ifp-ink);
+}
+
+.domis-live.ifp .ifp-notes-placeholder {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  color: var(--ifp-faint);
+}
+
 .domis-live.ifp .ifp-section-label {
-  margin: 0 0 4px 24px;
+  margin: 0 0 16px 24px;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -102,6 +176,92 @@
   color: var(--ifp-muted);
 }
 
+/* Category / Space / Associated chips */
+.domis-live.ifp .ifp-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 24px;
+  padding-left: 24px;
+  min-height: 36px;
+  overflow: hidden;
+}
+
+.domis-live.ifp .ifp-chip-row-pad {
+  padding-right: 24px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.domis-live.ifp .ifp-chip-row-pad::-webkit-scrollbar {
+  display: none;
+}
+
+.domis-live.ifp .ifp-chip-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  padding-right: 24px;
+  scrollbar-width: none;
+}
+
+.domis-live.ifp .ifp-chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.domis-live.ifp .ifp-add-circle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ifp-unselected);
+  color: var(--ifp-muted);
+}
+
+.domis-live.ifp .ifp-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: var(--ifp-chip);
+  color: var(--ifp-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.domis-live.ifp .ifp-chip-space {
+  padding: 2px 10px 2px 6px;
+  border-radius: 12px;
+}
+
+.domis-live.ifp .ifp-chip[data-selected="true"] {
+  background: var(--ifp-teal-light);
+  color: var(--ifp-active);
+  border: 1px solid var(--ifp-teal);
+}
+
+.domis-live.ifp .ifp-chip[data-selected="true"] .material-symbols-rounded {
+  color: var(--ifp-active);
+}
+
+.domis-live.ifp .ifp-chip .material-symbols-rounded {
+  color: var(--ifp-muted);
+}
+
+/* Additional Details rows */
 .domis-live.ifp .ifp-fields {
   display: flex;
   flex-direction: column;
@@ -207,4 +367,87 @@
   border: 0;
   border-top: 0.6px solid var(--ifp-line);
   border-radius: 12px;
+}
+
+/* Bottom action bar */
+.domis-live.ifp .ifp-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 24px 32px;
+  background: linear-gradient(
+    180deg,
+    rgba(247, 247, 247, 0) 0%,
+    rgba(247, 247, 247, 0.92) 28%,
+    var(--ifp-bg) 55%
+  );
+  pointer-events: none;
+}
+
+.domis-live.ifp .ifp-scan-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.domis-live.ifp .ifp-scan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: 32px;
+  background: var(--ifp-teal-light);
+  border: 1px solid var(--ifp-teal);
+  color: var(--ifp-teal);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.domis-live.ifp .ifp-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.domis-live.ifp .ifp-close-btn {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #ededed 100%);
+  color: var(--ifp-ink);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.domis-live.ifp .ifp-save-btn {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+  background: var(--ifp-faint);
+  color: var(--ifp-muted);
+  box-shadow: none;
+}
+
+.domis-live.ifp .ifp-save-btn[data-enabled="true"] {
+  background: var(--ifp-teal);
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 87, 80, 0.15);
 }

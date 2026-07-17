@@ -4,8 +4,14 @@
   --acd-font: "Outfit", system-ui, sans-serif;
   position: relative;
   width: 100%;
-  max-width: 720px;
+  max-width: 780px;
   font-family: var(--acd-font);
+}
+
+/* Large cursor — match create-home demo (44×64) */
+.domis-live.acd .domis-live-cursor {
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
 }
 
 .domis-live.acd .acd-stage {
@@ -26,9 +32,18 @@
   max-width: 260px;
 }
 
+.domis-live.acd .acd-col-fields {
+  max-width: 300px;
+  flex: 1.15 1 0;
+}
+
 .domis-live.acd .acd-phone {
   width: 100%;
   max-width: 220px;
+}
+
+.domis-live.acd .acd-col-fields .acd-phone {
+  max-width: 280px;
 }
 
 .domis-live.acd .acd-lbl {
@@ -86,8 +101,16 @@
     max-width: 160px;
   }
 
+  .domis-live.acd .acd-col-fields {
+    max-width: 180px;
+  }
+
   .domis-live.acd .acd-phone {
     max-width: 150px;
+  }
+
+  .domis-live.acd .acd-col-fields .acd-phone {
+    max-width: 170px;
   }
 
   .domis-live.acd .acd-arrow {
