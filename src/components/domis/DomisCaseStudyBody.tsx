@@ -4,7 +4,7 @@ import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
-import { LightboxImage } from "@/components/virdio/Lightbox";
+import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 function PointerCursor({ className }: { className?: string }) {
