@@ -1173,7 +1173,7 @@
 .domis-cs .dcs-flip:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.55);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 22px;
 }
 
 .domis-cs .dcs-flip-tilt {
@@ -1223,7 +1223,7 @@
 .domis-cs .dcs-flip-face {
   position: absolute;
   inset: 0;
-  border-radius: 4px;
+  border-radius: 22px;
   padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
@@ -1376,7 +1376,7 @@
 
   .domis-cs .dcs-flip-face {
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 20px;
   }
 
   .domis-cs .dcs-flip-icon svg {
