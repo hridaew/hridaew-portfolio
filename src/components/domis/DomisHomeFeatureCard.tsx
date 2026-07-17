@@ -4,15 +4,14 @@ import { homepageProjects } from "@/data/homepage-projects";
 import { LightboxImage } from "@/components/virdio/Lightbox";
 import { cn } from "@/lib/utils";
 
-const domis = homepageProjects.find((p) => p.slug === "domis");
-const reportCard = domis?.cards[0];
+const reportCard = homepageProjects.find((p) => p.slug === "domis")?.cards[0];
 
 /**
- * Visual twin of the Domis home-gallery first card (red field + tasks composite),
+ * Domis home-gallery first card treatment: plain Domis red + tasks composite,
  * sized to its parent instead of the fixed 696×392 home gallery frame.
  */
 export function DomisHomeFeatureCard({ className }: { className?: string }) {
-  if (!domis || !reportCard) return null;
+  if (!reportCard) return null;
 
   return (
     <div
@@ -22,29 +21,7 @@ export function DomisHomeFeatureCard({ className }: { className?: string }) {
       )}
       style={{ backgroundColor: "var(--dcs-media-bg, #ff5a5b)" }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 z-0 isolate overflow-hidden rounded-2xl"
-        aria-hidden
-      >
-        <div
-          className="absolute -left-8 -top-10 size-[180px] rounded-full blur-[42px] opacity-70"
-          style={{ backgroundColor: domis.orbColor1 }}
-        />
-        <div
-          className="absolute -bottom-12 -right-6 size-[220px] rounded-full blur-[48px] opacity-80"
-          style={{ backgroundColor: domis.orbColor2 }}
-        />
-        <div
-          className="domis-card-dot-mesh pointer-events-none absolute inset-0 rounded-2xl"
-          aria-hidden
-        />
-        <div
-          className="domis-card-dot-mesh-pop pointer-events-none absolute inset-0 rounded-2xl"
-          aria-hidden
-        />
-      </div>
-
-      <div className="absolute inset-0 z-10">
+      <div className="absolute inset-0">
         <LightboxImage
           src={reportCard.imageSrc}
           alt={reportCard.imageAlt}
