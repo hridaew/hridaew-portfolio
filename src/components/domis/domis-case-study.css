@@ -113,6 +113,17 @@
   padding: 2.75rem;
 }
 
+.domis-cs .dcs-media.dcs-media-fit {
+  aspect-ratio: auto;
+  height: auto;
+  align-items: stretch;
+  padding: 1.5rem;
+}
+
+.domis-cs .dcs-media.dcs-media-fit .dcs-affinity {
+  height: auto;
+}
+
 .domis-cs figcaption.dcs-caption {
   width: 100%;
   margin-top: 0.875rem;

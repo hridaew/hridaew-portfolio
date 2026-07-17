@@ -940,7 +940,7 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-figure w-full mx-auto">
-          <div className="dcs-media">
+          <div className="dcs-media dcs-media-fit">
             <div className="dcs-affinity">
               <div className="dcs-cluster">
                 <span className="dcs-ch">Report is stale</span>
