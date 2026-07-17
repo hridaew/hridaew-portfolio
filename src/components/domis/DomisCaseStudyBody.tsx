@@ -1038,10 +1038,6 @@ export function DomisCaseStudyBody() {
               no longer applies, and everything is categorized where the rest of
               Domis can reach it.
             </p>
-            <p>
-              Optional by design, because a report from 2016 has no business
-              telling anyone what to do this weekend.
-            </p>
           </div>
         </Reveal>
       </section>
