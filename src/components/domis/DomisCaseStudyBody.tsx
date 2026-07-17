@@ -51,7 +51,11 @@ export function DomisCaseStudyBody() {
             </p>
           </div>
 
-          <div className="case-study-block-gap case-study-prose-stack flex flex-col site-body text-white/65">
+          <div className="case-study-block-gap">
+            <p className="site-subheading case-study-heading-trail-mb text-white">
+              Key challenge
+            </p>
+            <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               <strong className="text-white">
                 The problem I keep returning to is ingestion.
@@ -78,6 +82,7 @@ export function DomisCaseStudyBody() {
                 willing to take.
               </strong>
             </p>
+            </div>
           </div>
         </Reveal>
       </section>
