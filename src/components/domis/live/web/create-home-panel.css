@@ -594,10 +594,8 @@
   z-index: 1;
 }
 
-/* Demo stage cursor sizing */
+/* Demo stage — large cursor wins over nested .domis-live / .domis-live-cursor defaults */
 .domis-live.chp-demo {
-  --domis-cursor-w: 44px;
-  --domis-cursor-h: 64px;
   position: relative;
   width: 100%;
 }
@@ -606,11 +604,7 @@
   width: 100%;
 }
 
-.domis-live.chp-demo .chp-cursor-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 60;
-  overflow: hidden;
-  border-radius: var(--domis-browser-radius, 12px);
+.domis-live.chp-demo .domis-live-cursor {
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
 }
