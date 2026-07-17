@@ -2,6 +2,7 @@
 
 import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
+import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 function PointerCursor({ className }: { className?: string }) {
@@ -1143,81 +1144,7 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure w-full mx-auto">
-          <div className="dcs-media">
-            <div className="dcs-sheet">
-              <div className="dcs-tile">
-                <span className="dcs-tl">Design system</span>
-                <div className="dcs-swatches">
-                  <span className="dcs-sw" style={{ background: "#16181c" }} />
-                  <span className="dcs-sw" style={{ background: "#3b6cf0" }} />
-                  <span className="dcs-sw" style={{ background: "#8a8f98" }} />
-                  <span className="dcs-sw" style={{ background: "#e4e6ea" }} />
-                </div>
-              </div>
-              <div className="dcs-tile">
-                <span className="dcs-tl">Multi-property</span>
-                <div style={{ display: "flex", gap: 5 }}>
-                  <span
-                    className="dcs-sw"
-                    style={{
-                      width: 21,
-                      height: 21,
-                      background: "var(--dcs-mock-surface-2)",
-                    }}
-                  />
-                  <span
-                    className="dcs-sw"
-                    style={{
-                      width: 21,
-                      height: 21,
-                      background: "var(--dcs-mock-surface-2)",
-                    }}
-                  />
-                  <span
-                    className="dcs-sw"
-                    style={{
-                      width: 21,
-                      height: 21,
-                      background: "#e9effd",
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="dcs-tile">
-                <span className="dcs-tl">Recommendations</span>
-                <div className="dcs-bar" style={{ width: "70%" }} />
-              </div>
-              <div className="dcs-tile">
-                <span className="dcs-tl">Maintenance guides</span>
-                <div>
-                  <div
-                    className="dcs-bar"
-                    style={{ width: "85%", marginBottom: 5 }}
-                  />
-                  <div className="dcs-bar" style={{ width: "60%" }} />
-                </div>
-              </div>
-              <div className="dcs-tile">
-                <span className="dcs-tl">Pro handoff</span>
-                <div className="dcs-bar" style={{ width: "50%" }} />
-              </div>
-              <div className="dcs-tile">
-                <span className="dcs-tl">Task modules</span>
-                <div>
-                  <div
-                    className="dcs-bar"
-                    style={{ width: "75%", marginBottom: 5 }}
-                  />
-                  <div className="dcs-bar" style={{ width: "45%" }} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <figcaption className="dcs-caption site-body">
-            The rest of it. Ask me about any of these.
-          </figcaption>
-        </figure>
+        <DomisMoreCards />
       </Reveal>
     </div>
   );
