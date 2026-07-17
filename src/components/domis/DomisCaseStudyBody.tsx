@@ -51,8 +51,7 @@ export function DomisCaseStudyBody() {
                 My role
               </p>
               <p className="site-body text-white/65">
-                I joined as the founding designer and work on 0→1 design across
-                mobile and web.
+                Founding Product Designer
               </p>
             </div>
 
