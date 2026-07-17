@@ -951,15 +951,7 @@ export function DomisCaseStudyBody() {
             Report Processor
           </p>
           <figure className="dcs-img-block">
-            <div className="dcs-media dcs-media-fit dcs-media-image">
-              <LightboxImage
-                src="/assets/home/domis-card1-tasks-composite.png"
-                alt="Domis report processor: inspection report flows into Tasks Found"
-                className="mx-auto h-auto w-full max-w-[320px] object-contain"
-                draggable={false}
-                hoverScale={1.02}
-              />
-            </div>
+            <DomisHomeFeatureCard />
           </figure>
           <div className="site-body text-white/65">
             <p>
