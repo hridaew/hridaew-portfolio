@@ -501,6 +501,40 @@ export function DomisCaseStudyBody() {
               times and kept what agreed across runs. It is fast and cheap
               enough that redundancy is a reasonable substitute for confidence.
             </p>
+            <ol
+              className="dcs-process"
+              aria-label="Address intelligence consensus pipeline"
+            >
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Input</span>
+                <span className="dcs-process-desc">Address</span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Google Places API</span>
+                <span className="dcs-process-desc">Address discovery</span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Gemini Search ×3</span>
+                <span className="dcs-process-desc">
+                  Searches with verification
+                </span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Gemini 2.5 Flash</span>
+                <span className="dcs-process-desc">
+                  Review and final data cleanup
+                </span>
+              </li>
+            </ol>
             <p>
               The results land in the same form the user would have filled in
               themselves. Tap a field, type, done. If the model says three
