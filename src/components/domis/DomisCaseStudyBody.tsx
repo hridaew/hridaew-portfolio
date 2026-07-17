@@ -3,6 +3,7 @@
 import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
+import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { LightboxImage } from "@/components/virdio/Lightbox";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
@@ -309,16 +310,7 @@ export function DomisCaseStudyBody() {
             The home, known
           </p>
           <figure className="dcs-img-block">
-            <div
-              className="dcs-media dcs-media-placeholder"
-              aria-label="Placeholder: filled property with appliances tagged, tasks from the report, and Domis icon"
-            >
-              <p className="dcs-placeholder-label">
-                Payoff frame: filled property, appliances tagged, tasks pulled
-                from the report, Domis icon — what an owner who understands
-                their house looks like in software
-              </p>
-            </div>
+            <DomisKnownCarousel />
           </figure>
           <div className="site-body text-white/65">
             <p>
