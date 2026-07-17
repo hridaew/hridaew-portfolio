@@ -56,8 +56,8 @@ export default function DomisPage() {
 
                             <Reveal delay={0.2}>
                                 <p className="site-body max-w-[560px] text-white/70">
-                                    I&rsquo;m the Product Designer at Domis
-                                    &mdash; creating an AI-powered home
+                                    I&rsquo;m the Product Designer at Domis,
+                                    creating an AI-powered home
                                     maintenance platform that makes it
                                     delightful for homeowners to take care of
                                     their homes and take pride in doing it
