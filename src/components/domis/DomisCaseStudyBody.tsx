@@ -935,7 +935,7 @@ export function DomisCaseStudyBody() {
           <div className="site-body text-white/65">
             <p>
               Same handling of uncertainty. The model fills the form, the fields
-              are editable on tap, and being wrong is cheap.
+              are editable on tap.
             </p>
             <p>
               <span className="dcs-em">
