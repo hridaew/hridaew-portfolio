@@ -33,18 +33,25 @@ export function DomisCaseStudyBody() {
           <p className="site-subheading case-study-heading-trail-mb text-white">
             What is Domis
           </p>
-          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
-            <p>
-              Domis is a consumer home maintenance app. Most services in this
-              category try to take home care out of the owner&rsquo;s hands.
-              Domis does the opposite. It sits between the owner and the house
-              as a compatibility layer, helping them track it, understand it,
-              and prevent the failures that get expensive.
+          <p className="site-body text-white/65">
+            Domis is a consumer home maintenance app. Most services in this
+            category try to take home care out of the owner&rsquo;s hands.
+            Domis does the opposite. It sits between the owner and the house
+            as a compatibility layer, helping them track it, understand it,
+            and prevent the failures that get expensive.
+          </p>
+
+          <div className="case-study-block-gap">
+            <p className="site-subheading case-study-heading-trail-mb text-white">
+              My role
             </p>
-            <p>
+            <p className="site-body text-white/65">
               I joined as the founding designer and work on 0→1 design across
               mobile and web.
             </p>
+          </div>
+
+          <div className="case-study-block-gap case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               <strong className="text-white">
                 The problem I keep returning to is ingestion.
@@ -78,7 +85,6 @@ export function DomisCaseStudyBody() {
       {/* Role */}
       <section id="role" className="dcs-col case-study-block-gap">
         <Reveal>
-          <p className="site-subheading case-study-heading-trail-mb text-white">My role</p>
           <ul className="dcs-roles case-study-prose-stack flex flex-col site-body text-white/65">
             <li>
               <svg
