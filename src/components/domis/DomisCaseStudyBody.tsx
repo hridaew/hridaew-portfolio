@@ -77,6 +77,17 @@ export function DomisCaseStudyBody() {
               <p className="dcs-heading site-subheading text-white">
                 Key challenge
               </p>
+              <figure className="dcs-img-block">
+                <div
+                  className="dcs-media dcs-media-placeholder"
+                  aria-label="Placeholder: old appliance with cobwebs, inspection report, and overwhelmed user"
+                >
+                  <p className="dcs-placeholder-label">
+                    Image or illustration: old core-system appliance with
+                    cobwebs, an inspection report, and an overwhelmed user
+                  </p>
+                </div>
+              </figure>
               <div className="site-body text-white/65">
                 <p>
                   A successful Domis experience depends on the app knowing your
