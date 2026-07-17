@@ -9,12 +9,12 @@
   --dcs-ai: #5b8cff;
   --dcs-ai-soft: rgba(91, 140, 255, 0.18);
   --dcs-mock: #ffffff;
-  --dcs-mock-text: #0c0d10;
-  --dcs-mock-muted: #4a5160;
-  --dcs-mock-faint: #6e7684;
-  --dcs-mock-line: #d5d8de;
+  --dcs-mock-text: #16181c;
+  --dcs-mock-muted: #8a8f98;
+  --dcs-mock-faint: #b6bac1;
+  --dcs-mock-line: #e4e6ea;
   --dcs-mock-surface: #f4f5f7;
-  --dcs-mock-surface-2: #e6e8ed;
+  --dcs-mock-surface-2: #eceef1;
   --dcs-col-text: 620px;
   /* Same Domis red as the home gallery / Report Processor card */
   --dcs-media-bg: #ff5a5b;
@@ -380,6 +380,7 @@
 }
 
 /* Labels / chrome sitting on the red media field (not inside white mock cards) */
+/* White chrome on the red field only — leave mock UI text untouched */
 .domis-cs .dcs-media .dcs-io-label,
 .domis-cs .dcs-media .dcs-io-arrow .dcs-mstep,
 .domis-cs .dcs-media .dcs-io-arrow .dcs-tip,
@@ -387,8 +388,10 @@
 .domis-cs .dcs-media .dcs-media-note,
 .domis-cs .dcs-media .dcs-sc .dcs-answers .dcs-who,
 .domis-cs .dcs-media .dcs-sc .dcs-lands .dcs-who,
-.domis-cs .dcs-media .dcs-sc .dcs-lands > .dcs-lbl {
-  color: rgba(255, 255, 255, 0.98);
+.domis-cs .dcs-media .dcs-sc .dcs-lands > .dcs-lbl,
+.domis-cs .dcs-media .dcs-placeholder-label,
+.domis-cs .dcs-media .dcs-known-slide-title {
+  color: #fff;
 }
 
 .domis-cs .dcs-media .dcs-io-arrow .dcs-stem {
@@ -541,6 +544,7 @@
 }
 
 .domis-cs .dcs-known-slide-card .dcs-placeholder-label {
+  color: #fff;
   font-size: 1.05rem;
   line-height: 1.45;
 }
@@ -1146,14 +1150,14 @@
   background: #14161a;
   border-radius: 7px;
   padding: 18px 20px;
-  color: #eceef2;
+  color: #c8ccd4;
   font-size: 11.5px;
   line-height: 1.9;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 .domis-cs .dcs-term .dcs-c {
-  color: #9aa1ad;
+  color: #6d7480;
 }
 
 .domis-cs .dcs-term .dcs-g {
@@ -1316,7 +1320,7 @@
   padding: 9px;
   font-size: 10.5px;
   line-height: 1.45;
-  color: #2a2f38;
+  color: #4a4f57;
 }
 
 .domis-cs .dcs-note:nth-child(3n) {
