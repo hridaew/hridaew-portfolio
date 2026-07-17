@@ -1506,7 +1506,12 @@
 @media (max-width: 760px) {
   .domis-cs .dcs-media {
     padding: 18px;
-    border-radius: 8px;
+    border-radius: 12px;
+  }
+
+  .domis-cs .dcs-more {
+    padding: 1rem;
+    border-radius: 12px;
   }
 
   .domis-cs figure.dcs-figure {
