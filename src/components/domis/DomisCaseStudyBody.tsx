@@ -37,6 +37,16 @@ export function DomisCaseStudyBody() {
               <p className="dcs-heading site-subheading text-white">
                 What is Domis
               </p>
+              <figure className="dcs-img-block">
+                <div
+                  className="dcs-media dcs-media-placeholder"
+                  aria-label="Placeholder: hero shot with web and mobile"
+                >
+                  <p className="dcs-placeholder-label">
+                    Hero shot with web and mobile
+                  </p>
+                </div>
+              </figure>
               <div className="site-body text-white/65">
                 <p>
                   Domis helps homeowners keep track of their homes. What needs
