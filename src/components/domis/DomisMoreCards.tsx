@@ -196,9 +196,6 @@ export function DomisMoreCards() {
           );
         })}
       </ul>
-      <p className="dcs-caption site-body">
-        The rest of it. Tap a card for more—ask me about any of these.
-      </p>
     </div>
   );
 }
