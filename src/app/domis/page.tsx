@@ -13,7 +13,7 @@ import { SITE_COLUMN } from "@/components/home/homeGrid";
 const sidebarSections = [
     { id: "hero", label: "Intro", number: "00" },
     { id: "overview", label: "Overview", number: "01" },
-    { id: "principle", label: "Principle", number: "02" },
+    { id: "known", label: "The home", number: "02" },
     { id: "address", label: "Address", number: "03" },
     { id: "appliance", label: "Appliance", number: "04" },
     { id: "report", label: "Report", number: "05" },

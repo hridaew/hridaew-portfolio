@@ -300,85 +300,39 @@ export function DomisCaseStudyBody() {
       </section>
 
 
-      {/* Principle */}
+      {/* Payoff — the home, known — before ingestion mechanics */}
       <hr className="dcs-rule" />
 
-      <section id="principle" className="dcs-col dcs-block">
+      <section id="known" className="dcs-col dcs-block">
         <Reveal>
           <p className="dcs-heading site-subheading text-white">
-            AI output is a first draft, not an answer
+            The home, known
           </p>
-          <div className="dcs-callout site-body text-white/65">
+          <figure className="dcs-img-block">
+            <div
+              className="dcs-media dcs-media-placeholder"
+              aria-label="Placeholder: filled property with appliances tagged, tasks from the report, and Domis icon"
+            >
+              <p className="dcs-placeholder-label">
+                Payoff frame: filled property, appliances tagged, tasks pulled
+                from the report, Domis icon — what an owner who understands
+                their house looks like in software
+              </p>
+            </div>
+          </figure>
+          <div className="site-body text-white/65">
             <p>
-              <strong className="text-white">
-                AI output is not deterministic.
-              </strong>{" "}
-              The same address returns different results on different runs, and
-              some of those results are wrong in ways users notice immediately,
-              like the number of bathrooms in their own house.
+              This is what an owner who understands their house looks like in
+              software. A filled property. Appliances tagged. Tasks pulled from
+              the report.
             </p>
             <p>
-              My answer was to stop treating AI output as an answer and treat it
-              as a first draft. The model fills in the same form the user would
-              have filled in manually.{" "}
-              <strong className="text-white">
-                Every field is editable on tap, with no edit mode and no
-                confirmation step.
-              </strong>{" "}
-              Correction costs the same as it would have if we&rsquo;d never run
-              the model at all, so a wrong result is a small annoyance instead of
-              a broken feature.
+              The three features below answer how it got that way, and each one
+              has an obvious reason to exist.
             </p>
-            <p>This shows up in every feature below.</p>
           </div>
         </Reveal>
       </section>
-
-      <Reveal>
-        <figure className="dcs-figure">
-          <div className="dcs-media">
-            <div className="dcs-fieldloop dcs-card">
-              <div className="dcs-row">
-                <span className="dcs-lbl">Year built</span>
-                <span className="dcs-val">
-                  <span className="dcs-aidot" />
-                  1974
-                </span>
-              </div>
-              <div className="dcs-row dcs-tgt">
-                <span className="dcs-lbl">Bathrooms</span>
-                <span className="dcs-val">
-                  <span className="dcs-aidot" />
-                  <span className="dcs-fl-swap">
-                    <span className="dcs-a">3</span>
-                    <span className="dcs-b">2</span>
-                  </span>
-                  <span className="dcs-caret" />
-                </span>
-              </div>
-              <div className="dcs-row">
-                <span className="dcs-lbl">Square footage</span>
-                <span className="dcs-val">
-                  <span className="dcs-aidot" />
-                  1,840
-                </span>
-              </div>
-              <div className="dcs-row">
-                <span className="dcs-lbl">Roof type</span>
-                <span className="dcs-val">
-                  <span className="dcs-aidot" />
-                  Asphalt shingle
-                </span>
-              </div>
-            </div>
-            <PointerCursor className="dcs-fl-cursor" />
-          </div>
-          <figcaption className="dcs-caption site-body">
-            AI fills the field. A tap corrects it. No edit mode, no save, no
-            confirmation.
-          </figcaption>
-        </figure>
-      </Reveal>
 
 
       {/* Address Intelligence */}
