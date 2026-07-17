@@ -529,6 +529,9 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Redo this in the Domis design system.
+            </p>
             <div className="dcs-sc">
               <div className="dcs-answers">
                 <span className="dcs-who">Run 1</span>
