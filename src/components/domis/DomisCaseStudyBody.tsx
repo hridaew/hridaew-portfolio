@@ -89,6 +89,9 @@ export function DomisCaseStudyBody() {
       {/* Role */}
       <section id="role" className="dcs-col case-study-block-gap">
         <Reveal>
+          <p className="site-subheading case-study-heading-trail-mb text-white">
+            My responsibilities
+          </p>
           <ul className="dcs-roles case-study-prose-stack flex flex-col site-body text-white/65">
             <li>
               <svg
