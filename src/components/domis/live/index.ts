@@ -47,3 +47,19 @@ export {
   HomeAvatarConversion,
   type HomeAvatarConversionProps,
 } from "./HomeAvatarConversion";
+
+export {
+  ApplianceCaptureDemo,
+  type ApplianceCaptureDemoProps,
+} from "./ApplianceCaptureDemo";
+
+export {
+  ItemScannerScreen,
+  type ItemScannerScreenProps,
+  type ItemScannerMode,
+} from "./mobile/ItemScannerScreen";
+
+export {
+  ItemFieldsPanel,
+  type ItemFieldsPanelProps,
+} from "./mobile/ItemFieldsPanel";

@@ -6,6 +6,7 @@ import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
 import {
+  ApplianceCaptureDemo,
   ConsensusRunsPanel,
   HomeAvatarConversion,
   WebCreateHomeDemo,
@@ -518,67 +519,8 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-figure">
-          <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Replace with real UI from Domis — capture mode on the left,
-              updated fields on the right.
-            </p>
-            <div className="dcs-io">
-              <div className="dcs-in" style={{ position: "relative" }}>
-                <p className="dcs-lbl dcs-io-label">The user gives</p>
-                <div className="dcs-phone">
-                  <div className="dcs-viewfinder">
-                    <div className="dcs-plate">
-                      <div className="dcs-bar" style={{ width: "80%" }} />
-                      <div className="dcs-bar" style={{ width: "56%" }} />
-                      <div className="dcs-bar" style={{ width: "70%" }} />
-                    </div>
-                    <div className="dcs-flash" />
-                  </div>
-                  <div className="dcs-shutter">
-                    <div className="dcs-ring">
-                      <div className="dcs-dot" />
-                    </div>
-                  </div>
-                </div>
-                <div className="dcs-touch dcs-ph-touch" />
-              </div>
-
-              <div className="dcs-io-arrow">
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Read plate</span>
-                <div className="dcs-stem" />
-                <span className="dcs-tip">→</span>
-              </div>
-
-              <div className="dcs-out">
-                <p className="dcs-lbl dcs-io-label">Domis returns</p>
-                <div className="dcs-appl dcs-card">
-                  <div className="dcs-arow">
-                    <span className="dcs-lbl">Appliance</span>
-                    <span className="dcs-val">Water heater</span>
-                  </div>
-                  <div className="dcs-arow">
-                    <span className="dcs-lbl">Brand</span>
-                    <span className="dcs-val">Rheem</span>
-                  </div>
-                  <div className="dcs-arow">
-                    <span className="dcs-lbl">Model</span>
-                    <span className="dcs-val">XE50M06ST45U1</span>
-                  </div>
-                  <div className="dcs-arow">
-                    <span className="dcs-lbl">Serial</span>
-                    <span className="dcs-val">Q451812345</span>
-                  </div>
-                  <div className="dcs-arow">
-                    <span className="dcs-lbl">Installed</span>
-                    <span className="dcs-val" style={{ color: "var(--dcs-mock-muted)" }}>
-                      Add
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="dcs-media dcs-media-fit">
+            <ApplianceCaptureDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             One photo, and the form fills itself in.

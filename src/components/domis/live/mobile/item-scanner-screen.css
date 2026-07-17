@@ -1,0 +1,242 @@
+/* InAppItemScanner + ItemScanningScreen — pixel port from Flutter. */
+
+.domis-live.iss {
+  --iss-black: #000000;
+  --iss-white: #ffffff;
+  --iss-frame-border: #efefef;
+  --iss-shutter-ring: rgb(39, 39, 39);
+  --iss-icon-ink: #525252;
+  --iss-scan-bg-real: #dcefee;
+  --iss-teal: #005750;
+  --iss-font: "Outfit", system-ui, sans-serif;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: var(--iss-font);
+  background: var(--iss-black);
+  color: var(--iss-white);
+  overflow: hidden;
+}
+
+/* —— Capture / confirm chrome (InAppItemScanner) —— */
+.domis-live.iss .iss-capture {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 28px 24px 28px;
+  box-sizing: border-box;
+}
+
+.domis-live.iss .iss-frame {
+  position: relative;
+  flex: none;
+  width: 342px;
+  height: 505px;
+  margin: 0 auto;
+  border-radius: 24px;
+  border: 1px solid var(--iss-frame-border);
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.domis-live.iss .iss-frame-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.domis-live.iss .iss-frame[data-flash="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  animation: iss-flash 280ms ease-out;
+}
+
+@keyframes iss-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.domis-live.iss .iss-flash-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--iss-white);
+  pointer-events: none;
+}
+
+.domis-live.iss .iss-flash-btn .material-symbols-rounded {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.domis-live.iss .iss-instruction {
+  margin: 28px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+  color: var(--iss-white);
+}
+
+.domis-live.iss .iss-spacer {
+  flex: 1 1 auto;
+  min-height: 12px;
+}
+
+.domis-live.iss .iss-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.domis-live.iss .iss-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--iss-white);
+  border: 1px solid var(--iss-white);
+  color: var(--iss-icon-ink);
+  flex: none;
+}
+
+.domis-live.iss .iss-icon-btn .material-symbols-rounded {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: var(--iss-icon-ink);
+}
+
+.domis-live.iss .iss-shutter {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--iss-white);
+  border: 8px solid var(--iss-shutter-ring);
+  flex: none;
+  transform: scale(1);
+  transition: transform 120ms ease;
+}
+
+.domis-live.iss .iss-shutter[data-pressed="true"] {
+  transform: scale(0.92);
+}
+
+/* —— Scanning overlay (ItemScanningScreen) —— */
+.domis-live.iss .iss-scanning {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  background: var(--iss-scan-bg-real);
+  color: var(--iss-teal);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+
+.domis-live.iss .iss-scanning[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.domis-live.iss .iss-scanning-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.domis-live.iss .iss-scanning-mascot {
+  display: block;
+  width: min(284px, 72%);
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.domis-live.iss .iss-scanning-title {
+  margin: 24px 0 0;
+  font-size: 45px;
+  font-weight: 600;
+  line-height: 52px;
+  letter-spacing: 0;
+  color: var(--iss-teal);
+}
+
+.domis-live.iss .iss-scanning-fact {
+  margin: 24px 0 0;
+  min-height: 100px;
+  max-width: 342px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--iss-teal);
+}
+
+.domis-live.iss .iss-progress-track {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 96px;
+  height: 56px;
+  border-radius: 50px;
+  background: var(--iss-white);
+  overflow: hidden;
+}
+
+.domis-live.iss .iss-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--iss-teal);
+  border-radius: 50px 0 0 50px;
+  transition: width 120ms linear;
+}
+
+.domis-live.iss .iss-scan-close {
+  position: absolute;
+  left: 24px;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--iss-teal);
+  color: var(--iss-white);
+}
+
+.domis-live.iss .iss-scan-close .material-symbols-rounded {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: var(--iss-white);
+}
