@@ -97,6 +97,10 @@ export default function DomisPage() {
                         </div>
                     </section>
 
+                    <div className={SITE_COLUMN} aria-hidden>
+                        <div className="h-px w-full bg-white/10" />
+                    </div>
+
                     {/* ─── CASE STUDY BODY (prototype content) ─── */}
                     <DomisCaseStudyBody />
 
