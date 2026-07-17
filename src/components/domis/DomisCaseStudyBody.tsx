@@ -309,7 +309,7 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             The home, known
           </p>
-          <figure className="dcs-img-block">
+          <figure className="dcs-img-block dcs-known-breakout">
             <DomisKnownCarousel />
           </figure>
           <div className="site-body text-white/65">

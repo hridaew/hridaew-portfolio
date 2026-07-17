@@ -388,19 +388,35 @@
   letter-spacing: 0.01em;
 }
 
+/* High-emphasis payoff: wider than standard media breakout */
+.domis-cs .dcs-known-breakout {
+  width: 100%;
+  max-width: none;
+}
+
+@media (min-width: 768px) {
+  .domis-cs figure.dcs-img-block.dcs-known-breakout {
+    width: calc(100% + 8.5rem);
+    margin-left: -4.25rem;
+    margin-right: -4.25rem;
+  }
+}
+
 .domis-cs .dcs-known-carousel {
   width: 100%;
   min-width: 0;
 }
 
 .domis-cs .dcs-known-slide {
-  width: min(32rem, calc(100% - 2.25rem));
+  width: min(44rem, calc(100% - 3.75rem));
 }
 
 .domis-cs .dcs-known-slide-card {
   width: 100%;
   height: 100%;
-  min-height: 16rem;
+  aspect-ratio: 16 / 9;
+  min-height: 22rem;
+  padding: 2.5rem;
 }
 
 .domis-cs .dcs-known-slide-copy {
@@ -408,17 +424,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   text-align: center;
-  max-width: 22rem;
+  max-width: 28rem;
 }
 
 .domis-cs .dcs-known-slide-title {
   margin: 0;
   color: var(--dcs-text);
-  font-size: 1.05rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+}
+
+.domis-cs .dcs-known-slide-card .dcs-placeholder-label {
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  .domis-cs .dcs-known-slide {
+    width: calc(100% - 2rem);
+  }
+
+  .domis-cs .dcs-known-slide-card {
+    min-height: 16rem;
+    aspect-ratio: 5 / 4;
+  }
+
+  .domis-cs .dcs-known-slide-title {
+    font-size: 1.15rem;
+  }
 }
 
 .domis-cs .dcs-media.dcs-media-image {
