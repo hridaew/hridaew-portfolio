@@ -5,7 +5,11 @@ import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
-import { WebCreateHomeDemo } from "@/components/domis/live";
+import {
+  ConsensusRunsPanel,
+  HomeAvatarConversion,
+  WebCreateHomeDemo,
+} from "@/components/domis/live";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 function PointerCursor({ className }: { className?: string }) {
@@ -437,42 +441,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Redo this in the Domis design system.
-            </p>
-            <div className="dcs-sc">
-              <div className="dcs-answers">
-                <span className="dcs-who">Run 1</span>
-                <div className="dcs-chip">1974</div>
-                <div className="dcs-chip">2 bath</div>
-                <div className="dcs-chip">1,840 sq ft</div>
-              </div>
-              <div className="dcs-answers">
-                <span className="dcs-who">Run 2</span>
-                <div className="dcs-chip">1974</div>
-                <div className="dcs-chip">2 bath</div>
-                <div className="dcs-chip dcs-drop">2,110 sq ft</div>
-              </div>
-              <div className="dcs-answers">
-                <span className="dcs-who">Run 3</span>
-                <div className="dcs-chip">1974</div>
-                <div className="dcs-chip dcs-drop">3 bath</div>
-                <div className="dcs-chip dcs-drop">1,910 sq ft</div>
-              </div>
-
-              <div className="dcs-lands">
-                <div className="dcs-answers">
-                  <span className="dcs-who">Shown</span>
-                  <div className="dcs-landed">1974</div>
-                  <div className="dcs-landed">2 bath</div>
-                  <div className="dcs-landed dcs-ask">Add sq ft</div>
-                </div>
-                <p className="dcs-lbl" style={{ margin: "14px 0 0" }}>
-                  Two out of three is enough to show. No agreement means the
-                  field arrives empty and asks.
-                </p>
-              </div>
-            </div>
+            <ConsensusRunsPanel />
           </div>
         </figure>
       </Reveal>
@@ -492,68 +461,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Replace with real home profile conversion.
-            </p>
-            <div className="dcs-versus">
-              <div>
-                <div className="dcs-thumb dcs-sat">
-                  <img
-                    src="/assets/domis/property-map-thumb.png"
-                    alt="Street-level map view of the property"
-                    className="dcs-thumb-img"
-                    draggable={false}
-                  />
-                </div>
-                <p className="dcs-lbl" style={{ margin: "12px 0 0" }}>
-                  What the map gives you
-                </p>
-              </div>
-              <div>
-                <div className="dcs-thumb dcs-icon">
-                  <svg
-                    width="66"
-                    height="66"
-                    viewBox="0 0 64 64"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M9 30 L32 11 L55 30"
-                      stroke="#4a5261"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M15 27 V52 H49 V27"
-                      stroke="#4a5261"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <rect
-                      x="27"
-                      y="38"
-                      width="10"
-                      height="14"
-                      stroke="#4a5261"
-                      strokeWidth="3"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M43 15 V23"
-                      stroke="#4a5261"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
-                <p className="dcs-lbl" style={{ margin: "12px 0 0" }}>
-                  What Domis makes of it
-                </p>
-              </div>
-            </div>
+            <HomeAvatarConversion />
           </div>
           <figcaption className="dcs-caption site-body">
             Recognizable at a glance, which is the whole job when you own four

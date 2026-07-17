@@ -1,0 +1,215 @@
+/* Map → home profile conversion — Lab HomeProfileCard on the right. */
+
+.domis-live.hac {
+  --hac-surface: #ffffff;
+  --hac-ink: #525252;
+  --hac-muted: #818181;
+  --hac-font: "Outfit", system-ui, sans-serif;
+  --hac-radius-card: 24px;
+  --hac-radius-thumb: 20px;
+  width: 100%;
+  max-width: 640px;
+  font-family: var(--hac-font);
+  color: var(--hac-ink);
+}
+
+.domis-live.hac .hac-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+}
+
+.domis-live.hac .hac-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 0 1 auto;
+}
+
+.domis-live.hac .hac-lbl {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #fff;
+  text-align: center;
+  max-width: 180px;
+}
+
+.domis-live.hac .hac-map {
+  width: 148px;
+  height: 148px;
+  border-radius: var(--hac-radius-thumb);
+  overflow: hidden;
+  background: #e8e9eb;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+.domis-live.hac .hac-map[data-dim="true"] {
+  opacity: 0.72;
+  transform: scale(0.97);
+}
+
+.domis-live.hac .hac-map img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.domis-live.hac .hac-arrow {
+  flex: none;
+  align-self: center;
+  margin-top: 56px;
+  font-size: 22px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0.35;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.domis-live.hac .hac-arrow[data-active="true"] {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Lab HomeProfileCard (Free / avatar-forward): white 340× shell, 142px avatar */
+.domis-live.hac .hac-profile {
+  width: 260px;
+  padding: 28px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: var(--hac-surface);
+  border-radius: var(--hac-radius-card);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 4px 8px rgba(0, 0, 0, 0.04);
+  opacity: 0;
+  transform: translateY(12px) scale(0.94);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.domis-live.hac .hac-profile[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.domis-live.hac .hac-profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.domis-live.hac .hac-avatar {
+  width: 142px;
+  height: 142px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-live.hac .hac-avatar img {
+  width: 142px;
+  height: 142px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.domis-live.hac .hac-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--hac-ink);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.domis-live.hac .hac-address {
+  margin: 0;
+  max-width: 220px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--hac-muted);
+  text-align: center;
+}
+
+.domis-live.hac-demo {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+}
+
+.domis-live.hac-demo .domis-live-cursor {
+  --domis-cursor-w: 28px;
+  --domis-cursor-h: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-live.hac .hac-map,
+  .domis-live.hac .hac-arrow,
+  .domis-live.hac .hac-profile {
+    transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .domis-live.hac .hac-stage {
+    gap: 14px;
+  }
+
+  .domis-live.hac .hac-map {
+    width: 112px;
+    height: 112px;
+  }
+
+  .domis-live.hac .hac-profile {
+    width: 200px;
+    padding: 20px 12px 16px;
+    gap: 14px;
+  }
+
+  .domis-live.hac .hac-avatar,
+  .domis-live.hac .hac-avatar img {
+    width: 108px;
+    height: 108px;
+  }
+
+  .domis-live.hac .hac-name {
+    font-size: 18px;
+  }
+
+  .domis-live.hac .hac-address {
+    font-size: 12px;
+  }
+
+  .domis-live.hac .hac-arrow {
+    margin-top: 40px;
+    font-size: 18px;
+  }
+
+  .domis-live.hac .hac-lbl {
+    font-size: 12px;
+    max-width: 140px;
+  }
+}

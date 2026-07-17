@@ -37,3 +37,13 @@ export {
   type CreateHomePanelProps,
   type CreateHomeManual,
 } from "./web/CreateHomePanel";
+
+export {
+  ConsensusRunsPanel,
+  type ConsensusRunsPanelProps,
+} from "./ConsensusRunsPanel";
+
+export {
+  HomeAvatarConversion,
+  type HomeAvatarConversionProps,
+} from "./HomeAvatarConversion";

@@ -9,6 +9,14 @@ export {
 } from "./addressProfile";
 
 export {
+  CONSENSUS_RUNS,
+  CONSENSUS_SHOWN,
+  type ConsensusChip,
+  type ConsensusRun,
+  type ConsensusShownChip,
+} from "./consensusRuns";
+
+export {
   APPLIANCE_CAPTURE_PHASES,
   APPLIANCE_ASSETS,
   APPLIANCE_CAPTURE_FIELDS,

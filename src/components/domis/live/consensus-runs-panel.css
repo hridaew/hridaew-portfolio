@@ -1,0 +1,192 @@
+/* Consensus runs — Lab web chip/card look (Outfit, #f7f7f7 tiles, teal accent). */
+
+.domis-live.crp {
+  --crp-bg: #f7f7f7;
+  --crp-surface: #ffffff;
+  --crp-ink: #525252;
+  --crp-muted: #818181;
+  --crp-faint: #c8c8c8;
+  --crp-line: #efefef;
+  --crp-accent: #005750;
+  --crp-accent-soft: rgba(0, 87, 80, 0.1);
+  --crp-font: "Outfit", system-ui, sans-serif;
+  --crp-radius-card: 24px;
+  --crp-radius-chip: 8px;
+  width: 100%;
+  max-width: 520px;
+  font-family: var(--crp-font);
+  color: var(--crp-ink);
+}
+
+.domis-live.crp .crp-card {
+  width: 100%;
+  padding: 22px 22px 20px;
+  background: var(--crp-surface);
+  border: 1px solid #fff;
+  border-radius: var(--crp-radius-card);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.06),
+    0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+.domis-live.crp .crp-runs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domis-live.crp .crp-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.domis-live.crp .crp-row[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.domis-live.crp .crp-who {
+  flex: none;
+  width: 52px;
+  padding-top: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--crp-muted);
+}
+
+.domis-live.crp .crp-chips {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.domis-live.crp .crp-chip {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 6px;
+  background: var(--crp-bg);
+  border-radius: var(--crp-radius-chip);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--crp-ink);
+  transition:
+    opacity 0.35s ease,
+    color 0.35s ease,
+    background 0.35s ease;
+}
+
+.domis-live.crp .crp-chip[data-dropped="true"] {
+  color: var(--crp-faint);
+  text-decoration: line-through;
+  text-decoration-color: rgba(200, 200, 200, 0.85);
+}
+
+.domis-live.crp .crp-chip[data-hl="agree"] {
+  background: var(--crp-accent-soft);
+  color: var(--crp-accent);
+  box-shadow: inset 0 0 0 1px rgba(0, 87, 80, 0.18);
+}
+
+.domis-live.crp .crp-shown {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--crp-line);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.domis-live.crp .crp-shown[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.domis-live.crp .crp-shown .crp-who {
+  color: var(--crp-ink);
+  font-weight: 600;
+}
+
+.domis-live.crp .crp-landed {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 6px;
+  border-radius: var(--crp-radius-chip);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  background: var(--crp-accent-soft);
+  color: var(--crp-accent);
+  box-shadow: inset 0 0 0 1px rgba(0, 87, 80, 0.22);
+}
+
+.domis-live.crp .crp-landed[data-ask="true"] {
+  background: var(--crp-bg);
+  color: var(--crp-muted);
+  box-shadow: none;
+  border: 1px dashed #d6d6d6;
+}
+
+.domis-live.crp .crp-caption {
+  margin: 14px 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--crp-muted);
+}
+
+.domis-live.crp-demo {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+.domis-live.crp-demo .domis-live-cursor {
+  --domis-cursor-w: 28px;
+  --domis-cursor-h: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-live.crp .crp-row,
+  .domis-live.crp .crp-shown,
+  .domis-live.crp .crp-chip {
+    transition: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .domis-live.crp .crp-card {
+    padding: 16px;
+  }
+
+  .domis-live.crp .crp-who {
+    width: 44px;
+    font-size: 11px;
+  }
+
+  .domis-live.crp .crp-chip,
+  .domis-live.crp .crp-landed {
+    font-size: 12px;
+    min-height: 36px;
+  }
+}
