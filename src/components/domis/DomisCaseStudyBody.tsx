@@ -353,6 +353,12 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Replace with real UI of the home profile creation card from the
+              web app prototype, except it&rsquo;s centered on a web screen like
+              an onboarding screen — and the data should be simulated in the
+              animated component along with a nice big animated cursor.
+            </p>
             <div className="dcs-io">
               <div className="dcs-in">
                 <p className="dcs-lbl dcs-io-label">The user gives</p>
