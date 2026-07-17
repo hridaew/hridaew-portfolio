@@ -797,6 +797,9 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Update with Domis styling.
+            </p>
             <div className="dcs-twoup">
               <div className="dcs-pane">
                 <div className="dcs-ph">
