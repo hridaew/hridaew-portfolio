@@ -17,7 +17,6 @@
   --dcs-mock-surface-2: #eceef1;
   --dcs-col-text: 620px;
   --dcs-col-media: 780px;
-  --dcs-step: 1.625rem;
   color: var(--dcs-text);
 }
 
@@ -26,31 +25,6 @@
   max-width: var(--dcs-col-text);
   margin: 0 auto;
   text-align: left;
-}
-
-.domis-cs .dcs-col p {
-  margin: 0 0 var(--dcs-step);
-}
-
-.domis-cs .dcs-col p:last-child {
-  margin-bottom: 0;
-}
-
-.domis-cs .dcs-block {
-  margin-bottom: 4.25rem;
-}
-
-.domis-cs .dcs-heading {
-  margin-bottom: var(--dcs-step);
-}
-
-.domis-cs .dcs-rule {
-  width: 100%;
-  max-width: var(--dcs-col-media);
-  margin: 5.75rem auto;
-  height: 1px;
-  background: var(--dcs-line);
-  border: 0;
 }
 
 .domis-cs .dcs-roles {
@@ -63,11 +37,6 @@
   display: flex;
   gap: 0.875rem;
   align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.domis-cs .dcs-roles li:last-child {
-  margin-bottom: 0;
 }
 
 .domis-cs .dcs-roles svg {
@@ -88,7 +57,6 @@
 .domis-cs figure.dcs-figure {
   width: 100%;
   max-width: var(--dcs-col-media);
-  margin: 3.25rem auto;
 }
 
 .domis-cs .dcs-media {
@@ -104,13 +72,6 @@
   padding: 2.75rem;
 }
 
-.domis-cs figcaption.dcs-caption {
-  width: 100%;
-  margin-top: 0.875rem;
-  color: var(--dcs-muted);
-}
-
-/* mockup primitives (light product UI) */
 .domis-cs .dcs-card {
   background: var(--dcs-mock);
   border: 1px solid var(--dcs-mock-line);
@@ -925,18 +886,6 @@
   .domis-cs .dcs-media {
     padding: 18px;
     border-radius: 8px;
-  }
-
-  .domis-cs figure.dcs-figure {
-    margin: 2.125rem auto;
-  }
-
-  .domis-cs .dcs-rule {
-    margin: 3.875rem auto;
-  }
-
-  .domis-cs figcaption.dcs-caption {
-    font-size: 0.875rem;
   }
 
   .domis-cs .dcs-io {

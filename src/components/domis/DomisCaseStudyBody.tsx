@@ -28,9 +28,9 @@ export function DomisCaseStudyBody() {
       </svg>
 
       {/* Intro */}
-      <section id="overview" className="dcs-col dcs-block case-study-section-y-t">
+      <section id="overview" className="dcs-col case-study-section-y-t">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               Domis is a consumer home maintenance app. Most services in this
               category try to take home care out of the owner&rsquo;s hands.
@@ -73,10 +73,10 @@ export function DomisCaseStudyBody() {
       </section>
 
       {/* Role */}
-      <section id="role" className="dcs-col dcs-block">
+      <section id="role" className="dcs-col case-study-block-gap">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">My role</p>
-          <ul className="dcs-roles site-body text-white/70">
+          <p className="site-subheading case-study-heading-trail-mb text-white">My role</p>
+          <ul className="dcs-roles case-study-prose-stack flex flex-col site-body text-white/65">
             <li>
               <svg
                 width="17"
@@ -230,15 +230,14 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <hr className="dcs-rule" />
 
       {/* Principle */}
-      <section id="principle" className="dcs-col dcs-block">
+      <section id="principle" className="dcs-col case-study-section-y-t border-t border-white/10">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="site-subheading case-study-heading-trail-mb text-white">
             AI output is a first draft, not an answer
           </p>
-          <div className="dcs-callout site-body text-white/70">
+          <div className="dcs-callout case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               <strong className="text-white">
                 AI output is not deterministic.
@@ -264,8 +263,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-fieldloop dcs-card">
               <div className="dcs-row">
@@ -303,22 +302,21 @@ export function DomisCaseStudyBody() {
             </div>
             <PointerCursor className="dcs-fl-cursor" />
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             AI fills the field. A tap corrects it. No edit mode, no save, no
             confirmation.
           </figcaption>
         </figure>
       </Reveal>
 
-      <hr className="dcs-rule" />
 
       {/* Address Intelligence */}
-      <section id="address" className="dcs-col dcs-block">
+      <section id="address" className="dcs-col case-study-section-y-t border-t border-white/10">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="site-subheading case-study-heading-trail-mb text-white">
             Address Intelligence
           </p>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               <strong className="text-white">
                 The first thing anyone does in Domis is type their address.
@@ -337,8 +335,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in">
@@ -424,15 +422,15 @@ export function DomisCaseStudyBody() {
             </div>
             <PointerCursor className="dcs-addr-cursor" />
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             One address in. A home profile out.
           </figcaption>
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
+      <section className="dcs-col case-study-block-gap">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               <strong className="text-white">
                 Agentic search is non-deterministic.
@@ -452,8 +450,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-sc">
               <div className="dcs-answers">
@@ -489,16 +487,16 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             Three answers. Only agreement survives. Disagreement arrives as an
             empty field.
           </figcaption>
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
+      <section className="dcs-col case-study-block-gap">
         <Reveal>
-          <p className="site-body text-white/70">
+          <p className="case-study-prose-stack flex flex-col site-body text-white/65">
             Address Intelligence also pulls photos of the property and generates
             a clean icon for it. Small thing, but a recognizable avatar matters
             when someone manages more than one property, and it is better than a
@@ -508,8 +506,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-versus">
               <div>
@@ -564,22 +562,21 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             Recognizable at a glance, which is the whole job when you own four
             of them.
           </figcaption>
         </figure>
       </Reveal>
 
-      <hr className="dcs-rule" />
 
       {/* Appliance Intelligence */}
-      <section id="appliance" className="dcs-col dcs-block">
+      <section id="appliance" className="dcs-col case-study-section-y-t border-t border-white/10">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="site-subheading case-study-heading-trail-mb text-white">
             Appliance Intelligence
           </p>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               Logging your appliances is one of the first useful things to do in
               Domis, since it lets them be tagged in tasks and in conversations
@@ -600,8 +597,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-artifact">
               <div className="dcs-term">
@@ -641,14 +638,14 @@ export function DomisCaseStudyBody() {
               </p>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             The test that became the feature, before it looked like anything.
           </figcaption>
         </figure>
       </Reveal>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in" style={{ position: "relative" }}>
@@ -707,15 +704,15 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             One photo, and the form fills itself in.
           </figcaption>
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
+      <section className="dcs-col case-study-block-gap">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               But a captured label is still just reference text.{" "}
               <strong className="text-white">
@@ -733,8 +730,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-twoup">
               <div className="dcs-pane">
@@ -859,16 +856,16 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             Same scan. One version knows the model number, the other knows what
             to do with it.
           </figcaption>
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
+      <section className="dcs-col case-study-block-gap">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               Same handling of uncertainty. The model fills the form, the fields
               are editable on tap, and being wrong is cheap.
@@ -884,15 +881,14 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <hr className="dcs-rule" />
 
       {/* Report Processor */}
-      <section id="report" className="dcs-col dcs-block">
+      <section id="report" className="dcs-col case-study-section-y-t border-t border-white/10">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="site-subheading case-study-heading-trail-mb text-white">
             Report Processor
           </p>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               Before any of the above, I went looking for what a homeowner
               already has. If information has to come from somewhere, the
@@ -917,8 +913,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-affinity">
               <div className="dcs-cluster">
@@ -961,16 +957,16 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             People skip the report because it describes a house that no longer
             exists.
           </figcaption>
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
+      <section className="dcs-col case-study-block-gap">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               That changed what the feature should be.{" "}
               <strong className="text-white">
@@ -991,8 +987,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-io">
               <div className="dcs-in">
@@ -1089,18 +1085,17 @@ export function DomisCaseStudyBody() {
             </div>
             <PointerCursor className="dcs-rep-cursor" />
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             One PDF in. Sixty-four pages you can hold in your head.
           </figcaption>
         </figure>
       </Reveal>
 
-      <hr className="dcs-rule" />
 
       {/* Closing */}
-      <section id="more" className="dcs-col dcs-block">
+      <section id="more" className="dcs-col case-study-section-y-t border-t border-white/10">
         <Reveal>
-          <div className="site-body text-white/70">
+          <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               There is more: a location-based recommendation system,
               multi-property management, multi-task preventative maintenance
@@ -1118,8 +1113,8 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
+      <Reveal className="case-study-block-gap">
+        <figure className="dcs-figure w-full mx-auto">
           <div className="dcs-media">
             <div className="dcs-sheet">
               <div className="dcs-tile">
@@ -1190,7 +1185,7 @@ export function DomisCaseStudyBody() {
               </div>
             </div>
           </div>
-          <figcaption className="dcs-caption site-body">
+          <figcaption className="site-gallery-caption case-study-media-caption-mt text-left text-white/45">
             The rest of it. Ask me about any of these.
           </figcaption>
         </figure>
