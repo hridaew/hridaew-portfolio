@@ -937,13 +937,6 @@ export function DomisCaseStudyBody() {
               Same handling of uncertainty. The model fills the form, the fields
               are editable on tap.
             </p>
-            <p>
-              <span className="dcs-em">
-                Signal: the reuse is the part I am most pleased with. One
-                pipeline, built once, now serving two different entry points into
-                the same problem.
-              </span>
-            </p>
           </div>
         </Reveal>
       </section>
