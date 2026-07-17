@@ -976,7 +976,7 @@ export function DomisCaseStudyBody() {
                   &ldquo;When was the roof done? No idea. Before us.&rdquo;
                 </div>
                 <div className="dcs-note dcs-fact">
-                  The gap isn&rsquo;t data. It&rsquo;s understanding.
+                  There could be data but it&rsquo;s not interpretable
                 </div>
               </div>
             </div>
