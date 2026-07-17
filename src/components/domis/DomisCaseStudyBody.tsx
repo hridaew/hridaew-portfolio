@@ -779,8 +779,8 @@ export function DomisCaseStudyBody() {
               For v2 I refocused the feature onto what is actually useful for
               the owner. V1&rsquo;s image recognition gathers the information on
               the plate; a search agent then turns that into actionable
-              information the user more clearly benefits from — the support
-              page, the manual, common failures for that unit, warranty status.
+              information the user more clearly benefits from — the support and
+              warranty page, for example.
             </p>
           </div>
         </Reveal>
