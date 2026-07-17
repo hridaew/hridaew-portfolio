@@ -476,8 +476,7 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               Rather than trying to engineer certainty, I ran the search three
-              times and kept what agreed across runs. It is fast and cheap
-              enough that redundancy is a reasonable substitute for confidence.
+              times and kept what agreed across runs.
             </p>
             <ol
               className="dcs-process"
