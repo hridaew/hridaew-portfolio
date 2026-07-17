@@ -1056,6 +1056,11 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Restyle as the actual task UI from Domis, with this same
+              inspection report thing on the left but restyle the cards on the
+              right to look like task cards from the Domis app.
+            </p>
             <div className="dcs-io">
               <div className="dcs-in">
                 <p className="dcs-lbl dcs-io-label">The user gives</p>
