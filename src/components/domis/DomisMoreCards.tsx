@@ -206,8 +206,11 @@ function FlipCard({
       className={`dcs-flip${flipped ? " is-flipped" : ""}`}
       aria-pressed={flipped}
       aria-label={`${card.title}. ${flipped ? "Showing description. Click to flip back." : "Click to read more."}`}
-      onClick={onToggle}
-      onPointerMove={onPointerMove}
+      onClick={() => {
+        resetTilt();
+        onToggle();
+      }}
+      onPointerMove={flipped ? undefined : onPointerMove}
       onPointerLeave={resetTilt}
       onPointerCancel={resetTilt}
     >
