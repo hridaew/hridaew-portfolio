@@ -666,8 +666,8 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               Walking around photographing them turns out to be mildly
-              satisfying. Typing in the model number, warranty date,
-              manufacturer, and where you bought it does not.
+              satisfying. Typing in the model number and other minute details
+              does not.
             </p>
             <p>
               <strong className="text-white">
