@@ -1172,7 +1172,7 @@
 .domis-cs .dcs-flip:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.55);
   outline-offset: 3px;
-  border-radius: 14px;
+  border-radius: 4px;
 }
 
 .domis-cs .dcs-flip-inner {
@@ -1191,14 +1191,13 @@
 .domis-cs .dcs-flip-face {
   position: absolute;
   inset: 0;
-  border-radius: 14px;
-  padding: 16px;
+  border-radius: 4px;
+  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 .domis-cs .dcs-flip-front {
@@ -1211,26 +1210,35 @@
 
 .domis-cs .dcs-flip-title {
   font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  max-width: 9ch;
 }
 
 .domis-cs .dcs-flip-icon {
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  opacity: 0.92;
+  align-self: flex-end;
+  line-height: 0;
+}
+
+.domis-cs .dcs-flip-icon svg {
+  display: block;
+  width: 3.25rem;
+  height: 3.25rem;
 }
 
 .domis-cs .dcs-flip-copy {
   font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.005em;
-  opacity: 0.9;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  opacity: 0.92;
 }
 
 .domis-cs .dcs-more > .dcs-caption {
@@ -1326,7 +1334,8 @@
   }
 
   .domis-cs .dcs-flip-title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    max-width: 10ch;
   }
 
   .domis-cs .dcs-flip-copy {
@@ -1335,7 +1344,12 @@
 
   .domis-cs .dcs-flip-face {
     padding: 12px;
-    border-radius: 12px;
+    border-radius: 4px;
+  }
+
+  .domis-cs .dcs-flip-icon svg {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .domis-cs .dcs-more {

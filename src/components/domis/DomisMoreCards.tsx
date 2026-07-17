@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 type MoreCard = {
   id: string;
@@ -11,6 +11,105 @@ type MoreCard = {
   icon: ReactNode;
 };
 
+function IconDesignSystem() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="22" height="22" fill="currentColor" />
+      <rect x="30" y="4" width="22" height="22" fill="currentColor" opacity="0.28" />
+      <rect x="4" y="30" width="22" height="22" fill="currentColor" opacity="0.28" />
+      <rect x="30" y="30" width="10" height="10" fill="currentColor" opacity="0.75" />
+      <rect x="42" y="30" width="10" height="10" fill="currentColor" opacity="0.45" />
+      <rect x="30" y="42" width="10" height="10" fill="currentColor" opacity="0.45" />
+      <rect x="42" y="42" width="10" height="10" fill="currentColor" opacity="0.2" />
+    </svg>
+  );
+}
+
+function IconMultiProperty() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <path d="M6 28 L22 14 L38 28 V48 H6 V28 Z" fill="currentColor" />
+      <path d="M24 30 L38 18 L52 30 V48 H38" fill="currentColor" opacity="0.32" />
+      <rect x="20" y="36" width="4" height="12" fill="#000" opacity="0.18" />
+    </svg>
+  );
+}
+
+function IconRecommendations() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <circle cx="28" cy="28" r="22" stroke="currentColor" strokeWidth="3" />
+      <circle cx="28" cy="28" r="3.5" fill="currentColor" />
+      <path d="M28 10 V22" stroke="currentColor" strokeWidth="3" strokeLinecap="square" />
+      <path
+        d="M28 28 L42 18"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="square"
+      />
+      <path
+        d="M10 28 H16 M40 28 H46 M28 40 V46"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="square"
+        opacity="0.4"
+      />
+    </svg>
+  );
+}
+
+function IconMaintenanceGuides() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <rect x="8" y="6" width="40" height="44" fill="currentColor" opacity="0.16" />
+      <rect x="8" y="6" width="40" height="8" fill="currentColor" />
+      <rect x="14" y="22" width="28" height="3.5" fill="currentColor" />
+      <rect x="14" y="30" width="22" height="3.5" fill="currentColor" opacity="0.7" />
+      <rect x="14" y="38" width="16" height="3.5" fill="currentColor" opacity="0.4" />
+      <rect x="38" y="6" width="10" height="10" fill="currentColor" opacity="0.55" />
+    </svg>
+  );
+}
+
+function IconProHandoff() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <rect x="4" y="14" width="18" height="28" fill="currentColor" />
+      <rect x="34" y="14" width="18" height="28" fill="currentColor" opacity="0.32" />
+      <path d="M24 28 H32" stroke="currentColor" strokeWidth="3.5" strokeLinecap="square" />
+      <path
+        d="M29 23 L34 28 L29 33"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        fill="none"
+      />
+      <circle cx="13" cy="24" r="3" fill="#000" opacity="0.18" />
+      <rect x="9" y="30" width="8" height="2.5" fill="#000" opacity="0.18" />
+    </svg>
+  );
+}
+
+function IconTaskModules() {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <rect x="4" y="6" width="48" height="12" fill="currentColor" />
+      <rect x="4" y="22" width="48" height="12" fill="currentColor" opacity="0.45" />
+      <rect x="4" y="38" width="32" height="12" fill="currentColor" opacity="0.22" />
+      <path
+        d="M10 12 L13.2 15 L20 9"
+        stroke="#000"
+        strokeWidth="2.8"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        opacity="0.22"
+      />
+      <rect x="10" y="26" width="6" height="4" fill="#000" opacity="0.22" />
+    </svg>
+  );
+}
+
 const cards: MoreCard[] = [
   {
     id: "design-system",
@@ -18,141 +117,53 @@ const cards: MoreCard[] = [
     description:
       "Tokens, components, and patterns that keep mobile and web coherent as Domis grows from 0→1 into a shipped product.",
     pastel: "#d9ebe3",
-    ink: "#1f3d34",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <rect x="4" y="4" width="12" height="12" rx="3" fill="#1f3d34" opacity="0.9" />
-        <rect x="20" y="4" width="12" height="12" rx="3" fill="#3b6cf0" opacity="0.85" />
-        <rect x="4" y="20" width="12" height="12" rx="3" fill="#6b7c75" opacity="0.75" />
-        <rect x="20" y="20" width="12" height="12" rx="3" fill="#1f3d34" opacity="0.35" />
-      </svg>
-    ),
+    ink: "#1a332c",
+    icon: <IconDesignSystem />,
   },
   {
     id: "multi-property",
     title: "Multi-property",
     description:
       "One place for several homes—each with its own profile, tasks, and avatar—so managing more than one property stays clear.",
-    pastel: "#f3e2d4",
-    ink: "#5a3420",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <path
-          d="M6 16 L14 10 L22 16 V28 H6 V16 Z"
-          stroke="#5a3420"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M16 18 L24 12 L32 18 V28 H22"
-          stroke="#5a3420"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-          opacity="0.55"
-        />
-        <rect x="11" y="21" width="4" height="7" fill="#5a3420" opacity="0.8" />
-      </svg>
-    ),
+    pastel: "#f0e0d2",
+    ink: "#4a2a18",
+    icon: <IconMultiProperty />,
   },
   {
     id: "recommendations",
     title: "Recommendations",
     description:
       "Location and season aware nudges so the right upkeep surfaces at the right time, without the owner having to remember.",
-    pastel: "#dce8f7",
-    ink: "#243b5a",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <circle cx="18" cy="18" r="11" stroke="#243b5a" strokeWidth="1.8" />
-        <path
-          d="M18 10 V18 L24 22"
-          stroke="#243b5a"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle cx="18" cy="18" r="2" fill="#243b5a" />
-      </svg>
-    ),
+    pastel: "#d8e4f4",
+    ink: "#1c314d",
+    icon: <IconRecommendations />,
   },
   {
     id: "maintenance-guides",
     title: "Maintenance guides",
     description:
       "Multi-step preventative guides that break complex home care into clear, finishable actions tied to the systems you own.",
-    pastel: "#efe8c8",
-    ink: "#4a3f16",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <path
-          d="M10 6 H22 L28 12 V30 H10 V6 Z"
-          stroke="#4a3f16"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-        />
-        <path d="M22 6 V12 H28" stroke="#4a3f16" strokeWidth="1.8" strokeLinejoin="round" />
-        <path
-          d="M14 18 H24 M14 22 H24 M14 26 H20"
-          stroke="#4a3f16"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
+    pastel: "#ebe4c4",
+    ink: "#3d3410",
+    icon: <IconMaintenanceGuides />,
   },
   {
     id: "pro-handoff",
     title: "Pro handoff",
     description:
       "Share home context with Pros so they arrive knowing the property—not starting from a blank conversation every time.",
-    pastel: "#f0ddd8",
-    ink: "#5a2e28",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <circle cx="12" cy="14" r="4" stroke="#5a2e28" strokeWidth="1.8" />
-        <path
-          d="M6 26 C6 21.5 8.5 19 12 19 C15.5 19 18 21.5 18 26"
-          stroke="#5a2e28"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M22 14 H30 M26 10 V18"
-          stroke="#5a2e28"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M20 26 H30"
-          stroke="#5a2e28"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity="0.5"
-        />
-      </svg>
-    ),
+    pastel: "#edd9d4",
+    ink: "#4d2620",
+    icon: <IconProHandoff />,
   },
   {
     id: "task-modules",
     title: "Task modules",
     description:
       "Reusable task patterns that turn what Domis knows about a home into trackable work homeowners can actually finish.",
-    pastel: "#dde8f0",
-    ink: "#2a3f4d",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-        <rect x="6" y="8" width="24" height="6" rx="2" stroke="#2a3f4d" strokeWidth="1.8" />
-        <rect x="6" y="17" width="24" height="6" rx="2" stroke="#2a3f4d" strokeWidth="1.8" />
-        <rect x="6" y="26" width="16" height="4" rx="2" fill="#2a3f4d" opacity="0.35" />
-        <path
-          d="M9 11 L11 13 L15 9"
-          stroke="#2a3f4d"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
+    pastel: "#d7e3ec",
+    ink: "#1f3442",
+    icon: <IconTaskModules />,
   },
 ];
 
@@ -178,7 +189,7 @@ export function DomisMoreCards() {
                 <span className="dcs-flip-inner">
                   <span
                     className="dcs-flip-face dcs-flip-front"
-                    style={{ background: card.pastel, color: card.ink }}
+                    style={{ background: card.pastel, color: card.ink } satisfies CSSProperties}
                   >
                     <span className="dcs-flip-title">{card.title}</span>
                     <span className="dcs-flip-icon">{card.icon}</span>
