@@ -63,8 +63,9 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               <strong className="text-white">
-                Research made clear that this isn&rsquo;t only a data problem.
-                Most people don&rsquo;t know their own homes.
+                My research and interviews with homeowners revealed that this
+                isn&rsquo;t just an information issue for Domis. Most people
+                don&rsquo;t know their own homes.
               </strong>{" "}
               Owners we interviewed couldn&rsquo;t name the manufacturer of
               their water heater or say when the roof was last serviced. So
