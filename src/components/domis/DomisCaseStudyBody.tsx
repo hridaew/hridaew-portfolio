@@ -74,7 +74,8 @@ export function DomisCaseStudyBody() {
               understands the house they live in.
             </p>
             <p>
-              Everything below follows one principle.{" "}
+              In order to maximize the information we get and reduce the load on
+              the user, I designed Domis through one core principle:{" "}
               <strong className="text-white">
                 Extract the maximum value from the smallest action the user is
                 willing to take.
