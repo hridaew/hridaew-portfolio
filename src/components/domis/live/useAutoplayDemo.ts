@@ -124,30 +124,25 @@ export function useAutoplayDemo(
     applyPaused();
   }, [applyPaused]);
 
-  // rAF ticker + reduced-motion listener
+  // rAF ticker + reduced-motion listener (no ticker while reduced motion is on)
   useEffect(() => {
-    reducedMotionRef.current = prefersReducedMotion();
-    if (reducedMotionRef.current) {
-      jumpToFinalPhase();
-    } else {
-      phaseStartedAtRef.current = performance.now();
-    }
-    applyPaused();
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const onMotionChange = () => {
-      reducedMotionRef.current = mq.matches;
-      if (mq.matches) {
-        jumpToFinalPhase();
+    const stopTicker = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
-      applyPaused();
     };
-    mq.addEventListener("change", onMotionChange);
 
     const tick = (now: number) => {
+      // Reduced motion: hard-stop — do not re-schedule.
+      if (reducedMotionRef.current) {
+        rafRef.current = null;
+        return;
+      }
+
       rafRef.current = requestAnimationFrame(tick);
 
-      if (pausedRef.current || reducedMotionRef.current) return;
+      if (pausedRef.current) return;
 
       const list = phasesRef.current;
       if (!list.length) return;
@@ -167,7 +162,10 @@ export function useAutoplayDemo(
       const nextProgress = Math.min(1, elapsed / current.durationMs);
 
       // Keep continuous value in a ref; push to state when it moves enough to matter.
-      if (Math.abs(nextProgress - progressRef.current) >= 0.008 || nextProgress >= 1) {
+      if (
+        Math.abs(nextProgress - progressRef.current) >= 0.008 ||
+        nextProgress >= 1
+      ) {
         progressRef.current = nextProgress;
         setProgress(nextProgress);
       } else {
@@ -184,14 +182,38 @@ export function useAutoplayDemo(
       }
     };
 
-    rafRef.current = requestAnimationFrame(tick);
+    const startTicker = () => {
+      if (reducedMotionRef.current || rafRef.current !== null) return;
+      phaseStartedAtRef.current =
+        performance.now() -
+        progressRef.current *
+          (phasesRef.current[phaseIndexRef.current]?.durationMs ?? 0);
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const applyMotionPreference = (reduce: boolean) => {
+      reducedMotionRef.current = reduce;
+      if (reduce) {
+        jumpToFinalPhase();
+        stopTicker();
+      } else {
+        startTicker();
+      }
+      applyPaused();
+    };
+
+    applyMotionPreference(mq.matches);
+
+    const onMotionChange = () => {
+      applyMotionPreference(mq.matches);
+    };
+    mq.addEventListener("change", onMotionChange);
 
     return () => {
       mq.removeEventListener("change", onMotionChange);
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
+      stopTicker();
     };
   }, [applyPaused, jumpToFinalPhase]);
 
