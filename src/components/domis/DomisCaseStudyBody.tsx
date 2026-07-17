@@ -667,7 +667,10 @@ export function DomisCaseStudyBody() {
             <p>
               Logging your appliances is one of the first useful things to do in
               Domis, since it lets them be tagged in tasks and in conversations
-              with Pros. Walking around photographing them turns out to be mildly
+              with Pros.
+            </p>
+            <p>
+              Walking around photographing them turns out to be mildly
               satisfying. Typing in the model number, warranty date,
               manufacturer, and where you bought it does not.
             </p>
