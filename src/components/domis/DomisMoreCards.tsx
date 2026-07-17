@@ -122,8 +122,8 @@ const cards: MoreCard[] = [
     title: "Design system",
     description:
       "Tokens, components, and patterns that keep mobile and web coherent as Domis grows from 0→1 into a shipped product.",
-    pastel: "#2bb673",
-    ink: "#062416",
+    pastel: "#6bc492",
+    ink: "#143528",
     icon: <IconDesignSystem />,
   },
   {
@@ -131,8 +131,8 @@ const cards: MoreCard[] = [
     title: "Multi-property",
     description:
       "One place for several homes—each with its own profile, tasks, and avatar—so managing more than one property stays clear.",
-    pastel: "#f08a4b",
-    ink: "#3a1604",
+    pastel: "#c4a882",
+    ink: "#3a2a18",
     icon: <IconMultiProperty />,
   },
   {
@@ -140,8 +140,8 @@ const cards: MoreCard[] = [
     title: "Recommendations",
     description:
       "Location and season aware nudges so the right upkeep surfaces at the right time, without the owner having to remember.",
-    pastel: "#3b82f6",
-    ink: "#061530",
+    pastel: "#6b9ee8",
+    ink: "#15233d",
     icon: <IconRecommendations />,
   },
   {
@@ -149,8 +149,8 @@ const cards: MoreCard[] = [
     title: "Maintenance guides",
     description:
       "Multi-step preventative guides that break complex home care into clear, finishable actions tied to the systems you own.",
-    pastel: "#e6b422",
-    ink: "#2e2300",
+    pastel: "#d4bc5c",
+    ink: "#352c10",
     icon: <IconMaintenanceGuides />,
   },
   {
@@ -158,8 +158,8 @@ const cards: MoreCard[] = [
     title: "Pro handoff",
     description:
       "Share home context with Pros so they arrive knowing the property—not starting from a blank conversation every time.",
-    pastel: "#ef5d5d",
-    ink: "#3a0a0a",
+    pastel: "#e07a7a",
+    ink: "#3d1818",
     icon: <IconProHandoff />,
   },
   {
@@ -167,8 +167,8 @@ const cards: MoreCard[] = [
     title: "Task modules",
     description:
       "Reusable task patterns that turn what Domis knows about a home into trackable work homeowners can actually finish.",
-    pastel: "#2ec4b6",
-    ink: "#062621",
+    pastel: "#8a9bb0",
+    ink: "#1e2834",
     icon: <IconTaskModules />,
   },
 ];
