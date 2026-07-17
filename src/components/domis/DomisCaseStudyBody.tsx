@@ -451,6 +451,9 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
+          <p className="dcs-heading site-subheading text-white">
+            The challenge
+          </p>
           <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
