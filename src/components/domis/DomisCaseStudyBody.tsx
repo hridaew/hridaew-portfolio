@@ -1111,7 +1111,8 @@ export function DomisCaseStudyBody() {
             <PointerCursor className="dcs-rep-cursor" />
           </div>
           <figcaption className="dcs-caption site-body">
-            One PDF in. Sixty-four pages you can hold in your head.
+            One PDF in. From 64 pages of construction and real estate lingo to
+            things you can actually comprehend.
           </figcaption>
         </figure>
       </Reveal>
