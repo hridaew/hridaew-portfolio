@@ -30,6 +30,9 @@ export function DomisCaseStudyBody() {
       {/* Intro — top padding mirrors hero pb-16/md:pb-24 for even spacing around the divider */}
       <section id="overview" className="dcs-col pt-16 md:pt-24">
         <Reveal>
+          <p className="site-subheading case-study-heading-trail-mb text-white">
+            What is Domis
+          </p>
           <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
               Domis is a consumer home maintenance app. Most services in this
