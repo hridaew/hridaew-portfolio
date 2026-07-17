@@ -1,0 +1,189 @@
+/* Domis live demos — scoped under .domis-live so portfolio typography stays untouched.
+   Fonts load for product UI only; set font-family on .domis-live descendants as needed. */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
+
+.domis-live {
+  --domis-live-bg: #f7f7f7;
+  --domis-live-surface: #ffffff;
+  --domis-live-ink: #16181c;
+  --domis-live-muted: #818181;
+  --domis-live-line: #efefef;
+  --domis-live-chrome: #ececee;
+  --domis-live-chrome-ink: #6b6f76;
+  --domis-live-font: "Outfit", system-ui, sans-serif;
+  --domis-cursor-w: 36px;
+  --domis-cursor-h: 52px;
+  --domis-cursor-z: 50;
+  --domis-phone-radius: 44px;
+  --domis-phone-bezel: #16181c;
+  --domis-browser-radius: 12px;
+  box-sizing: border-box;
+  color: var(--domis-live-ink);
+}
+
+.domis-live *,
+.domis-live *::before,
+.domis-live *::after {
+  box-sizing: border-box;
+}
+
+.domis-live .material-symbols-rounded {
+  font-family: "Material Symbols Rounded", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* —— Frames —— */
+.domis-live-phone-shell,
+.domis-live-browser-shell {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  /* Reserve layout space for the scaled canvas (height set inline). */
+  overflow: hidden;
+}
+
+.domis-live-phone-canvas,
+.domis-live-browser-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: calc(var(--domis-design-w, 390px) / -2);
+  transform-origin: top center;
+  overflow: hidden;
+  /* scale() applied inline */
+}
+
+.domis-live-phone-canvas {
+  width: var(--domis-design-w, 390px);
+  height: var(--domis-design-h, 844px);
+  border-radius: var(--domis-phone-radius);
+  background: var(--domis-live-surface);
+  border: 3px solid var(--domis-phone-bezel);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.domis-live-phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--domis-phone-radius) - 3px);
+  background: var(--domis-live-bg);
+  font-family: var(--domis-live-font);
+}
+
+.domis-live-browser-stage {
+  width: var(--domis-design-w, 720px);
+  height: var(--domis-design-h, 640px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--domis-browser-radius);
+  background: var(--domis-live-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.domis-live-browser-chrome {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--domis-live-chrome);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.domis-live-browser-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.domis-live-browser-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d0d2d6;
+}
+
+.domis-live-browser-dots span:nth-child(1) {
+  background: #ff5f57;
+}
+
+.domis-live-browser-dots span:nth-child(2) {
+  background: #febc2e;
+}
+
+.domis-live-browser-dots span:nth-child(3) {
+  background: #28c840;
+}
+
+.domis-live-browser-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--domis-live-font);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--domis-live-chrome-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.domis-live-browser-content {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--domis-live-bg);
+  font-family: var(--domis-live-font);
+}
+
+/* —— Cursor —— */
+.domis-live-cursor {
+  --domis-cursor-w: 36px;
+  --domis-cursor-h: 52px;
+  --domis-cursor-z: 50;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--domis-cursor-w);
+  height: var(--domis-cursor-h);
+  z-index: var(--domis-cursor-z);
+  pointer-events: none;
+  /* Tip sits near top-left of the path; GSAP can also tween x/y on this node. */
+  will-change: transform, opacity;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+.domis-live-cursor[data-visible="false"] {
+  opacity: 0;
+}
+
+.domis-live-cursor svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
