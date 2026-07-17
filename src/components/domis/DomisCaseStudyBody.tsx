@@ -27,8 +27,8 @@ export function DomisCaseStudyBody() {
         </symbol>
       </svg>
 
-      {/* Intro */}
-      <section id="overview" className="dcs-col case-study-section-y-t">
+      {/* Intro — top padding mirrors hero pb-16/md:pb-24 for even spacing around the divider */}
+      <section id="overview" className="dcs-col pt-16 md:pt-24">
         <Reveal>
           <div className="case-study-prose-stack flex flex-col site-body text-white/65">
             <p>
