@@ -124,6 +124,16 @@
   height: auto;
 }
 
+.domis-cs .dcs-img-block {
+  width: 100%;
+  margin: 0 0 var(--dcs-step);
+}
+
+.domis-cs .dcs-media.dcs-media-image {
+  justify-content: center;
+  padding: 1.25rem;
+}
+
 .domis-cs figcaption.dcs-caption {
   width: 100%;
   margin-top: 0.875rem;

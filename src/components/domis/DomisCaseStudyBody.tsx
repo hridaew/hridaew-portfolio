@@ -3,6 +3,7 @@
 import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
+import { LightboxImage } from "@/components/virdio/Lightbox";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 function PointerCursor({ className }: { className?: string }) {
@@ -913,6 +914,17 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             Report Processor
           </p>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-media-fit dcs-media-image">
+              <LightboxImage
+                src="/assets/home/domis-card1-tasks-composite.png"
+                alt="Domis report processor: inspection report flows into Tasks Found"
+                className="mx-auto h-auto w-full max-w-[320px] object-contain"
+                draggable={false}
+                hoverScale={1.02}
+              />
+            </div>
+          </figure>
           <div className="site-body text-white/65">
             <p>
               Before any of the above, I went looking for what a homeowner
