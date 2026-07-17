@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from "react";
 
 type MoreCard = {
   id: string;
@@ -167,45 +173,94 @@ const cards: MoreCard[] = [
   },
 ];
 
+function FlipCard({
+  card,
+  flipped,
+  onToggle,
+}: {
+  card: MoreCard;
+  flipped: boolean;
+  onToggle: () => void;
+}) {
+  const tiltRef = useRef<HTMLSpanElement>(null);
+  const rafRef = useRef(0);
+
+  const resetTilt = () => {
+    cancelAnimationFrame(rafRef.current);
+    const el = tiltRef.current;
+    if (!el) return;
+    el.classList.remove("is-tilting");
+    el.style.setProperty("--dcs-tilt-x", "0deg");
+    el.style.setProperty("--dcs-tilt-y", "0deg");
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const el = tiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.classList.add("is-tilting");
+      // invert X so the card leans toward the cursor
+      el.style.setProperty("--dcs-tilt-x", `${(-py * 12).toFixed(2)}deg`);
+      el.style.setProperty("--dcs-tilt-y", `${(px * 14).toFixed(2)}deg`);
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      className={`dcs-flip${flipped ? " is-flipped" : ""}`}
+      aria-pressed={flipped}
+      aria-label={`${card.title}. ${flipped ? "Showing description. Click to flip back." : "Click to read more."}`}
+      onClick={onToggle}
+      onPointerMove={onPointerMove}
+      onPointerLeave={resetTilt}
+      onPointerCancel={resetTilt}
+    >
+      <span className="dcs-flip-tilt" ref={tiltRef}>
+        <span className="dcs-flip-inner">
+          <span
+            className="dcs-flip-face dcs-flip-front"
+            style={{ background: card.pastel, color: card.ink } satisfies CSSProperties}
+          >
+            <span className="dcs-flip-title">{card.title}</span>
+            <span className="dcs-flip-icon">{card.icon}</span>
+          </span>
+          <span
+            className="dcs-flip-face dcs-flip-back"
+            style={{ background: card.pastel, color: card.ink }}
+          >
+            <span className="dcs-flip-title">{card.title}</span>
+            <span className="dcs-flip-copy">{card.description}</span>
+          </span>
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export function DomisMoreCards() {
   const [flippedId, setFlippedId] = useState<string | null>(null);
 
   return (
     <div className="dcs-more">
       <ul className="dcs-sheet">
-        {cards.map((card) => {
-          const flipped = flippedId === card.id;
-          return (
-            <li key={card.id} className="dcs-flip-item">
-              <button
-                type="button"
-                className={`dcs-flip${flipped ? " is-flipped" : ""}`}
-                aria-pressed={flipped}
-                aria-label={`${card.title}. ${flipped ? "Showing description. Click to flip back." : "Click to read more."}`}
-                onClick={() =>
-                  setFlippedId((current) => (current === card.id ? null : card.id))
-                }
-              >
-                <span className="dcs-flip-inner">
-                  <span
-                    className="dcs-flip-face dcs-flip-front"
-                    style={{ background: card.pastel, color: card.ink } satisfies CSSProperties}
-                  >
-                    <span className="dcs-flip-title">{card.title}</span>
-                    <span className="dcs-flip-icon">{card.icon}</span>
-                  </span>
-                  <span
-                    className="dcs-flip-face dcs-flip-back"
-                    style={{ background: card.pastel, color: card.ink }}
-                  >
-                    <span className="dcs-flip-title">{card.title}</span>
-                    <span className="dcs-flip-copy">{card.description}</span>
-                  </span>
-                </span>
-              </button>
-            </li>
-          );
-        })}
+        {cards.map((card) => (
+          <li key={card.id} className="dcs-flip-item">
+            <FlipCard
+              card={card}
+              flipped={flippedId === card.id}
+              onToggle={() =>
+                setFlippedId((current) => (current === card.id ? null : card.id))
+              }
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );
