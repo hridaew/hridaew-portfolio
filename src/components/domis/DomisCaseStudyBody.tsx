@@ -1002,6 +1002,11 @@ export function DomisCaseStudyBody() {
               any of it means in plain language.
             </p>
             <p>
+              This turned the inspection report into something that is actually
+              made for the user, task and location based so they can understand
+              it through their lens.
+            </p>
+            <p>
               So the report became something that sits in the app and stays
               there. The user pulls tasks from it if they want them, deletes what
               no longer applies, and everything is categorized where the rest of
