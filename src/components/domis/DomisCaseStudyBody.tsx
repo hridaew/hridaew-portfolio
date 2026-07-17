@@ -1024,10 +1024,8 @@ export function DomisCaseStudyBody() {
               That changed what the feature should be.{" "}
               <strong className="text-white">
                 Not a diagnostic that generates a to-do list, which would be
-                wrong on arrival, but a way to understand the house:
-              </strong>{" "}
-              what the higher priority issues were, how they group together, what
-              any of it means in plain language.
+                wrong on arrival, but a way to understand the house.
+              </strong>
             </p>
             <p>
               This turned the inspection report into something that is actually
