@@ -494,10 +494,12 @@ export function DomisCaseStudyBody() {
                 Agentic search is non-deterministic.
               </strong>{" "}
               The same address returns different results on different runs, and
-              there is no version of this that is right every time. Rather than
-              trying to engineer certainty, I ran the search three times and
-              kept what agreed across runs. It is fast and cheap enough that
-              redundancy is a reasonable substitute for confidence.
+              there is no version of this that is right every time.
+            </p>
+            <p>
+              Rather than trying to engineer certainty, I ran the search three
+              times and kept what agreed across runs. It is fast and cheap
+              enough that redundancy is a reasonable substitute for confidence.
             </p>
             <p>
               The results land in the same form the user would have filled in
