@@ -586,7 +586,14 @@ export function DomisCaseStudyBody() {
           <div className="dcs-media">
             <div className="dcs-versus">
               <div>
-                <div className="dcs-thumb dcs-sat" />
+                <div className="dcs-thumb dcs-sat">
+                  <img
+                    src="/assets/domis/property-map-thumb.png"
+                    alt="Street-level map view of the property"
+                    className="dcs-thumb-img"
+                    draggable={false}
+                  />
+                </div>
                 <p className="dcs-lbl" style={{ margin: "12px 0 0" }}>
                   What the map gives you
                 </p>
