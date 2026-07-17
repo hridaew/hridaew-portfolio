@@ -4,7 +4,7 @@
   --hac-surface: #ffffff;
   --hac-ink: #525252;
   --hac-muted: #818181;
-  --hac-font: "Outfit", system-ui, sans-serif;
+  --hac-font: var(--font-domis-outfit), system-ui, sans-serif;
   --hac-radius-card: 24px;
   --hac-radius-thumb: 20px;
   width: 100%;
@@ -161,8 +161,8 @@
 }
 
 .domis-live.hac-demo .domis-live-cursor {
-  --domis-cursor-w: 28px;
-  --domis-cursor-h: 40px;
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
 }
 
 @media (prefers-reduced-motion: reduce) {

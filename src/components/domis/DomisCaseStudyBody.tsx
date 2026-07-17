@@ -9,6 +9,7 @@ import {
   ApplianceCaptureDemo,
   ApplianceV1V2Compare,
   ConsensusRunsPanel,
+  DomisLiveFonts,
   HomeAvatarConversion,
   InspectionToTasksDemo,
   WebCreateHomeDemo,
@@ -17,7 +18,7 @@ import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 export function DomisCaseStudyBody() {
   return (
-    <div className={`domis-cs ${SITE_COLUMN} pb-16 md:pb-24`}>
+    <DomisLiveFonts className={`domis-cs ${SITE_COLUMN} pb-16 md:pb-24`}>
       {/* Intro — top padding mirrors hero pb-16/md:pb-24 for even spacing around the divider */}
       <section id="overview" className="dcs-col dcs-block pt-16 md:pt-24">
         <Reveal>
@@ -705,6 +706,6 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <DomisMoreCards />
       </Reveal>
-    </div>
+    </DomisLiveFonts>
   );
 }

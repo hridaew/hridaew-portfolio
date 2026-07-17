@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties, Ref } from "react";
+import { DomisLiveIcon } from "@/components/domis/live/DomisLiveIcon";
 import { APPLIANCE_ASSETS } from "@/components/domis/live/fixtures";
 import "./item-scanner-screen.css";
 
@@ -27,24 +28,6 @@ export type ItemScannerScreenProps = {
 
 const DEFAULT_FACT =
   "Barcodes were first used in 1974.";
-
-function MaterialIcon({
-  name,
-  size = 24,
-}: {
-  name: string;
-  size?: number;
-}) {
-  return (
-    <span
-      className="material-symbols-rounded"
-      aria-hidden
-      style={{ fontSize: size, width: size, height: size }}
-    >
-      {name}
-    </span>
-  );
-}
 
 /**
  * Presentational Domis item scanner — InAppItemScanner chrome +
@@ -81,7 +64,7 @@ export function ItemScannerScreen({
             draggable={false}
           />
           <div className="iss-flash-btn">
-            <MaterialIcon name="flash_off" />
+            <DomisLiveIcon name="flash_off" size={24} />
           </div>
         </div>
 
@@ -94,7 +77,7 @@ export function ItemScannerScreen({
 
         <div className="iss-controls">
           <div className="iss-icon-btn" aria-hidden>
-            <MaterialIcon name="close" />
+            <DomisLiveIcon name="close" size={24} />
           </div>
           <div
             ref={shutterRef}
@@ -103,7 +86,7 @@ export function ItemScannerScreen({
             aria-label="Shutter"
           />
           <div className="iss-icon-btn" aria-hidden>
-            <MaterialIcon name="help" />
+            <DomisLiveIcon name="help" size={24} />
           </div>
         </div>
       </div>
@@ -130,7 +113,7 @@ export function ItemScannerScreen({
           />
         </div>
         <div className="iss-scan-close" aria-hidden>
-          <MaterialIcon name="close" />
+          <DomisLiveIcon name="close" size={24} />
         </div>
       </div>
     </div>

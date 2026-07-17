@@ -1,7 +1,7 @@
 /* Appliance capture demo — left scanner phone, right fields phone. */
 
 .domis-live.acd {
-  --acd-font: "Outfit", system-ui, sans-serif;
+  --acd-font: var(--font-domis-outfit), system-ui, sans-serif;
   position: relative;
   width: 100%;
   max-width: 780px;

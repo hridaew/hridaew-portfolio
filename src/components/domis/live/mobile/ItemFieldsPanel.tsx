@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import { DomisLiveIcon } from "@/components/domis/live/DomisLiveIcon";
 import {
   APPLIANCE_ASSETS,
   APPLIANCE_CAPTURE,
@@ -53,24 +54,6 @@ export type ItemFieldsPanelProps = {
   className?: string;
   style?: CSSProperties;
 };
-
-function MaterialIcon({
-  name,
-  size = 20,
-}: {
-  name: string;
-  size?: number;
-}) {
-  return (
-    <span
-      className="material-symbols-rounded"
-      aria-hidden
-      style={{ fontSize: size, width: size, height: size }}
-    >
-      {name}
-    </span>
-  );
-}
 
 /**
  * Presentational Domis create-item form — FormHeader, SharedSuggestionInput,
@@ -131,12 +114,12 @@ export function ItemFieldsPanel({
             <div className="ifp-photo ifp-photo-scanned">
               <img src={photoSrc!} alt="" draggable={false} />
               <span className="ifp-photo-ai" aria-hidden>
-                <MaterialIcon name="document_scanner" size={17} />
+                <DomisLiveIcon name="document_scanner" size={17} />
               </span>
             </div>
           ) : (
             <div className="ifp-photo ifp-photo-add" aria-hidden>
-              <MaterialIcon name="add_photo_alternate" size={30} />
+              <DomisLiveIcon name="add_photo_alternate" size={30} />
             </div>
           )}
           <p
@@ -167,7 +150,7 @@ export function ItemFieldsPanel({
                 className="ifp-chip"
                 data-selected={selected ? "true" : "false"}
               >
-                <MaterialIcon name={chip.icon} size={18} />
+                <DomisLiveIcon name={chip.icon} size={18} />
                 <span>{chip.label}</span>
               </div>
             );
@@ -178,7 +161,7 @@ export function ItemFieldsPanel({
         <p className="ifp-section-label">Space</p>
         <div className="ifp-chip-row">
           <div className="ifp-add-circle" aria-hidden>
-            <MaterialIcon name="add" size={24} />
+            <DomisLiveIcon name="add" size={24} />
           </div>
           <div className="ifp-chip-scroll">
             {SPACE_CHIPS.map((chip) => (
@@ -187,7 +170,7 @@ export function ItemFieldsPanel({
                 className="ifp-chip ifp-chip-space"
                 data-selected="false"
               >
-                <MaterialIcon name={chip.icon} size={20} />
+                <DomisLiveIcon name={chip.icon} size={20} />
                 <span>{chip.label}</span>
               </div>
             ))}
@@ -198,7 +181,7 @@ export function ItemFieldsPanel({
         <p className="ifp-section-label">Associated Item</p>
         <div className="ifp-chip-row">
           <div className="ifp-add-circle" aria-hidden>
-            <MaterialIcon name="add" size={24} />
+            <DomisLiveIcon name="add" size={24} />
           </div>
           <div className="ifp-chip-scroll">
             {ITEM_CHIPS.map((chip) => (
@@ -234,7 +217,7 @@ export function ItemFieldsPanel({
               >
                 <div className="ifp-row-inner">
                   <div className="ifp-row-icon">
-                    <MaterialIcon name={icon} />
+                    <DomisLiveIcon name={icon} />
                   </div>
                   <p className="ifp-row-label">{label}</p>
                   <p
@@ -245,7 +228,7 @@ export function ItemFieldsPanel({
                   </p>
                   {!empty ? (
                     <div className="ifp-row-chevron">
-                      <MaterialIcon name="chevron_right" />
+                      <DomisLiveIcon name="chevron_right" />
                     </div>
                   ) : null}
                 </div>
@@ -262,13 +245,13 @@ export function ItemFieldsPanel({
       <div className="ifp-footer">
         <div className="ifp-scan-wrap">
           <div className="ifp-scan-btn" aria-hidden>
-            <MaterialIcon name="document_scanner" size={18} />
+            <DomisLiveIcon name="document_scanner" size={18} />
             <span>Scan It!</span>
           </div>
         </div>
         <div className="ifp-footer-row">
           <div className="ifp-close-btn" aria-hidden>
-            <MaterialIcon name="close" size={24} />
+            <DomisLiveIcon name="close" size={24} />
           </div>
           <div
             className="ifp-save-btn"

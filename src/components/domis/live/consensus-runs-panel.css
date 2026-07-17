@@ -9,7 +9,7 @@
   --crp-line: #efefef;
   --crp-accent: #005750;
   --crp-accent-soft: rgba(0, 87, 80, 0.1);
-  --crp-font: "Outfit", system-ui, sans-serif;
+  --crp-font: var(--font-domis-outfit), system-ui, sans-serif;
   --crp-radius-card: 24px;
   --crp-radius-chip: 8px;
   width: 100%;
@@ -162,8 +162,8 @@
 }
 
 .domis-live.crp-demo .domis-live-cursor {
-  --domis-cursor-w: 28px;
-  --domis-cursor-h: 40px;
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
 }
 
 @media (prefers-reduced-motion: reduce) {

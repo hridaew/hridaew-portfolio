@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type Ref,
 } from "react";
+import { DomisLiveIcon } from "@/components/domis/live/DomisLiveIcon";
 import {
   ADDRESS_ASSETS,
   ADDRESS_FULL,
@@ -73,31 +74,6 @@ const DEFAULT_DETAILS = [
   ADDRESS_PROFILE.roof,
   ADDRESS_PROFILE.heating,
 ] as const;
-
-function MaterialIcon({
-  name,
-  color = "currentColor",
-  size = 20,
-}: {
-  name: string;
-  color?: string;
-  size?: number;
-}) {
-  return (
-    <span
-      className="material-symbols-rounded"
-      aria-hidden
-      style={{
-        color,
-        fontSize: size,
-        width: size,
-        height: size,
-      }}
-    >
-      {name}
-    </span>
-  );
-}
 
 function SilhouetteLoader({
   size = 96,
@@ -205,7 +181,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                   className="chp-search"
                   data-focused={fieldFocused || typing ? "true" : "false"}
                 >
-                  <MaterialIcon name="location_on" size={20} color="#818181" />
+                  <DomisLiveIcon name="location_on" size={20} color="#818181" />
                   <div className="chp-search-input" aria-hidden>
                     {addressText || (
                       <span style={{ color: "var(--chp-muted)" }}>
@@ -362,7 +338,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                           className="chp-stat"
                           data-visible={showStats ? "true" : "false"}
                         >
-                          <MaterialIcon
+                          <DomisLiveIcon
                             name="design_services"
                             size={22}
                             color="#818181"
@@ -377,7 +353,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                           data-visible={showStats ? "true" : "false"}
                           style={{ transitionDelay: "60ms" }}
                         >
-                          <MaterialIcon
+                          <DomisLiveIcon
                             name="square_foot"
                             size={22}
                             color="#818181"
@@ -399,7 +375,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                         <div className="chp-chips">
                           {bedrooms.map((name) => (
                             <div key={name} className="chp-chip">
-                              <MaterialIcon
+                              <DomisLiveIcon
                                 name="bed"
                                 size={22}
                                 color="#818181"
@@ -408,7 +384,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                             </div>
                           ))}
                           <div className="chp-chip-add">
-                            <MaterialIcon name="add" size={22} color="#c8c8c8" />
+                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
                             <span>Add bedroom</span>
                           </div>
                         </div>
@@ -424,7 +400,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                         <div className="chp-chips">
                           {bathrooms.map((name) => (
                             <div key={name} className="chp-chip">
-                              <MaterialIcon
+                              <DomisLiveIcon
                                 name="shower"
                                 size={22}
                                 color="#818181"
@@ -433,7 +409,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                             </div>
                           ))}
                           <div className="chp-chip-add">
-                            <MaterialIcon name="add" size={22} color="#c8c8c8" />
+                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
                             <span>Add bathroom</span>
                           </div>
                         </div>
@@ -449,7 +425,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                         <div className="chp-chips">
                           {details.map((name) => (
                             <div key={name} className="chp-chip">
-                              <MaterialIcon
+                              <DomisLiveIcon
                                 name="home_repair_service"
                                 size={22}
                                 color="#818181"
@@ -458,7 +434,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                             </div>
                           ))}
                           <div className="chp-chip-add">
-                            <MaterialIcon name="add" size={22} color="#c8c8c8" />
+                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
                             <span>Add detail</span>
                           </div>
                         </div>

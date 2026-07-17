@@ -10,7 +10,7 @@
   --avc-line: #f4f4f4;
   --avc-teal: #005750;
   --avc-teal-light: #dcefee;
-  --avc-font: "Outfit", system-ui, sans-serif;
+  --avc-font: var(--font-domis-outfit), system-ui, sans-serif;
   width: 100%;
   max-width: 720px;
   font-family: var(--avc-font);
@@ -81,8 +81,7 @@
   color: var(--avc-ink);
 }
 
-.domis-live.avc .avc-row-icon .material-symbols-rounded {
-  font-size: 18px;
+.domis-live.avc .avc-row-icon .domis-live-icon {
   width: 18px;
   height: 18px;
 }
@@ -119,8 +118,7 @@
   align-items: center;
 }
 
-.domis-live.avc .avc-row-chevron .material-symbols-rounded {
-  font-size: 18px;
+.domis-live.avc .avc-row-chevron .domis-live-icon {
   width: 18px;
   height: 18px;
 }

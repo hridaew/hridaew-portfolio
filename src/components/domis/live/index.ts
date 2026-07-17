@@ -1,6 +1,14 @@
 import "./domis-live.css";
 
 export {
+  DomisLiveFonts,
+  domisLiveFontVariables,
+  type DomisLiveFontsProps,
+} from "./DomisLiveFonts";
+
+export { DomisLiveIcon, type DomisLiveIconProps } from "./DomisLiveIcon";
+
+export {
   PhoneFrame,
   PHONE_DESIGN_WIDTH,
   PHONE_DESIGN_HEIGHT,

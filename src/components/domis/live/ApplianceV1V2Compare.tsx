@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { DomisLiveIcon } from "@/components/domis/live/DomisLiveIcon";
 import { APPLIANCE_CAPTURE } from "@/components/domis/live/fixtures";
 import "./appliance-v1-v2-compare.css";
 
@@ -26,18 +27,6 @@ export type ApplianceV1V2CompareProps = {
   className?: string;
   style?: CSSProperties;
 };
-
-function MaterialIcon({ name, size = 20 }: { name: string; size?: number }) {
-  return (
-    <span
-      className="material-symbols-rounded"
-      aria-hidden
-      style={{ fontSize: size, width: size, height: size }}
-    >
-      {name}
-    </span>
-  );
-}
 
 /**
  * Editorial v1 vs v2 appliance compare — same story as DomisCaseStudyBody,
@@ -66,12 +55,12 @@ export function ApplianceV1V2Compare({
               <div key={field.key} className="avc-row">
                 <div className="avc-row-inner">
                   <div className="avc-row-icon">
-                    <MaterialIcon name={field.icon} />
+                    <DomisLiveIcon name={field.icon} size={18} />
                   </div>
                   <p className="avc-row-label">{field.label}:</p>
                   <p className="avc-row-value">{field.value}</p>
                   <div className="avc-row-chevron">
-                    <MaterialIcon name="chevron_right" />
+                    <DomisLiveIcon name="chevron_right" size={18} />
                   </div>
                 </div>
                 <hr className="avc-divider" />
@@ -92,11 +81,11 @@ export function ApplianceV1V2Compare({
             {V2_LINKS.map((link) => (
               <div key={link.key} className="avc-link">
                 <div className="avc-link-icon">
-                  <MaterialIcon name={link.icon} size={18} />
+                  <DomisLiveIcon name={link.icon} size={18} />
                 </div>
                 <span>{link.label}</span>
                 <div className="avc-link-chevron">
-                  <MaterialIcon name="chevron_right" size={18} />
+                  <DomisLiveIcon name="chevron_right" size={18} />
                 </div>
               </div>
             ))}

@@ -1,7 +1,5 @@
 /* Create-home panel — Lab CreateHomeProfilePanel visuals, scoped under .domis-live.
    Tweak tokens here without touching WebCreateHomeDemo choreography. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap");
-
 .domis-live.chp {
   --chp-bg: #f7f7f7;
   --chp-surface: #ffffff;
@@ -13,8 +11,9 @@
   --chp-manual-bg: #f3f4f6;
   --chp-accent: #005750;
   --chp-accent-fill: rgba(0, 87, 80, 0.4);
-  --chp-font: "Outfit", system-ui, sans-serif;
-  --chp-font-btn: "Inter", "Outfit", system-ui, sans-serif;
+  --chp-font: var(--font-domis-outfit), system-ui, sans-serif;
+  --chp-font-btn: var(--font-domis-inter), var(--font-domis-outfit), system-ui,
+    sans-serif;
   --chp-radius-card: 24px;
   --chp-radius-field: 16px;
   --chp-radius-pill: 999px;

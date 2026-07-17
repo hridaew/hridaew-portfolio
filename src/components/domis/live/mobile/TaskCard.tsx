@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { DomisLiveIcon } from "@/components/domis/live/DomisLiveIcon";
 import "./task-card.css";
 
 export type TaskCardChipVariant =
@@ -16,7 +17,7 @@ export type TaskCardChipVariant =
 export type TaskCardChip = {
   id: string;
   label?: string;
-  /** Material Symbols Rounded ligature name */
+  /** Icon key (Material ligature name → Lucide via DomisLiveIcon) */
   icon?: string;
   variant?: TaskCardChipVariant;
   backgroundColor?: string;
@@ -36,24 +37,6 @@ export type TaskCardProps = {
   className?: string;
   style?: CSSProperties;
 };
-
-function MaterialIcon({
-  name,
-  size = 15,
-}: {
-  name: string;
-  size?: number;
-}) {
-  return (
-    <span
-      className="material-symbols-rounded"
-      aria-hidden="true"
-      style={{ fontSize: size, width: size, height: size }}
-    >
-      {name}
-    </span>
-  );
-}
 
 /**
  * Presentational Domis task card — Flutter TaskCard / CustomCard / AppShadows.
@@ -87,7 +70,7 @@ export function TaskCard({
                 data-variant="pin"
                 aria-label="Pinned"
               >
-                <MaterialIcon name="star" size={16} />
+                <DomisLiveIcon name="star" size={16} />
               </span>
             )}
             {chips.map((chip) => {
@@ -107,7 +90,7 @@ export function TaskCard({
                     }}
                     aria-hidden="true"
                   >
-                    <MaterialIcon name={chip.icon!} size={15} />
+                    <DomisLiveIcon name={chip.icon!} size={15} />
                   </span>
                 );
               }
@@ -123,7 +106,7 @@ export function TaskCard({
                     color: chip.color,
                   }}
                 >
-                  {chip.icon ? <MaterialIcon name={chip.icon} /> : null}
+                  {chip.icon ? <DomisLiveIcon name={chip.icon} size={15} /> : null}
                   {chip.label ? (
                     <span className="dtc-chip-label">{chip.label}</span>
                   ) : null}

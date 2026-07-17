@@ -1,7 +1,5 @@
 /* Domis live demos — scoped under .domis-live so portfolio typography stays untouched.
-   Fonts load for product UI only; set font-family on .domis-live descendants as needed. */
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
-
+   Fonts: next/font CSS vars from DomisLiveFonts (--font-domis-outfit / --font-domis-inter). */
 .domis-live {
   --domis-live-bg: #f7f7f7;
   --domis-live-surface: #ffffff;
@@ -10,9 +8,9 @@
   --domis-live-line: #efefef;
   --domis-live-chrome: #ececee;
   --domis-live-chrome-ink: #6b6f76;
-  --domis-live-font: "Outfit", system-ui, sans-serif;
-  --domis-cursor-w: 36px;
-  --domis-cursor-h: 52px;
+  --domis-live-font: var(--font-domis-outfit), system-ui, sans-serif;
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
   --domis-cursor-z: 50;
   --domis-phone-radius: 44px;
   --domis-phone-bezel: #16181c;
@@ -27,27 +25,12 @@
   box-sizing: border-box;
 }
 
-.domis-live .material-symbols-rounded {
-  font-family: "Material Symbols Rounded", sans-serif;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1em;
-  height: 1em;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+.domis-live .domis-live-icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
   user-select: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* —— Frames —— */
@@ -168,8 +151,8 @@
 
 /* —— Cursor —— */
 .domis-live-cursor {
-  --domis-cursor-w: 36px;
-  --domis-cursor-h: 52px;
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
   --domis-cursor-z: 50;
   position: absolute;
   left: 0;

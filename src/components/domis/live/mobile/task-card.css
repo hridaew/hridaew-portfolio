@@ -10,7 +10,7 @@
   --dtc-primary-light: rgba(255, 90, 95, 0.16);
   --dtc-star-bg: #fff1dc;
   --dtc-star: #ffa726;
-  --dtc-font: "Outfit", system-ui, sans-serif;
+  --dtc-font: var(--font-domis-outfit), system-ui, sans-serif;
   --dtc-radius-card: 24px;
   --dtc-radius-thumb: 8px;
   --dtc-thumb: 56px;
@@ -119,15 +119,14 @@
   color: var(--dtc-ink);
 }
 
-.domis-live.dtc .dtc-chip .material-symbols-rounded {
-  font-size: 15px;
+.domis-live.dtc .dtc-chip .domis-live-icon {
   width: 15px;
   height: 15px;
   color: inherit;
   flex: none;
 }
 
-.domis-live.dtc .dtc-chip[data-variant="location"] .material-symbols-rounded {
+.domis-live.dtc .dtc-chip[data-variant="location"] .domis-live-icon {
   transform: translateX(1px);
 }
 
@@ -154,11 +153,9 @@
   color: var(--dtc-star);
 }
 
-.domis-live.dtc .dtc-chip-circle .material-symbols-rounded {
-  font-size: 16px;
+.domis-live.dtc .dtc-chip-circle .domis-live-icon {
   width: 16px;
   height: 16px;
-  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 /* Thumb — 56×56, AppRadius.sm, AppShadows.cardThumb */

@@ -12,7 +12,7 @@
   --ifp-unselected: #efefef;
   --ifp-teal: #005750;
   --ifp-teal-light: #dcefee;
-  --ifp-font: "Outfit", system-ui, sans-serif;
+  --ifp-font: var(--font-domis-outfit), system-ui, sans-serif;
   position: relative;
   width: 100%;
   height: 100%;
@@ -253,11 +253,11 @@
   border: 1px solid var(--ifp-teal);
 }
 
-.domis-live.ifp .ifp-chip[data-selected="true"] .material-symbols-rounded {
+.domis-live.ifp .ifp-chip[data-selected="true"] .domis-live-icon {
   color: var(--ifp-active);
 }
 
-.domis-live.ifp .ifp-chip .material-symbols-rounded {
+.domis-live.ifp .ifp-chip .domis-live-icon {
   color: var(--ifp-muted);
 }
 
@@ -303,8 +303,7 @@
   color: var(--ifp-muted);
 }
 
-.domis-live.ifp .ifp-row-icon .material-symbols-rounded {
-  font-size: 20px;
+.domis-live.ifp .ifp-row-icon .domis-live-icon {
   width: 20px;
   height: 20px;
 }
@@ -351,8 +350,7 @@
   align-items: center;
 }
 
-.domis-live.ifp .ifp-row-chevron .material-symbols-rounded {
-  font-size: 20px;
+.domis-live.ifp .ifp-row-chevron .domis-live-icon {
   width: 20px;
   height: 20px;
 }

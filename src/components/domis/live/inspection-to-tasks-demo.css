@@ -1,7 +1,7 @@
 /* Inspection PDF → Domis TaskCard list — autoplay demo. */
 
 .domis-live.itt {
-  --itt-font: "Outfit", system-ui, sans-serif;
+  --itt-font: var(--font-domis-outfit), system-ui, sans-serif;
   --itt-mock: #ffffff;
   --itt-mock-text: #16181c;
   --itt-mock-muted: #6b6f76;
@@ -153,8 +153,8 @@
 }
 
 .domis-live.itt-demo .domis-live-cursor {
-  --domis-cursor-w: 28px;
-  --domis-cursor-h: 40px;
+  --domis-cursor-w: 44px;
+  --domis-cursor-h: 64px;
 }
 
 @media (prefers-reduced-motion: reduce) {
