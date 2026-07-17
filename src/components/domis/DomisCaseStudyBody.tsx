@@ -37,15 +37,20 @@ export function DomisCaseStudyBody() {
               <p className="dcs-heading site-subheading text-white">
                 What is Domis
               </p>
-              <p className="site-body text-white/65">
-                Domis helps homeowners keep track of their homes. What needs
-                fixing, what&rsquo;s about to break, and what that appliance in
-                the garage actually is. Most services in this category try to
-                take home care out of the owner&rsquo;s hands. Domis does the
-                opposite. It sits between the owner and the house as a
-                compatibility layer, helping them track it, understand it, and
-                prevent the failures that get expensive.
-              </p>
+              <div className="site-body text-white/65">
+                <p>
+                  Domis helps homeowners keep track of their homes. What needs
+                  fixing, what&rsquo;s about to break, and what that appliance
+                  in the garage actually is.
+                </p>
+                <p>
+                  Most services in this category try to take home care out of
+                  the owner&rsquo;s hands. Domis does the opposite. It sits
+                  between the owner and the house as a compatibility layer,
+                  helping them track it, understand it, and prevent the failures
+                  that get expensive.
+                </p>
+              </div>
             </div>
 
             <div>
