@@ -45,20 +45,9 @@ function IconRecommendations() {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
       <circle cx="28" cy="28" r="22" stroke="currentColor" strokeWidth="3" />
-      <circle cx="28" cy="28" r="3.5" fill="currentColor" />
-      <path d="M28 10 V22" stroke="currentColor" strokeWidth="3" strokeLinecap="square" />
       <path
-        d="M28 28 L42 18"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeLinecap="square"
-      />
-      <path
-        d="M10 28 H16 M40 28 H46 M28 40 V46"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="square"
-        opacity="0.4"
+        d="M28 14 L31.2 23.2 L41 24.1 L33.8 30.4 L36 40 L28 34.8 L20 40 L22.2 30.4 L15 24.1 L24.8 23.2 Z"
+        fill="currentColor"
       />
     </svg>
   );
