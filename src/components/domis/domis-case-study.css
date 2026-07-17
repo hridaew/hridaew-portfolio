@@ -1339,13 +1339,10 @@
   background: #e9effd;
 }
 
-/* more cards — flip tiles on the Domis red media field */
+/* more cards — flip tiles (no media container) */
 .domis-cs .dcs-more {
   margin-top: 3.25rem;
   margin-bottom: 3.25rem;
-  padding: 1.5rem;
-  border-radius: 16px;
-  background: var(--dcs-media-bg);
 }
 
 .domis-cs .dcs-sheet {
