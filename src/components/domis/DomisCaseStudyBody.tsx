@@ -1046,8 +1046,11 @@ export function DomisCaseStudyBody() {
               So the report became something that sits in the app and stays
               there. The user pulls tasks from it if they want them, deletes what
               no longer applies, and everything is categorized where the rest of
-              Domis can reach it. Optional by design, because a report from 2016
-              has no business telling anyone what to do this weekend.
+              Domis can reach it.
+            </p>
+            <p>
+              Optional by design, because a report from 2016 has no business
+              telling anyone what to do this weekend.
             </p>
           </div>
         </Reveal>
