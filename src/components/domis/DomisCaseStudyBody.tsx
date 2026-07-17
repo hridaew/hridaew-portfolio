@@ -85,10 +85,12 @@ export function DomisCaseStudyBody() {
                     people don&rsquo;t know their own homes.
                   </strong>{" "}
                   Owners couldn&rsquo;t name the manufacturer of their water
-                  heater or say when the roof was last serviced. So getting
-                  information into Domis is also the act of learning it. That
-                  reframed the goal: not a filled database, but an owner who
-                  understands the house they live in.
+                  heater or say when the roof was last serviced.
+                </p>
+                <p>
+                  So getting information into Domis is also the act of learning
+                  it. That reframed the goal: not a filled database, but an
+                  owner who understands the house they live in.
                 </p>
                 <p>
                   In order to maximize the information we get and reduce the
