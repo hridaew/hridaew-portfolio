@@ -63,3 +63,8 @@ export {
   ItemFieldsPanel,
   type ItemFieldsPanelProps,
 } from "./mobile/ItemFieldsPanel";
+
+export {
+  ApplianceV1V2Compare,
+  type ApplianceV1V2CompareProps,
+} from "./ApplianceV1V2Compare";

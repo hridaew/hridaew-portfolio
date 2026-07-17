@@ -7,6 +7,7 @@ import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
 import {
   ApplianceCaptureDemo,
+  ApplianceV1V2Compare,
   ConsensusRunsPanel,
   HomeAvatarConversion,
   WebCreateHomeDemo,
@@ -551,132 +552,8 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-figure">
-          <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Update with Domis styling.
-            </p>
-            <div className="dcs-twoup">
-              <div className="dcs-pane">
-                <div className="dcs-ph">
-                  <span className="dcs-lbl">v1 — Label scanner</span>
-                </div>
-                <div className="dcs-kv">
-                  <span className="dcs-lbl">Brand</span>
-                  <span>Rheem</span>
-                </div>
-                <div className="dcs-kv">
-                  <span className="dcs-lbl">Model</span>
-                  <span>XE50M06ST</span>
-                </div>
-                <div className="dcs-kv">
-                  <span className="dcs-lbl">Serial</span>
-                  <span>Q451812345</span>
-                </div>
-                <div className="dcs-kv">
-                  <span className="dcs-lbl">Capacity</span>
-                  <span>50 gal</span>
-                </div>
-                <p className="dcs-lbl" style={{ margin: "auto 0 0" }}>
-                  Accurate. Inert.
-                </p>
-              </div>
-              <div className="dcs-pane">
-                <div className="dcs-ph">
-                  <span className="dcs-lbl">v2 — Appliance Intelligence</span>
-                </div>
-                <div className="dcs-link">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    style={{ flex: "none" }}
-                  >
-                    <path
-                      d="M4 1.5 H9.5 L13 5 V14.5 H4 Z"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M9.5 1.5 V5 H13"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Manual, 42 pp
-                </div>
-                <div className="dcs-link">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    style={{ flex: "none" }}
-                  >
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="6.3"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                    />
-                    <path d="M1.7 8 H14.3" stroke="#3b6cf0" strokeWidth="1.4" />
-                    <path
-                      d="M8 1.7 C10.2 4.2 10.2 11.8 8 14.3 C5.8 11.8 5.8 4.2 8 1.7 Z"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                  Rheem support
-                </div>
-                <div className="dcs-link">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    style={{ flex: "none" }}
-                  >
-                    <path
-                      d="M2 5 L8 1.8 L14 5 V11 L8 14.2 L2 11 Z"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 5 L8 8.2 L14 5 M8 8.2 V14.2"
-                      stroke="#3b6cf0"
-                      strokeWidth="1.4"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Replacement parts
-                </div>
-                <div style={{ padding: "9px 0 5px" }}>
-                  <span className="dcs-pill dcs-hi">
-                    Warranty active · 4 yrs left
-                  </span>
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    lineHeight: 1.5,
-                    color: "#4a4f57",
-                    paddingTop: 6,
-                  }}
-                >
-                  Common failures: thermocouple, anode rod, pilot assembly
-                </div>
-                <p className="dcs-lbl" style={{ margin: "auto 0 0" }}>
-                  Same capture. Now it does something.
-                </p>
-              </div>
-            </div>
+          <div className="dcs-media dcs-media-fit">
+            <ApplianceV1V2Compare />
           </div>
           <figcaption className="dcs-caption site-body">
             Same scan. One version knows the model number, the other knows what
