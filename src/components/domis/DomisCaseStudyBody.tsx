@@ -30,59 +30,64 @@ export function DomisCaseStudyBody() {
       </svg>
 
       {/* Intro — top padding mirrors hero pb-16/md:pb-24 for even spacing around the divider */}
-      <section id="overview" className="dcs-col pt-16 md:pt-24">
+      <section id="overview" className="dcs-col dcs-block pt-16 md:pt-24">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
-            What is Domis
-          </p>
-          <p className="site-body text-white/65">
-            Domis is a consumer home maintenance app. Most services in this
-            category try to take home care out of the owner&rsquo;s hands.
-            Domis does the opposite. It sits between the owner and the house
-            as a compatibility layer, helping them track it, understand it,
-            and prevent the failures that get expensive.
-          </p>
+          <div className="dcs-overview-stack">
+            <div>
+              <p className="dcs-heading site-subheading text-white">
+                What is Domis
+              </p>
+              <p className="site-body text-white/65">
+                Domis is a consumer home maintenance app. Most services in this
+                category try to take home care out of the owner&rsquo;s hands.
+                Domis does the opposite. It sits between the owner and the house
+                as a compatibility layer, helping them track it, understand it,
+                and prevent the failures that get expensive.
+              </p>
+            </div>
 
-          <div className="dcs-block">
-            <p className="dcs-heading site-subheading text-white">
-              My role
-            </p>
-            <p className="site-body text-white/65">
-              I joined as the founding designer and work on 0→1 design across
-              mobile and web.
-            </p>
-          </div>
+            <div>
+              <p className="dcs-heading site-subheading text-white">
+                My role
+              </p>
+              <p className="site-body text-white/65">
+                I joined as the founding designer and work on 0→1 design across
+                mobile and web.
+              </p>
+            </div>
 
-          <div className="dcs-block">
-            <p className="dcs-heading site-subheading text-white">
-              Key challenge
-            </p>
-            <div className="site-body text-white/65">
-            <p>
-              The biggest challenge for Domis is to ingest information. Domis is
-              most helpful when it knows a user&rsquo;s home, and a lot of that
-              is work the user would otherwise have to do manually (unlikely).
-            </p>
-            <p>
-              <strong className="text-white">
-                My research and interviews with homeowners revealed that this
-                isn&rsquo;t just an information issue for Domis. Most people
-                don&rsquo;t know their own homes.
-              </strong>{" "}
-              Owners couldn&rsquo;t name the manufacturer of
-              their water heater or say when the roof was last serviced. So
-              getting information into Domis is also the act of learning it.
-              That reframed the goal: not a filled database, but an owner who
-              understands the house they live in.
-            </p>
-            <p>
-              In order to maximize the information we get and reduce the load on
-              the user, I designed Domis through one core principle:{" "}
-              <strong className="text-white">
-                Extract the maximum value from the smallest action the user is
-                willing to take.
-              </strong>
-            </p>
+            <div>
+              <p className="dcs-heading site-subheading text-white">
+                Key challenge
+              </p>
+              <div className="site-body text-white/65">
+                <p>
+                  The biggest challenge for Domis is to ingest information.
+                  Domis is most helpful when it knows a user&rsquo;s home, and a
+                  lot of that is work the user would otherwise have to do
+                  manually (unlikely).
+                </p>
+                <p>
+                  <strong className="text-white">
+                    My research and interviews with homeowners revealed that
+                    this isn&rsquo;t just an information issue for Domis. Most
+                    people don&rsquo;t know their own homes.
+                  </strong>{" "}
+                  Owners couldn&rsquo;t name the manufacturer of their water
+                  heater or say when the roof was last serviced. So getting
+                  information into Domis is also the act of learning it. That
+                  reframed the goal: not a filled database, but an owner who
+                  understands the house they live in.
+                </p>
+                <p>
+                  In order to maximize the information we get and reduce the
+                  load on the user, I designed Domis through one core principle:{" "}
+                  <strong className="text-white">
+                    Extract the maximum value from the smallest action the user
+                    is willing to take.
+                  </strong>
+                </p>
+              </div>
             </div>
           </div>
         </Reveal>

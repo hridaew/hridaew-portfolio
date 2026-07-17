@@ -49,6 +49,21 @@
   margin-bottom: 4.25rem;
 }
 
+.domis-cs .dcs-overview-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.domis-cs .dcs-overview-stack > * > .site-body:last-child,
+.domis-cs .dcs-overview-stack > * > p.site-body:last-child {
+  margin-bottom: 0;
+}
+
+.domis-cs .dcs-overview-stack .site-body > p:last-child {
+  margin-bottom: 0;
+}
+
 .domis-cs .dcs-heading {
   margin-bottom: var(--dcs-step);
 }
