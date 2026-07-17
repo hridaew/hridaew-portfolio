@@ -784,10 +784,11 @@ export function DomisCaseStudyBody() {
               </strong>
             </p>
             <p>
-              For v2 I reused the pipeline I had built for Address Intelligence.
-              Clean up the captured text, run the searches, filter the results,
-              and return the things an owner actually wants: the support page,
-              the manual, common failures for that unit, warranty status.
+              For v2 I refocused the feature onto what is actually useful for
+              the owner. V1&rsquo;s image recognition gathers the information on
+              the plate; a search agent then turns that into actionable
+              information the user more clearly benefits from — the support
+              page, the manual, common failures for that unit, warranty status.
             </p>
           </div>
         </Reveal>
