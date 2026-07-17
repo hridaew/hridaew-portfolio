@@ -26,3 +26,14 @@ export {
   type UseAutoplayDemoOptions,
   type UseAutoplayDemoResult,
 } from "./useAutoplayDemo";
+
+export {
+  WebCreateHomeDemo,
+  type WebCreateHomeDemoProps,
+} from "./web/WebCreateHomeDemo";
+
+export {
+  CreateHomePanel,
+  type CreateHomePanelProps,
+  type CreateHomeManual,
+} from "./web/CreateHomePanel";

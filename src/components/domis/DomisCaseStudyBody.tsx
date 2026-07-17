@@ -5,6 +5,7 @@ import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
+import { WebCreateHomeDemo } from "@/components/domis/live";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
 
 function PointerCursor({ className }: { className?: string }) {
@@ -365,95 +366,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <p className="dcs-replace-tag">
-              Replace with real UI of the home profile creation card from the
-              web app prototype, except it&rsquo;s centered on a web screen like
-              an onboarding screen — and the data should be simulated in the
-              animated component along with a nice big animated cursor.
-            </p>
-            <div className="dcs-io">
-              <div className="dcs-in">
-                <p className="dcs-lbl dcs-io-label">The user gives</p>
-                <div className="dcs-addrfield">
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    style={{ flex: "none" }}
-                  >
-                    <circle
-                      cx="7"
-                      cy="7"
-                      r="5"
-                      stroke="#b6bac1"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M10.7 10.7 L14.5 14.5"
-                      stroke="#b6bac1"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="dcs-type">2140 Fillmore St</span>
-                  <span className="dcs-caret" />
-                </div>
-              </div>
-
-              <div className="dcs-io-arrow">
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Places</span>
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Search agent</span>
-                <div className="dcs-stem" />
-                <span className="dcs-mstep">Consensus</span>
-                <div className="dcs-stem" />
-                <span className="dcs-tip">→</span>
-              </div>
-
-              <div className="dcs-out">
-                <p className="dcs-lbl dcs-io-label">Domis returns</p>
-                <div className="dcs-profile dcs-card">
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Property</span>
-                    <span className="dcs-val">Single family</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Year built</span>
-                    <span className="dcs-val">1974</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Square footage</span>
-                    <span className="dcs-val">1,840</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Bedrooms</span>
-                    <span className="dcs-val">3</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Bathrooms</span>
-                    <span className="dcs-val">2</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Roof</span>
-                    <span className="dcs-val">Asphalt shingle</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Heating</span>
-                    <span className="dcs-val">Forced air, gas</span>
-                  </div>
-                  <div className="dcs-prow">
-                    <span className="dcs-lbl">Lot size</span>
-                    <span className="dcs-val" style={{ color: "var(--dcs-mock-muted)" }}>
-                      Add
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <PointerCursor className="dcs-addr-cursor" />
+            <WebCreateHomeDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             One address in. A home profile out.
