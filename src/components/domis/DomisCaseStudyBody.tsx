@@ -584,6 +584,9 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
+            <p className="dcs-replace-tag">
+              Replace with real home profile conversion.
+            </p>
             <div className="dcs-versus">
               <div>
                 <div className="dcs-thumb dcs-sat">
