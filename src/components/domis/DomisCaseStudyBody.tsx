@@ -1129,8 +1129,8 @@ export function DomisCaseStudyBody() {
             <p>
               There is more: a location-based recommendation system,
               multi-property management, multi-task preventative maintenance
-              guides, and the design system all of it ships on. I am still adding
-              to it.
+              guides, and the design system all of it ships on. Domis is recently
+              launched and rapidly updating.
             </p>
             <p>
               The lens has not changed.{" "}
