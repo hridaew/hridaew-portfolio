@@ -346,6 +346,40 @@ export function DomisCaseStudyBody() {
               second model sorts what comes back into what it is confident about
               and what should be dropped.
             </p>
+            <ol
+              className="dcs-process"
+              aria-label="Address intelligence pipeline"
+            >
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Input</span>
+                <span className="dcs-process-desc">Address</span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Google Places API</span>
+                <span className="dcs-process-desc">Address discovery</span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Gemini Search ×3</span>
+                <span className="dcs-process-desc">
+                  Searches with verification
+                </span>
+              </li>
+              <li className="dcs-process-arrow" aria-hidden="true">
+                →
+              </li>
+              <li className="dcs-process-step">
+                <span className="dcs-process-name">Gemini 2.5 Flash</span>
+                <span className="dcs-process-desc">
+                  Review and final data cleanup
+                </span>
+              </li>
+            </ol>
           </div>
         </Reveal>
       </section>

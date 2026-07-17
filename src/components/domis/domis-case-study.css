@@ -377,6 +377,68 @@
   pointer-events: none;
 }
 
+.domis-cs .dcs-process {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.55rem 0.35rem;
+}
+
+.domis-cs .dcs-process-step {
+  flex: 1 1 7.5rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0.7rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--dcs-line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.domis-cs .dcs-process-name {
+  color: var(--dcs-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.domis-cs .dcs-process-desc {
+  color: var(--dcs-muted);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.domis-cs .dcs-process-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  color: var(--dcs-faint);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+@media (max-width: 760px) {
+  .domis-cs .dcs-process {
+    flex-direction: column;
+  }
+
+  .domis-cs .dcs-process-step {
+    flex: 1 1 auto;
+  }
+
+  .domis-cs .dcs-process-arrow {
+    align-self: flex-start;
+    margin-left: 0.85rem;
+    transform: rotate(90deg);
+  }
+}
+
 .domis-cs .dcs-media.dcs-media-fit {
   aspect-ratio: auto;
   height: auto;
