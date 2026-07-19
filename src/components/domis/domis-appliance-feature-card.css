@@ -1,0 +1,226 @@
+/* Appliance Intelligence feature composite — nameplate → item record */
+
+.dap {
+  --dap-bg: #f7f7f7;
+  --dap-surface: #ffffff;
+  --dap-ink: #525252;
+  --dap-active: #1a1c1e;
+  --dap-muted: #818181;
+  --dap-line: #efefef;
+  --dap-teal: #005750;
+  --dap-teal-light: #dcefee;
+  --dap-font: var(--font-domis-outfit), system-ui, sans-serif;
+  font-family: var(--dap-font);
+}
+
+.dap .dap-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5% 5% 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dap .dap-input {
+  flex: none;
+  width: min(380px, 76%);
+  z-index: 3;
+}
+
+.dap .dap-plate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px 8px 8px;
+  overflow: hidden;
+  background: var(--dap-surface);
+  border: 1px solid var(--dap-line);
+  border-radius: 16px;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.dap .dap-plate-frame {
+  flex: none;
+  width: 96px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1c1e;
+}
+
+.dap .dap-plate-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+/* Beat .domis-cs .dcs-col p step margins inside the composite. */
+.domis-cs .dap .dap-plate-title,
+.domis-cs .dap .dap-name,
+.domis-cs .dap .dap-model,
+.dap .dap-plate-title,
+.dap .dap-name,
+.dap .dap-model {
+  margin: 0;
+}
+
+.dap .dap-plate-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--dap-active);
+}
+
+.dap .dap-arrow {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: 8px 0 6px;
+  color: rgba(255, 255, 255, 0.92);
+  z-index: 2;
+}
+
+.dap .dap-panel {
+  flex: none;
+  width: min(460px, 88%);
+  padding: 12px 14px 14px;
+  background: var(--dap-bg);
+  border-radius: 22px 22px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 0;
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+  z-index: 1;
+}
+
+.dap .dap-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.dap .dap-thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--dap-surface);
+  border: 1px solid var(--dap-line);
+}
+
+.dap .dap-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.dap .dap-titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dap .dap-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--dap-active);
+}
+
+.dap .dap-model {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--dap-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dap .dap-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dap .dap-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  background: var(--dap-surface);
+  border-radius: 10px;
+  border: 1px solid var(--dap-line);
+}
+
+.dap .dap-field-icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--dap-teal-light);
+  color: var(--dap-teal);
+}
+
+.dap .dap-field-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.dap .dap-field-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--dap-muted);
+}
+
+.dap .dap-field-value {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--dap-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .dap .dap-stage {
+    padding: 6% 4% 0;
+  }
+
+  .dap .dap-input,
+  .dap .dap-panel {
+    width: min(100%, 92%);
+  }
+
+  .dap .dap-plate-frame {
+    width: 80px;
+    height: 56px;
+  }
+}

@@ -5,7 +5,6 @@ import {
   type CSSProperties,
   type RefObject,
 } from "react";
-import { DemoCursor } from "@/components/domis/live/DemoCursor";
 import {
   useAutoplayDemo,
   type AutoplayPhase,
@@ -128,11 +127,11 @@ export function HomeAvatarConversion({
           >
             <img
               src={mapSrc}
-              alt="Street-level map view of the property"
+              alt="Street-level photo of the property"
               draggable={false}
             />
           </div>
-          <p className="hac-lbl">What the map gives you</p>
+          <p className="hac-lbl">What street view gives you</p>
         </div>
 
         <div
@@ -140,7 +139,21 @@ export function HomeAvatarConversion({
           data-active={view.arrowActive ? "true" : "false"}
           aria-hidden="true"
         >
-          →
+          <svg
+            className="hac-arrow-icon"
+            width="36"
+            height="16"
+            viewBox="0 0 36 16"
+            fill="none"
+          >
+            <path
+              d="M1 8h30M24.5 2.5 31.5 8l-7 5.5"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
 
         <div className="hac-col">
@@ -159,12 +172,6 @@ export function HomeAvatarConversion({
           <p className="hac-lbl">What Domis makes of it</p>
         </div>
       </div>
-
-      <DemoCursor
-        x={view.cursor.x}
-        y={view.cursor.y}
-        visible={view.cursor.visible}
-      />
     </div>
   );
 }

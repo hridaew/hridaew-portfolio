@@ -36,19 +36,17 @@ export const APPLIANCE_CAPTURE_PHASES: readonly ApplianceCapturePhase[] = [
 
 /**
  * Local plate / scan assets (zero network).
- * `platePhoto` is the vendor scan_item_demo nameplate photo — useful for the
- * capture UI even though the filled fields use Rheem water-heater copy from
- * the case study page (demo data, not OCR of this image).
+ * `platePhoto` is a Rheem water-heater nameplate that matches the filled fields.
  */
 export const APPLIANCE_ASSETS = {
   /** Nameplate / rating-plate demo photo for the camera viewfinder */
   platePhoto: "/assets/domis/live/scan-item-demo.png",
-  /** Scanning mascot overlay used while "reading" the plate */
-  scanningMascot: "/assets/domis/live/item-scanning.png",
   /** Case study scanner composition (phone UI reference) */
   scannerComposition: "/assets/domis/live/scanner.png",
   /** Generic item placeholder if plate photo is unavailable */
   itemPlaceholder: "/assets/domis/live/item-placeholder.png",
+  /** Gemini label-research proof-of-concept screenshot */
+  geminiLabelTest: "/assets/domis/live/gemini-appliance-label.jpg",
 } as const;
 
 /** Fields Domis returns after reading the plate — page order */

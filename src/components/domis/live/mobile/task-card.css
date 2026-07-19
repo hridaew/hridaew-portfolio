@@ -14,7 +14,7 @@
   --dtc-radius-card: 24px;
   --dtc-radius-thumb: 8px;
   --dtc-thumb: 56px;
-  --dtc-chip-gap: 6px;
+  --dtc-chip-gap: 8px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -32,9 +32,9 @@
   font-family: var(--dtc-font);
   color: var(--dtc-ink);
   transition:
-    opacity 0.4s ease,
-    transform 0.4s ease,
-    box-shadow 0.35s ease;
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .domis-live.dtc *,
@@ -101,17 +101,13 @@
 }
 
 .domis-live.dtc .dtc-chip[data-has-icon="true"] {
-  padding: 0 8px 0 3px;
+  gap: 4px;
+  padding: 0 10px 0 6px;
 }
 
 .domis-live.dtc .dtc-chip[data-variant="location"] {
-  padding: 2px 7px 2px 0;
-}
-
-.domis-live.dtc .dtc-chip[data-variant="recommends"] {
-  padding: 0 8px 0 2px;
-  background: var(--dtc-primary-light);
-  color: var(--dtc-ink);
+  gap: 4px;
+  padding: 0 10px 0 6px;
 }
 
 .domis-live.dtc .dtc-chip[data-variant="priority-high"] {
@@ -127,7 +123,7 @@
 }
 
 .domis-live.dtc .dtc-chip[data-variant="location"] .domis-live-icon {
-  transform: translateX(1px);
+  flex: none;
 }
 
 .domis-live.dtc .dtc-chip-label {

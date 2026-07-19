@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
+import {
+    motion,
+    AnimatePresence,
+    LayoutGroup,
+    useReducedMotion,
+} from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +30,16 @@ const COLORS = [
     "#BBDEFB",
     "#E1BEE7",
 ];
+
+const GLASS_SURFACE =
+    "border border-white/12 bg-[rgba(29,29,29,0.72)] shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[54.45px]";
+
+const BLOB_SPRING = {
+    type: "spring" as const,
+    stiffness: 320,
+    damping: 24,
+    mass: 0.85,
+};
 
 /** UUID for anonymous user id. `randomUUID` is omitted on non-secure origins (e.g. http:// LAN). */
 function newAnonymousId(): string {
@@ -70,6 +85,12 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
     const triggerRef = useRef<HTMLDivElement>(null);
     const userIdRef = useRef<string>("");
     const isAdminRef = useRef(false);
+    const reduceMotion = useReducedMotion();
+    const reactId = useId();
+    const glassLayoutId = `sticky-notes-glass-${page}-${reactId}`;
+    const layoutGroupId = `sticky-notes-group-${page}-${reactId}`;
+
+    const morphTransition = reduceMotion ? { duration: 0 } : BLOB_SPRING;
 
     useEffect(() => {
         setIsMobile(window.innerWidth < 768);
@@ -178,7 +199,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
         <>
             {placingNote && (
                 <div className="fixed inset-0 z-[150]" onClick={handlePlacement}>
-                    <div className="pointer-events-none fixed left-1/2 top-6 -translate-x-1/2 rounded-full border border-white/10 bg-card/95 px-4 py-2 text-left text-white/90 shadow-lg shadow-black/40 backdrop-blur-md type-body">
+                    <div className="pointer-events-none fixed left-1/2 top-6 -translate-x-1/2 rounded-full border border-white/10 bg-[rgba(29,29,29,0.72)] px-4 py-2 text-left text-white/90 shadow-lg shadow-black/40 backdrop-blur-[54.45px] type-body">
                         Click anywhere to place your note
                     </div>
                 </div>
@@ -210,119 +231,203 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                 </div>
             ))}
 
-            <div ref={triggerRef} className="fixed bottom-24 right-4 md:right-8 z-[110]">
-                <button
-                    type="button"
-                    onClick={() => setIsOpen(!isOpen)}
-                    onMouseEnter={() => setIsHoveringStack(true)}
-                    onMouseLeave={() => setIsHoveringStack(false)}
-                    className="relative mx-auto block h-12 w-12 cursor-pointer"
-                    aria-label={isOpen ? "Close sticky note form" : "Leave a sticky note"}
-                    aria-expanded={isOpen}
-                >
-                    {COLORS.slice(0, 4).map((color, i) => (
-                        <div
-                            key={color}
-                            className="absolute inset-0 rounded shadow-md shadow-black/25 ring-1 ring-black/10 transition-transform duration-300 ease-out will-change-transform"
-                            style={{
-                                backgroundColor: color,
-                                transform: isHoveringStack
-                                    ? `rotate(${(i - 1.5) * 6}deg) translateY(${-i * 2}px)`
-                                    : `rotate(${(i - 1.5) * 2}deg)`,
-                                zIndex: i,
-                            }}
-                        />
-                    ))}
-                    <span
-                        className={cn(
-                            "absolute inset-0 z-10 flex items-center justify-center font-semibold leading-none text-neutral-800 drop-shadow-[0_1px_0_rgba(255,255,255,0.5)] type-body-lg transition-transform duration-300 ease-out motion-reduce:transition-none",
-                            isOpen && "rotate-45"
-                        )}
-                        aria-hidden
-                    >
-                        +
-                    </span>
-                </button>
+            <div
+                ref={triggerRef}
+                className="fixed bottom-24 right-4 z-[110] md:right-8"
+            >
+                <LayoutGroup id={layoutGroupId}>
+                    <div className="relative h-12 w-12">
+                        {/* Decorative back sheets — only while collapsed */}
+                        <AnimatePresence>
+                            {!isOpen
+                                ? [0, 1].map((i) => (
+                                      <motion.div
+                                          key={`sheet-${i}`}
+                                          aria-hidden
+                                          initial={false}
+                                          exit={
+                                              reduceMotion
+                                                  ? { opacity: 0 }
+                                                  : {
+                                                        opacity: 0,
+                                                        scale: 0.85,
+                                                        rotate: (i - 0.5) * 14,
+                                                    }
+                                          }
+                                          transition={{
+                                              duration: 0.22,
+                                              ease: [0.22, 1, 0.36, 1],
+                                          }}
+                                          className="absolute inset-0 rounded-[14px] border border-white/10 bg-[rgba(29,29,29,0.45)] shadow-[0_8px_24px_rgba(0,0,0,0.28)] backdrop-blur-[40px] will-change-transform"
+                                          style={{
+                                              transform: isHoveringStack
+                                                  ? `rotate(${(i - 0.5) * 8}deg) translateY(${-i * 3}px)`
+                                                  : `rotate(${(i - 0.5) * 3}deg)`,
+                                              zIndex: i,
+                                          }}
+                                      />
+                                  ))
+                                : null}
+                        </AnimatePresence>
 
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            ref={formRef}
-                            initial={{ opacity: 0, y: 16, scale: 0.94 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 12, scale: 0.96 }}
-                            transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.7 }}
-                            className="absolute bottom-16 right-0 w-[min(calc(100vw-2rem),20rem)] origin-bottom-right overflow-hidden rounded-2xl border border-white/10 bg-card/95 shadow-[0_24px_80px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl"
-                        >
-                            <div className="h-1.5 bg-gradient-to-r from-amber-500/45 via-rose-500/40 to-violet-500/45" aria-hidden />
-                            <div className="space-y-4 p-5">
-                                <div>
-                                    <p className="mb-1 text-left type-caption-medium uppercase tracking-wide text-white/45">
-                                        Post-it
-                                    </p>
-                                    <p className="text-left leading-relaxed text-white/60 type-caption">
-                                        Leave a note &mdash; only you and Hridae can see yours.
-                                    </p>
-                                </div>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="Write something…"
-                                    className="h-24 w-full resize-none rounded-xl border border-white/10 bg-background/80 px-3.5 py-3 text-left text-white/90 placeholder:text-white/35 type-body transition-shadow focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
-                                    maxLength={200}
+                        {!isOpen ? (
+                            <motion.button
+                                type="button"
+                                layoutId={glassLayoutId}
+                                transition={morphTransition}
+                                onClick={() => setIsOpen(true)}
+                                onMouseEnter={() => setIsHoveringStack(true)}
+                                onMouseLeave={() => setIsHoveringStack(false)}
+                                aria-label="Leave a sticky note"
+                                aria-expanded={false}
+                                className={cn(
+                                    "absolute bottom-0 right-0 z-[2] flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden",
+                                    GLASS_SURFACE
+                                )}
+                                style={{ borderRadius: 14 }}
+                                whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                                whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                            >
+                                <span
+                                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.14] to-transparent"
+                                    aria-hidden
                                 />
-                                <input
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Email (optional)"
-                                    type="email"
-                                    className="w-full rounded-xl border border-white/10 bg-background/80 px-3.5 py-2.5 text-left text-white/90 placeholder:text-white/35 type-body transition-shadow focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
-                                />
-                                <input
-                                    value={honeypot}
-                                    onChange={(e) => setHoneypot(e.target.value)}
-                                    name="website"
-                                    autoComplete="off"
-                                    tabIndex={-1}
-                                    aria-hidden="true"
-                                    className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
-                                    placeholder="Website"
-                                />
-                                <div>
-                                    <p className="mb-2 text-left text-white/45 type-caption">Color</p>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {COLORS.map((color) => (
-                                            <motion.button
-                                                key={color}
-                                                type="button"
-                                                onClick={() => setSelectedColor(color)}
-                                                whileTap={{ scale: 0.92 }}
-                                                className={cn(
-                                                    "h-8 w-8 rounded-full border-2 transition-shadow",
-                                                    selectedColor === color
-                                                        ? "border-white shadow-md ring-2 ring-white/30 ring-offset-2 ring-offset-card"
-                                                        : "border-transparent hover:border-white/35"
-                                                )}
-                                                style={{ backgroundColor: color }}
-                                                aria-label={`Select color ${color}`}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                                <motion.button
-                                    type="button"
-                                    onClick={handleSubmit}
-                                    disabled={!message.trim()}
-                                    whileHover={message.trim() ? { scale: 1.02 } : undefined}
-                                    whileTap={message.trim() ? { scale: 0.98 } : undefined}
-                                    className="type-caption-medium w-full rounded-xl bg-white py-3 text-center text-background shadow-sm transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                                <motion.span
+                                    layoutId={`${glassLayoutId}-glyph`}
+                                    transition={morphTransition}
+                                    className="relative z-10 flex items-center justify-center font-semibold leading-none text-white/85 type-body-lg"
+                                    aria-hidden
                                 >
-                                    Drop it on the page
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                                    +
+                                </motion.span>
+                            </motion.button>
+                        ) : (
+                            <motion.div
+                                ref={formRef}
+                                layoutId={glassLayoutId}
+                                transition={morphTransition}
+                                role="dialog"
+                                aria-label="Compose sticky note"
+                                className={cn(
+                                    "absolute bottom-0 right-0 z-[2] w-[min(calc(100vw-2rem),20rem)] overflow-hidden",
+                                    GLASS_SURFACE
+                                )}
+                                style={{ borderRadius: 20 }}
+                            >
+                                <span
+                                    className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/[0.12] to-transparent"
+                                    aria-hidden
+                                />
+                                <div
+                                    className="relative h-1.5 bg-gradient-to-r from-amber-500/45 via-rose-500/40 to-violet-500/45"
+                                    aria-hidden
+                                />
+                                <motion.div
+                                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={
+                                        reduceMotion
+                                            ? { duration: 0 }
+                                            : {
+                                                  delay: 0.12,
+                                                  duration: 0.28,
+                                                  ease: [0.22, 1, 0.36, 1],
+                                              }
+                                    }
+                                    className="relative space-y-4 p-5"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p className="mb-1 text-left type-caption-medium uppercase tracking-wide text-white/45">
+                                                Post-it
+                                            </p>
+                                            <p className="text-left leading-relaxed text-white/60 type-caption">
+                                                Leave a note &mdash; only you and Hridae can see yours.
+                                            </p>
+                                        </div>
+                                        <motion.button
+                                            type="button"
+                                            layoutId={`${glassLayoutId}-glyph`}
+                                            transition={morphTransition}
+                                            onClick={() => setIsOpen(false)}
+                                            aria-label="Close sticky note form"
+                                            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08]"
+                                        >
+                                            <span
+                                                className="rotate-45 font-semibold leading-none type-body-lg"
+                                                aria-hidden
+                                            >
+                                                +
+                                            </span>
+                                        </motion.button>
+                                    </div>
+                                    <textarea
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        placeholder="Write something…"
+                                        autoFocus
+                                        className="h-24 w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-left text-white/90 placeholder:text-white/35 type-body transition-shadow focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
+                                        maxLength={200}
+                                    />
+                                    <input
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Email (optional)"
+                                        type="email"
+                                        className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-left text-white/90 placeholder:text-white/35 type-body transition-shadow focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
+                                    />
+                                    <input
+                                        value={honeypot}
+                                        onChange={(e) => setHoneypot(e.target.value)}
+                                        name="website"
+                                        autoComplete="off"
+                                        tabIndex={-1}
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+                                        placeholder="Website"
+                                    />
+                                    <div>
+                                        <p className="mb-2 text-left text-white/45 type-caption">
+                                            Color
+                                        </p>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            {COLORS.map((color) => (
+                                                <motion.button
+                                                    key={color}
+                                                    type="button"
+                                                    onClick={() => setSelectedColor(color)}
+                                                    whileTap={{ scale: 0.92 }}
+                                                    className={cn(
+                                                        "h-8 w-8 rounded-full border-2 transition-shadow",
+                                                        selectedColor === color
+                                                            ? "border-white shadow-md ring-2 ring-white/30 ring-offset-2 ring-offset-[#1d1d1d]"
+                                                            : "border-transparent hover:border-white/35"
+                                                    )}
+                                                    style={{ backgroundColor: color }}
+                                                    aria-label={`Select color ${color}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <motion.button
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        disabled={!message.trim()}
+                                        whileHover={
+                                            message.trim() ? { scale: 1.02 } : undefined
+                                        }
+                                        whileTap={
+                                            message.trim() ? { scale: 0.98 } : undefined
+                                        }
+                                        className="type-caption-medium w-full rounded-xl bg-white py-3 text-center text-background shadow-sm transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                                    >
+                                        Drop it on the page
+                                    </motion.button>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </div>
+                </LayoutGroup>
             </div>
         </>
     );

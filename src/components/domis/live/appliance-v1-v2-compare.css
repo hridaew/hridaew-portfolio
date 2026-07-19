@@ -8,8 +8,7 @@
   --avc-muted: #818181;
   --avc-faint: #c8c8c8;
   --avc-line: #f4f4f4;
-  --avc-teal: #005750;
-  --avc-teal-light: #dcefee;
+  --avc-chip: #efefef;
   --avc-font: var(--font-domis-outfit), system-ui, sans-serif;
   width: 100%;
   max-width: 720px;
@@ -135,7 +134,7 @@
   display: none;
 }
 
-/* v2 resource links — Domis teal action rows */
+/* v2 resource links — same neutral chrome as v1 rows */
 .domis-live.avc .avc-links {
   display: flex;
   flex-direction: column;
@@ -151,7 +150,7 @@
   padding: 8px 10px;
   border-radius: 12px;
   background: var(--avc-surface);
-  color: var(--avc-teal);
+  color: var(--avc-ink);
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
@@ -166,13 +165,13 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: var(--avc-teal-light);
-  color: var(--avc-teal);
+  background: var(--avc-chip);
+  color: var(--avc-ink);
 }
 
 .domis-live.avc .avc-link-chevron {
   margin-left: auto;
-  color: var(--avc-teal);
+  color: var(--avc-ink);
   display: flex;
   align-items: center;
   opacity: 0.7;
@@ -188,9 +187,9 @@
   height: 28px;
   padding: 0 12px;
   border-radius: 10px;
-  background: var(--avc-teal-light);
-  border: 1px solid var(--avc-teal);
-  color: var(--avc-active);
+  background: var(--avc-surface);
+  border: 1px solid var(--avc-faint);
+  color: var(--avc-ink);
   font-size: 11px;
   font-weight: 500;
   line-height: 16px;
@@ -204,20 +203,6 @@
   line-height: 1.5;
   letter-spacing: 0.3px;
   color: var(--avc-muted);
-}
-
-.domis-live.avc .avc-foot {
-  margin: auto 20px 0;
-  padding-top: 14px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: var(--avc-muted);
-}
-
-.domis-live.avc .avc-pane[data-variant="v2"] .avc-foot {
-  color: var(--avc-teal);
 }
 
 @media (max-width: 640px) {

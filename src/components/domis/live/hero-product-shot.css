@@ -1,0 +1,193 @@
+/* Hero web + mobile composition under “What is Domis”. */
+
+.domis-live.dcs-hero-shot {
+  width: 100%;
+  min-height: 25rem;
+  padding: 2rem 0.75rem 2.25rem;
+}
+
+.domis-live.dcs-hero-shot .domis-live-phone-shell {
+  --domis-phone-bezel: #ffffff;
+}
+
+.domis-live.dcs-hero-shot .domis-live-phone-canvas {
+  background: #ffffff;
+}
+
+.domis-live .dcs-hero-shot-stage {
+  position: relative;
+  width: 100%;
+  max-width: 54rem;
+  margin: 0 auto;
+  min-height: 23rem;
+  height: clamp(23rem, 56vw, 31rem);
+}
+
+/* Browser as the grounding plane — left, larger, quieter */
+.domis-live .dcs-hero-shot-web {
+  position: absolute;
+  left: 0;
+  top: 18%;
+  width: 64%;
+  z-index: 1;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.28));
+}
+
+.domis-live .dcs-hero-shot-phone {
+  position: absolute;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.32));
+}
+
+/* Profile — mid depth, tucked over the browser’s right edge */
+.domis-live .dcs-hero-shot-phone-profile {
+  right: 24%;
+  top: 0;
+  width: 24%;
+  max-width: 10.25rem;
+  z-index: 2;
+  transform: rotate(-5deg);
+}
+
+/* Tasks — front focal phone */
+.domis-live .dcs-hero-shot-phone-tasks {
+  right: 1%;
+  bottom: 0;
+  width: 28%;
+  max-width: 11.5rem;
+  z-index: 3;
+  transform: rotate(3.5deg);
+}
+
+/* Home profile preview (phone canvas content) */
+.domis-live .dcs-home-preview {
+  height: 100%;
+  overflow: auto;
+  padding: 28px 18px 36px;
+  background: #f7f7f7;
+  font-family: var(--font-domis-outfit), system-ui, sans-serif;
+  color: #16181c;
+  scrollbar-width: none;
+}
+
+.domis-live .dcs-home-preview::-webkit-scrollbar {
+  display: none;
+}
+
+.domis-live .dcs-home-preview-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.domis-live .dcs-home-preview-avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 24px;
+  object-fit: cover;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.06),
+    0 8px 20px rgba(17, 24, 39, 0.1);
+}
+
+.domis-live .dcs-home-preview-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.domis-live .dcs-home-preview-addr {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #6b6f76;
+}
+
+.domis-live .dcs-home-preview-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 14px 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(156, 156, 156, 0.35);
+}
+
+.domis-live .dcs-home-preview-section {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a8f98;
+}
+
+.domis-live .dcs-home-preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid #f0f1f3;
+  font-size: 13px;
+}
+
+.domis-live .dcs-home-preview-row span {
+  color: #8a8f98;
+}
+
+.domis-live .dcs-home-preview-row strong {
+  display: inline;
+  font-weight: 500;
+  color: #16181c;
+  text-align: right;
+}
+
+.domis-live .dcs-home-preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.domis-live .dcs-home-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 40px;
+  background: #dcefee;
+  font-size: 12px;
+  font-weight: 500;
+  color: #005750;
+}
+
+@media (max-width: 720px) {
+  .domis-live.dcs-hero-shot {
+    min-height: 20rem;
+    padding: 1.25rem 0.5rem 1.5rem;
+  }
+
+  .domis-live .dcs-hero-shot-stage {
+    min-height: 20rem;
+    height: 24rem;
+  }
+
+  .domis-live .dcs-hero-shot-web {
+    width: 72%;
+    top: 10%;
+  }
+
+  .domis-live .dcs-hero-shot-phone-profile {
+    display: none;
+  }
+
+  .domis-live .dcs-hero-shot-phone-tasks {
+    width: 36%;
+    max-width: 9.5rem;
+    right: 0;
+    bottom: 0;
+  }
+}

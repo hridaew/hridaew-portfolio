@@ -1,88 +1,42 @@
-import {
-  Bed,
-  Calendar,
-  ChevronRight,
-  CircleHelp,
-  Droplet,
-  Fan,
-  FileText,
-  FlashlightOff,
-  Globe,
-  Hammer,
-  ImagePlus,
-  MapPin,
-  PenTool,
-  Plus,
-  QrCode,
-  Refrigerator,
-  Ruler,
-  ScanLine,
-  ShowerHead,
-  Star,
-  StickyNote,
-  Store,
-  Tag,
-  ThumbsUp,
-  Wrench,
-  X,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+"use client";
 
-/** Material Symbols ligature name → Lucide (keeps fixture/icon string APIs stable). */
-const ICONS: Record<string, LucideIcon> = {
-  star: Star,
-  recommend: ThumbsUp,
-  location_on: MapPin,
-  storefront: Store,
-  tag: Tag,
-  qr_code_2: QrCode,
-  water_drop: Droplet,
-  description: FileText,
-  language: Globe,
-  build: Wrench,
-  chevron_right: ChevronRight,
-  kitchen: Refrigerator,
-  bolt: Zap,
-  mode_fan: Fan,
-  calendar_today: Calendar,
-  document_scanner: ScanLine,
-  add_photo_alternate: ImagePlus,
-  add: Plus,
-  close: X,
-  flash_off: FlashlightOff,
-  help: CircleHelp,
-  design_services: PenTool,
-  square_foot: Ruler,
-  bed: Bed,
-  shower: ShowerHead,
-  home_repair_service: Hammer,
-  notes: StickyNote,
-};
+import type { CSSProperties } from "react";
 
 export type DomisLiveIconProps = {
-  /** Material Symbols Rounded ligature name (mapped to Lucide). */
+  /** Material Symbols Rounded ligature name. */
   name: string;
   size?: number;
   color?: string;
   className?: string;
 };
 
-/** Inline SVG icon — no Material Symbols webfont / ligatures. */
+/**
+ * Material Symbols Rounded icon via ligature (self-hosted font).
+ */
 export function DomisLiveIcon({
   name,
   size = 20,
   color = "currentColor",
   className,
 }: DomisLiveIconProps) {
-  const Icon = ICONS[name] ?? FileText;
+  const style = {
+    fontSize: size,
+    width: size,
+    height: size,
+    color,
+    lineHeight: 1,
+    fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+  } as CSSProperties;
+
   return (
-    <Icon
-      className={["domis-live-icon", className].filter(Boolean).join(" ")}
-      size={size}
-      color={color}
-      strokeWidth={1.75}
+    <span
+      className={["material-symbols-rounded", "domis-live-icon", className]
+        .filter(Boolean)
+        .join(" ")}
+      style={style}
       aria-hidden
-    />
+    >
+      {name}
+    </span>
   );
 }

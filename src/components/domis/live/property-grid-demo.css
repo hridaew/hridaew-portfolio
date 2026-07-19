@@ -1,0 +1,143 @@
+/* Fillmore → 3×3 property icon grid */
+
+.domis-live.pgd {
+  --pgd-surface: #ffffff;
+  --pgd-ink: #525252;
+  --pgd-font: var(--font-domis-outfit), system-ui, sans-serif;
+  --pgd-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  font-family: var(--pgd-font);
+  color: var(--pgd-ink);
+}
+
+.domis-live.pgd .pgd-stage {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-live.pgd .pgd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.domis-live.pgd .pgd-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px 10px;
+  background: var(--pgd-surface);
+  border-radius: var(--pgd-radius);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  transform-origin: center center;
+  transition:
+    opacity 0.45s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+.domis-live.pgd .pgd-avatar {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.domis-live.pgd .pgd-avatar img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.domis-live.pgd .pgd-name {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--pgd-ink);
+  white-space: nowrap;
+}
+
+/* Solo: hero large, satellites hidden */
+.domis-live.pgd .pgd-stage[data-layout="solo"] .pgd-card[data-hero="true"] {
+  transform: scale(2.05);
+  z-index: 2;
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.14),
+    0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.domis-live.pgd .pgd-stage[data-layout="solo"] .pgd-card[data-hero="false"],
+.domis-live.pgd
+  .pgd-stage[data-layout="grid"][data-satellites="false"]
+  .pgd-card[data-hero="false"] {
+  opacity: 0;
+  transform: scale(0.72);
+  pointer-events: none;
+  transition-delay: 0ms;
+}
+
+/* Grid populate: staggered fade-in */
+.domis-live.pgd
+  .pgd-stage[data-layout="grid"][data-satellites="true"]
+  .pgd-card[data-hero="false"] {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: calc(var(--pgd-i, 0) * 35ms);
+}
+
+.domis-live.pgd
+  .pgd-stage[data-layout="grid"]
+  .pgd-card[data-hero="true"] {
+  transform: scale(1);
+  z-index: 1;
+}
+
+.domis-live.pgd-demo {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-live.pgd .pgd-card {
+    transition: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .domis-live.pgd .pgd-grid {
+    gap: 8px;
+    max-width: 340px;
+  }
+
+  .domis-live.pgd .pgd-card {
+    padding: 10px 6px 8px;
+    border-radius: 14px;
+  }
+
+  .domis-live.pgd .pgd-avatar,
+  .domis-live.pgd .pgd-avatar img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .domis-live.pgd .pgd-name {
+    font-size: 11px;
+  }
+
+  .domis-live.pgd .pgd-stage[data-layout="solo"] .pgd-card[data-hero="true"] {
+    transform: scale(1.85);
+  }
+}

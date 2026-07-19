@@ -55,6 +55,8 @@ const CV_HREF =
 
 const MOTION_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const MOTION_DURATION = 0.4;
+/** Collapsed hero shell height — keeps p-8 bottom margin with the larger avatar. */
+const COLLAPSED_CARD_HEIGHT = 208;
 
 /** Opening height tween — `y` bump waits until this finishes (same pattern as close). */
 const OPEN_HEIGHT_DURATION = 0.52;
@@ -244,6 +246,90 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
   return wrapperRef;
 }
 
+/** Signature replay GIF — hidden for now; set true to bring it back. */
+const SHOW_HERO_SIGNATURE_GIF = false;
+
+function HeroSignatureMark({
+  avatarReplayTick,
+  avatarBurst,
+  onReplay,
+  reduceMotion,
+  replayLabel,
+  replayTitle,
+}: {
+  avatarReplayTick: number;
+  avatarBurst: BurstParticleSpec[] | null;
+  onReplay: () => void;
+  reduceMotion: boolean | null;
+  replayLabel: string;
+  replayTitle: string;
+}) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="size-12 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+        <img
+          src="/assets/aboutme.png"
+          alt=""
+          draggable={false}
+          className="size-full origin-center scale-[1.9] object-cover object-[50%_0%] select-none"
+        />
+      </div>
+      {SHOW_HERO_SIGNATURE_GIF ? (
+        <div className="relative h-8 w-[73px] overflow-visible opacity-80">
+          <button
+            type="button"
+            onClick={onReplay}
+            aria-label={replayLabel}
+            title={replayTitle}
+            className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
+          >
+            <motion.img
+              key={avatarReplayTick}
+              src={
+                avatarReplayTick === 0
+                  ? "/assets/home/hero-avatar.gif"
+                  : `/assets/home/hero-avatar.gif?replay=${avatarReplayTick}`
+              }
+              alt=""
+              draggable={false}
+              initial={
+                reduceMotion
+                  ? { scale: 1, opacity: 1 }
+                  : { scale: 0.88, opacity: 0.92 }
+              }
+              animate={{ scale: 1, opacity: 1 }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : {
+                      type: "spring",
+                      stiffness: 560,
+                      damping: 26,
+                      mass: 0.85,
+                    }
+              }
+              className="pointer-events-none relative z-0 size-full object-cover select-none"
+            />
+            {avatarBurst ? (
+              <span
+                className="pointer-events-none absolute left-1/2 top-1/2 z-10 block h-0 w-0"
+                aria-hidden
+              >
+                {avatarBurst.map((p) => (
+                  <AvatarBurstParticle
+                    key={`${avatarReplayTick}-b-${p.id}`}
+                    particle={p}
+                  />
+                ))}
+              </span>
+            ) : null}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function ExpandToggle({
   isExpanded,
   onToggle,
@@ -263,17 +349,18 @@ function ExpandToggle({
       onClick={onToggle}
       aria-expanded={isExpanded}
       aria-controls={controlsId}
-      className="relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03] transition-colors hover:bg-white/[0.08]"
+      className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-white/[0.03] px-3 transition-colors hover:bg-white/[0.08]"
       aria-label={isExpanded ? ariaLabelExpanded : ariaLabelCollapsed}
     >
+      <span className="text-[13px] font-medium leading-none text-white/80">
+        About
+      </span>
       <svg
-        className="absolute inset-0 block size-full"
+        className="block size-[13px] shrink-0"
         fill="none"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 32 32"
+        viewBox="10 10 12 12"
         aria-hidden
       >
-        <circle cx="16" cy="16" fill="white" fillOpacity="0.03" r="16" />
         <motion.g
           animate={{ rotate: isExpanded ? 180 : 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -317,7 +404,7 @@ export function HeroCard() {
     useState<VerticalBumpPhase>("idle");
   const [openVerticalBump, setOpenVerticalBump] =
     useState<VerticalBumpPhase>("idle");
-  const [orbBox, setOrbBox] = useState({ w: 656, h: 192 });
+  const [orbBox, setOrbBox] = useState({ w: 656, h: COLLAPSED_CARD_HEIGHT });
   const [mounted, setMounted] = useState(false);
   /** Bumped on avatar click so animated WebP restarts (play-once file replays from frame 0). */
   const [avatarReplayTick, setAvatarReplayTick] = useState(0);
@@ -490,7 +577,7 @@ export function HeroCard() {
     const ro = new ResizeObserver(() => {
       const r = el.getBoundingClientRect();
       const w = Math.round(r.width) || 656;
-      const h = Math.round(r.height) || 192;
+      const h = Math.round(r.height) || COLLAPSED_CARD_HEIGHT;
       setOrbBox((prev) =>
         prev.w === w && prev.h === h ? prev : { w, h }
       );
@@ -602,7 +689,7 @@ export function HeroCard() {
   if (isMobile) {
     return (
       <div className="relative isolate w-full min-w-0">
-        <div className="flex min-h-[192px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]">
+        <div className="flex min-h-[208px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]">
           <div
             className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
             aria-hidden
@@ -622,55 +709,18 @@ export function HeroCard() {
           </div>
 
           <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
-            <div className="flex shrink-0 flex-col gap-10">
+            <div className="flex shrink-0 flex-col gap-6">
               <div className="flex items-center">
-                <div className="relative h-8 w-[73px] overflow-visible opacity-80">
-                  <button
-                    type="button"
-                    onClick={replayHeroAvatarAnimation}
-                    aria-label={
-                      choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
-                    }
-                    title={choom ? CHOOM.heroReplayTitle : "Replay animation"}
-                    className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
-                  >
-                    <motion.img
-                      key={avatarReplayTick}
-                      src={
-                        avatarReplayTick === 0
-                          ? "/assets/home/hero-avatar.gif"
-                          : `/assets/home/hero-avatar.gif?replay=${avatarReplayTick}`
-                      }
-                      alt=""
-                      draggable={false}
-                      initial={
-                        reduceMotion
-                          ? { scale: 1, opacity: 1 }
-                          : { scale: 0.88, opacity: 0.92 }
-                      }
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={
-                        reduceMotion
-                          ? { duration: 0 }
-                          : { type: "spring", stiffness: 560, damping: 26, mass: 0.85 }
-                      }
-                      className="pointer-events-none relative z-0 size-full object-cover select-none"
-                    />
-                    {avatarBurst ? (
-                      <span
-                        className="pointer-events-none absolute left-1/2 top-1/2 z-10 block h-0 w-0"
-                        aria-hidden
-                      >
-                        {avatarBurst.map((p) => (
-                          <AvatarBurstParticle
-                            key={`${avatarReplayTick}-b-${p.id}`}
-                            particle={p}
-                          />
-                        ))}
-                      </span>
-                    ) : null}
-                  </button>
-                </div>
+                <HeroSignatureMark
+                  avatarReplayTick={avatarReplayTick}
+                  avatarBurst={avatarBurst}
+                  onReplay={replayHeroAvatarAnimation}
+                  reduceMotion={reduceMotion}
+                  replayLabel={
+                    choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
+                  }
+                  replayTitle={choom ? CHOOM.heroReplayTitle : "Replay animation"}
+                />
               </div>
 
               <div className="flex min-w-0 flex-col gap-4">
@@ -748,14 +798,14 @@ export function HeroCard() {
       >
       <motion.div
         ref={cardShellRef}
-        className="flex min-h-[192px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px]"
+        className="flex min-h-[208px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px]"
         style={{ transformOrigin: "50% 0" }}
         initial={false}
         onPointerDown={onHeroShellPointerDown}
         onPointerUp={onHeroShellPointerUp}
         onPointerCancel={onHeroShellPointerCancel}
         animate={{
-          height: isExpanded ? "auto" : 192,
+          height: isExpanded ? "auto" : COLLAPSED_CARD_HEIGHT,
           y:
             isExpanded && openVerticalBump === "playing"
               ? [...CARD_OPEN_BUMP_Y]
@@ -822,55 +872,18 @@ export function HeroCard() {
       </div>
 
       <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
-        <div className="flex shrink-0 flex-col gap-10">
+        <div className="flex shrink-0 flex-col gap-6">
           <div className="flex items-center justify-between">
-            <div className="relative h-8 w-[73px] overflow-visible opacity-80">
-              <button
-                type="button"
-                onClick={replayHeroAvatarAnimation}
-                aria-label={
-                  choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
-                }
-                title={choom ? CHOOM.heroReplayTitle : "Replay animation"}
-                className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
-              >
-                <motion.img
-                  key={avatarReplayTick}
-                  src={
-                    avatarReplayTick === 0
-                      ? "/assets/home/hero-avatar.gif"
-                      : `/assets/home/hero-avatar.gif?replay=${avatarReplayTick}`
-                  }
-                  alt=""
-                  draggable={false}
-                  initial={
-                    reduceMotion
-                      ? { scale: 1, opacity: 1 }
-                      : { scale: 0.88, opacity: 0.92 }
-                  }
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0 }
-                      : { type: "spring", stiffness: 560, damping: 26, mass: 0.85 }
-                  }
-                  className="pointer-events-none relative z-0 size-full object-cover select-none"
-                />
-                {avatarBurst ? (
-                  <span
-                    className="pointer-events-none absolute left-1/2 top-1/2 z-10 block h-0 w-0"
-                    aria-hidden
-                  >
-                    {avatarBurst.map((p) => (
-                      <AvatarBurstParticle
-                        key={`${avatarReplayTick}-b-${p.id}`}
-                        particle={p}
-                      />
-                    ))}
-                  </span>
-                ) : null}
-              </button>
-            </div>
+            <HeroSignatureMark
+              avatarReplayTick={avatarReplayTick}
+              avatarBurst={avatarBurst}
+              onReplay={replayHeroAvatarAnimation}
+              reduceMotion={reduceMotion}
+              replayLabel={
+                choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"
+              }
+              replayTitle={choom ? CHOOM.heroReplayTitle : "Replay animation"}
+            />
             <ExpandToggle
               isExpanded={isExpanded}
               onToggle={() => setIsExpanded((v) => !v)}
@@ -1037,7 +1050,7 @@ export function HeroCard() {
   return (
     <div
       ref={anchorRef}
-      className="relative isolate z-[25] min-h-[192px] w-full min-w-0 max-w-[656px]"
+      className="relative isolate z-[25] min-h-[208px] w-full min-w-0 max-w-[656px]"
     >
       {mounted && createPortal(glassCard, document.body)}
       {mounted && !isMobile

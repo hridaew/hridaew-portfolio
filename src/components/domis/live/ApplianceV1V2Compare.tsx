@@ -67,8 +67,6 @@ export function ApplianceV1V2Compare({
               </div>
             ))}
           </div>
-
-          <p className="avc-foot">Accurate. Inert.</p>
         </div>
 
         {/* v2 — Appliance Intelligence: same capture, actionable outputs */}
@@ -98,8 +96,6 @@ export function ApplianceV1V2Compare({
           <p className="avc-failures">
             Common failures: thermocouple, anode rod, pilot assembly
           </p>
-
-          <p className="avc-foot">Same capture. Now it does something.</p>
         </div>
       </div>
     </div>

@@ -70,17 +70,17 @@ export function HomePage() {
             </div>
           </RevealOnLoad>
 
-          {/* Current Toolkit */}
+          {/* Work — project galleries */}
           <RevealOnLoad delay={0.35}>
             <div className="mt-[72px]">
-              <ToolkitSection />
+              <WorkSection />
             </div>
           </RevealOnLoad>
 
-          {/* Work — project galleries (mt matches WorkSection gap between "Work" label and first project) */}
+          {/* Current Toolkit */}
           <RevealOnLoad delay={0.5}>
-            <div className="mt-[120px]">
-              <WorkSection />
+            <div className="mt-[72px]">
+              <ToolkitSection />
             </div>
           </RevealOnLoad>
 

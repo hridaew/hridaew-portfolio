@@ -129,7 +129,7 @@ const cards: MoreCard[] = [
     id: "multi-property",
     title: "Multi-property",
     description:
-      "One place for several homes—each with its own profile, tasks, and avatar—so managing more than one property stays clear.",
+      "One place for several homes, each with its own profile, tasks, and avatar, so managing more than one property stays clear.",
     pastel: "#c4a882",
     ink: "#3a2a18",
     icon: <IconMultiProperty />,
@@ -156,7 +156,7 @@ const cards: MoreCard[] = [
     id: "pro-handoff",
     title: "Pro handoff",
     description:
-      "Share home context with Pros so they arrive knowing the property—not starting from a blank conversation every time.",
+      "Share home context with Pros so they arrive knowing the property, not starting from a blank conversation every time.",
     pastel: "#e07a7a",
     ink: "#3d1818",
     icon: <IconProHandoff />,

@@ -1,0 +1,64 @@
+/* Live UI slides inside “The home, known” carousel. */
+
+.domis-cs .dcs-known-slide-card-ui {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem);
+  align-items: center;
+  gap: 1.5rem 2rem;
+  padding: 1.75rem 2rem;
+  text-align: left;
+}
+
+.domis-cs .dcs-known-slide-card-ui .dcs-known-slide-copy {
+  align-items: flex-start;
+  text-align: left;
+  max-width: none;
+}
+
+.domis-cs .dcs-known-slide-ui {
+  width: min(100%, 14rem);
+  margin: 0 auto;
+  justify-self: center;
+}
+
+.domis-cs .dcs-known-slide-body {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+
+.domis-cs .dcs-known-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 auto;
+}
+
+.domis-cs .dcs-known-tasks .dtc {
+  padding: 16px;
+}
+
+.domis-cs .dcs-known-tasks .dtc .dtc-title {
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .domis-cs .dcs-known-slide-card-ui {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 1.25rem 1.25rem 1.5rem;
+    text-align: center;
+  }
+
+  .domis-cs .dcs-known-slide-card-ui .dcs-known-slide-copy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .domis-cs .dcs-known-slide-ui {
+    width: min(100%, 12rem);
+  }
+}

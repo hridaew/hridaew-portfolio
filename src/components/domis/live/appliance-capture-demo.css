@@ -8,6 +8,15 @@
   font-family: var(--acd-font);
 }
 
+/* PhoneFrame roots also set .domis-live, so override the canvas fill */
+.domis-live.acd .domis-live-phone-shell {
+  --domis-phone-bezel: #ffffff;
+}
+
+.domis-live.acd .domis-live-phone-canvas {
+  background: #ffffff;
+}
+
 /* Large cursor — match create-home demo (44×64) */
 .domis-live.acd .domis-live-cursor {
   --domis-cursor-w: 44px;
@@ -18,8 +27,33 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 20px;
+  gap: 56px;
   width: 100%;
+}
+
+.domis-live.acd .domis-live-phone-shell {
+  /* Match visual scaled corner; hides any residual fringe */
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+/* Shorter viewfinder so the label plate isn’t cropped as hard */
+.domis-live.acd .iss-capture {
+  justify-content: center;
+  gap: 40px;
+}
+
+.domis-live.acd .iss-frame {
+  flex: 0 0 auto;
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  height: auto;
+  max-height: none;
+}
+
+.domis-live.acd .iss-frame-media {
+  object-fit: cover;
+  object-position: center;
 }
 
 .domis-live.acd .acd-col {
@@ -55,46 +89,10 @@
   text-align: center;
 }
 
-.domis-live.acd .acd-arrow {
-  flex: none;
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-top: 120px;
-  color: rgba(255, 255, 255, 0.85);
-  opacity: 0.4;
-  transition: opacity 0.4s ease;
-}
-
-.domis-live.acd .acd-arrow[data-active="true"] {
-  opacity: 1;
-}
-
-.domis-live.acd .acd-arrow-stem {
-  width: 1px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.domis-live.acd .acd-arrow-step {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.domis-live.acd .acd-arrow-tip {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1;
-}
-
 @media (max-width: 640px) {
   .domis-live.acd .acd-stage {
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 24px;
   }
 
   .domis-live.acd .acd-col {
@@ -111,26 +109,5 @@
 
   .domis-live.acd .acd-col-fields .acd-phone {
     max-width: 170px;
-  }
-
-  .domis-live.acd .acd-arrow {
-    flex-direction: row;
-    margin-top: 0;
-    width: 100%;
-    justify-content: center;
-    order: 1;
-  }
-
-  .domis-live.acd .acd-arrow-stem {
-    width: 18px;
-    height: 1px;
-  }
-
-  .domis-live.acd .acd-col:first-child {
-    order: 0;
-  }
-
-  .domis-live.acd .acd-col:last-child {
-    order: 2;
   }
 }

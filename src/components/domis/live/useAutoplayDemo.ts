@@ -104,7 +104,9 @@ export function useAutoplayDemo(
   const jumpToFinalPhase = useCallback(() => {
     const list = phasesRef.current;
     if (!list.length) return;
-    const last = list.length - 1;
+    // Prefer an explicit "hold" beat when present (end-state frame).
+    const holdIdx = list.findIndex((p) => p.id === "hold");
+    const last = holdIdx >= 0 ? holdIdx : list.length - 1;
     phaseIndexRef.current = last;
     progressRef.current = 1;
     setPhaseIndex(last);

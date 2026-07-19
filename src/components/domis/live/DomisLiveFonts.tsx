@@ -1,8 +1,10 @@
 import { Inter, Outfit } from "next/font/google";
 import type { ReactNode } from "react";
+import "material-symbols/rounded.css";
 
 /**
  * Self-hosted via next/font (no fonts.googleapis.com).
+ * Material Symbols Rounded ships with the `material-symbols` package.
  * CSS variables are consumed by domis-live*.css --*-font tokens.
  */
 const outfit = Outfit({

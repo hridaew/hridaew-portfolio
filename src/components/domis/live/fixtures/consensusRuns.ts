@@ -56,7 +56,6 @@ export const CONSENSUS_RUNS: readonly ConsensusRun[] = [
 export const CONSENSUS_SHOWN: {
   who: string;
   chips: readonly ConsensusShownChip[];
-  caption: string;
 } = {
   who: "Shown",
   chips: [
@@ -64,6 +63,4 @@ export const CONSENSUS_SHOWN: {
     { label: "2 bath" },
     { label: "Add sq ft", ask: true },
   ],
-  caption:
-    "Two out of three is enough to show. No agreement means the field arrives empty and asks.",
 } as const;

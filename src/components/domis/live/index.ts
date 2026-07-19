@@ -36,6 +36,9 @@ export {
   type WebCreateHomeDemoProps,
 } from "./web/WebCreateHomeDemo";
 
+export { HeroProductShot, HomeProfilePreview } from "./HeroProductShot";
+export { HomeTasksScreen } from "./mobile/HomeTasksScreen";
+
 export {
   ConsensusRunsPanel,
   type ConsensusRunsPanelProps,
@@ -45,6 +48,11 @@ export {
   HomeAvatarConversion,
   type HomeAvatarConversionProps,
 } from "./HomeAvatarConversion";
+
+export {
+  PropertyGridDemo,
+  type PropertyGridDemoProps,
+} from "./PropertyGridDemo";
 
 export {
   ApplianceCaptureDemo,

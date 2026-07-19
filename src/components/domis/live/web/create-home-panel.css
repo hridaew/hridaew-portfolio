@@ -121,6 +121,7 @@
   line-height: 1.5;
   color: var(--chp-ink);
   pointer-events: none;
+  transition: color 0.25s ease;
 }
 
 .domis-live.chp .chp-search-input::placeholder {
@@ -155,6 +156,22 @@
   align-items: center;
   gap: 12px;
   padding: 4px 0;
+  overflow: hidden;
+  max-height: 40px;
+  opacity: 1;
+  transition:
+    opacity 0.35s ease,
+    max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.35s ease,
+    margin 0.35s ease;
+}
+
+.domis-live.chp .chp-divider[data-visible="false"] {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
 }
 
 .domis-live.chp .chp-divider-line {
@@ -175,7 +192,7 @@
   flex-direction: column;
   gap: 12px;
   opacity: 0.45;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.45s ease;
 }
 
 .domis-live.chp .chp-manual[data-emphasized="true"] {
@@ -188,6 +205,20 @@
   font-weight: 500;
   line-height: 1.5;
   color: var(--chp-muted);
+  overflow: hidden;
+  max-height: 24px;
+  opacity: 1;
+  transition:
+    opacity 0.3s ease,
+    max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.35s ease;
+}
+
+.domis-live.chp .chp-manual-label[data-visible="false"] {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
 }
 
 .domis-live.chp .chp-row {
@@ -246,17 +277,42 @@
   color: var(--chp-ink);
   outline: none;
   pointer-events: none;
+  transition:
+    background-color 0.4s ease,
+    color 0.35s ease,
+    box-shadow 0.4s ease,
+    border-color 0.35s ease;
 }
 
 .domis-live.chp .chp-input::placeholder {
   color: var(--chp-muted);
 }
 
+.domis-live.chp .chp-input[data-filled="true"] {
+  background: #fff;
+  border-color: rgba(0, 87, 80, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 87, 80, 0.06);
+}
+
 .domis-live.chp .chp-confirm-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  padding-top: 0;
+  transition:
+    grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease,
+    padding-top 0.35s ease;
+}
+
+.domis-live.chp .chp-confirm-wrap[data-visible="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
   padding-top: 4px;
+}
+
+.domis-live.chp .chp-confirm-wrap[data-visible="false"] {
+  pointer-events: none;
 }
 
 .domis-live.chp .chp-confirm {
@@ -265,6 +321,8 @@
   justify-content: center;
   height: 48px;
   width: 100%;
+  min-height: 0;
+  overflow: hidden;
   padding: 0 24px;
   border: 0;
   border-radius: var(--chp-radius-pill);
@@ -276,12 +334,19 @@
   line-height: 1.5;
   white-space: nowrap;
   cursor: default;
-  transition: opacity 0.15s ease, transform 0.12s ease;
+  transform: translateY(10px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 
-.domis-live.chp .chp-confirm[data-pressed="true"] {
-  transform: scale(0.97);
+.domis-live.chp .chp-confirm-wrap[data-visible="true"] .chp-confirm {
+  transform: translateY(0);
+}
+
+.domis-live.chp .chp-confirm-wrap[data-visible="true"] .chp-confirm[data-pressed="true"] {
+  transform: translateY(0) scale(0.97);
   opacity: 0.85;
 }
 
@@ -293,9 +358,9 @@
 .domis-live.chp .chp-preview {
   position: relative;
   flex: none;
+  align-self: stretch;
   width: var(--chp-preview-w);
-  display: flex;
-  flex-direction: column;
+  min-height: 0;
   overflow: hidden;
   background: var(--chp-surface);
   border: 0.5px solid var(--chp-faint);
@@ -306,15 +371,36 @@
     0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-.domis-live.chp .chp-preview-empty,
-.domis-live.chp .chp-preview-enriching {
-  flex: 1;
+.domis-live.chp .chp-preview-layer {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.domis-live.chp .chp-preview-layer[data-active="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.domis-live.chp .chp-preview-empty,
+.domis-live.chp .chp-preview-enriching {
   align-items: center;
   justify-content: center;
   gap: 12px;
   padding: 24px;
+}
+
+.domis-live.chp .chp-preview-profile {
+  overflow: hidden;
 }
 
 .domis-live.chp .chp-silhouette {
@@ -322,16 +408,31 @@
   height: 96px;
   object-fit: contain;
   opacity: 0.4;
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .domis-live.chp .chp-preview-hint {
   margin: 0;
   max-width: 200px;
+  max-height: 0;
+  overflow: hidden;
   text-align: center;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
   color: var(--chp-muted);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.4s ease;
+}
+
+.domis-live.chp .chp-preview-hint[data-visible="true"] {
+  max-height: 4.5em;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .domis-live.chp .chp-enrich-label {
@@ -367,7 +468,8 @@
   inset-inline: 0;
   bottom: 0;
   overflow: hidden;
-  transition: height 0.3s ease-out;
+  /* Track demo progress tightly — long ease-out was cutting the fill short */
+  transition: height 60ms linear;
 }
 
 .domis-live.chp .chp-loader-tint {
@@ -425,6 +527,14 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+.domis-live.chp .chp-profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .domis-live.chp .chp-avatar {
@@ -593,7 +703,7 @@
   z-index: 1;
 }
 
-/* Demo stage — large cursor wins over nested .domis-live / .domis-live-cursor defaults */
+/* Demo stage — card floats on the case-study red field (no browser shell). */
 .domis-live.chp-demo {
   position: relative;
   width: 100%;
@@ -603,7 +713,39 @@
   width: 100%;
 }
 
+.domis-live.chp-demo .domis-live-browser-stage {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.domis-live.chp-demo .domis-live-browser-content {
+  background: transparent;
+  overflow: visible;
+}
+
+.domis-live.chp-demo .chp-screen {
+  padding: 0;
+  background: transparent;
+}
+
 .domis-live.chp-demo .domis-live-cursor {
   --domis-cursor-w: 44px;
   --domis-cursor-h: 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-live.chp .chp-divider,
+  .domis-live.chp .chp-manual,
+  .domis-live.chp .chp-manual-label,
+  .domis-live.chp .chp-input,
+  .domis-live.chp .chp-confirm-wrap,
+  .domis-live.chp .chp-confirm,
+  .domis-live.chp .chp-preview-layer,
+  .domis-live.chp .chp-preview-hint,
+  .domis-live.chp .chp-stat,
+  .domis-live.chp .chp-section {
+    transition: none;
+  }
 }

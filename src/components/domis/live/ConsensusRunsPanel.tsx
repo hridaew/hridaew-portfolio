@@ -5,7 +5,6 @@ import {
   type CSSProperties,
   type RefObject,
 } from "react";
-import { DemoCursor } from "@/components/domis/live/DemoCursor";
 import {
   useAutoplayDemo,
   type AutoplayPhase,
@@ -74,9 +73,9 @@ function deriveView(phase: string, progress: number): DemoView {
       visible: true,
     };
   } else if (phase === "shown" || phase === "point") {
-    cursor = { x: 52, y: 72, visible: true };
+    cursor = { x: 72, y: 62, visible: true };
   } else if (phase === "hold") {
-    cursor = { x: 52, y: 72, visible: progress < 0.35 };
+    cursor = { x: 72, y: 62, visible: progress < 0.35 };
   }
 
   return { runsVisible, highlightAgree, showShown, cursor };
@@ -84,7 +83,7 @@ function deriveView(phase: string, progress: number): DemoView {
 
 /**
  * Gemini ×3 consensus board restyled to web Domis chips/cards.
- * Keeps Run 1/2/3 → Shown story and editorial caption.
+ * Keeps Run 1/2/3 → Shown story (caption lives on the figure in the case study).
  */
 export function ConsensusRunsPanel({
   className,
@@ -101,11 +100,11 @@ export function ConsensusRunsPanel({
 
   const view = autoplay
     ? deriveView(phase, progress)
-    : {
+        : {
         runsVisible: 3,
         highlightAgree: true,
         showShown: true,
-        cursor: { x: 52, y: 72, visible: false },
+        cursor: { x: 72, y: 62, visible: false },
       };
 
   return (
@@ -169,15 +168,8 @@ export function ConsensusRunsPanel({
               ))}
             </div>
           </div>
-          <p className="crp-caption">{CONSENSUS_SHOWN.caption}</p>
         </div>
       </div>
-
-      <DemoCursor
-        x={view.cursor.x}
-        y={view.cursor.y}
-        visible={view.cursor.visible}
-      />
     </div>
   );
 }

@@ -61,3 +61,4 @@ socialpreview.png
 
 # Local Domis reference checkouts (never ship)
 /vendor/
+.tmp-venv/

@@ -18,8 +18,6 @@ export type InspectionTask = {
   thumbSrc?: string;
   /** Completed-date chip when dismissed (MM/dd/yyyy, Flutter format) */
   completedAtLabel?: string;
-  /** Domis Recommends chip (systemTaskId path in Flutter) */
-  recommends?: boolean;
   /** Dismissed / muted styling on the page */
   muted?: boolean;
 };
@@ -41,8 +39,8 @@ export const INSPECTION_SOURCE = {
 } as const;
 
 /**
- * Three result cards — High priority, Monitor, Dismissed.
- * Copy is exact from DomisCaseStudyBody.
+ * Three result cards for the inspection → tasks demo.
+ * Priority labels are unused in the live media; kept for Known carousel.
  */
 export const INSPECTION_TASKS: readonly InspectionTask[] = [
   {
@@ -52,7 +50,6 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     title: "Roof flashing, north side",
     description: "Water can get in where the roof meets the chimney.",
     location: "Roof",
-    recommends: true,
     thumbSrc: "/assets/domis/live/item-placeholder.png",
   },
   {
@@ -72,7 +69,6 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     description: "Already fixed. Removed by you, Mar 2025.",
     location: "Kitchen",
     completedAtLabel: "03/01/2025",
-    muted: true,
     thumbSrc: "/assets/domis/live/item-placeholder.png",
   },
 ] as const;

@@ -1,0 +1,265 @@
+/* Address Intelligence feature composite — compact Domis profile */
+
+.daf {
+  --daf-bg: #f7f7f7;
+  --daf-surface: #ffffff;
+  --daf-ink: #525252;
+  --daf-active: #1a1c1e;
+  --daf-muted: #818181;
+  --daf-line: #efefef;
+  --daf-teal: #005750;
+  --daf-teal-light: #dcefee;
+  --daf-font: var(--font-domis-outfit), system-ui, sans-serif;
+  font-family: var(--daf-font);
+}
+
+.daf .daf-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5% 5% 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.daf .daf-input {
+  flex: none;
+  width: min(420px, 78%);
+  z-index: 3;
+}
+
+.daf .daf-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  background: var(--daf-surface);
+  border: 1px solid var(--daf-line);
+  border-radius: 16px;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.daf .daf-search-pin {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.daf .daf-search-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--daf-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.daf .daf-arrow {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: 8px 0 6px;
+  color: rgba(255, 255, 255, 0.92);
+  z-index: 2;
+}
+
+.daf .daf-panel {
+  flex: none;
+  width: min(480px, 88%);
+  padding: 12px 14px 14px;
+  background: var(--daf-bg);
+  border-radius: 22px 22px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 0;
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+  z-index: 1;
+}
+
+.daf .daf-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.daf .daf-avatar {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--daf-surface);
+  border: 1px solid var(--daf-line);
+}
+
+.daf .daf-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.daf .daf-titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Beat .domis-cs .dcs-col p step margins inside the composite. */
+.domis-cs .daf .daf-name,
+.domis-cs .daf .daf-addr,
+.daf .daf-name,
+.daf .daf-addr {
+  margin: 0;
+}
+
+.daf .daf-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--daf-active);
+}
+
+.daf .daf-addr {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--daf-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.daf .daf-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.daf .daf-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  padding: 7px 8px;
+  background: var(--daf-surface);
+  border-radius: 10px;
+  border: 1px solid var(--daf-line);
+}
+
+.daf .daf-meta-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--daf-muted);
+}
+
+.daf .daf-meta-value {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--daf-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.daf .daf-meta-item .domis-live-icon {
+  margin-bottom: 1px;
+}
+
+.daf .daf-details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.daf .daf-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  background: var(--daf-surface);
+  border-radius: 10px;
+  border: 1px solid var(--daf-line);
+}
+
+.daf .daf-detail-icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--daf-teal-light);
+  color: var(--daf-teal);
+}
+
+.daf .daf-detail-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.daf .daf-detail-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--daf-muted);
+}
+
+.daf .daf-detail-value {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--daf-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .daf .daf-stage {
+    padding: 6% 4% 0;
+  }
+
+  .daf .daf-input,
+  .daf .daf-panel {
+    width: min(100%, 92%);
+  }
+
+  .daf .daf-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daf .daf-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daf .daf-details .daf-detail:nth-child(n + 5) {
+    display: none;
+  }
+}

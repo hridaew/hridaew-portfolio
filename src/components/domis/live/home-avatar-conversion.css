@@ -15,7 +15,7 @@
 
 .domis-live.hac .hac-stage {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   gap: 28px;
   width: 100%;
@@ -70,12 +70,12 @@
 .domis-live.hac .hac-arrow {
   flex: none;
   align-self: center;
-  margin-top: 56px;
-  font-size: 22px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
   opacity: 0.35;
-  transform: translateX(-4px);
+  transform: translateX(-6px);
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
@@ -84,6 +84,12 @@
 .domis-live.hac .hac-arrow[data-active="true"] {
   opacity: 1;
   transform: translateX(0);
+}
+
+.domis-live.hac .hac-arrow-icon {
+  display: block;
+  width: 36px;
+  height: 16px;
 }
 
 /* Lab HomeProfileCard (Free / avatar-forward): white 340× shell, 142px avatar */
@@ -203,9 +209,9 @@
     font-size: 12px;
   }
 
-  .domis-live.hac .hac-arrow {
-    margin-top: 40px;
-    font-size: 18px;
+  .domis-live.hac .hac-arrow-icon {
+    width: 28px;
+    height: 13px;
   }
 
   .domis-live.hac .hac-lbl {

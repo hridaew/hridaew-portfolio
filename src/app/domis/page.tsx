@@ -38,15 +38,6 @@ export default function DomisPage() {
                     >
                         <div className={SITE_COLUMN}>
                         <div className="relative w-full min-w-0 text-left flex flex-col gap-10">
-                            <Reveal>
-                                <img
-                                    src="/assets/domis/domis_icon.png"
-                                    alt="Domis app icon"
-                                    className="size-20 shrink-0 rounded-[22%] object-cover object-center shadow-lg ring-1 ring-white/10 md:size-24"
-                                    draggable={false}
-                                />
-                            </Reveal>
-
                             <HeroTextAnimation
                                 variant="wave"
                                 className="type-h1 text-left text-white"
@@ -56,12 +47,10 @@ export default function DomisPage() {
 
                             <Reveal delay={0.2}>
                                 <p className="site-body max-w-[560px] text-white/70">
-                                    I&rsquo;m the Product Designer at Domis,
-                                    creating an AI-powered home
-                                    maintenance platform that makes it
-                                    delightful for homeowners to take care of
-                                    their homes and take pride in doing it
-                                    right.
+                                    I&rsquo;m the Product Designer at Domis, a
+                                    home maintenance platform that helps people
+                                    understand their house and take care of it
+                                    without the busywork getting in the way.
                                 </p>
                             </Reveal>
 

@@ -12,8 +12,9 @@
   --domis-cursor-w: 44px;
   --domis-cursor-h: 64px;
   --domis-cursor-z: 50;
-  --domis-phone-radius: 44px;
+  --domis-phone-radius: 54px;
   --domis-phone-bezel: #16181c;
+  --domis-phone-bezel-width: 3px;
   --domis-browser-radius: 12px;
   box-sizing: border-box;
   color: var(--domis-live-ink);
@@ -25,12 +26,26 @@
   box-sizing: border-box;
 }
 
-.domis-live .domis-live-icon {
-  display: inline-block;
+.domis-live .domis-live-icon.material-symbols-rounded {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
   user-select: none;
-  overflow: visible;
+  overflow: hidden;
+  font-family: "Material Symbols Rounded", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga";
 }
 
 /* —— Frames —— */
@@ -41,6 +56,11 @@
   max-width: 100%;
   /* Reserve layout space for the scaled canvas (height set inline). */
   overflow: hidden;
+}
+
+/* Soft clip so scaled round corners don’t fray against the shell rect */
+.domis-live-phone-shell {
+  border-radius: calc(var(--domis-phone-radius) * 0.55);
 }
 
 .domis-live-phone-canvas,
@@ -54,16 +74,18 @@
   /* scale() applied inline */
 }
 
-/* Bezel via outer box-shadow (not border) so the canvas stays exactly designW×designH. */
+/*
+  Bezel is a solid canvas fill + inset screen (not box-shadow).
+  Shadow bezels leak black crescents at corners under CSS scale().
+*/
 .domis-live-phone-canvas {
   width: var(--domis-design-w, 390px);
   height: var(--domis-design-h, 844px);
   border: 0;
   border-radius: var(--domis-phone-radius);
-  background: var(--domis-live-surface);
-  box-shadow:
-    0 0 0 3px var(--domis-phone-bezel),
-    0 12px 40px rgba(0, 0, 0, 0.18);
+  background: var(--domis-phone-bezel);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  padding: var(--domis-phone-bezel-width);
 }
 
 .domis-live-phone-screen {
@@ -71,9 +93,13 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: var(--domis-phone-radius);
+  /* Concentric with outer radius − bezel width */
+  border-radius: calc(
+    var(--domis-phone-radius) - var(--domis-phone-bezel-width)
+  );
   background: var(--domis-live-bg);
   font-family: var(--domis-live-font);
+  transform: translateZ(0);
 }
 
 /* Window edge via outer box-shadow so stage stays exactly designW×designH. */

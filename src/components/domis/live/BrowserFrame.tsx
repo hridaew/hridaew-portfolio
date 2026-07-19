@@ -14,6 +14,8 @@ export type BrowserFrameProps = {
   "aria-label"?: string;
   /** Chrome bar label (optional). */
   title?: string;
+  /** When false, omits the traffic-light / title bar. Default true. */
+  showChrome?: boolean;
   /** Override design canvas width (px). Default 720. */
   designWidth?: number;
   /** Override design canvas height (px). Default 640. */
@@ -25,6 +27,7 @@ export function BrowserFrame({
   className,
   "aria-label": ariaLabel = "Browser demo",
   title = "domis.app",
+  showChrome = true,
   designWidth = BROWSER_DESIGN_WIDTH,
   designHeight = BROWSER_DESIGN_HEIGHT,
 }: BrowserFrameProps) {
@@ -52,14 +55,16 @@ export function BrowserFrame({
           } as CSSProperties
         }
       >
-        <div className="domis-live-browser-chrome" aria-hidden="true">
-          <div className="domis-live-browser-dots">
-            <span />
-            <span />
-            <span />
+        {showChrome ? (
+          <div className="domis-live-browser-chrome" aria-hidden="true">
+            <div className="domis-live-browser-dots">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="domis-live-browser-title">{title}</div>
           </div>
-          <div className="domis-live-browser-title">{title}</div>
-        </div>
+        ) : null}
         <div className="domis-live-browser-content">{children}</div>
       </div>
     </div>

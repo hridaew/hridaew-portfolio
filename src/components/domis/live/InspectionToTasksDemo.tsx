@@ -5,7 +5,6 @@ import {
   type CSSProperties,
   type RefObject,
 } from "react";
-import { DemoCursor } from "@/components/domis/live/DemoCursor";
 import {
   useAutoplayDemo,
   type AutoplayPhase,
@@ -21,52 +20,37 @@ import {
 } from "@/components/domis/live/mobile/TaskCard";
 import "./inspection-to-tasks-demo.css";
 
-/** Cursor → PDF → process → cards appear / highlight → hold → loop */
+/**
+ * One beat = one element. Phase changes drive the choreography
+ * (not progress within a long phase), so each step is evenly timed.
+ *
+ * enter: PDF → Read → Group → Translate → → → label → cards → hint → settle
+ * hold → exit (all at once) → loop
+ */
+const FADE_MS = 400;
+const BEAT_MS = 450;
+
+const PROCESS_STEPS = ["Read", "Group", "Translate"] as const;
+
 const PHASES: AutoplayPhase[] = [
-  { id: "idle", durationMs: 700 },
-  { id: "engage", durationMs: 1100 },
-  { id: "process", durationMs: 900 },
-  { id: "reveal", durationMs: 1400 },
-  { id: "highlight", durationMs: 1200 },
-  { id: "hold", durationMs: 2800 },
+  { id: "pdf", durationMs: BEAT_MS },
+  { id: "step-1", durationMs: BEAT_MS },
+  { id: "step-2", durationMs: BEAT_MS },
+  { id: "step-3", durationMs: BEAT_MS },
+  { id: "tip", durationMs: BEAT_MS },
+  { id: "out-label", durationMs: BEAT_MS },
+  { id: "card-0", durationMs: BEAT_MS },
+  { id: "card-1", durationMs: BEAT_MS },
+  { id: "card-2", durationMs: BEAT_MS },
+  { id: "hint", durationMs: BEAT_MS },
+  { id: "settle", durationMs: BEAT_MS },
+  { id: "hold", durationMs: 2600 },
+  // Exit — everything fades out together
+  { id: "exit", durationMs: FADE_MS + 80 },
 ];
-
-const CURSOR = {
-  rest: { x: 14, y: 58 },
-  pdf: { x: 18, y: 48 },
-  cards: { x: 72, y: 42 },
-} as const;
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t;
-}
-
-function easeOutCubic(t: number) {
-  return 1 - (1 - t) ** 3;
-}
 
 function chipsForTask(task: InspectionTask): TaskCardChip[] {
   const chips: TaskCardChip[] = [];
-
-  if (task.recommends) {
-    chips.push({
-      id: `${task.id}-rec`,
-      label: "Domis Recommends",
-      icon: "recommend",
-      variant: "recommends",
-    });
-  }
-
-  chips.push({
-    id: `${task.id}-priority`,
-    label: task.priorityLabel,
-    variant:
-      task.priority === "high"
-        ? "priority-high"
-        : task.priority === "monitor"
-          ? "priority-monitor"
-          : "priority-dismissed",
-  });
 
   if (task.location) {
     chips.push({
@@ -96,119 +80,126 @@ export type InspectionToTasksDemoProps = {
 };
 
 type DemoView = {
+  showIn: boolean;
   pdfEngaged: boolean;
-  arrowActive: boolean;
+  processLit: number;
+  showOutLabel: boolean;
   cardsVisible: number;
+  showHint: boolean;
   highlightIndex: number;
-  cursor: { x: number; y: number; visible: boolean };
 };
-
-function deriveView(phase: string, progress: number): DemoView {
-  const t = easeOutCubic(progress);
-
-  if (phase === "idle") {
-    return {
-      pdfEngaged: false,
-      arrowActive: false,
-      cardsVisible: 0,
-      highlightIndex: -1,
-      cursor: {
-        x: lerp(CURSOR.rest.x, CURSOR.rest.x + 2, progress),
-        y: lerp(CURSOR.rest.y, CURSOR.rest.y - 2, progress),
-        visible: progress > 0.15,
-      },
-    };
-  }
-
-  if (phase === "engage") {
-    return {
-      pdfEngaged: progress > 0.35,
-      arrowActive: false,
-      cardsVisible: 0,
-      highlightIndex: -1,
-      cursor: {
-        x: lerp(CURSOR.rest.x, CURSOR.pdf.x, t),
-        y: lerp(CURSOR.rest.y, CURSOR.pdf.y, t),
-        visible: true,
-      },
-    };
-  }
-
-  if (phase === "process") {
-    return {
-      pdfEngaged: true,
-      arrowActive: true,
-      cardsVisible: 0,
-      highlightIndex: -1,
-      cursor: {
-        x: lerp(CURSOR.pdf.x, 42, t),
-        y: lerp(CURSOR.pdf.y, 44, t),
-        visible: true,
-      },
-    };
-  }
-
-  if (phase === "reveal") {
-    const cardsVisible = Math.min(
-      INSPECTION_TASKS.length,
-      1 + Math.floor(progress * INSPECTION_TASKS.length)
-    );
-    return {
-      pdfEngaged: true,
-      arrowActive: true,
-      cardsVisible,
-      highlightIndex: -1,
-      cursor: {
-        x: lerp(42, CURSOR.cards.x, t),
-        y: lerp(44, CURSOR.cards.y, t),
-        visible: true,
-      },
-    };
-  }
-
-  if (phase === "highlight") {
-    const highlightIndex = Math.min(
-      INSPECTION_TASKS.length - 1,
-      Math.floor(progress * INSPECTION_TASKS.length)
-    );
-    return {
-      pdfEngaged: true,
-      arrowActive: true,
-      cardsVisible: INSPECTION_TASKS.length,
-      highlightIndex,
-      cursor: {
-        x: CURSOR.cards.x,
-        y: lerp(36, 62, progress),
-        visible: true,
-      },
-    };
-  }
-
-  // hold
-  return {
-    pdfEngaged: true,
-    arrowActive: true,
-    cardsVisible: INSPECTION_TASKS.length,
-    highlightIndex: 0,
-    cursor: {
-      x: CURSOR.cards.x,
-      y: 42,
-      visible: progress < 0.3,
-    },
-  };
-}
 
 const END_VIEW: DemoView = {
+  showIn: true,
   pdfEngaged: true,
-  arrowActive: true,
+  processLit: 4,
+  showOutLabel: true,
   cardsVisible: INSPECTION_TASKS.length,
+  showHint: true,
   highlightIndex: 0,
-  cursor: { x: CURSOR.cards.x, y: 42, visible: false },
 };
 
+const EMPTY_VIEW: DemoView = {
+  showIn: false,
+  pdfEngaged: false,
+  processLit: 0,
+  showOutLabel: false,
+  cardsVisible: 0,
+  showHint: false,
+  highlightIndex: -1,
+};
+
+function deriveView(phase: string): DemoView {
+  switch (phase) {
+    case "pdf":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+      };
+    case "step-1":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 1,
+      };
+    case "step-2":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 2,
+      };
+    case "step-3":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 3,
+      };
+    case "tip":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 4,
+      };
+    case "out-label":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 4,
+        showOutLabel: true,
+      };
+    case "card-0":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 4,
+        showOutLabel: true,
+        cardsVisible: 1,
+      };
+    case "card-1":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 4,
+        showOutLabel: true,
+        cardsVisible: 2,
+      };
+    case "card-2":
+      return {
+        ...EMPTY_VIEW,
+        showIn: true,
+        pdfEngaged: true,
+        processLit: 4,
+        showOutLabel: true,
+        cardsVisible: 3,
+      };
+    case "hint":
+      return {
+        ...END_VIEW,
+        highlightIndex: -1,
+      };
+    case "settle":
+    case "hold":
+      return END_VIEW;
+
+    case "exit":
+      return EMPTY_VIEW;
+
+    default:
+      return EMPTY_VIEW;
+  }
+}
+
 /**
- * inspection.pdf left → real Domis TaskCard recreations on the right.
- * Presentational TaskCard; this module owns the autoplay loop.
+ * inspection.pdf left → Domis TaskCard list on the right.
+ * Beat-sequenced choreography; CSS fades between discrete states.
  */
 export function InspectionToTasksDemo({
   className,
@@ -216,14 +207,14 @@ export function InspectionToTasksDemo({
   autoplay = true,
 }: InspectionToTasksDemoProps) {
   const phases = useMemo(() => PHASES, []);
-  const { phase, progress, containerRef } = useAutoplayDemo({
+  const { phase, containerRef } = useAutoplayDemo({
     phases,
     enabled: autoplay,
     pauseOnHover: true,
     visibilityThreshold: 0.2,
   });
 
-  const view = autoplay ? deriveView(phase, progress) : END_VIEW;
+  const view = autoplay ? deriveView(phase) : END_VIEW;
   const { source, tasks, footerHint } = INSPECTION_DEMO;
 
   return (
@@ -232,11 +223,19 @@ export function InspectionToTasksDemo({
       className={["domis-live", "itt", "itt-demo", className]
         .filter(Boolean)
         .join(" ")}
-      style={style}
+      style={
+        {
+          ...style,
+          "--itt-fade": `${FADE_MS}ms`,
+        } as CSSProperties
+      }
       aria-label="Inspection report converted into Domis task cards"
     >
       <div className="itt-stage">
-        <div className="itt-in">
+        <div
+          className="itt-in"
+          data-visible={view.showIn ? "true" : "false"}
+        >
           <p className="itt-lbl">The user gives</p>
           <div
             className="itt-dropzone"
@@ -275,31 +274,40 @@ export function InspectionToTasksDemo({
 
         <div
           className="itt-arrow"
-          data-active={view.arrowActive ? "true" : "false"}
+          data-lit={view.processLit}
           aria-hidden="true"
         >
-          <div className="itt-stem" />
-          <span className="itt-mstep">Read</span>
-          <div className="itt-stem" />
-          <span className="itt-mstep">Group</span>
-          <div className="itt-stem" />
-          <span className="itt-mstep">Translate</span>
-          <div className="itt-stem" />
-          <span className="itt-tip">→</span>
+          <div className="itt-stem" data-part="1" />
+          <span className="itt-mstep" data-part="1">
+            {PROCESS_STEPS[0]}
+          </span>
+          <div className="itt-stem" data-part="2" />
+          <span className="itt-mstep" data-part="2">
+            {PROCESS_STEPS[1]}
+          </span>
+          <div className="itt-stem" data-part="3" />
+          <span className="itt-mstep" data-part="3">
+            {PROCESS_STEPS[2]}
+          </span>
+          <div className="itt-stem" data-part="4" />
+          <span className="itt-tip" data-part="4">
+            →
+          </span>
         </div>
 
         <div className="itt-out">
-          <p className="itt-lbl">Domis returns</p>
+          <p
+            className="itt-lbl itt-out-lbl"
+            data-visible={view.showOutLabel ? "true" : "false"}
+          >
+            Domis returns
+          </p>
           <div className="itt-cards">
             {tasks.map((task, index) => (
               <div
                 key={task.id}
                 className="itt-card-slot"
                 data-visible={index < view.cardsVisible ? "true" : "false"}
-                style={{
-                  transitionDelay:
-                    index < view.cardsVisible ? `${index * 60}ms` : "0ms",
-                }}
               >
                 <TaskCard
                   title={task.title}
@@ -311,16 +319,15 @@ export function InspectionToTasksDemo({
                 />
               </div>
             ))}
-            <p className="itt-hint">{footerHint}</p>
+            <p
+              className="itt-hint"
+              data-visible={view.showHint ? "true" : "false"}
+            >
+              {footerHint}
+            </p>
           </div>
         </div>
       </div>
-
-      <DemoCursor
-        x={view.cursor.x}
-        y={view.cursor.y}
-        visible={view.cursor.visible}
-      />
     </div>
   );
 }

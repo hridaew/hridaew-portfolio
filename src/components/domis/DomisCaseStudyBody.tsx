@@ -4,14 +4,18 @@ import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
+import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
+import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
 import {
   ApplianceCaptureDemo,
   ApplianceV1V2Compare,
   ConsensusRunsPanel,
   DomisLiveFonts,
+  HeroProductShot,
   HomeAvatarConversion,
   InspectionToTasksDemo,
+  PropertyGridDemo,
   WebCreateHomeDemo,
 } from "@/components/domis/live";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
@@ -28,13 +32,8 @@ export function DomisCaseStudyBody() {
                 What is Domis
               </p>
               <figure className="dcs-img-block">
-                <div
-                  className="dcs-media dcs-media-placeholder"
-                  aria-label="Placeholder: hero shot with web and mobile"
-                >
-                  <p className="dcs-placeholder-label">
-                    Hero shot with web and mobile
-                  </p>
+                <div className="dcs-media dcs-media-fit">
+                  <HeroProductShot />
                 </div>
               </figure>
               <div className="site-body text-white/65">
@@ -63,230 +62,213 @@ export function DomisCaseStudyBody() {
               </p>
             </div>
 
+            <div id="role">
+              <p className="dcs-heading site-subheading text-white">
+                My responsibilities
+              </p>
+              <ul className="dcs-roles">
+                <li className="dcs-role-card">
+                  <span className="dcs-role-icon dcs-role-icon-layers" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <path
+                        className="dcs-role-layer dcs-role-layer-1"
+                        d="M14 3.5 L24.5 9 L14 14.5 L3.5 9 Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        className="dcs-role-layer dcs-role-layer-2"
+                        d="M3.5 14 L14 19.5 L24.5 14"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        className="dcs-role-layer dcs-role-layer-3"
+                        d="M3.5 18.5 L14 24 L24.5 18.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="site-body text-white/65">
+                    Own product design end to end, along with the design system it
+                    ships on.
+                  </span>
+                </li>
+                <li className="dcs-role-card">
+                  <span className="dcs-role-icon dcs-role-icon-phases" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <path
+                        className="dcs-role-axis"
+                        d="M4 24 V4"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        className="dcs-role-bar dcs-role-bar-1"
+                        x="8"
+                        y="5"
+                        width="7"
+                        height="5.5"
+                        rx="1.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <rect
+                        className="dcs-role-bar dcs-role-bar-2"
+                        x="14"
+                        y="15.5"
+                        width="10"
+                        height="5.5"
+                        rx="1.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <path
+                        className="dcs-role-tick dcs-role-tick-1"
+                        d="M15 7.75 H24"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        className="dcs-role-tick dcs-role-tick-2"
+                        d="M4 18.25 H14"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="site-body text-white/65">
+                    Define the phases of design and development, and what gets built
+                    when.
+                  </span>
+                </li>
+                <li className="dcs-role-card">
+                  <span className="dcs-role-icon dcs-role-icon-collab" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <circle
+                        className="dcs-role-node dcs-role-node-1"
+                        cx="14"
+                        cy="6"
+                        r="3"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <circle
+                        className="dcs-role-node dcs-role-node-2"
+                        cx="6"
+                        cy="21"
+                        r="3"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <circle
+                        className="dcs-role-node dcs-role-node-3"
+                        cx="22"
+                        cy="21"
+                        r="3"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <path
+                        className="dcs-role-link dcs-role-link-1"
+                        d="M11.8 8.4 L7.8 18.2"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        className="dcs-role-link dcs-role-link-2"
+                        d="M16.2 8.4 L20.2 18.2"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        className="dcs-role-link dcs-role-link-3"
+                        d="M9 21 H19"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="site-body text-white/65">
+                    Work directly with leadership and engineering on how the product
+                    takes shape.
+                  </span>
+                </li>
+                <li className="dcs-role-card">
+                  <span className="dcs-role-icon dcs-role-icon-spark" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <path
+                        className="dcs-role-spark dcs-role-spark-1"
+                        d="M10.5 3.5 L12.4 9 L17.5 10.9 L12.4 12.8 L10.5 18.3 L8.6 12.8 L3.5 10.9 L8.6 9 Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        className="dcs-role-spark dcs-role-spark-2"
+                        d="M20.5 15 L21.7 18.2 L25 19.4 L21.7 20.6 L20.5 23.8 L19.3 20.6 L16 19.4 L19.3 18.2 Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="site-body text-white/65">
+                    Define how Domis uses AI, and design and prototype those
+                    implementations myself.
+                  </span>
+                </li>
+              </ul>
+            </div>
+
             <div>
               <p className="dcs-heading site-subheading text-white">
                 Key challenge
               </p>
               <figure className="dcs-img-block">
-                <div
-                  className="dcs-media dcs-media-placeholder"
-                  aria-label="Placeholder: old appliance with cobwebs, inspection report, and overwhelmed user"
-                >
-                  <p className="dcs-placeholder-label">
-                    Image or illustration: old core-system appliance with
-                    cobwebs, an inspection report, and an overwhelmed user
-                  </p>
+                <div className="dcs-media dcs-media-cover">
+                  <img
+                    src="/assets/domis/key-challenge.png"
+                    alt="Mondrian-style geometric composition in Domis red, green, yellow, and black"
+                    width={1536}
+                    height={1024}
+                    draggable={false}
+                  />
                 </div>
               </figure>
               <div className="site-body text-white/65">
                 <p>
-                  A successful Domis experience depends on the app knowing your
-                  home. Setting up a home profile means answering questions
-                  about square footage, build year, and every appliance you own,
-                  and that is close to the least appealing task imaginable.
+                  Domis only works if it knows your home, but listing every
+                  space, appliance, and nuance by hand is painful.
                 </p>
                 <p>
-                  So people don&rsquo;t, and then the product has nothing to
-                  work with.
+                  When people tried to set up a home profile, many realized they
+                  didn&rsquo;t know their own homes. Setting up Domis also
+                  became the act of learning it.
                 </p>
                 <p>
-                  <strong className="text-white">
-                    My research and interviews with homeowners revealed that
-                    this isn&rsquo;t just an information issue for Domis. Most
-                    people don&rsquo;t know their own homes.
-                  </strong>
+                  So to make setup feel as rewarding and informative as
+                  possible, I designed Domis around one principle:
                 </p>
-                <p>
-                  Getting information into Domis is also the act of learning it.
-                  That reframed the goal: not a filled database, but an owner
-                  who understands the house they live in.
-                </p>
-                <p>
-                  In order to maximize the information we get and reduce the
-                  load on the user, I designed Domis through one core principle:{" "}
-                  <strong className="text-white">
-                    Extract the maximum value from the smallest action the user
-                    is willing to take.
-                  </strong>
+                <p className="mt-3 font-medium text-white">
+                  Extract the maximum value from the smallest action the user is
+                  willing to take.
                 </p>
               </div>
             </div>
           </div>
         </Reveal>
       </section>
-
-      {/* Role */}
-      <section id="role" className="dcs-col dcs-block">
-        <Reveal>
-          <p className="dcs-heading site-subheading text-white">
-            My responsibilities
-          </p>
-          <ul className="dcs-roles">
-            <li className="dcs-role-card">
-              <span className="dcs-role-icon dcs-role-icon-layers" aria-hidden="true">
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <path
-                    className="dcs-role-layer dcs-role-layer-1"
-                    d="M14 3.5 L24.5 9 L14 14.5 L3.5 9 Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    className="dcs-role-layer dcs-role-layer-2"
-                    d="M3.5 14 L14 19.5 L24.5 14"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    className="dcs-role-layer dcs-role-layer-3"
-                    d="M3.5 18.5 L14 24 L24.5 18.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              <span className="site-body text-white/65">
-                Own product design end to end, along with the design system it
-                ships on.
-              </span>
-            </li>
-            <li className="dcs-role-card">
-              <span className="dcs-role-icon dcs-role-icon-phases" aria-hidden="true">
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <path
-                    className="dcs-role-axis"
-                    d="M4 24 V4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <rect
-                    className="dcs-role-bar dcs-role-bar-1"
-                    x="8"
-                    y="5"
-                    width="7"
-                    height="5.5"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    className="dcs-role-bar dcs-role-bar-2"
-                    x="14"
-                    y="15.5"
-                    width="10"
-                    height="5.5"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    className="dcs-role-tick dcs-role-tick-1"
-                    d="M15 7.75 H24"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    className="dcs-role-tick dcs-role-tick-2"
-                    d="M4 18.25 H14"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <span className="site-body text-white/65">
-                Define the phases of design and development, and what gets built
-                when.
-              </span>
-            </li>
-            <li className="dcs-role-card">
-              <span className="dcs-role-icon dcs-role-icon-collab" aria-hidden="true">
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <circle
-                    className="dcs-role-node dcs-role-node-1"
-                    cx="14"
-                    cy="6"
-                    r="3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <circle
-                    className="dcs-role-node dcs-role-node-2"
-                    cx="6"
-                    cy="21"
-                    r="3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <circle
-                    className="dcs-role-node dcs-role-node-3"
-                    cx="22"
-                    cy="21"
-                    r="3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    className="dcs-role-link dcs-role-link-1"
-                    d="M11.8 8.4 L7.8 18.2"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    className="dcs-role-link dcs-role-link-2"
-                    d="M16.2 8.4 L20.2 18.2"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    className="dcs-role-link dcs-role-link-3"
-                    d="M9 21 H19"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <span className="site-body text-white/65">
-                Work directly with leadership and engineering on how the product
-                takes shape.
-              </span>
-            </li>
-            <li className="dcs-role-card">
-              <span className="dcs-role-icon dcs-role-icon-spark" aria-hidden="true">
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <path
-                    className="dcs-role-spark dcs-role-spark-1"
-                    d="M10.5 3.5 L12.4 9 L17.5 10.9 L12.4 12.8 L10.5 18.3 L8.6 12.8 L3.5 10.9 L8.6 9 Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    className="dcs-role-spark dcs-role-spark-2"
-                    d="M20.5 15 L21.7 18.2 L25 19.4 L21.7 20.6 L20.5 23.8 L19.3 20.6 L16 19.4 L19.3 18.2 Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              <span className="site-body text-white/65">
-                Define how Domis uses AI, and design and prototype those
-                implementations myself.
-              </span>
-            </li>
-          </ul>
-        </Reveal>
-      </section>
-
 
       {/* Payoff — the home, known — before ingestion mechanics */}
       <hr className="dcs-rule" />
@@ -318,6 +300,9 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             Address Intelligence
           </p>
+          <figure className="dcs-img-block">
+            <DomisAddressFeatureCard />
+          </figure>
           <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
@@ -351,17 +336,6 @@ export function DomisCaseStudyBody() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <figure className="dcs-figure">
-          <div className="dcs-media">
-            <WebCreateHomeDemo />
-          </div>
-          <figcaption className="dcs-caption site-body">
-            One address in. A home profile out.
-          </figcaption>
-        </figure>
-      </Reveal>
-
       <section className="dcs-col dcs-block">
         <Reveal>
           <p className="dcs-heading site-subheading text-white">
@@ -370,10 +344,9 @@ export function DomisCaseStudyBody() {
           <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
-                Agentic search is non-deterministic.
+                AI search is non-deterministic.
               </strong>{" "}
-              The same address returns different results on different runs, and
-              there is no version of this that is right every time.
+              The same address returns different results on different runs.
             </p>
             <p>
               Rather than trying to engineer certainty, I ran the search three
@@ -415,8 +388,7 @@ export function DomisCaseStudyBody() {
             </ol>
             <p>
               The results land in the same form the user would have filled in
-              themselves. Tap a field, type, done. If the model says three
-              bathrooms and there are two, fixing it costs a second.
+              themselves. Tap a field, type, done.
             </p>
           </div>
         </Reveal>
@@ -427,6 +399,21 @@ export function DomisCaseStudyBody() {
           <div className="dcs-media">
             <ConsensusRunsPanel />
           </div>
+          <figcaption className="dcs-caption site-body">
+            Three searches, then a review agent checks. Two matches are enough
+            to show. No agreement leaves the field blank for you to review.
+          </figcaption>
+        </figure>
+      </Reveal>
+
+      <Reveal>
+        <figure className="dcs-figure">
+          <div className="dcs-media">
+            <WebCreateHomeDemo />
+          </div>
+          <figcaption className="dcs-caption site-body">
+            Type an address. Domis fills in what it can.
+          </figcaption>
         </figure>
       </Reveal>
 
@@ -435,9 +422,8 @@ export function DomisCaseStudyBody() {
           <p className="site-body text-white/65">
             Address Intelligence also pulls photos of the property and generates
             a clean icon for it. Small thing, but a recognizable avatar matters
-            when someone manages more than one property, and it is better than a
-            blurry street view crop. It is replaceable if they would rather use
-            their own.
+            when someone manages more than one property, and it is replaceable
+            if they would rather use their own.
           </p>
         </Reveal>
       </section>
@@ -448,8 +434,18 @@ export function DomisCaseStudyBody() {
             <HomeAvatarConversion />
           </div>
           <figcaption className="dcs-caption site-body">
-            Recognizable at a glance, which is the whole job when you own four
-            of them.
+            Street view in. A clean home icon out.
+          </figcaption>
+        </figure>
+      </Reveal>
+
+      <Reveal>
+        <figure className="dcs-figure">
+          <div className="dcs-media">
+            <PropertyGridDemo />
+          </div>
+          <figcaption className="dcs-caption site-body">
+            Recognizable at a glance.
           </figcaption>
         </figure>
       </Reveal>
@@ -463,6 +459,9 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             Appliance Intelligence
           </p>
+          <figure className="dcs-img-block">
+            <DomisApplianceFeatureCard />
+          </figure>
           <div className="site-body text-white/65">
             <p>
               Logging your appliances is one of the first useful things to do in
@@ -475,9 +474,14 @@ export function DomisCaseStudyBody() {
               does not.
             </p>
             <p>
+              I wanted to explore how we can minimize user effort here, and
+              since a core part of logging an appliance is taking a photo, I
+              started there.
+            </p>
+            <p>
               <strong className="text-white">
-                I started by asking my Google Gemini app about appliance labels
-                to see what it could give me.
+                I asked my Google Gemini app about appliance labels to see what
+                it could give me.
               </strong>
             </p>
           </div>
@@ -486,19 +490,30 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-figure">
-          <div
-            className="dcs-media dcs-media-placeholder"
-            aria-label="Placeholder: Gemini screenshot of appliance label test"
-          >
-            <p className="dcs-placeholder-label">
-              Gemini screenshot — appliance label test that became the feature
-            </p>
+          <div className="dcs-media dcs-media-image">
+            <div className="dcs-gemini-shot">
+              <img
+                src="/assets/domis/live/gemini-appliance-label.jpg"
+                alt="Gemini chat extracting manufacturer, model, and serial from an appliance label photo"
+                width={1024}
+                height={865}
+                draggable={false}
+              />
+            </div>
           </div>
-          <figcaption className="dcs-caption site-body">
-            The test that became the feature, before it looked like anything.
-          </figcaption>
         </figure>
       </Reveal>
+
+      <section className="dcs-col dcs-block">
+        <Reveal>
+          <div className="site-body text-white/65">
+            <p>
+              With the Gemini test as proof of concept, I moved on to designing
+              the feature.
+            </p>
+          </div>
+        </Reveal>
+      </section>
 
       <Reveal>
         <figure className="dcs-figure">
@@ -522,11 +537,9 @@ export function DomisCaseStudyBody() {
               </strong>
             </p>
             <p>
-              For v2 I refocused the feature onto what is actually useful for
-              the owner. V1&rsquo;s image recognition gathers the information on
-              the plate; a search agent then turns that into actionable
-              information the user more clearly benefits from — the support and
-              warranty page, for example.
+              For v2 I refocused on what the owner actually needs. V1 reads the
+              plate; a search agent turns that into useful links, like support
+              and warranty pages.
             </p>
           </div>
         </Reveal>
@@ -544,18 +557,6 @@ export function DomisCaseStudyBody() {
         </figure>
       </Reveal>
 
-      <section className="dcs-col dcs-block">
-        <Reveal>
-          <div className="site-body text-white/65">
-            <p>
-              Same handling of uncertainty. The model fills the form, the fields
-              are editable on tap.
-            </p>
-          </div>
-        </Reveal>
-      </section>
-
-
       {/* Report Processor */}
       <hr className="dcs-rule" />
 
@@ -570,23 +571,19 @@ export function DomisCaseStudyBody() {
           <div className="site-body text-white/65">
             <p>
               Before any of the above, I went looking for what a homeowner
-              already has. If information has to come from somewhere, the
-              cheapest place is something already sitting in their possession.
+              already has.
             </p>
             <p>
-              <strong className="text-white">
-                The inspection report is universal.
-              </strong>{" "}
-              Every homeowner has one, because you cannot buy a house without it.
-              It is also long, repetitive, and almost entirely unread.
+              Every homeowner has an inspection report. It is also long,
+              repetitive, and almost entirely unread.
             </p>
             <p>
-              Interviews explained why.{" "}
+              However, no one cares about the inspection report. Our interviews
+              explained why.{" "}
               <strong className="text-white">
                 People had been in their homes long enough that the report no
                 longer described the house they were living in.
-              </strong>{" "}
-              Consulting it felt like reading about a stranger&rsquo;s property.
+              </strong>
             </p>
           </div>
         </Reveal>
@@ -649,17 +646,6 @@ export function DomisCaseStudyBody() {
                 wrong on arrival, but a way to understand the house.
               </strong>
             </p>
-            <p>
-              This turned the inspection report into something that is actually
-              made for the user, task and location based so they can understand
-              it through their lens.
-            </p>
-            <p>
-              So the report became something that sits in the app and stays
-              there. The user pulls tasks from it if they want them, deletes what
-              no longer applies, and everything is categorized where the rest of
-              Domis can reach it.
-            </p>
           </div>
         </Reveal>
       </section>
@@ -687,10 +673,7 @@ export function DomisCaseStudyBody() {
           </p>
           <div className="site-body text-white/65">
             <p>
-              There is more: a location-based recommendation system,
-              multi-property management, multi-task preventative maintenance
-              guides, and the design system all of it ships on. Domis is recently
-              launched and rapidly updating.
+              Domis is recently launched and rapidly updating.
             </p>
             <p>
               The lens has not changed.{" "}

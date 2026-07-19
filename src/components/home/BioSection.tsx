@@ -60,7 +60,6 @@ export function BioSection() {
         <>
           <p>{CHOOM.bioP1}</p>
           <p className="mt-6">{CHOOM.bioP2}</p>
-          <p className="mt-6">{CHOOM.bioP3}</p>
         </>
       ) : (
         <>
@@ -75,12 +74,11 @@ export function BioSection() {
             <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, designed and
             hosted a VR museum exhibit at MOHAI &ndash;{" "}
             <BioProjectAnchor slug="obscura">OBSCURA</BioProjectAnchor>, and created
-            multi-sensory experiences for people with Alzheimer&apos;s, via the{" "}
-            <BioProjectAnchor slug="memory-care">MCES</BioProjectAnchor>.
-          </p>
-          <p className="mt-6">
-            I studied Interaction Design at California College of the Arts, and have
-            a Master&apos;s in HCI from The University of Washington.
+            accessible, multi-sensory experiences for people with Alzheimer&apos;s, via the{" "}
+            <BioProjectAnchor slug="memory-care">
+              Memory Care Experience Station
+            </BioProjectAnchor>
+            .
           </p>
         </>
       )}

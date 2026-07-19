@@ -192,27 +192,34 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                   </div>
                 </div>
 
-                {showManualChrome ? (
-                  <div className="chp-divider">
-                    <div className="chp-divider-line" />
-                    <span className="chp-divider-label">or</span>
-                    <div className="chp-divider-line" />
-                  </div>
-                ) : null}
+                <div
+                  className="chp-divider"
+                  data-visible={showManualChrome ? "true" : "false"}
+                  aria-hidden={!showManualChrome}
+                >
+                  <div className="chp-divider-line" />
+                  <span className="chp-divider-label">or</span>
+                  <div className="chp-divider-line" />
+                </div>
 
                 <div
                   className="chp-manual"
                   data-emphasized={manualEmphasized ? "true" : "false"}
                 >
-                  {showManualChrome ? (
-                    <p className="chp-manual-label">Enter address manually</p>
-                  ) : null}
+                  <p
+                    className="chp-manual-label"
+                    data-visible={showManualChrome ? "true" : "false"}
+                    aria-hidden={!showManualChrome}
+                  >
+                    Enter address manually
+                  </p>
 
                   <div className="chp-row">
                     <div className="chp-field chp-field-street">
                       <span className="chp-field-label">Street address</span>
                       <input
                         className="chp-input"
+                        data-filled={manual.street ? "true" : "false"}
                         value={manual.street}
                         placeholder="Street address"
                         readOnly
@@ -223,6 +230,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                       <span className="chp-field-label">Apt #</span>
                       <input
                         className="chp-input"
+                        data-filled={manual.apt ? "true" : "false"}
                         value={manual.apt}
                         placeholder="Apt #"
                         readOnly
@@ -236,6 +244,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                       <span className="chp-field-label">City</span>
                       <input
                         className="chp-input"
+                        data-filled={manual.city ? "true" : "false"}
                         value={manual.city}
                         placeholder="City"
                         readOnly
@@ -246,6 +255,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                       <span className="chp-field-label">State</span>
                       <input
                         className="chp-input"
+                        data-filled={manual.state ? "true" : "false"}
                         value={manual.state}
                         placeholder="ST"
                         readOnly
@@ -256,6 +266,7 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                       <span className="chp-field-label">ZIP</span>
                       <input
                         className="chp-input"
+                        data-filled={manual.zip ? "true" : "false"}
                         value={manual.zip}
                         placeholder="ZIP"
                         readOnly
@@ -265,185 +276,199 @@ export const CreateHomePanel = forwardRef<HTMLDivElement, CreateHomePanelProps>(
                   </div>
                 </div>
 
-                {showConfirm ? (
-                  <div className="chp-confirm-wrap">
-                    <button
-                      ref={confirmButtonRef}
-                      type="button"
-                      className="chp-confirm"
-                      data-pressed={confirmPressed ? "true" : "false"}
-                      data-enriching={enriching ? "true" : "false"}
-                      tabIndex={-1}
-                    >
-                      {confirmLabel}
-                    </button>
-                  </div>
-                ) : null}
+                <div
+                  className="chp-confirm-wrap"
+                  data-visible={showConfirm ? "true" : "false"}
+                  aria-hidden={!showConfirm}
+                >
+                  <button
+                    ref={confirmButtonRef}
+                    type="button"
+                    className="chp-confirm"
+                    data-pressed={confirmPressed ? "true" : "false"}
+                    data-enriching={enriching ? "true" : "false"}
+                    tabIndex={-1}
+                  >
+                    {confirmLabel}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="chp-preview">
-              {!profileActive && !enriching ? (
-                <div className="chp-preview-empty">
-                  <img
-                    src={ADDRESS_ASSETS.emptySilhouette}
-                    alt=""
-                    className="chp-silhouette"
-                  />
-                  {hasAddress && addressSelected ? (
-                    <p className="chp-preview-hint">
-                      Confirm your address to build this home profile
-                    </p>
-                  ) : null}
-                </div>
-              ) : enriching && !profileActive ? (
-                <div className="chp-preview-enriching">
-                  <SilhouetteLoader
-                    size={96}
-                    progress={enrichProgress}
-                    src={ADDRESS_ASSETS.emptySilhouette}
-                  />
-                  <p className="chp-enrich-label">Looking up this home…</p>
-                </div>
-              ) : (
-                <>
-                  <div className="chp-profile">
-                    <div className="chp-profile-inner">
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: 8,
-                          width: "100%",
-                        }}
-                      >
-                        <div className="chp-avatar">
-                          <img
-                            src={homePhoto || ADDRESS_ASSETS.emptySilhouette}
-                            alt=""
-                            style={
-                              homePhoto
-                                ? undefined
-                                : { opacity: 0.4, objectFit: "contain" }
-                            }
-                          />
-                        </div>
-                        <p className="chp-home-name">{homeName}</p>
-                        <p className="chp-home-address">{displayAddress}</p>
-                      </div>
+            <div
+              className="chp-preview"
+              data-phase={
+                profileActive ? "profile" : enriching ? "enriching" : "empty"
+              }
+            >
+              <div
+                className="chp-preview-layer chp-preview-empty"
+                data-active={!profileActive && !enriching ? "true" : "false"}
+                aria-hidden={profileActive || enriching}
+              >
+                <img
+                  src={ADDRESS_ASSETS.emptySilhouette}
+                  alt=""
+                  className="chp-silhouette"
+                />
+                <p
+                  className="chp-preview-hint"
+                  data-visible={
+                    hasAddress && addressSelected && !enriching && !profileActive
+                      ? "true"
+                      : "false"
+                  }
+                >
+                  Confirm your address to build this home profile
+                </p>
+              </div>
 
-                      <div className="chp-stats">
-                        <div
-                          className="chp-stat"
-                          data-visible={showStats ? "true" : "false"}
-                        >
-                          <DomisLiveIcon
-                            name="design_services"
-                            size={22}
-                            color="#818181"
-                          />
-                          <div className="chp-stat-value">
-                            <span>Built</span>
-                            {ADDRESS_PROFILE.yearBuiltDisplay}
-                          </div>
-                        </div>
-                        <div
-                          className="chp-stat"
-                          data-visible={showStats ? "true" : "false"}
-                          style={{ transitionDelay: "60ms" }}
-                        >
-                          <DomisLiveIcon
-                            name="square_foot"
-                            size={22}
-                            color="#818181"
-                          />
-                          <div className="chp-stat-value">
-                            {ADDRESS_PROFILE.squareFootageDisplay}
-                            <span>ft²</span>
-                          </div>
+              <div
+                className="chp-preview-layer chp-preview-enriching"
+                data-active={enriching && !profileActive ? "true" : "false"}
+                aria-hidden={!enriching || profileActive}
+              >
+                <SilhouetteLoader
+                  size={96}
+                  progress={enrichProgress}
+                  src={ADDRESS_ASSETS.emptySilhouette}
+                />
+                <p className="chp-enrich-label">Looking up this home…</p>
+              </div>
+
+              <div
+                className="chp-preview-layer chp-preview-profile"
+                data-active={profileActive ? "true" : "false"}
+                aria-hidden={!profileActive}
+              >
+                <div className="chp-profile">
+                  <div className="chp-profile-inner">
+                    <div className="chp-profile-head">
+                      <div className="chp-avatar">
+                        <img
+                          src={homePhoto || ADDRESS_ASSETS.emptySilhouette}
+                          alt=""
+                          style={
+                            homePhoto
+                              ? undefined
+                              : { opacity: 0.4, objectFit: "contain" }
+                          }
+                        />
+                      </div>
+                      <p className="chp-home-name">{homeName}</p>
+                      <p className="chp-home-address">{displayAddress}</p>
+                    </div>
+
+                    <div className="chp-stats">
+                      <div
+                        className="chp-stat"
+                        data-visible={showStats ? "true" : "false"}
+                      >
+                        <DomisLiveIcon
+                          name="design_services"
+                          size={22}
+                          color="#818181"
+                        />
+                        <div className="chp-stat-value">
+                          <span>Built</span>
+                          {ADDRESS_PROFILE.yearBuiltDisplay}
                         </div>
                       </div>
-
                       <div
-                        className="chp-section"
-                        data-visible={showBeds ? "true" : "false"}
+                        className="chp-stat"
+                        data-visible={showStats ? "true" : "false"}
+                        style={{ transitionDelay: "60ms" }}
                       >
-                        <p className="chp-section-title">
-                          Bedrooms ({bedrooms.length})
-                        </p>
-                        <div className="chp-chips">
-                          {bedrooms.map((name) => (
-                            <div key={name} className="chp-chip">
-                              <DomisLiveIcon
-                                name="bed"
-                                size={22}
-                                color="#818181"
-                              />
-                              <p className="chp-chip-name">{name}</p>
-                            </div>
-                          ))}
-                          <div className="chp-chip-add">
-                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
-                            <span>Add bedroom</span>
-                          </div>
+                        <DomisLiveIcon
+                          name="square_foot"
+                          size={22}
+                          color="#818181"
+                        />
+                        <div className="chp-stat-value">
+                          {ADDRESS_PROFILE.squareFootageDisplay}
+                          <span>ft²</span>
                         </div>
                       </div>
+                    </div>
 
-                      <div
-                        className="chp-section"
-                        data-visible={showBaths ? "true" : "false"}
-                      >
-                        <p className="chp-section-title">
-                          Bathrooms ({bathrooms.length})
-                        </p>
-                        <div className="chp-chips">
-                          {bathrooms.map((name) => (
-                            <div key={name} className="chp-chip">
-                              <DomisLiveIcon
-                                name="shower"
-                                size={22}
-                                color="#818181"
-                              />
-                              <p className="chp-chip-name">{name}</p>
-                            </div>
-                          ))}
-                          <div className="chp-chip-add">
-                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
-                            <span>Add bathroom</span>
+                    <div
+                      className="chp-section"
+                      data-visible={showBeds ? "true" : "false"}
+                    >
+                      <p className="chp-section-title">
+                        Bedrooms ({bedrooms.length})
+                      </p>
+                      <div className="chp-chips">
+                        {bedrooms.map((name) => (
+                          <div key={name} className="chp-chip">
+                            <DomisLiveIcon
+                              name="bed"
+                              size={22}
+                              color="#818181"
+                            />
+                            <p className="chp-chip-name">{name}</p>
                           </div>
+                        ))}
+                        <div className="chp-chip-add">
+                          <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
+                          <span>Add bedroom</span>
                         </div>
                       </div>
+                    </div>
 
-                      <div
-                        className="chp-section"
-                        data-visible={showDetails ? "true" : "false"}
-                      >
-                        <p className="chp-section-title">
-                          Additional Details ({details.length})
-                        </p>
-                        <div className="chp-chips">
-                          {details.map((name) => (
-                            <div key={name} className="chp-chip">
-                              <DomisLiveIcon
-                                name="home_repair_service"
-                                size={22}
-                                color="#818181"
-                              />
-                              <p className="chp-chip-name">{name}</p>
-                            </div>
-                          ))}
-                          <div className="chp-chip-add">
-                            <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
-                            <span>Add detail</span>
+                    <div
+                      className="chp-section"
+                      data-visible={showBaths ? "true" : "false"}
+                    >
+                      <p className="chp-section-title">
+                        Bathrooms ({bathrooms.length})
+                      </p>
+                      <div className="chp-chips">
+                        {bathrooms.map((name) => (
+                          <div key={name} className="chp-chip">
+                            <DomisLiveIcon
+                              name="shower"
+                              size={22}
+                              color="#818181"
+                            />
+                            <p className="chp-chip-name">{name}</p>
                           </div>
+                        ))}
+                        <div className="chp-chip-add">
+                          <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
+                          <span>Add bathroom</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className="chp-section"
+                      data-visible={showDetails ? "true" : "false"}
+                    >
+                      <p className="chp-section-title">
+                        Additional Details ({details.length})
+                      </p>
+                      <div className="chp-chips">
+                        {details.map((name) => (
+                          <div key={name} className="chp-chip">
+                            <DomisLiveIcon
+                              name="home_repair_service"
+                              size={22}
+                              color="#818181"
+                            />
+                            <p className="chp-chip-name">{name}</p>
+                          </div>
+                        ))}
+                        <div className="chp-chip-add">
+                          <DomisLiveIcon name="add" size={22} color="#c8c8c8" />
+                          <span>Add detail</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="chp-profile-fade" aria-hidden />
-                </>
-              )}
+                </div>
+                <div className="chp-profile-fade" aria-hidden />
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
-/* Inspection PDF → Domis TaskCard list — autoplay demo. */
+/* Inspection PDF → Domis TaskCard list — timeline-choreographed demo. */
 
 .domis-live.itt {
   --itt-font: var(--font-domis-outfit), system-ui, sans-serif;
+  --itt-fade: 400ms;
+  --itt-ease: cubic-bezier(0.33, 1, 0.68, 1);
   --itt-mock: #ffffff;
   --itt-mock-text: #16181c;
   --itt-mock-muted: #6b6f76;
@@ -28,6 +30,16 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--itt-fade) var(--itt-ease),
+    transform var(--itt-fade) var(--itt-ease);
+}
+
+.domis-live.itt .itt-in[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .domis-live.itt .itt-out {
@@ -46,6 +58,19 @@
   color: #fff;
 }
 
+.domis-live.itt .itt-out-lbl {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--itt-fade) var(--itt-ease),
+    transform var(--itt-fade) var(--itt-ease);
+}
+
+.domis-live.itt .itt-out-lbl[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .domis-live.itt .itt-dropzone {
   border: 1.5px dashed var(--itt-mock-faint);
   border-radius: 9px;
@@ -53,14 +78,16 @@
   text-align: center;
   background: var(--itt-mock);
   color: var(--itt-mock-text);
+  transform: scale(0.98);
+  box-shadow: 0 0 0 transparent;
   transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease,
-    border-color 0.35s ease;
+    transform var(--itt-fade) var(--itt-ease),
+    box-shadow var(--itt-fade) var(--itt-ease),
+    border-color var(--itt-fade) ease;
 }
 
 .domis-live.itt .itt-dropzone[data-engaged="true"] {
-  transform: scale(1.02);
+  transform: scale(1);
   border-color: #8a8f98;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.12),
@@ -95,34 +122,40 @@
   flex-direction: column;
   align-items: center;
   gap: 7px;
-  opacity: 0.4;
-  transform: translateX(-3px);
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
-}
-
-.domis-live.itt .itt-arrow[data-active="true"] {
-  opacity: 1;
-  transform: translateX(0);
 }
 
 .domis-live.itt .itt-stem {
   width: 1px;
   height: 26px;
   background: rgba(255, 255, 255, 0.55);
+  opacity: 0;
+  transition: opacity var(--itt-fade) var(--itt-ease);
 }
 
 .domis-live.itt .itt-mstep {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 9.5px;
   letter-spacing: 0.04em;
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--itt-fade) var(--itt-ease);
 }
 
 .domis-live.itt .itt-tip {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 12px;
+  opacity: 0;
+  transition: opacity var(--itt-fade) var(--itt-ease);
+}
+
+.domis-live.itt .itt-arrow[data-lit="1"] [data-part="1"],
+.domis-live.itt .itt-arrow[data-lit="2"] [data-part="1"],
+.domis-live.itt .itt-arrow[data-lit="2"] [data-part="2"],
+.domis-live.itt .itt-arrow[data-lit="3"] [data-part="1"],
+.domis-live.itt .itt-arrow[data-lit="3"] [data-part="2"],
+.domis-live.itt .itt-arrow[data-lit="3"] [data-part="3"],
+.domis-live.itt .itt-arrow[data-lit="4"] [data-part] {
+  opacity: 1;
 }
 
 .domis-live.itt .itt-cards {
@@ -133,15 +166,15 @@
 
 .domis-live.itt .itt-card-slot {
   opacity: 0;
-  transform: translateY(10px) scale(0.97);
+  transform: translateY(10px);
   transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
+    opacity var(--itt-fade) var(--itt-ease),
+    transform var(--itt-fade) var(--itt-ease);
 }
 
 .domis-live.itt .itt-card-slot[data-visible="true"] {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 .domis-live.itt .itt-hint {
@@ -150,17 +183,33 @@
   font-weight: 400;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.78);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--itt-fade) var(--itt-ease),
+    transform var(--itt-fade) var(--itt-ease);
 }
 
-.domis-live.itt-demo .domis-live-cursor {
-  --domis-cursor-w: 44px;
-  --domis-cursor-h: 64px;
+.domis-live.itt .itt-hint[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.domis-live.itt .dtc {
+  transition:
+    transform var(--itt-fade) var(--itt-ease),
+    box-shadow var(--itt-fade) var(--itt-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .domis-live.itt .itt-in,
   .domis-live.itt .itt-dropzone,
-  .domis-live.itt .itt-arrow,
+  .domis-live.itt .itt-stem,
+  .domis-live.itt .itt-mstep,
+  .domis-live.itt .itt-tip,
+  .domis-live.itt .itt-out-lbl,
   .domis-live.itt .itt-card-slot,
+  .domis-live.itt .itt-hint,
   .domis-live.itt .dtc {
     transition: none;
   }

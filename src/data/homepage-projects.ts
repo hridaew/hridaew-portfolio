@@ -21,6 +21,8 @@ export interface HomepageProject {
   orbColor1: string;
   orbColor2: string;
   cards: [ProjectCardData, ProjectCardData, ProjectCardData];
+  /** Short context labels (e.g. "AI", "Experience Design") shown as chips. */
+  contextTags?: string[];
   /**
    * Optional short labels (e.g. recognition) shown as chips under the intro copy.
    * Use `title` on each chip for the full formal name when the label is abbreviated.
@@ -37,6 +39,7 @@ export const homepageProjects: HomepageProject[] = [
     bgColor: "#ff5a5b",
     orbColor1: "rgba(211,153,153,0.6)",
     orbColor2: "rgba(255,37,37,0.8)",
+    contextTags: ["Consumer App", "AI"],
     cards: [
       {
         imageSrc: "/assets/home/domis-card1-tasks-composite.png",
@@ -73,6 +76,7 @@ export const homepageProjects: HomepageProject[] = [
     bgColor: "#171528",
     orbColor1: "rgba(204,186,255,0.6)",
     orbColor2: "rgba(27,25,33,0.8)",
+    contextTags: ["Consumer App", "AR"],
     cards: [
       {
         imageSrc: "/assets/home/virdio-ar-desktop.png",
@@ -106,6 +110,7 @@ export const homepageProjects: HomepageProject[] = [
     bgColor: "#111111",
     orbColor1: "rgba(118,118,118,0.6)",
     orbColor2: "#111111",
+    contextTags: ["Immersive Exhibit", "VR"],
     cards: [
       {
         imageSrc: "/assets/home/obscura-sbs-view.png",
@@ -140,6 +145,7 @@ export const homepageProjects: HomepageProject[] = [
     bgColor: "#ff9f73",
     orbColor1: "rgba(255,118,6,0.5)",
     orbColor2: "#ff813a",
+    contextTags: ["Healthcare", "Immersive"],
     recognitionChips: [
       {
         label: "CABHI — 2x award recipient",

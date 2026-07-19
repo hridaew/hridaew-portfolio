@@ -7,7 +7,6 @@ import {
   type RefObject,
 } from "react";
 import { BrowserFrame } from "@/components/domis/live/BrowserFrame";
-import { DemoCursor } from "@/components/domis/live/DemoCursor";
 import {
   useAutoplayDemo,
   type AutoplayPhase,
@@ -31,7 +30,7 @@ const PHASES: AutoplayPhase[] = [
   { id: "addressReady", durationMs: 450 },
   { id: "moveToConfirm", durationMs: 850 },
   { id: "clickConfirm", durationMs: 320 },
-  { id: "enriching", durationMs: 1200 },
+  { id: "enriching", durationMs: 1800 },
   { id: "fieldsFilled", durationMs: 900 },
   { id: "hold", durationMs: 2800 },
 ];
@@ -109,7 +108,7 @@ export function WebCreateHomeDemo({
       style={style}
     >
       <BrowserFrame
-        title="domis.app / create home"
+        showChrome={false}
         aria-label="Create home profile demo"
         designWidth={designWidth}
         designHeight={designHeight}
@@ -130,17 +129,6 @@ export function WebCreateHomeDemo({
           displayAddress={ADDRESS_FULL}
           addressFieldRef={addressFieldRef}
           confirmButtonRef={confirmButtonRef}
-        />
-        <DemoCursor
-          x={demo.cursor.x}
-          y={demo.cursor.y}
-          visible={demo.cursorVisible}
-          style={{
-            transition:
-              phase === "typing" || phase === "hold" || phase === "idle"
-                ? "none"
-                : undefined,
-          }}
         />
       </BrowserFrame>
     </div>
@@ -249,19 +237,23 @@ function deriveDemoState(phase: string, progress: number): DemoDerived {
         },
       };
 
-    case "enriching":
+    case "enriching": {
+      // Reach 100% before the phase ends, then hold full so the profile
+      // never cuts the fill short.
+      const fillT = Math.min(1, progress / 0.72);
       return {
         ...base,
         addressText: ADDRESS_TYPED,
         addressSelected: true,
         manual: SELECTED_MANUAL,
         enriching: true,
-        enrichProgress: 8 + progress * 82,
+        enrichProgress: easeOutCubic(fillT) * 100,
         cursor: {
           x: lerp(CURSOR.confirm.x, 72, t * 0.6),
           y: lerp(CURSOR.confirm.y, 48, t * 0.6),
         },
       };
+    }
 
     case "fieldsFilled":
       return {

@@ -17,6 +17,11 @@ export {
 } from "./consensusRuns";
 
 export {
+  PROPERTY_GRID_HOMES,
+  type PropertyGridHome,
+} from "./propertyGrid";
+
+export {
   APPLIANCE_CAPTURE_PHASES,
   APPLIANCE_ASSETS,
   APPLIANCE_CAPTURE_FIELDS,

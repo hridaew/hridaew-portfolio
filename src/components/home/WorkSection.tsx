@@ -693,14 +693,43 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
       className="flex w-full scroll-mt-[88px] flex-col items-stretch gap-8"
     >
       {/* Title + description — same left spine as Bio / Toolkit (parent HOME_COLUMN padding) */}
-      <div className="flex w-full flex-col gap-8 text-white/80">
-        <div>
-          <ProjectTitleLink
-            slug={project.slug}
-            title={project.title}
-            displayTitle={displayTitle}
-          />
-        </div>
+      <div className="flex w-full flex-col gap-3 text-white/80">
+        <ProjectTitleLink
+          slug={project.slug}
+          title={project.title}
+          displayTitle={displayTitle}
+        />
+        {(project.contextTags?.length || project.recognitionChips?.length) ? (
+          <ul
+            className="m-0 flex list-none flex-wrap gap-2 p-0"
+            aria-label={
+              project.recognitionChips?.length
+                ? "Project tags and recognition"
+                : "Project tags"
+            }
+          >
+            {project.contextTags?.map((tag) => (
+              <li key={tag}>
+                <span className="inline-flex rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/70 backdrop-blur-sm">
+                  {tag}
+                </span>
+              </li>
+            ))}
+            {project.recognitionChips?.map((chip, i) => (
+              <li key={chip.label}>
+                <span
+                  className="inline-flex max-w-full rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/80 backdrop-blur-sm"
+                  title={chip.title ?? chip.label}
+                  aria-label={chip.title ?? chip.label}
+                >
+                  {choom && project.slug === "memory-care"
+                    ? (CHOOM_MEMORY_CHIPS[i] ?? chip.label)
+                    : chip.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         <p className="font-[family-name:var(--font-geist)] text-base leading-6">
           {project.slug === "memory-care" && !choom ? (
             <>
@@ -722,26 +751,6 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
             project.description
           )}
         </p>
-        {project.recognitionChips && project.recognitionChips.length > 0 ? (
-          <ul
-            className="m-0 flex list-none flex-wrap gap-2 p-0"
-            aria-label="Recognition"
-          >
-            {project.recognitionChips.map((chip, i) => (
-              <li key={chip.label}>
-                <span
-                  className="inline-flex max-w-full rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/80 backdrop-blur-sm"
-                  title={chip.title ?? chip.label}
-                  aria-label={chip.title ?? chip.label}
-                >
-                  {choom && project.slug === "memory-care"
-                    ? (CHOOM_MEMORY_CHIPS[i] ?? chip.label)
-                    : chip.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
       </div>
 
       {/* Mobile: first card only (no Embla). Desktop: original Embla row + breakout. */}
@@ -850,15 +859,16 @@ function SectionLabel({ label }: { label: string }) {
 export function WorkSection() {
   const choom = useChoomLingo();
   return (
-    <div
-      data-home-work-section
-      className="flex w-full flex-col items-stretch gap-[120px]"
-    >
-      <SectionLabel label={choom ? CHOOM.workSectionLabel : "Work"} />
+    <div data-home-work-section className="flex w-full flex-col items-stretch">
+      <SectionLabel
+        label={choom ? CHOOM.workSectionLabel : "Selected Projects"}
+      />
 
-      {homepageProjects.map((project) => (
-        <ProjectGroup key={project.slug} project={project} />
-      ))}
+      <div className="mt-6 flex w-full flex-col items-stretch gap-[120px]">
+        {homepageProjects.map((project) => (
+          <ProjectGroup key={project.slug} project={project} />
+        ))}
+      </div>
     </div>
   );
 }
