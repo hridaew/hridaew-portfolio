@@ -28,17 +28,28 @@ const FACE_MASK: CSSProperties = {
   WebkitMaskPosition: "center",
 };
 
-const CHROME_SHELL_BG = [
-  "conic-gradient(from 210deg at 42% 28%,",
+/** Outer rim — darker steel so thickness reads at ~48px */
+const CHROME_OUTER_BG = [
+  "conic-gradient(from 200deg at 40% 30%,",
+  "#f4f6f8 0deg,",
+  "#a8b0be 55deg,",
+  "#5c6574 120deg,",
+  "#dce1e8 175deg,",
+  "#3d4554 240deg,",
+  "#b6becb 300deg,",
+  "#f4f6f8 360deg)",
+].join("");
+
+/** Inner bevel highlight — brighter lip inside the dark rim */
+const CHROME_INNER_BG = [
+  "conic-gradient(from 220deg at 45% 25%,",
   "#ffffff 0deg,",
-  "#d8dde6 48deg,",
-  "#9aa3b2 110deg,",
-  "#eef1f6 165deg,",
-  "#7a8496 220deg,",
-  "#c5ccd8 280deg,",
-  "#f7f8fb 320deg,",
+  "#cfd5df 70deg,",
+  "#8b94a3 140deg,",
+  "#f0f3f7 200deg,",
+  "#6a7382 270deg,",
+  "#e8ecf2 330deg,",
   "#ffffff 360deg)",
-  ", linear-gradient(145deg, #fafbfc 0%, #b8c0cc 38%, #6f7888 62%, #e8ecf2 100%)",
 ].join("");
 
 type HeroFaceBadgeProps = {
@@ -191,27 +202,46 @@ export function HeroFaceBadge({
         >
           {/* Soft drop shadow under the pin */}
           <span
-            className="pointer-events-none absolute inset-0 translate-y-[2px] scale-[1.02]"
+            className="pointer-events-none absolute inset-0 translate-y-[2px] scale-[1.04]"
             style={{
               ...FACE_MASK,
-              background: "rgba(0, 0, 0, 0.55)",
-              filter: "blur(3.5px)",
-              opacity: 0.55,
+              background: "rgba(0, 0, 0, 0.65)",
+              filter: "blur(3px)",
+              opacity: 0.6,
             }}
           />
 
-          {/* Chrome shell — chunky bright silver rim via silhouette mask */}
+          {/* Outer chrome — dark steel silhouette (full size) */}
           <span
             className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
-              background: CHROME_SHELL_BG,
+              background: CHROME_OUTER_BG,
               boxShadow:
-                "inset 0 1px 1px rgba(255,255,255,0.85), inset 0 -2px 3px rgba(40,48,62,0.35)",
+                "inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -2px 3px rgba(20,24,32,0.55)",
             }}
           />
 
-          {/* Face cutout — inset so chrome rim reads */}
+          {/* Inner chrome bevel — bright lip, slightly inset */}
+          <span
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            aria-hidden
+          >
+            <span
+              className="block h-[90%] w-auto"
+              style={{
+                ...FACE_MASK,
+                aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}`,
+                width: "90%",
+                height: "90%",
+                background: CHROME_INNER_BG,
+                boxShadow:
+                  "inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -1px 2px rgba(40,48,62,0.4)",
+              }}
+            />
+          </span>
+
+          {/* Face cutout — deeper inset so dual chrome rim reads chunky */}
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <Image
               src={BADGE_SRC}
@@ -220,8 +250,8 @@ export function HeroFaceBadge({
               height={BADGE_HEIGHT}
               sizes="48px"
               draggable={false}
-              priority={false}
-              className="h-[90%] w-auto origin-center select-none object-contain"
+              priority
+              className="h-[78%] w-auto origin-center select-none object-contain"
             />
           </span>
 
@@ -231,8 +261,8 @@ export function HeroFaceBadge({
             style={{
               ...FACE_MASK,
               background:
-                "radial-gradient(ellipse 70% 55% at var(--badge-px) var(--badge-py), rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.22) 38%, rgba(255,255,255,0) 68%)",
-              opacity: 0.55,
+                "radial-gradient(ellipse 65% 50% at var(--badge-px) var(--badge-py), rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.25) 34%, rgba(255,255,255,0) 64%)",
+              opacity: 0.5,
             }}
           />
         </span>
