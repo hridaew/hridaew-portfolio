@@ -9,6 +9,7 @@ import {
   useId,
 } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import {
   animate,
   motion,
@@ -266,10 +267,13 @@ function HeroSignatureMark({
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="size-12 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
-        <img
-          src="/assets/aboutme.png"
+      <div className="relative size-12 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+        <Image
+          src="/assets/aboutme.webp"
           alt=""
+          width={96}
+          height={96}
+          sizes="48px"
           draggable={false}
           className="size-full origin-center scale-[1.9] object-cover object-[50%_0%] select-none"
         />

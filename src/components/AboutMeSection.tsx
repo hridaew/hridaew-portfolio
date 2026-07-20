@@ -131,7 +131,7 @@ export function AboutMeSection() {
                                 >
                                     <motion.img
                                         layoutId="aboutme-image"
-                                        src="/assets/aboutme.png"
+                                        src="/assets/aboutme.webp"
                                         alt="Hridae at Valve Software"
                                         className="w-full h-full object-cover"
                                         draggable={false}
@@ -339,7 +339,7 @@ export function AboutMeSection() {
                             {/* Expanded image */}
                             <motion.img
                                 layoutId="aboutme-image"
-                                src="/assets/aboutme.png"
+                                src="/assets/aboutme.webp"
                                 alt="Hridae at Valve Software"
                                 className="relative z-10 max-w-[600px] w-full rounded-2xl"
                                 draggable={false}

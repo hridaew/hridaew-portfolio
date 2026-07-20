@@ -64,21 +64,31 @@ export function BioSection() {
       ) : (
         <>
           <p>
-            Based in San Francisco, I&apos;m currently the Founding Product Designer
-            at <BioProjectAnchor slug="domis">Domis</BioProjectAnchor> &ndash; building
-            consumer experiences from 0-1, leveraging multi-modal AI to help people
-            take better care of their homes.
+            I&apos;m a Product Designer obsessed with making, and I have 6 years of
+            experience doing it.
           </p>
           <p className="mt-6">
-            In the last 5+ years I&apos;ve designed AR consumer experiences at{" "}
-            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, designed and
-            hosted a VR museum exhibit at MOHAI &ndash;{" "}
-            <BioProjectAnchor slug="obscura">OBSCURA</BioProjectAnchor>, and created
-            accessible, multi-sensory experiences for people with Alzheimer&apos;s, via the{" "}
+            I&apos;ve designed features that help homeowners
+            understand their homes at{" "}
+            <BioProjectAnchor slug="domis">Domis</BioProjectAnchor>, AR fitness
+            experiences that work in any space at{" "}
+            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, an immersive interactive
+            exhibition at the{" "}
+            <BioProjectAnchor slug="obscura">
+              Museum of History and Industry
+            </BioProjectAnchor>
+            , and tangible, accessible experiences for people living with
+            Alzheimer&apos;s at the SFCJL{" "}
             <BioProjectAnchor slug="memory-care">
-              Memory Care Experience Station
+              memory care facility
             </BioProjectAnchor>
             .
+          </p>
+          <p className="mt-6">
+            Most of it has meant designing for interaction models that barely
+            exist yet. My process starts with the people and the problems we&apos;re
+            solving for, then learning by making it real first, and making it better
+            through iteration.
           </p>
         </>
       )}

@@ -10,8 +10,10 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { DeferredVideo } from "@/components/DeferredVideo";
 import {
   homepageProjects,
   virdioCard2ExtraImage,
@@ -585,16 +587,13 @@ function GalleryCard({
           }`}
         >
           {card.videoSrc ? (
-            <video
+            <DeferredVideo
               ref={mediaRef as React.RefObject<HTMLVideoElement>}
               src={card.videoSrc}
               poster={card.imageSrc}
               className={`work-gallery-card-video ${card.imageClassName} pointer-events-none select-none outline-none`}
-              autoPlay
               loop
               muted
-              playsInline
-              preload="metadata"
               tabIndex={-1}
               controls={false}
               controlsList="nodownload nofullscreen noremoteplayback"
@@ -605,17 +604,29 @@ function GalleryCard({
               onContextMenu={(e) => e.preventDefault()}
             />
           ) : (
-            <img
+            <Image
               ref={mediaRef as React.RefObject<HTMLImageElement>}
               src={card.imageSrc}
               alt={card.imageAlt}
+              width={1200}
+              height={1200}
+              sizes="(max-width: 768px) 90vw, 520px"
               draggable={false}
               className={card.imageClassName}
             />
           )}
 
           {extraImages?.map((img, i) => (
-            <img key={i} src={img.src} alt={img.alt} draggable={false} className={img.className} />
+            <Image
+              key={i}
+              src={img.src}
+              alt={img.alt}
+              width={800}
+              height={800}
+              sizes="(max-width: 768px) 40vw, 240px"
+              draggable={false}
+              className={img.className}
+            />
           ))}
 
           {/* Dev note for future video swap — inside media layer so it never stacks above art */}

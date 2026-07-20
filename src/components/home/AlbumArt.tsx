@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, useSpring, useMotionTemplate, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
@@ -107,11 +108,13 @@ function ParallaxAlbumCard({
             className="absolute inset-0 backface-hidden rounded-[4px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.4)]"
             style={{ backfaceVisibility: "hidden" }}
           >
-            <img
+            <Image
               alt={title}
               src={frontSrc}
+              fill
+              sizes="(max-width: 768px) 85vw, 600px"
               draggable={false}
-              className="pointer-events-none absolute inset-0 size-full rounded-[4px] object-cover"
+              className="pointer-events-none rounded-[4px] object-cover"
             />
             {/* Premium Spotlight Glare effect */}
             {!reduceMotion && (
@@ -128,11 +131,13 @@ function ParallaxAlbumCard({
             className="absolute inset-0 backface-hidden rotate-y-180 rounded-[4px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.4)] bg-black"
             style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}
           >
-            <img
+            <Image
               alt={`${title} - tracklist`}
               src={backSrc}
+              fill
+              sizes="(max-width: 768px) 85vw, 600px"
               draggable={false}
-              className="pointer-events-none absolute inset-0 size-full rounded-[4px] object-cover"
+              className="pointer-events-none rounded-[4px] object-cover"
             />
           </div>
         </motion.div>

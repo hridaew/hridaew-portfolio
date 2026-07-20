@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import Image from "next/image";
 import { CHOOM, CHOOM_WAFFLINGS } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 import Link from "next/link";
@@ -108,10 +109,12 @@ function WafflingCard({
       {/* Optional thumbnail */}
       {waffling.imageSrc && (
         <div className="relative size-16 shrink-0 overflow-hidden rounded-[1px]">
-          <img
+          <Image
             src={waffling.imageSrc}
             alt=""
-            className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[1px] object-cover"
+            fill
+            sizes="64px"
+            className="pointer-events-none rounded-[1px] object-cover"
           />
         </div>
       )}

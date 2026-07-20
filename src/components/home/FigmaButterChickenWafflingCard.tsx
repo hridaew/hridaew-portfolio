@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { WafflingData } from "@/data/homepage-wafflings";
 import { SkeuomorphicRim } from "@/components/shared/SkeuomorphicRim";
 import { cn } from "@/lib/utils";
@@ -46,10 +47,12 @@ export function FigmaButterChickenWafflingCard({ waffling }: { waffling: Wafflin
           {/* Hero image — `object-contain object-left` so the mockup sits flush with
               the card's left padding and is never cropped. */}
           <div className="relative z-0 mt-4 w-full shrink-0" style={{ height: 132 }}>
-            <img
-              src={waffling.imageSrc}
+            <Image
+              src={waffling.imageSrc!}
               alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none object-contain object-left"
+              fill
+              sizes="176px"
+              className="pointer-events-none object-contain object-left"
             />
           </div>
 
@@ -64,10 +67,12 @@ export function FigmaButterChickenWafflingCard({ waffling }: { waffling: Wafflin
         <>
           {waffling.imageSrc ? (
             <div className="relative z-0 mt-4 size-[64px] shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15">
-              <img
+              <Image
                 src={waffling.imageSrc}
                 alt=""
-                className="pointer-events-none absolute inset-0 size-full max-w-none object-cover"
+                fill
+                sizes="64px"
+                className="pointer-events-none object-cover"
               />
             </div>
           ) : null}

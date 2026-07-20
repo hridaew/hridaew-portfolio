@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Image from "next/image";
 import { heroExpandedAssets } from "@/data/hero-expanded-assets";
 import {
   playBiochipMalfunctionHeroGame,
@@ -15,9 +16,11 @@ function AboutSection() {
       <div className="flex w-full max-w-[128px] shrink-0 flex-col items-start gap-2 sm:w-[128px]">
         <div className="relative size-[128px] shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
-            <img
+            <Image
               alt="Portrait at Valve Software"
-              className="block h-full w-full object-cover object-top"
+              fill
+              sizes="128px"
+              className="object-cover object-top"
               src={img.aboutPrimary}
             />
           </div>
@@ -215,27 +218,33 @@ function SideImages() {
     <div className="flex w-32 shrink-0 flex-col items-center justify-center gap-8 pt-[25px]">
       <TiltFrame rotation="-rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
-          <img
+          <Image
             alt=""
-            className="pointer-events-none absolute inset-0 size-full max-w-none rounded-lg object-cover"
+            fill
+            sizes="128px"
+            className="pointer-events-none rounded-lg object-cover"
             src={img.tilt1}
           />
         </div>
       </TiltFrame>
       <TiltFrame rotation="rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
-          <img
+          <Image
             alt=""
-            className="pointer-events-none absolute inset-0 size-full max-w-none rounded-2xl object-cover"
+            fill
+            sizes="128px"
+            className="pointer-events-none rounded-2xl object-cover"
             src={img.tilt2}
           />
         </div>
       </TiltFrame>
       <TiltFrame rotation="-rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
-          <img
+          <Image
             alt=""
-            className="pointer-events-none absolute inset-0 size-full max-w-none rounded-2xl object-cover"
+            fill
+            sizes="128px"
+            className="pointer-events-none rounded-2xl object-cover"
             src={img.tilt3}
           />
         </div>
@@ -243,8 +252,11 @@ function SideImages() {
       <TiltFrame rotation="rotate-[4deg]">
         <div className="relative size-32 shrink-0 rounded-2xl">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-            <img
+            <Image
               alt=""
+              width={256}
+              height={168}
+              sizes="128px"
               className="absolute left-[-20.63%] top-0 h-full max-w-none w-[153.8%]"
               src={img.tilt4}
             />
@@ -307,9 +319,11 @@ function Top3Section() {
               playBiochipMalfunctionHeroGame();
             }}
           >
-            <img
+            <Image
               alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"
+              fill
+              sizes="160px"
+              className="pointer-events-none rounded-[5px] object-cover"
               src={img.game1}
             />
           </div>
@@ -326,8 +340,11 @@ function Top3Section() {
             }}
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[5px]">
-              <img
+              <Image
                 alt=""
+                width={320}
+                height={440}
+                sizes="160px"
                 className="absolute left-[0.73%] top-[-1.93%] h-[102.65%] max-w-none w-[100.01%]"
                 src={img.game2}
               />
@@ -345,9 +362,11 @@ function Top3Section() {
               playGame3HeroCover();
             }}
           >
-            <img
+            <Image
               alt=""
-              className="pointer-events-none absolute inset-0 size-full max-w-none rounded-[5px] object-cover"
+              fill
+              sizes="160px"
+              className="pointer-events-none rounded-[5px] object-cover"
               src={img.game3}
             />
           </div>
@@ -399,8 +418,11 @@ function Top3Section() {
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
-              <img
+              <Image
                 alt=""
+                width={640}
+                height={560}
+                sizes="(max-width: 768px) 30vw, 220px"
                 className="absolute left-[-1.66%] top-[-0.98%] h-[101.71%] max-w-none w-[103.88%]"
                 src={img.move1}
               />
@@ -408,8 +430,11 @@ function Top3Section() {
           </div>
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
-              <img
+              <Image
                 alt=""
+                width={640}
+                height={560}
+                sizes="(max-width: 768px) 30vw, 220px"
                 className="absolute left-[-0.95%] top-[-0.34%] h-[100.73%] max-w-none w-[101.59%]"
                 src={img.move2}
               />
@@ -417,8 +442,11 @@ function Top3Section() {
           </div>
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
-              <img
+              <Image
                 alt=""
+                width={640}
+                height={560}
+                sizes="(max-width: 768px) 30vw, 220px"
                 className="absolute left-[-1.53%] top-[-0.79%] h-[101.49%] max-w-none w-[102.7%]"
                 src={img.move3}
               />

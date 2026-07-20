@@ -18,6 +18,7 @@ import { TLDRCard } from "@/components/virdio/TLDRCard";
 import { MarketComparison } from "@/components/virdio/MarketComparison";
 import { PlatformSpectrum } from "@/components/virdio/PlatformSpectrum";
 import { DecisionCards } from "@/components/virdio/DecisionCards";
+import { DeferredVideo } from "@/components/DeferredVideo";
 
 export default function VirdioPage() {
     const pageRootRef = useRef<HTMLDivElement>(null);
@@ -89,15 +90,12 @@ export default function VirdioPage() {
                 <section className={cn("relative z-20 case-study-section-gap", SITE_COLUMN)}>
                     <Reveal>
                         <div className="aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
-                            <video
+                            <DeferredVideo
                                 src="/assets/home/virdio-hero-crop.mp4"
-                                poster="/assets/home/virdio-ar-desktop.png"
+                                poster="/assets/home/virdio-ar-desktop.webp"
                                 className="work-gallery-card-video h-full w-full select-none object-cover outline-none"
-                                autoPlay
                                 loop
                                 muted
-                                playsInline
-                                preload="auto"
                                 tabIndex={-1}
                                 controls={false}
                                 controlsList="nodownload nofullscreen noremoteplayback"

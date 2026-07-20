@@ -51,7 +51,7 @@ export const homepageProjects: HomepageProject[] = [
           "absolute bottom-0 left-1/2 -translate-x-1/2 max-h-[90%] max-w-full w-auto h-auto object-contain object-bottom drop-shadow-[0px_14px_32px_rgba(0,0,0,0.22)]",
       },
       {
-        imageSrc: "/assets/home/domis-task-detail.png",
+        imageSrc: "/assets/home/domis-task-detail.webp",
         imageAlt: "Domis task detail screen looping animation",
         caption: "Designed to log every detail while feeling light",
         imageClassName:
@@ -79,7 +79,7 @@ export const homepageProjects: HomepageProject[] = [
     contextTags: ["Consumer App", "AR"],
     cards: [
       {
-        imageSrc: "/assets/home/virdio-ar-desktop.png",
+        imageSrc: "/assets/home/virdio-ar-desktop.webp",
         imageAlt: "Virdio AR desktop hero video",
         caption: "Virdio hero video",
         imageClassName:
@@ -87,7 +87,7 @@ export const homepageProjects: HomepageProject[] = [
         videoSrc: "/assets/home/virdio-hero-crop.mp4",
       },
       {
-        imageSrc: "/assets/home/virdio-ar-desktop.png",
+        imageSrc: "/assets/home/virdio-ar-desktop.webp",
         imageAlt: "Virdio AR desktop workout in context",
         caption: "Virdio AR exercise and mobile app",
         imageClassName:
@@ -113,7 +113,7 @@ export const homepageProjects: HomepageProject[] = [
     contextTags: ["Immersive Exhibit", "VR"],
     cards: [
       {
-        imageSrc: "/assets/home/obscura-sbs-view.png",
+        imageSrc: "/assets/home/obscura-sbs-view.webp",
         imageAlt: "OBSCURA side-by-side view looping video",
         caption:
           "OBSCURA is an asynchronous VR exhibit my team and I hosted at MOHAI",
