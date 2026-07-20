@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import Image from "next/image";
 import { animate, motion, useMotionValue } from "framer-motion";
@@ -16,14 +15,31 @@ const BADGE_SRC = "/assets/home/hero-face-badge.webp";
 const BADGE_WIDTH = 250;
 const BADGE_HEIGHT = 360;
 
-/* ─── Tunables (size / chrome / tilt) ─── */
-/** Display height in Tailwind terms — bump for a larger pin (was 48 / h-12). */
-const BADGE_HEIGHT_CLASS = "h-16"; // 64px
+/* ─── Tunables (size / chrome / tilt / pin depth) ─── */
+/** Display height in Tailwind terms. */
+const BADGE_HEIGHT_CLASS = "h-14"; // 56px
 /** How much of the chrome shell the face fills. Higher = thinner rim. */
 const FACE_INSET = 0.97; // 97% → ~1.5% rim each side
-/** Pointer-follow tilt (idle). */
-const MAX_TILT_DEG = 10;
+/**
+ * Pin thickness in screen px (2D extrusion).
+ * NOTE: True CSS translateZ depth is flattened by the hero card’s
+ * overflow:hidden ancestors — so thickness is faked with offset metal slices.
+ */
+const PIN_DEPTH_PX = 1;
+/** Extrusion direction (unit-ish): down-right reads as light from top-left. */
+const PIN_EXTRUDE_X = 0.7;
+const PIN_EXTRUDE_Y = 0.95;
+/** Max look tilt toward the cursor (degrees). */
+const MAX_TILT_DEG = 16;
+/** How fast tilt eases toward the cursor (0–1 per frame). */
 const TILT_LERP = 0.18;
+/**
+ * Cursor distance from badge center (px) that maps to full tilt.
+ * Larger = gentler; smaller = more reactive near the face.
+ */
+const TILT_LOOK_RADIUS_PX = 320;
+/** Face specular strength — keep low so skin doesn’t blow out. */
+const FACE_SPECULAR_OPACITY = 0.22;
 
 /* ─── Tunables — Mario 64–style spin ───
  * Edit these to taste; times are fractions of SPIN_DURATION_S (0–1).
@@ -75,6 +91,40 @@ const CHROME_MIRROR_BG = [
   "#f0f2f6 100%)",
 ].join("");
 
+/**
+ * Reflective metal bands along the pin side (opaque).
+ * Alternating dark / bright chrome so the edge catches light like polished steel.
+ */
+function extrudeFill(depthFromFront: number): string {
+  // Cycle highlight → mid → dark across slices for a mirror edge
+  const band = depthFromFront % 3;
+  if (band === 0) {
+    return [
+      "linear-gradient(145deg,",
+      "#f4f6f8 0%,",
+      "#b8c0cc 35%,",
+      "#6a7382 70%,",
+      "#d8dde6 100%)",
+    ].join("");
+  }
+  if (band === 1) {
+    return [
+      "linear-gradient(145deg,",
+      "#9aa3b2 0%,",
+      "#4a5262 40%,",
+      "#2a303c 75%,",
+      "#7a8494 100%)",
+    ].join("");
+  }
+  return [
+    "linear-gradient(145deg,",
+    "#c5ccd8 0%,",
+    "#5c6574 30%,",
+    "#3a414d 65%,",
+    "#aeb6c4 100%)",
+  ].join("");
+}
+
 type HeroFaceBadgeProps = {
   reduceMotion: boolean | null;
   replayLabel: string;
@@ -90,84 +140,164 @@ export function HeroFaceBadge({
 }: HeroFaceBadgeProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pinRef = useRef<HTMLSpanElement>(null);
+  const mouseRef = useRef({ x: 0, y: 0, has: false });
+  const centerRef = useRef({ x: 0, y: 0 });
   const targetRef = useRef({ x: 0, y: 0 });
   const currentRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef<number | null>(null);
-  const hoveringRef = useRef(false);
+  const pageVisibleRef = useRef(true);
+  const inViewRef = useRef(true);
   const spinningRef = useRef(false);
   const [spinning, setSpinning] = useState(false);
 
   const spinY = useMotionValue(0);
   const spinScale = useMotionValue(1);
 
-  const applyTilt = useCallback(() => {
-    const pin = pinRef.current;
-    if (!pin) {
-      rafRef.current = null;
+  const canTilt = () =>
+    !reduceMotion &&
+    !spinningRef.current &&
+    pageVisibleRef.current &&
+    inViewRef.current;
+
+  const syncCenter = useCallback(() => {
+    const el = buttonRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    centerRef.current = {
+      x: rect.left + rect.width * 0.5,
+      y: rect.top + rect.height * 0.5,
+    };
+  }, []);
+
+  const updateTargetFromMouse = useCallback(() => {
+    if (!mouseRef.current.has) {
+      targetRef.current = { x: 0, y: 0 };
       return;
     }
-
-    if (spinningRef.current || reduceMotion) {
-      pin.style.transform = "rotateX(0deg) rotateY(0deg)";
-      rafRef.current = null;
-      return;
-    }
-
-    const cur = currentRef.current;
-    const tgt = targetRef.current;
-    cur.x += (tgt.x - cur.x) * TILT_LERP;
-    cur.y += (tgt.y - cur.y) * TILT_LERP;
-
-    const rotateY = cur.x * MAX_TILT_DEG;
-    const rotateX = -cur.y * MAX_TILT_DEG;
-
-    pin.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
-    pin.style.setProperty("--badge-px", `${((cur.x + 1) / 2) * 100}%`);
-    pin.style.setProperty("--badge-py", `${((cur.y + 1) / 2) * 100}%`);
-
-    const settled =
-      Math.abs(tgt.x - cur.x) < 0.001 && Math.abs(tgt.y - cur.y) < 0.001;
-    if (!settled || hoveringRef.current) {
-      rafRef.current = requestAnimationFrame(applyTilt);
-    } else {
-      rafRef.current = null;
-      pin.style.transform = "rotateX(0deg) rotateY(0deg)";
-      pin.style.setProperty("--badge-px", "38%");
-      pin.style.setProperty("--badge-py", "22%");
-    }
-  }, [reduceMotion]);
+    const { x: mx, y: my } = mouseRef.current;
+    const { x: cx, y: cy } = centerRef.current;
+    const nx = Math.max(
+      -1,
+      Math.min(1, (mx - cx) / TILT_LOOK_RADIUS_PX),
+    );
+    const ny = Math.max(
+      -1,
+      Math.min(1, (my - cy) / TILT_LOOK_RADIUS_PX),
+    );
+    targetRef.current = { x: nx, y: ny };
+  }, []);
 
   const ensureRaf = useCallback(() => {
-    if (rafRef.current == null) {
-      rafRef.current = requestAnimationFrame(applyTilt);
-    }
-  }, [applyTilt]);
+    if (rafRef.current != null) return;
 
-  const handlePointerMove = useCallback(
-    (event: ReactPointerEvent<HTMLButtonElement>) => {
-      if (reduceMotion || spinningRef.current) return;
-      const el = buttonRef.current;
-      if (!el) return;
+    const tick = () => {
+      const pin = pinRef.current;
+      if (!pin) {
+        rafRef.current = null;
+        return;
+      }
 
-      const rect = el.getBoundingClientRect();
-      const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-      targetRef.current = {
-        x: Math.max(-1, Math.min(1, nx)),
-        y: Math.max(-1, Math.min(1, ny)),
-      };
-      hoveringRef.current = true;
-      ensureRaf();
-    },
-    [ensureRaf, reduceMotion],
-  );
+      if (!canTilt()) {
+        pin.style.transform = "rotateX(0deg) rotateY(0deg)";
+        rafRef.current = null;
+        return;
+      }
 
-  const handlePointerLeave = useCallback(() => {
+      updateTargetFromMouse();
+
+      const cur = currentRef.current;
+      const tgt = targetRef.current;
+      cur.x += (tgt.x - cur.x) * TILT_LERP;
+      cur.y += (tgt.y - cur.y) * TILT_LERP;
+
+      const rotateY = cur.x * MAX_TILT_DEG;
+      const rotateX = -cur.y * MAX_TILT_DEG;
+
+      pin.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+      pin.style.setProperty("--badge-px", `${((cur.x + 1) / 2) * 100}%`);
+      pin.style.setProperty("--badge-py", `${((cur.y + 1) / 2) * 100}%`);
+
+      const settled =
+        Math.abs(tgt.x - cur.x) < 0.001 && Math.abs(tgt.y - cur.y) < 0.001;
+      if (settled) {
+        rafRef.current = null;
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [reduceMotion, updateTargetFromMouse]);
+
+  // Global look-at: window coords in refs, one rAF lerp, cached badge center.
+  useEffect(() => {
     if (reduceMotion) return;
-    hoveringRef.current = false;
-    targetRef.current = { x: 0, y: 0 };
-    ensureRaf();
-  }, [ensureRaf, reduceMotion]);
+
+    syncCenter();
+
+    const onPointerMove = (event: PointerEvent) => {
+      mouseRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        has: true,
+      };
+      if (canTilt()) ensureRaf();
+    };
+
+    const onScrollOrResize = () => {
+      syncCenter();
+      if (mouseRef.current.has && canTilt()) ensureRaf();
+    };
+
+    const onVisibility = () => {
+      pageVisibleRef.current = document.visibilityState === "visible";
+      if (!pageVisibleRef.current) {
+        if (rafRef.current != null) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+        return;
+      }
+      syncCenter();
+      if (mouseRef.current.has && canTilt()) ensureRaf();
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("scroll", onScrollOrResize, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("resize", onScrollOrResize, { passive: true });
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const io =
+      typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(
+            ([entry]) => {
+              inViewRef.current = Boolean(entry?.isIntersecting);
+              if (inViewRef.current) {
+                syncCenter();
+                if (mouseRef.current.has && canTilt()) ensureRaf();
+              } else if (rafRef.current != null) {
+                cancelAnimationFrame(rafRef.current);
+                rafRef.current = null;
+              }
+            },
+            { root: null, threshold: 0 },
+          )
+        : null;
+    if (io && buttonRef.current) io.observe(buttonRef.current);
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      io?.disconnect();
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [ensureRaf, reduceMotion, syncCenter]);
 
   const playSpin = useCallback(async () => {
     if (spinningRef.current) return;
@@ -178,8 +308,6 @@ export function HeroFaceBadge({
 
     spinningRef.current = true;
     setSpinning(true);
-    hoveringRef.current = false;
-    targetRef.current = { x: 0, y: 0 };
     if (pinRef.current) {
       pinRef.current.style.transform = "rotateX(0deg) rotateY(0deg)";
     }
@@ -218,28 +346,32 @@ export function HeroFaceBadge({
     spinScale.set(1);
     spinningRef.current = false;
     setSpinning(false);
-  }, [reduceMotion, spinScale, spinY]);
-
-  useEffect(() => {
-    return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
+    syncCenter();
+    if (mouseRef.current.has) ensureRaf();
+  }, [ensureRaf, reduceMotion, spinScale, spinY, syncCenter]);
 
   const facePct = `${FACE_INSET * 100}%`;
+  // Deepest first so later slices paint on top toward the face plate.
+  const extrudeSlices = Array.from({ length: PIN_DEPTH_PX }, (_, i) => {
+    const depth = PIN_DEPTH_PX - i; // PIN_DEPTH_PX … 1
+    return {
+      key: depth,
+      x: depth * PIN_EXTRUDE_X,
+      y: depth * PIN_EXTRUDE_Y,
+      fill: extrudeFill(depth),
+    };
+  });
 
   return (
     <button
       ref={buttonRef}
       type="button"
       onClick={playSpin}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
       aria-label={replayLabel}
       title={replayTitle}
       disabled={spinning}
       className={cn(
-        "relative inline-flex w-auto shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0",
+        "relative inline-flex w-auto shrink-0 cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0",
         BADGE_HEIGHT_CLASS,
         "touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
         "focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416]",
@@ -250,39 +382,53 @@ export function HeroFaceBadge({
     >
       <motion.span
         aria-hidden
-        className="relative block h-full w-auto"
+        className="relative block h-full w-auto overflow-visible"
         style={{
           aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}`,
           rotateY: spinY,
           scale: spinScale,
-          transformStyle: "preserve-3d",
-          transformPerspective: 480,
+          transformPerspective: 520,
         }}
       >
         {/* Pointer tilt — nested so it doesn't fight the spin rotateY */}
         <span
           ref={pinRef}
-          className="relative block h-full w-full will-change-transform"
+          className="relative block h-full w-full overflow-visible will-change-transform"
           style={
             {
-              transformStyle: "preserve-3d",
               transform: "rotateX(0deg) rotateY(0deg)",
               ["--badge-px" as string]: "38%",
               ["--badge-py" as string]: "22%",
             } as CSSProperties
           }
         >
+          {/* Soft ground shadow — dark only, keep it tight */}
           <span
-            className="pointer-events-none absolute inset-0 translate-y-[1.5px] scale-[1.02]"
+            className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
-              background: "rgba(0, 0, 0, 0.55)",
-              filter: "blur(2.5px)",
-              opacity: 0.5,
+              transform: `translate(${PIN_DEPTH_PX * PIN_EXTRUDE_X + 0.5}px, ${PIN_DEPTH_PX * PIN_EXTRUDE_Y + 1}px)`,
+              background: "#000",
+              filter: "blur(1.5px)",
+              opacity: 0.35,
             }}
           />
 
-          {/* Thin mirror chrome rim */}
+          {/* Reflective metal body extrusion (pin thickness) */}
+          {extrudeSlices.map(({ key, x, y, fill }) => (
+            <span
+              key={key}
+              className="pointer-events-none absolute inset-0"
+              style={{
+                ...FACE_MASK,
+                transform: `translate(${x}px, ${y}px)`,
+                background: fill,
+                opacity: 1,
+              }}
+            />
+          ))}
+
+          {/* Front chrome lip — polished silver on the face plane only */}
           <span
             className="pointer-events-none absolute inset-0"
             style={{
@@ -291,31 +437,34 @@ export function HeroFaceBadge({
             }}
           />
 
-          {/* Face — nearly full size so chrome reads as a hairline */}
+          {/* Face plate — inset so chrome rim reads as a hairline */}
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <Image
               src={BADGE_SRC}
               alt=""
               width={BADGE_WIDTH}
               height={BADGE_HEIGHT}
-              sizes="64px"
+              sizes="56px"
               draggable={false}
               priority
               className="w-auto origin-center select-none object-contain"
-              style={{ height: facePct }}
+              style={{
+                height: facePct,
+                filter: "brightness(0.96) contrast(1.04) saturate(1.05)",
+              }}
             />
           </span>
 
-          {/* Sharp mirror specular that tracks pointer */}
+          {/* Soft specular on the front face */}
           <span
             className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
               background:
-                "linear-gradient(115deg, transparent 0%, transparent 28%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0.9) 46%, rgba(255,255,255,0.35) 50%, transparent 62%, transparent 100%)",
+                "linear-gradient(115deg, transparent 0%, transparent 36%, rgba(255,255,255,0.28) 44%, rgba(255,255,255,0.45) 47%, rgba(255,255,255,0.2) 50%, transparent 60%, transparent 100%)",
               backgroundPosition: "var(--badge-px) var(--badge-py)",
               mixBlendMode: "soft-light",
-              opacity: 0.85,
+              opacity: FACE_SPECULAR_OPACITY,
             }}
           />
         </span>

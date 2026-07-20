@@ -68,27 +68,20 @@ export function BioSection() {
             experience doing it.
           </p>
           <p className="mt-6">
-            I&apos;ve designed features that help homeowners
-            understand their homes at{" "}
+            I&apos;ve designed features that help people understand their homes at{" "}
             <BioProjectAnchor slug="domis">Domis</BioProjectAnchor>, AR fitness
-            experiences that work in any space at{" "}
-            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, an immersive interactive
-            exhibition at the{" "}
-            <BioProjectAnchor slug="obscura">
-              Museum of History and Industry
-            </BioProjectAnchor>
-            , and tangible, accessible experiences for people living with
-            Alzheimer&apos;s at the SFCJL{" "}
-            <BioProjectAnchor slug="memory-care">
-              memory care facility
-            </BioProjectAnchor>
-            .
+            for any space at{" "}
+            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, an
+            interactive exhibition at{" "}
+            <BioProjectAnchor slug="obscura">MOHAI</BioProjectAnchor>, and
+            tangible, accessible experiences for people living with
+            Alzheimer&apos;s at the{" "}
+            <BioProjectAnchor slug="memory-care">SFCJL</BioProjectAnchor>.
           </p>
           <p className="mt-6">
             Most of it has meant designing for interaction models that barely
-            exist yet. My process starts with the people and the problems we&apos;re
-            solving for, then learning by making it real first, and making it better
-            through iteration.
+            exist yet. I focus on the user and learn by making, whether on the
+            canvas, in code, or the physical world.
           </p>
         </>
       )}

@@ -907,6 +907,14 @@ export function HeroCard() {
                 style={{
                   fontVariationSettings: "'opsz' 14, 'wdth' 100",
                 }}
+                onPointerEnter={() => setShowPronunciation(true)}
+                onPointerLeave={() => setShowPronunciation(false)}
+                onFocusCapture={() => setShowPronunciation(true)}
+                onBlurCapture={(ev) => {
+                  if (!ev.currentTarget.contains(ev.relatedTarget as Node | null)) {
+                    setShowPronunciation(false);
+                  }
+                }}
               >
                 <button
                   type="button"
@@ -914,18 +922,10 @@ export function HeroCard() {
                   aria-expanded={showPronunciation}
                   aria-controls="hero-pronunciation-panel"
                   aria-label={
-                    showPronunciation
-                      ? choom
-                        ? CHOOM.heroPronHide
-                        : "Hridae Walia, hide pronunciation"
-                      : choom
-                        ? CHOOM.heroPronShow
-                        : "Hridae Walia, show pronunciation"
+                    choom
+                      ? CHOOM.heroPronShow
+                      : "Hridae Walia, pronunciation ri-they waaliaa"
                   }
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setShowPronunciation((v) => !v);
-                  }}
                   className="min-w-0 border-0 bg-transparent p-0 text-left font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
                   style={{
                     fontVariationSettings: "'opsz' 14, 'wdth' 100",
