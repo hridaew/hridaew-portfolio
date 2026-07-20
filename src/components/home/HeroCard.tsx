@@ -9,7 +9,6 @@ import {
   useId,
 } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import {
   animate,
   motion,
@@ -31,6 +30,7 @@ import {
   playChoomHeroExpand,
 } from "@/lib/choomUiAudio";
 import { HeroCardExpandedBody } from "./HeroCardExpandedBody";
+import { HeroFaceBadge } from "./HeroFaceBadge";
 import {
   HeroSketchOrbField,
   type HeroSketchOrbFieldHandle,
@@ -267,16 +267,28 @@ function HeroSignatureMark({
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="relative size-12 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
-        <Image
-          src="/assets/aboutme.webp"
-          alt=""
-          width={96}
-          height={96}
-          sizes="48px"
-          draggable={false}
-          className="size-full origin-center scale-[1.9] object-cover object-[50%_0%] select-none"
+      <div className="relative shrink-0">
+        <HeroFaceBadge
+          replayTick={avatarReplayTick}
+          burstActive={Boolean(avatarBurst)}
+          onReplay={onReplay}
+          reduceMotion={reduceMotion}
+          replayLabel={replayLabel}
+          replayTitle={replayTitle}
         />
+        {avatarBurst ? (
+          <span
+            className="pointer-events-none absolute left-1/2 top-1/2 z-10 block h-0 w-0"
+            aria-hidden
+          >
+            {avatarBurst.map((p) => (
+              <AvatarBurstParticle
+                key={`${avatarReplayTick}-b-${p.id}`}
+                particle={p}
+              />
+            ))}
+          </span>
+        ) : null}
       </div>
       {SHOW_HERO_SIGNATURE_GIF ? (
         <div className="relative h-8 w-[73px] overflow-visible opacity-80">
