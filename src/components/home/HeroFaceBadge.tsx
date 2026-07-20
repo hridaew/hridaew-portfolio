@@ -4,18 +4,49 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useState,
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { animate, motion, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const BADGE_SRC = "/assets/home/hero-face-badge.webp";
 const BADGE_WIDTH = 250;
 const BADGE_HEIGHT = 360;
+
+/* ─── Tunables (size / chrome / tilt) ─── */
+/** Display height in Tailwind terms — bump for a larger pin (was 48 / h-12). */
+const BADGE_HEIGHT_CLASS = "h-16"; // 64px
+/** How much of the chrome shell the face fills. Higher = thinner rim. */
+const FACE_INSET = 0.97; // 97% → ~1.5% rim each side
+/** Pointer-follow tilt (idle). */
 const MAX_TILT_DEG = 10;
-const LERP = 0.18;
+const TILT_LERP = 0.18;
+
+/* ─── Tunables — Mario 64–style spin ───
+ * Edit these to taste; times are fractions of SPIN_DURATION_S (0–1).
+ */
+/** Total spin choreography length (seconds). */
+const SPIN_DURATION_S = 1.05;
+/** Wind-up opposite the spin (degrees). Negative = left first. */
+const SPIN_ANTICIPATION_DEG = -32;
+/** When anticipation ends (0–1 along the timeline). */
+const SPIN_T_ANTICIPATION = 0.11;
+/** Full turns before overshoot (1 = classic single flip). */
+const SPIN_FULL_TURNS = 1;
+/** Extra degrees past the landing before settle (follow-through). */
+const SPIN_OVERSHOOT_DEG = 22;
+/** When the fast spin reaches overshoot (0–1). */
+const SPIN_T_OVERSHOOT = 0.72;
+/** Squash on anticipation / stretch mid-spin. */
+const SPIN_SCALE_SQUASH = 0.94;
+const SPIN_SCALE_STRETCH = 1.055;
+/** Final settle spring after the keyframed spin lands. */
+const SPIN_SETTLE_STIFFNESS = 420;
+const SPIN_SETTLE_DAMPING = 14;
+const SPIN_SETTLE_MASS = 0.65;
 
 const FACE_MASK: CSSProperties = {
   maskImage: `url(${BADGE_SRC})`,
@@ -28,34 +59,23 @@ const FACE_MASK: CSSProperties = {
   WebkitMaskPosition: "center",
 };
 
-/** Outer rim — darker steel so thickness reads at ~48px */
-const CHROME_OUTER_BG = [
-  "conic-gradient(from 200deg at 40% 30%,",
-  "#f4f6f8 0deg,",
-  "#a8b0be 55deg,",
-  "#5c6574 120deg,",
-  "#dce1e8 175deg,",
-  "#3d4554 240deg,",
-  "#b6becb 300deg,",
-  "#f4f6f8 360deg)",
-].join("");
-
-/** Inner bevel highlight — brighter lip inside the dark rim */
-const CHROME_INNER_BG = [
-  "conic-gradient(from 220deg at 45% 25%,",
-  "#ffffff 0deg,",
-  "#cfd5df 70deg,",
-  "#8b94a3 140deg,",
-  "#f0f3f7 200deg,",
-  "#6a7382 270deg,",
-  "#e8ecf2 330deg,",
-  "#ffffff 360deg)",
+/** Mirror chrome — hard specular bands, polished silver. */
+const CHROME_MIRROR_BG = [
+  "linear-gradient(128deg,",
+  "#ffffff 0%,",
+  "#d4d9e2 6%,",
+  "#ffffff 11%,",
+  "#9aa3b2 22%,",
+  "#eceff4 34%,",
+  "#5c6574 48%,",
+  "#f7f8fb 58%,",
+  "#aeb6c4 70%,",
+  "#ffffff 82%,",
+  "#7a8494 92%,",
+  "#f0f2f6 100%)",
 ].join("");
 
 type HeroFaceBadgeProps = {
-  replayTick: number;
-  burstActive: boolean;
-  onReplay: () => void;
   reduceMotion: boolean | null;
   replayLabel: string;
   replayTitle: string;
@@ -63,9 +83,6 @@ type HeroFaceBadgeProps = {
 };
 
 export function HeroFaceBadge({
-  replayTick,
-  burstActive,
-  onReplay,
   reduceMotion,
   replayLabel,
   replayTitle,
@@ -77,6 +94,11 @@ export function HeroFaceBadge({
   const currentRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef<number | null>(null);
   const hoveringRef = useRef(false);
+  const spinningRef = useRef(false);
+  const [spinning, setSpinning] = useState(false);
+
+  const spinY = useMotionValue(0);
+  const spinScale = useMotionValue(1);
 
   const applyTilt = useCallback(() => {
     const pin = pinRef.current;
@@ -85,15 +107,21 @@ export function HeroFaceBadge({
       return;
     }
 
+    if (spinningRef.current || reduceMotion) {
+      pin.style.transform = "rotateX(0deg) rotateY(0deg)";
+      rafRef.current = null;
+      return;
+    }
+
     const cur = currentRef.current;
     const tgt = targetRef.current;
-    cur.x += (tgt.x - cur.x) * LERP;
-    cur.y += (tgt.y - cur.y) * LERP;
+    cur.x += (tgt.x - cur.x) * TILT_LERP;
+    cur.y += (tgt.y - cur.y) * TILT_LERP;
 
     const rotateY = cur.x * MAX_TILT_DEG;
     const rotateX = -cur.y * MAX_TILT_DEG;
 
-    pin.style.transform = `perspective(400px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+    pin.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
     pin.style.setProperty("--badge-px", `${((cur.x + 1) / 2) * 100}%`);
     pin.style.setProperty("--badge-py", `${((cur.y + 1) / 2) * 100}%`);
 
@@ -103,11 +131,11 @@ export function HeroFaceBadge({
       rafRef.current = requestAnimationFrame(applyTilt);
     } else {
       rafRef.current = null;
-      pin.style.transform = "perspective(400px) rotateX(0deg) rotateY(0deg)";
-      pin.style.setProperty("--badge-px", "42%");
-      pin.style.setProperty("--badge-py", "28%");
+      pin.style.transform = "rotateX(0deg) rotateY(0deg)";
+      pin.style.setProperty("--badge-px", "38%");
+      pin.style.setProperty("--badge-py", "22%");
     }
-  }, []);
+  }, [reduceMotion]);
 
   const ensureRaf = useCallback(() => {
     if (rafRef.current == null) {
@@ -117,7 +145,7 @@ export function HeroFaceBadge({
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLButtonElement>) => {
-      if (reduceMotion) return;
+      if (reduceMotion || spinningRef.current) return;
       const el = buttonRef.current;
       if (!el) return;
 
@@ -141,128 +169,153 @@ export function HeroFaceBadge({
     ensureRaf();
   }, [ensureRaf, reduceMotion]);
 
+  const playSpin = useCallback(async () => {
+    if (spinningRef.current) return;
+
+    if (reduceMotion) {
+      return;
+    }
+
+    spinningRef.current = true;
+    setSpinning(true);
+    hoveringRef.current = false;
+    targetRef.current = { x: 0, y: 0 };
+    if (pinRef.current) {
+      pinRef.current.style.transform = "rotateX(0deg) rotateY(0deg)";
+    }
+
+    const landDeg = 360 * SPIN_FULL_TURNS;
+    const overshootDeg = landDeg + SPIN_OVERSHOOT_DEG;
+
+    spinY.set(0);
+    spinScale.set(1);
+
+    const spinPhaseS = SPIN_DURATION_S * SPIN_T_OVERSHOOT;
+    const tAnti = SPIN_T_ANTICIPATION / SPIN_T_OVERSHOOT;
+
+    await Promise.all([
+      animate(spinY, [0, SPIN_ANTICIPATION_DEG, overshootDeg], {
+        duration: spinPhaseS,
+        times: [0, tAnti, 1],
+        ease: ["easeOut", [0.33, 0.0, 0.2, 1]],
+      }),
+      animate(spinScale, [1, SPIN_SCALE_SQUASH, SPIN_SCALE_STRETCH, 1], {
+        duration: spinPhaseS,
+        times: [0, tAnti, 0.55, 1],
+        ease: "easeInOut",
+      }),
+    ]);
+
+    await animate(spinY, landDeg, {
+      type: "spring",
+      stiffness: SPIN_SETTLE_STIFFNESS,
+      damping: SPIN_SETTLE_DAMPING,
+      mass: SPIN_SETTLE_MASS,
+    });
+
+    // Normalize so the next spin starts from 0 without a visual jump.
+    spinY.set(0);
+    spinScale.set(1);
+    spinningRef.current = false;
+    setSpinning(false);
+  }, [reduceMotion, spinScale, spinY]);
+
   useEffect(() => {
     return () => {
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
+  const facePct = `${FACE_INSET * 100}%`;
+
   return (
     <button
       ref={buttonRef}
       type="button"
-      onClick={onReplay}
+      onClick={playSpin}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       aria-label={replayLabel}
       title={replayTitle}
+      disabled={spinning}
       className={cn(
-        "relative inline-flex h-12 w-auto shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0",
+        "relative inline-flex w-auto shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0",
+        BADGE_HEIGHT_CLASS,
         "touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
         "focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416]",
+        spinning && "cursor-default",
         className,
       )}
       style={{ aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}` }}
     >
       <motion.span
-        key={replayTick}
         aria-hidden
-        initial={
-          reduceMotion ? { scale: 1, opacity: 1 } : { scale: 0.88, opacity: 0.92 }
-        }
-        animate={{
-          scale: 1,
-          opacity: burstActive ? 0 : 1,
-        }}
-        transition={
-          reduceMotion
-            ? { duration: 0 }
-            : {
-                type: "spring",
-                stiffness: 560,
-                damping: 26,
-                mass: 0.85,
-              }
-        }
         className="relative block h-full w-auto"
-        style={{ aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}` }}
+        style={{
+          aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}`,
+          rotateY: spinY,
+          scale: spinScale,
+          transformStyle: "preserve-3d",
+          transformPerspective: 480,
+        }}
       >
-        {/* Tilt stack — DOM style only; nested so FM scale doesn't clobber rotate */}
+        {/* Pointer tilt — nested so it doesn't fight the spin rotateY */}
         <span
           ref={pinRef}
           className="relative block h-full w-full will-change-transform"
           style={
             {
               transformStyle: "preserve-3d",
-              transform: "perspective(400px) rotateX(0deg) rotateY(0deg)",
-              ["--badge-px" as string]: "42%",
-              ["--badge-py" as string]: "28%",
+              transform: "rotateX(0deg) rotateY(0deg)",
+              ["--badge-px" as string]: "38%",
+              ["--badge-py" as string]: "22%",
             } as CSSProperties
           }
         >
-          {/* Soft drop shadow under the pin */}
           <span
-            className="pointer-events-none absolute inset-0 translate-y-[2px] scale-[1.04]"
+            className="pointer-events-none absolute inset-0 translate-y-[1.5px] scale-[1.02]"
             style={{
               ...FACE_MASK,
-              background: "rgba(0, 0, 0, 0.65)",
-              filter: "blur(3px)",
-              opacity: 0.6,
+              background: "rgba(0, 0, 0, 0.55)",
+              filter: "blur(2.5px)",
+              opacity: 0.5,
             }}
           />
 
-          {/* Outer chrome — dark steel silhouette (full size) */}
+          {/* Thin mirror chrome rim */}
           <span
             className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
-              background: CHROME_OUTER_BG,
-              boxShadow:
-                "inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -2px 3px rgba(20,24,32,0.55)",
+              background: CHROME_MIRROR_BG,
             }}
           />
 
-          {/* Inner chrome bevel — bright lip, slightly inset */}
-          <span
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
-            aria-hidden
-          >
-            <span
-              className="block h-[90%] w-auto"
-              style={{
-                ...FACE_MASK,
-                aspectRatio: `${BADGE_WIDTH} / ${BADGE_HEIGHT}`,
-                width: "90%",
-                height: "90%",
-                background: CHROME_INNER_BG,
-                boxShadow:
-                  "inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -1px 2px rgba(40,48,62,0.4)",
-              }}
-            />
-          </span>
-
-          {/* Face cutout — deeper inset so dual chrome rim reads chunky */}
+          {/* Face — nearly full size so chrome reads as a hairline */}
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <Image
               src={BADGE_SRC}
               alt=""
               width={BADGE_WIDTH}
               height={BADGE_HEIGHT}
-              sizes="48px"
+              sizes="64px"
               draggable={false}
               priority
-              className="h-[78%] w-auto origin-center select-none object-contain"
+              className="w-auto origin-center select-none object-contain"
+              style={{ height: facePct }}
             />
           </span>
 
-          {/* Specular highlight — tracks pointer via CSS vars */}
+          {/* Sharp mirror specular that tracks pointer */}
           <span
-            className="pointer-events-none absolute inset-0 mix-blend-soft-light"
+            className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
               background:
-                "radial-gradient(ellipse 65% 50% at var(--badge-px) var(--badge-py), rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.25) 34%, rgba(255,255,255,0) 64%)",
-              opacity: 0.5,
+                "linear-gradient(115deg, transparent 0%, transparent 28%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0.9) 46%, rgba(255,255,255,0.35) 50%, transparent 62%, transparent 100%)",
+              backgroundPosition: "var(--badge-px) var(--badge-py)",
+              mixBlendMode: "soft-light",
+              opacity: 0.85,
             }}
           />
         </span>
