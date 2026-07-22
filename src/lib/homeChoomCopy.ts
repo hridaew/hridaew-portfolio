@@ -91,6 +91,11 @@ export const CHOOM_WAFFLINGS: {
   preview: string;
 }[] = [
   {
+    title: "Savor: phone vid to 3D model chrome",
+    preview:
+      "Orbit an object on your slab, drop the clip in, pull a clean Gaussian splat out. Room carved away, all local on Apple silicon. Research preview, preem choom energy.",
+  },
+  {
     title: "Butter Chicken Recipe — kitchen-side black ICE (joke run)",
     preview:
       "Runners keep asking for my spice stack. It’s a vibes-build: amounts drift like heat in the sprawl. More Kashmiri red if you want pain. If taste reads flat, it’s salt or butter — butter scales linear, choom. That’s nova.",

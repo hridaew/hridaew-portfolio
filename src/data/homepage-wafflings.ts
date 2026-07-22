@@ -17,6 +17,15 @@ export interface WafflingData {
 
 export const homepageWafflings: WafflingData[] = [
   {
+    title: "Savor",
+    imageSrc: "/assets/savor/card-poster.jpg",
+    previewText:
+      "Phone video of an object in, photoreal 3D Gaussian splat out. Orbit it, zoom it, room cut away. Runs locally on your Mac.",
+    href: "/waffling/savor",
+    opacity: 1,
+    taperedRim: true,
+  },
+  {
     title: "Butter Chicken Recipe",
     imageSrc: "/assets/home/waffling-butterchicken.png",
     previewText:
