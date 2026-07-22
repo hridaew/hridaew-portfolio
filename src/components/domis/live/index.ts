@@ -36,8 +36,10 @@ export {
   type WebCreateHomeDemoProps,
 } from "./web/WebCreateHomeDemo";
 
-export { HeroProductShot, HomeProfilePreview } from "./HeroProductShot";
-export { HomeTasksScreen } from "./mobile/HomeTasksScreen";
+export { HeroProductShot } from "./HeroProductShot";
+export { HomeOverviewScreen } from "./mobile/HomeOverviewScreen";
+export { HomePageScreen } from "./mobile/HomePageScreen";
+export { CreateFabMenu } from "./mobile/CreateFabMenu";
 
 export {
   ConsensusRunsPanel,

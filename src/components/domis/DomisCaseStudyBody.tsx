@@ -4,6 +4,8 @@ import "./domis-case-study.css";
 import { Reveal } from "@/components/Reveal";
 import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
+import { DomisConstraintDiagram } from "@/components/domis/DomisConstraintDiagram";
+import { DomisValueMultiply } from "@/components/domis/DomisValueMultiply";
 import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
 import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
@@ -32,7 +34,7 @@ export function DomisCaseStudyBody() {
                 What is Domis
               </p>
               <figure className="dcs-img-block">
-                <div className="dcs-media dcs-media-fit">
+                <div className="dcs-media dcs-media-hero-shot">
                   <HeroProductShot />
                 </div>
               </figure>
@@ -235,22 +237,18 @@ export function DomisCaseStudyBody() {
               <p className="dcs-heading site-subheading text-white">
                 Key challenge
               </p>
-              <figure className="dcs-img-block">
-                <div className="dcs-media dcs-media-cover">
-                  <img
-                    src="/assets/domis/key-challenge.png"
-                    alt="Mondrian-style geometric composition in Domis red, green, yellow, and black"
-                    width={1536}
-                    height={1024}
-                    draggable={false}
-                  />
-                </div>
-              </figure>
               <div className="site-body text-white/65">
                 <p>
                   Domis only works if it knows your home, but listing every
                   space, appliance, and nuance by hand is painful.
                 </p>
+              </div>
+              <figure className="dcs-img-block">
+                <div className="dcs-media dcs-constraint">
+                    <DomisConstraintDiagram />
+                </div>
+              </figure>
+              <div className="site-body text-white/65">
                 <p>
                   When people tried to set up a home profile, many realized they
                   didn&rsquo;t know their own homes. Setting up Domis also
@@ -265,6 +263,11 @@ export function DomisCaseStudyBody() {
                   willing to take.
                 </p>
               </div>
+              <figure className="dcs-img-block">
+                <div className="dcs-media dcs-value-multiply">
+                    <DomisValueMultiply />
+                </div>
+              </figure>
             </div>
           </div>
         </Reveal>
@@ -279,13 +282,13 @@ export function DomisCaseStudyBody() {
             The home, known
           </p>
           <figure className="dcs-img-block dcs-known-breakout">
-            <DomisKnownCarousel />
+              <DomisKnownCarousel />
           </figure>
           <div className="site-body text-white/65">
             <p>
               This is what an owner who understands their house looks like in
-              software. A filled property. Appliances tagged. Tasks pulled from
-              the report.
+              software. A filled property. Tasks tracked with tagged appliances.
+              Tasks pulled from the report.
             </p>
           </div>
         </Reveal>
@@ -301,7 +304,7 @@ export function DomisCaseStudyBody() {
             Address Intelligence
           </p>
           <figure className="dcs-img-block">
-            <DomisAddressFeatureCard />
+              <DomisAddressFeatureCard />
           </figure>
           <div className="site-body text-white/65">
             <p>
@@ -312,7 +315,10 @@ export function DomisCaseStudyBody() {
               will tolerate before deciding whether this is worth their time.
             </p>
             <p>
-              So I designed for that one action to return as much as possible.
+              So I designed an address intelligence feature that maximizes the
+              value of a user provided home address.
+            </p>
+            <p>
               The address resolves the property through Google Places, which
               hands off to a search agent that goes and researches the house.
             </p>
@@ -397,7 +403,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <ConsensusRunsPanel />
+              <ConsensusRunsPanel />
           </div>
           <figcaption className="dcs-caption site-body">
             Three searches, then a review agent checks. Two matches are enough
@@ -409,7 +415,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <WebCreateHomeDemo />
+              <WebCreateHomeDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             Type an address. Domis fills in what it can.
@@ -431,7 +437,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <HomeAvatarConversion />
+              <HomeAvatarConversion />
           </div>
           <figcaption className="dcs-caption site-body">
             Street view in. A clean home icon out.
@@ -442,7 +448,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <PropertyGridDemo />
+              <PropertyGridDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             Recognizable at a glance.
@@ -460,7 +466,7 @@ export function DomisCaseStudyBody() {
             Appliance Intelligence
           </p>
           <figure className="dcs-img-block">
-            <DomisApplianceFeatureCard />
+              <DomisApplianceFeatureCard />
           </figure>
           <div className="site-body text-white/65">
             <p>
@@ -518,7 +524,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media dcs-media-fit">
-            <ApplianceCaptureDemo />
+              <ApplianceCaptureDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             One photo, and the form fills itself in.
@@ -548,7 +554,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media dcs-media-fit">
-            <ApplianceV1V2Compare />
+              <ApplianceV1V2Compare />
           </div>
           <figcaption className="dcs-caption site-body">
             Same scan. One version knows the model number, the other knows what
@@ -566,7 +572,7 @@ export function DomisCaseStudyBody() {
             Report Processor
           </p>
           <figure className="dcs-img-block">
-            <DomisHomeFeatureCard />
+              <DomisHomeFeatureCard />
           </figure>
           <div className="site-body text-white/65">
             <p>
@@ -653,7 +659,7 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-figure">
           <div className="dcs-media">
-            <InspectionToTasksDemo />
+              <InspectionToTasksDemo />
           </div>
           <figcaption className="dcs-caption site-body">
             One PDF in. From 64 pages of construction and real estate lingo to
@@ -662,6 +668,40 @@ export function DomisCaseStudyBody() {
         </figure>
       </Reveal>
 
+
+      {/* Insights */}
+      <hr className="dcs-rule" />
+
+      <section id="insights" className="dcs-col dcs-block">
+        <Reveal>
+          <p className="dcs-heading site-subheading text-white">
+            Insights
+          </p>
+          <div className="site-body text-white/65">
+            <p>
+              <strong className="text-white">Systems.</strong> AI output and
+              human input share the same editable forms. Mobile and web sit on
+              one design system I own. Consensus, capture, and report processing
+              are different pipelines with the same contract: fill what you can,
+              never lock the owner out.
+            </p>
+            <p>
+              <strong className="text-white">Trust.</strong> AI is wrong
+              sometimes. We show disagreement instead of a confident wrong
+              answer, keep every field editable, and treat the report as
+              understanding, not an automatic chore list. Latency and cost of
+              ×3 search were accepted so the product could be honest under
+              non-determinism.
+            </p>
+            <p>
+              <strong className="text-white">Collaboration.</strong> As founding
+              PD I set phases with leadership and eng: what ships when, and what
+              the AI is allowed to claim. I define and prototype the AI
+              surfaces; engineering owns the pipeline under that contract.
+            </p>
+          </div>
+        </Reveal>
+      </section>
 
       {/* Closing */}
       <hr className="dcs-rule" />

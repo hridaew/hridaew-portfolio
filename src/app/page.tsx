@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HomePage } from "@/components/home/HomePage";
 import { HOME_COLUMN } from "@/components/home/homeGrid";
-import { StickyNotes } from "@/components/StickyNotes";
 import { ENABLE_HOME_CHEAT_CODES } from "@/lib/site-toggles";
 import {
   HomeChoomLingoProvider,
@@ -15,6 +14,11 @@ import {
   consumeWafflingReturnScroll,
   scrollHomeToTopImmediate,
 } from "@/lib/scrollHomeWafflings";
+
+const StickyNotes = dynamic(
+  () => import("@/components/StickyNotes").then((m) => m.StickyNotes),
+  { ssr: false }
+);
 
 const HomeCheatEasterEggs = dynamic(
   () =>

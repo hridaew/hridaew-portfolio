@@ -141,7 +141,7 @@ function WafflingCard({
             style={{ opacity: wipHover ? 1 : 0 }}
           />
           <div
-            className="absolute rounded-md border border-white/25 bg-white/[0.12] px-2 py-1 font-[family-name:var(--font-geist-mono)] text-[10px] font-bold uppercase tracking-widest text-white shadow-lg backdrop-blur-sm transition-opacity duration-150 ease-out"
+            className="absolute rounded-md border border-white/25 bg-white/[0.12] px-2 py-1 font-[family-name:var(--font-geist-mono)] text-[10px] font-extrabold uppercase tracking-widest text-white shadow-lg backdrop-blur-sm transition-opacity duration-150 ease-out"
             style={{
               opacity: wipHover ? 1 : 0,
               left: `${wipPct.x}%`,

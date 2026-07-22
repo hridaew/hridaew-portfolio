@@ -21,7 +21,7 @@ export function DomisHomeFeatureCard({ className }: { className?: string }) {
       )}
       style={{ backgroundColor: "var(--dcs-media-bg, #ff5a5b)" }}
     >
-      <div className="absolute inset-0">
+      <div className="dcs-home-feature-media absolute inset-0">
         <LightboxImage
           src={reportCard.imageSrc}
           alt={reportCard.imageAlt}

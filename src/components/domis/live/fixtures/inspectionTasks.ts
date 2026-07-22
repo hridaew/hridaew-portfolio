@@ -29,6 +29,9 @@ export const INSPECTION_ASSETS = {
   inspectionBlippy: "/assets/domis/live/inspection-blippy.png",
   /** Shared task thumb fallback */
   taskThumb: "/assets/domis/live/item-placeholder.png",
+  roofFlashing: "/assets/domis/live/task-roof-flashing.png",
+  waterHeater: "/assets/domis/live/scan-item-demo.png",
+  kitchenGfci: "/assets/domis/live/task-kitchen-gfci.png",
 } as const;
 
 /** Source doc shown on the input side of the demo */
@@ -50,7 +53,7 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     title: "Roof flashing, north side",
     description: "Water can get in where the roof meets the chimney.",
     location: "Roof",
-    thumbSrc: "/assets/domis/live/item-placeholder.png",
+    thumbSrc: INSPECTION_ASSETS.roofFlashing,
   },
   {
     id: "water-heater-age",
@@ -59,7 +62,7 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     title: "Water heater, age",
     description: "Near the end of a typical lifespan. Not urgent.",
     location: "Utility",
-    thumbSrc: "/assets/domis/live/scan-item-demo.png",
+    thumbSrc: INSPECTION_ASSETS.waterHeater,
   },
   {
     id: "kitchen-gfci",
@@ -69,7 +72,8 @@ export const INSPECTION_TASKS: readonly InspectionTask[] = [
     description: "Already fixed. Removed by you, Mar 2025.",
     location: "Kitchen",
     completedAtLabel: "03/01/2025",
-    thumbSrc: "/assets/domis/live/item-placeholder.png",
+    thumbSrc: INSPECTION_ASSETS.kitchenGfci,
+    muted: true,
   },
 ] as const;
 

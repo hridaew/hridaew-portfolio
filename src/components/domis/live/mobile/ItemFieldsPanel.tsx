@@ -18,119 +18,160 @@ const FIELD_ICONS: Record<string, string> = {
   installed: "calendar_today",
 };
 
-/** Static category chips — matches FormCategorySection empty create flow. */
 const CATEGORY_CHIPS = [
   { id: "appliances", label: "Appliances", icon: "kitchen" },
   { id: "utilities", label: "Utilities", icon: "bolt" },
   { id: "hvac", label: "HVAC", icon: "mode_fan" },
 ] as const;
 
-/** Space chips — TaskLocationSection / LocationChip look. */
-const SPACE_CHIPS = [
-  { id: "basement", label: "Basement", icon: "location_on" },
-  { id: "garage", label: "Garage", icon: "location_on" },
-] as const;
+/** Beats before Additional Details rows: name → photo → category */
+export const IFP_HEADER_STEPS = 3;
 
-/** Associated item chips — TaskItemSection look (unselected placeholders). */
-const ITEM_CHIPS = [
-  { id: "furnace", label: "Furnace" },
-  { id: "panel", label: "Electrical panel" },
-] as const;
+export function itemFieldsRevealSteps(
+  fieldCount = APPLIANCE_CAPTURE_FIELDS.length
+) {
+  return IFP_HEADER_STEPS + fieldCount;
+}
 
 export type ItemFieldsPanelProps = {
   fields?: readonly ApplianceCaptureField[];
-  /** Item title shown in SharedSuggestionInput-style name field. */
   itemName?: string;
-  /** Thumbnail from scan (plate photo). Null = empty photo slot + hint. */
   photoSrc?: string | null;
   /**
-   * 0–1 stagger for Additional Details rows.
-   * 0 = none, 1 = all fields visible.
+   * Discrete reveal beat for fades:
+   * 0 empty · 1 name · 2 photo · 3 category · 4… detail rows
    */
-  fieldsReveal?: number;
-  /** When true, name + photo + details show filled scan results. */
-  filled?: boolean;
-  header?: string;
+  revealStep?: number;
+  /**
+   * 0–1 continuous progress for one linear scroll (no section snaps).
+   */
+  revealProgress?: number;
   className?: string;
   style?: CSSProperties;
 };
 
 /**
- * Presentational Domis create-item form — FormHeader, SharedSuggestionInput,
- * FormImageSection, Notes, Category / Space / Associated Item, Additional
- * Details, and bottom Scan It! / close / Add Item chrome.
+ * Domis create-item form.
+ * Fades step top → bottom; scroll is one continuous drift with revealProgress.
  */
 export function ItemFieldsPanel({
   fields = APPLIANCE_CAPTURE_FIELDS,
   itemName = APPLIANCE_CAPTURE.appliance,
   photoSrc = APPLIANCE_ASSETS.platePhoto,
-  fieldsReveal = 1,
-  filled = true,
-  header = "New Item",
+  revealStep = itemFieldsRevealSteps(fields.length),
+  revealProgress,
   className,
   style,
 }: ItemFieldsPanelProps) {
-  const showPhoto = filled && Boolean(photoSrc);
-  const nameText = filled ? itemName : "What's the Item?";
-  const count = fields.length;
-  const saveEnabled = filled && fieldsReveal >= 0.4;
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const detailsRef = useRef<HTMLParagraphElement | null>(null);
+  const totalSteps = itemFieldsRevealSteps(fields.length);
+  const step = Math.max(0, Math.floor(revealStep));
+  const progress =
+    revealProgress !== undefined
+      ? Math.max(0, Math.min(1, revealProgress))
+      : step / Math.max(1, totalSteps);
 
-  // Keep Additional Details in view while fields stagger in; reset on loop.
+  const nameOn = step >= 1;
+  const photoOn = step >= 2 && Boolean(photoSrc);
+  const categoryOn = step >= 3;
+  const fieldsVisible = Math.max(0, step - IFP_HEADER_STEPS);
+  const saveEnabled = fieldsVisible >= 2;
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // One linear scroll tied to progress — no per-section tween checkpoints.
   useEffect(() => {
     const scrollEl = scrollRef.current;
     if (!scrollEl) return;
-    if (!filled) {
-      scrollEl.scrollTo({ top: 0, behavior: "auto" });
+
+    if (progress <= 0) {
+      scrollEl.scrollTop = 0;
       return;
     }
-    if (fieldsReveal <= 0) return;
-    const detailsEl = detailsRef.current;
-    if (!detailsEl) return;
-    const top = Math.max(0, detailsEl.offsetTop - 12);
-    scrollEl.scrollTo({
-      top,
-      behavior: fieldsReveal < 0.15 ? "smooth" : "auto",
-    });
-  }, [filled, fieldsReveal]);
+
+    const maxScroll = Math.max(
+      0,
+      scrollEl.scrollHeight - scrollEl.clientHeight
+    );
+    if (maxScroll <= 0) return;
+
+    // Hold at top while name / photo / category fill, then drift down with details.
+    const headerShare = IFP_HEADER_STEPS / totalSteps;
+    const t =
+      progress <= headerShare
+        ? 0
+        : (progress - headerShare) / Math.max(0.0001, 1 - headerShare);
+
+    scrollEl.scrollTop = maxScroll * t;
+  }, [progress, totalSteps]);
 
   return (
     <div
       className={["domis-live", "ifp", className].filter(Boolean).join(" ")}
       style={style}
       aria-label="Item fields after scan"
-      data-filled={filled ? "true" : "false"}
+      data-step={step}
     >
       <div className="ifp-scroll" ref={scrollRef}>
-        <p className="ifp-header">{header}</p>
-
-        <div className="ifp-name" data-empty={filled ? "false" : "true"}>
-          {nameText}
+        {/* 1 — Name */}
+        <div
+          className="ifp-name ifp-reveal"
+          data-on={nameOn ? "true" : "false"}
+          data-empty={nameOn ? "false" : "true"}
+        >
+          {nameOn ? itemName : "What's the Item?"}
         </div>
 
+        {/* 2 — Photo */}
         <div className="ifp-photo-row">
-          {showPhoto ? (
-            <div className="ifp-photo ifp-photo-scanned">
-              <img src={photoSrc!} alt="" draggable={false} />
-              <span className="ifp-photo-ai" aria-hidden>
-                <DomisLiveIcon name="document_scanner" size={17} />
-              </span>
-            </div>
-          ) : (
-            <div className="ifp-photo ifp-photo-add" aria-hidden>
+          <div className="ifp-photo-slot">
+            <div
+              className="ifp-photo ifp-photo-add"
+              data-active={photoOn ? "false" : "true"}
+              aria-hidden={photoOn}
+            >
               <DomisLiveIcon name="add_photo_alternate" size={30} />
             </div>
-          )}
+            {photoSrc ? (
+              <div
+                className="ifp-photo ifp-photo-scanned ifp-reveal"
+                data-on={photoOn ? "true" : "false"}
+              >
+                <img src={photoSrc} alt="" draggable={false} />
+                <span className="ifp-photo-ai" aria-hidden>
+                  <DomisLiveIcon name="document_scanner" size={17} />
+                </span>
+              </div>
+            ) : null}
+          </div>
           <p
             className="ifp-photo-hint"
-            data-hidden={showPhoto ? "true" : "false"}
+            data-hidden={photoOn ? "true" : "false"}
           >
             Add a photo and we’ll fill the details for you!
           </p>
         </div>
 
-        {/* Notes — TaskFormNoteSection */}
+        {/* 3 — Category */}
+        <div>
+          <p className="ifp-section-label">Category</p>
+          <div className="ifp-chip-row ifp-chip-row-pad">
+            {CATEGORY_CHIPS.map((chip) => {
+              const selected = categoryOn && chip.id === "appliances";
+              return (
+                <div
+                  key={chip.id}
+                  className="ifp-chip ifp-reveal"
+                  data-on="true"
+                  data-selected={selected ? "true" : "false"}
+                >
+                  <DomisLiveIcon name={chip.icon} size={18} />
+                  <span>{chip.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="ifp-notes">
           <p className="ifp-notes-title">Notes</p>
           <p className="ifp-notes-placeholder">
@@ -139,71 +180,25 @@ export function ItemFieldsPanel({
           </p>
         </div>
 
-        {/* Category — FormCategorySection */}
-        <p className="ifp-section-label">Category</p>
-        <div className="ifp-chip-row ifp-chip-row-pad">
-          {CATEGORY_CHIPS.map((chip) => {
-            const selected = filled && chip.id === "appliances";
-            return (
-              <div
-                key={chip.id}
-                className="ifp-chip"
-                data-selected={selected ? "true" : "false"}
-              >
-                <DomisLiveIcon name={chip.icon} size={18} />
-                <span>{chip.label}</span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Space — TaskLocationSection + add affordance */}
         <p className="ifp-section-label">Space</p>
         <div className="ifp-chip-row">
           <div className="ifp-add-circle" aria-hidden>
             <DomisLiveIcon name="add" size={24} />
           </div>
-          <div className="ifp-chip-scroll">
-            {SPACE_CHIPS.map((chip) => (
-              <div
-                key={chip.id}
-                className="ifp-chip ifp-chip-space"
-                data-selected="false"
-              >
-                <DomisLiveIcon name={chip.icon} size={20} />
-                <span>{chip.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Associated Item — TaskItemSection */}
         <p className="ifp-section-label">Associated Item</p>
         <div className="ifp-chip-row">
           <div className="ifp-add-circle" aria-hidden>
             <DomisLiveIcon name="add" size={24} />
           </div>
-          <div className="ifp-chip-scroll">
-            {ITEM_CHIPS.map((chip) => (
-              <div
-                key={chip.id}
-                className="ifp-chip ifp-chip-space"
-                data-selected="false"
-              >
-                <span>{chip.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Additional Details — AdditionalDetailsItem rows */}
-        <p className="ifp-section-label" ref={detailsRef}>
-          Additional Details
-        </p>
+        {/* 4… — Each Additional Details row */}
+        <p className="ifp-section-label">Additional Details</p>
         <div className="ifp-fields">
           {fields.map((field, index) => {
-            const threshold = (index + 1) / count;
-            const visible = filled && fieldsReveal >= threshold - 0.001;
+            const visible = index < fieldsVisible;
             const empty = Boolean(field.empty);
             const label = empty ? field.label : `${field.label}:`;
             const icon = FIELD_ICONS[field.key] ?? "notes";
@@ -211,8 +206,8 @@ export function ItemFieldsPanel({
             return (
               <div
                 key={field.key}
-                className="ifp-row"
-                data-visible={visible ? "true" : "false"}
+                className="ifp-row ifp-reveal"
+                data-on={visible ? "true" : "false"}
                 data-empty={empty ? "true" : "false"}
               >
                 <div className="ifp-row-inner">
@@ -241,7 +236,6 @@ export function ItemFieldsPanel({
         <div className="ifp-scroll-pad" aria-hidden />
       </div>
 
-      {/* Bottom chrome — Scan It! + BrandBackButton + Add Item */}
       <div className="ifp-footer">
         <div className="ifp-scan-wrap">
           <div className="ifp-scan-btn" aria-hidden>

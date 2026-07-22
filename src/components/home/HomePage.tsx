@@ -54,35 +54,31 @@ export function HomePage() {
         {/* One shared SVG filter for Obscura liquid lens + hero sketch orbs (Chromium). */}
         <ObscuraLiquidGlassFilterSvg />
         <div className={HOME_COLUMN}>
-          {/* Hero card with animated orbs */}
-          <RevealOnLoad delay={0.05}>
-            <div className="pt-[112px]">
+          {/*
+            One flex stack so hero→bio and bio→work share the same gap.
+            (Separate mt-* on RevealOnLoad children was collapsing / fighting the portaled hero.)
+          */}
+          <div className="flex flex-col gap-[72px] pt-[80px]">
+            <RevealOnLoad delay={0.05}>
               <div className={HOME_HERO_BLEED}>
                 <HeroCard />
               </div>
-            </div>
-          </RevealOnLoad>
+            </RevealOnLoad>
 
-          {/* Bio — stays under hero slot; expanded hero overlays in z-index */}
-          <RevealOnLoad delay={0.2}>
-            <div className="relative z-0 mt-[64px]">
-              <BioSection />
-            </div>
-          </RevealOnLoad>
+            <RevealOnLoad delay={0.2}>
+              <div className="relative z-0">
+                <BioSection />
+              </div>
+            </RevealOnLoad>
 
-          {/* Work — project galleries */}
-          <RevealOnLoad delay={0.35}>
-            <div className="mt-[72px]">
+            <RevealOnLoad delay={0.35}>
               <WorkSection />
-            </div>
-          </RevealOnLoad>
+            </RevealOnLoad>
 
-          {/* Current Toolkit */}
-          <RevealOnLoad delay={0.5}>
-            <div className="mt-[72px]">
+            <RevealOnLoad delay={0.5}>
               <ToolkitSection />
-            </div>
-          </RevealOnLoad>
+            </RevealOnLoad>
+          </div>
 
           {/* Wafflings */}
           {ENABLE_WAFFLINGS_SECTION && (

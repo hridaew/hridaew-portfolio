@@ -1,0 +1,26 @@
+/* Full-screen Create Home capture page */
+
+.chs-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #ececee;
+}
+
+.chs-page .chs-panel {
+  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+}
+
+.chs-page .chs-panel .chp-screen {
+  min-height: 100vh;
+  height: 100vh;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.chs-page .chs-panel .chp-card {
+  max-width: min(920px, 100%);
+  max-height: none;
+  height: min(720px, calc(100vh - 3rem));
+  width: 100%;
+}

@@ -1,0 +1,226 @@
+/* One in → gate → many out. Animations attach only when .dvm-playing. */
+
+.dvm {
+  --dvm-loop: 4.2s;
+  --dvm-pill: #ffffff;
+  --dvm-in-w: 4.5rem;
+  --dvm-in-h: 2rem;
+
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dvm .dvm-stage {
+  position: relative;
+  width: 100%;
+  height: 10rem;
+}
+
+.dvm .dvm-gate {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 50%;
+  z-index: 2;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+/* Left half only — pill travels within this track to the gate */
+.dvm .dvm-in-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 8%;
+  right: 50%;
+  z-index: 3;
+  container-type: inline-size;
+  container-name: dvm-in;
+}
+
+.dvm .dvm-pill {
+  border-radius: 999px;
+  background: var(--dvm-pill);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.dvm .dvm-pill-in {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: var(--dvm-in-w);
+  height: var(--dvm-in-h);
+  margin-top: calc(var(--dvm-in-h) / -2);
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+}
+
+.dvm .dvm-outs {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 1.75rem);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transform: translateY(-50%);
+}
+
+.dvm .dvm-pill-out {
+  width: calc(3.25rem + (var(--i) * 0.55rem));
+  height: 1.55rem;
+  opacity: 0;
+  transform: translate3d(-0.35rem, 0, 0);
+}
+
+/* Attach animations only when playing so the first frame is always 0% */
+.dvm.dvm-playing .dvm-pill-in {
+  animation: dvm-in var(--dvm-loop) cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.dvm.dvm-playing .dvm-pill-out {
+  animation: dvm-out var(--dvm-loop) cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation-delay: calc(var(--i) * 70ms);
+  will-change: transform, opacity;
+}
+
+.dvm.dvm-playing .dvm-gate {
+  animation: dvm-gate var(--dvm-loop) ease-in-out infinite;
+}
+
+/*
+  No idle park at the start (that read as hesitation / a false restart).
+
+  0–6%     fade in while already rolling toward gate
+  6–28%    travel to gate
+  28–34%   brief hold
+  34–42%   fade at gate
+  42%+     reset offscreen while invisible
+  42–54%   outputs cascade in
+  54–72%   hold
+  72–84%   outputs out
+  84–100%  empty beat
+*/
+@keyframes dvm-in {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    transform: translate3d(8cqi, 0, 0);
+    opacity: 1;
+  }
+  28%,
+  34% {
+    transform: translate3d(calc(100cqi - var(--dvm-in-w)), 0, 0);
+    opacity: 1;
+  }
+  42% {
+    transform: translate3d(calc(100cqi - var(--dvm-in-w)), 0, 0);
+    opacity: 0;
+  }
+  42.01%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes dvm-out {
+  0%,
+  42% {
+    transform: translate3d(-0.35rem, 0, 0);
+    opacity: 0;
+  }
+  52% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  72% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  84%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes dvm-gate {
+  0%,
+  28%,
+  48%,
+  100% {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+  }
+  34%,
+  42% {
+    background: #fff;
+    box-shadow:
+      0 0 0 5px rgba(255, 255, 255, 0.2),
+      0 0 14px rgba(255, 255, 255, 0.28);
+  }
+}
+
+.domis-cs .dcs-media.dcs-value-multiply {
+  aspect-ratio: auto;
+  height: auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1.75rem 1.5rem;
+  overflow: hidden;
+  background: var(--dcs-media-bg);
+}
+
+@media (max-width: 720px) {
+  .dvm {
+    --dvm-in-w: 3.75rem;
+  }
+
+  .dvm .dvm-stage {
+    height: 11rem;
+  }
+
+  .dvm .dvm-in-track {
+    left: 4%;
+  }
+
+  .dvm .dvm-outs {
+    left: calc(50% + 1.25rem);
+  }
+
+  .dvm .dvm-pill-out {
+    width: calc(2.75rem + (var(--i) * 0.4rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dvm.dvm-playing .dvm-pill-in,
+  .dvm.dvm-playing .dvm-pill-out,
+  .dvm.dvm-playing .dvm-gate,
+  .dvm .dvm-pill-in,
+  .dvm .dvm-pill-out,
+  .dvm .dvm-gate {
+    animation: none !important;
+  }
+
+  .dvm .dvm-pill-in {
+    transform: translate3d(calc(100cqi - var(--dvm-in-w)), 0, 0);
+    opacity: 1;
+  }
+
+  .dvm .dvm-pill-out {
+    opacity: 1;
+    transform: none;
+  }
+}

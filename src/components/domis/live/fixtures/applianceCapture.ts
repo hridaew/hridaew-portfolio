@@ -18,19 +18,19 @@ export type ApplianceCaptureField = {
   empty?: boolean;
 };
 
-/** Demo phases for shutter → scan → filled form loops */
+/** Demo phases for shutter → sequential form fill */
 export type ApplianceCapturePhase =
   | "idle"
   | "aiming"
   | "capturing"
-  | "reading"
+  | "reveal"
   | "filled";
 
 export const APPLIANCE_CAPTURE_PHASES: readonly ApplianceCapturePhase[] = [
   "idle",
   "aiming",
   "capturing",
-  "reading",
+  "reveal",
   "filled",
 ] as const;
 

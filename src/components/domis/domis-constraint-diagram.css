@@ -1,0 +1,137 @@
+/* Key-challenge constraint diagram — two cards, no outer shell */
+
+.dcd {
+  --dcd-bg: #f7f7f7;
+  --dcd-ink: #1a1c1e;
+  --dcd-muted: #818181;
+  --dcd-font: var(--font-domis-outfit), system-ui, sans-serif;
+
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  column-gap: 1.25rem;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--dcd-font);
+  color: var(--dcd-ink);
+}
+
+.dcd .dcd-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 0;
+  height: 100%;
+  min-height: 16rem;
+  padding: 1.75rem 1.6rem;
+  background: var(--dcd-bg);
+  border: 0;
+  border-radius: 18px;
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.domis-cs .dcd .dcd-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--dcd-muted);
+  flex: none;
+}
+
+.dcd .dcd-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.95rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dcd .dcd-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  min-height: 0;
+}
+
+.dcd .dcd-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  background: none;
+  border-radius: 0;
+}
+
+.dcd .dcd-label {
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--dcd-ink);
+}
+
+.dcd .dcd-gap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 2.75rem;
+  color: #ffffff;
+}
+
+.dcd .dcd-gap-mark {
+  display: block;
+  width: 1.35rem;
+  height: 1.15rem;
+  flex: none;
+}
+
+.domis-cs .dcs-media.dcs-constraint {
+  aspect-ratio: auto;
+  height: auto;
+  min-height: 20rem;
+  align-items: stretch;
+  justify-content: center;
+  padding: 2rem 1.75rem;
+  background: var(--dcs-media-bg);
+}
+
+@media (max-width: 720px) {
+  .dcd {
+    grid-template-columns: 1fr;
+    row-gap: 0.75rem;
+  }
+
+  .dcd .dcd-gap {
+    width: 100%;
+    height: auto;
+    min-height: 1.75rem;
+    align-items: center;
+  }
+
+  .dcd .dcd-gap-mark {
+    width: 1.35rem;
+    height: 1.15rem;
+    transform: none;
+  }
+}

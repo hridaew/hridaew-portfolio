@@ -10,18 +10,22 @@ const displayFont = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["600", "700", "800"],
+  display: "swap",
 });
 
 const geistSans = Geist({
   variable: "--font-geist",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
+  // 700 unused on mono in practice; extrabold covers emphasis.
+  weight: ["400", "500", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
   useCallback,
   useEffect,
@@ -35,7 +36,6 @@ import {
 } from "./ObscuraLiquidGlassFilterSvg";
 import { ProjectCarousel } from "./ProjectCarousel";
 import { useBrowserEngine } from "@/lib/useBrowserEngine";
-import { ThreeGlassLensFallback } from "../obscura/ThreeGlassLensFallback";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 import {
   CHOOM,
@@ -44,6 +44,14 @@ import {
   choomProjectTitle,
   choomProjectDescription,
 } from "@/lib/homeChoomCopy";
+
+const ThreeGlassLensFallback = dynamic(
+  () =>
+    import("../obscura/ThreeGlassLensFallback").then(
+      (m) => m.ThreeGlassLensFallback
+    ),
+  { ssr: false }
+);
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -704,7 +712,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
       className="flex w-full scroll-mt-[88px] flex-col items-stretch gap-8"
     >
       {/* Title + description — same left spine as Bio / Toolkit (parent HOME_COLUMN padding) */}
-      <div className="flex w-full flex-col gap-3 text-white/80">
+      <div className="flex w-full flex-col gap-4 text-white/80">
         <ProjectTitleLink
           slug={project.slug}
           title={project.title}
@@ -842,14 +850,8 @@ function SectionLabel({ label }: { label: string }) {
       <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50 whitespace-nowrap">
         {label}
       </p>
-      <div className="w-[80px] h-px">
-        <svg
-          width="80"
-          height="1"
-          viewBox="0 0 80 1"
-          fill="none"
-          aria-hidden="true"
-        >
+      <div className="w-[80px] h-px" aria-hidden="true">
+        <svg width="80" height="1" viewBox="0 0 80 1" fill="none">
           <line
             x1="0.5"
             x2="79.5"
@@ -872,7 +874,7 @@ export function WorkSection() {
   return (
     <div data-home-work-section className="flex w-full flex-col items-stretch">
       <SectionLabel
-        label={choom ? CHOOM.workSectionLabel : "Selected Projects"}
+        label={choom ? CHOOM.workSectionLabel : "Selected Work"}
       />
 
       <div className="mt-6 flex w-full flex-col items-stretch gap-[120px]">

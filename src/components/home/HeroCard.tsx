@@ -194,7 +194,10 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
       color: def.color,
     }));
 
+    let running = false;
+
     const update = () => {
+      if (!running) return;
       const orbs = orbsRef.current;
       const wrapper = wrapperRef.current;
       for (let i = 0; i < orbs.length; i++) {
@@ -218,7 +221,6 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
           orb.vy = -Math.abs(orb.vy);
         }
 
-        // Direct DOM mutation — hardware accelerated CSS translate3d
         const el = wrapper?.children[i] as HTMLDivElement | undefined;
         if (el) {
           el.style.transform = `translate3d(${orb.x - orb.rx}px, ${orb.y - orb.ry}px, 0)`;
@@ -228,7 +230,20 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
       rafRef.current = requestAnimationFrame(update);
     };
 
-    // Set initial positions on divs
+    const start = () => {
+      if (running) return;
+      running = true;
+      rafRef.current = requestAnimationFrame(update);
+    };
+
+    const stop = () => {
+      running = false;
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+    };
+
     const wrapper = wrapperRef.current;
     if (wrapper) {
       const orbs = orbsRef.current;
@@ -240,8 +255,24 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
       }
     }
 
-    rafRef.current = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(rafRef.current);
+    let io: IntersectionObserver | undefined;
+    if (wrapper && typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting) start();
+          else stop();
+        },
+        { rootMargin: "48px", threshold: 0 }
+      );
+      io.observe(wrapper);
+    } else {
+      start();
+    }
+
+    return () => {
+      stop();
+      io?.disconnect();
+    };
   }, [w, h]);
 
   return wrapperRef;
@@ -556,15 +587,38 @@ export function HeroCard() {
     if (!mounted) return;
     syncPortalPosition();
     window.addEventListener("resize", syncPortalPosition);
+    window.addEventListener("scroll", syncPortalPosition, { passive: true });
+
+    // RevealOnLoad translates the anchor; transform won't fire ResizeObserver,
+    // so re-sync through the reveal and once it settles.
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      syncPortalPosition();
+      if (now - start < 900) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
     const anchor = anchorRef.current;
     let ro: ResizeObserver | undefined;
     if (anchor && typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(() => syncPortalPosition());
       ro.observe(anchor);
     }
+
+    const lenis = (
+      window as unknown as {
+        __lenis?: { on: (e: string, fn: () => void) => void; off: (e: string, fn: () => void) => void };
+      }
+    ).__lenis;
+    lenis?.on("scroll", syncPortalPosition);
+
     return () => {
       window.removeEventListener("resize", syncPortalPosition);
+      window.removeEventListener("scroll", syncPortalPosition);
+      cancelAnimationFrame(raf);
       ro?.disconnect();
+      lenis?.off("scroll", syncPortalPosition);
     };
   }, [mounted, syncPortalPosition]);
 

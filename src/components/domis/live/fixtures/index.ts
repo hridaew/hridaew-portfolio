@@ -39,3 +39,5 @@ export {
   type InspectionTaskPriority,
   type InspectionTask,
 } from "./inspectionTasks";
+
+export { HOME_PAGE, HOME_PAGE_SHOT } from "./homePage";

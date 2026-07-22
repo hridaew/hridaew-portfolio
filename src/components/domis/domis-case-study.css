@@ -86,6 +86,11 @@
   margin-bottom: 0;
 }
 
+/* Keep normal paragraph rhythm when copy is followed by a media block */
+.domis-cs .dcs-overview-stack .site-body:has(+ .dcs-img-block) > p:last-child {
+  margin-bottom: var(--dcs-step);
+}
+
 .domis-cs .dcs-heading {
   margin-bottom: var(--dcs-step);
 }
@@ -358,6 +363,161 @@
   align-items: center;
   justify-content: center;
   padding: 2.75rem;
+  --domis-dot-x: 50%;
+  --domis-dot-y: 50%;
+  --domis-dot-heat: 0;
+}
+
+/* Homepage Domis card wavy-dot mesh (base + pointer pop) */
+.domis-cs .dcs-media:not(.dcs-media-hero-shot)::before,
+.domis-cs .dcs-home-feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.13) 1.2px, transparent 1.45px),
+    radial-gradient(circle at 50% 50%, rgba(25, 0, 0, 0.07) 0.95px, transparent 1.15px);
+  background-size: 12px 12px, 12px 12px;
+  background-position: 0 0, 6px 6px;
+  opacity: 0.52;
+  mix-blend-mode: soft-light;
+  animation: domis-dot-mesh-drift 20s ease-in-out infinite;
+}
+
+.domis-cs .dcs-media:not(.dcs-media-hero-shot)::after,
+.domis-cs .dcs-home-feature-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.42) 1.7px, transparent 2.05px),
+    radial-gradient(circle at 50% 50%, rgba(15, 0, 0, 0.16) 1.3px, transparent 1.6px);
+  background-size: 17px 17px, 17px 17px;
+  background-position: 0 0, 8.5px 8.5px;
+  mix-blend-mode: soft-light;
+  opacity: var(--domis-dot-heat, 0);
+  animation: domis-dot-mesh-drift 23s ease-in-out infinite reverse;
+  mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-mode: alpha;
+  transition: opacity 0.22s ease-out;
+}
+
+.domis-cs .dcs-media:not(.dcs-media-hero-shot) > *,
+.domis-cs .dcs-home-feature-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keep media fills absolute — the rule above must not collapse them */
+.domis-cs .dcs-home-feature-card > .dcs-home-feature-media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Coral frames outside / inside case study (e.g. mobile hero) */
+.dcs-domis-red {
+  position: relative;
+  background: var(--dcs-media-bg, #ff5a5b);
+  --domis-dot-x: 50%;
+  --domis-dot-y: 50%;
+  --domis-dot-heat: 0;
+}
+
+.dcs-domis-red::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.13) 1.2px, transparent 1.45px),
+    radial-gradient(circle at 50% 50%, rgba(25, 0, 0, 0.07) 0.95px, transparent 1.15px);
+  background-size: 12px 12px, 12px 12px;
+  background-position: 0 0, 6px 6px;
+  opacity: 0.52;
+  mix-blend-mode: soft-light;
+  animation: domis-dot-mesh-drift 20s ease-in-out infinite;
+}
+
+.dcs-domis-red::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.42) 1.7px, transparent 2.05px),
+    radial-gradient(circle at 50% 50%, rgba(15, 0, 0, 0.16) 1.3px, transparent 1.6px);
+  background-size: 17px 17px, 17px 17px;
+  background-position: 0 0, 8.5px 8.5px;
+  mix-blend-mode: soft-light;
+  opacity: var(--domis-dot-heat, 0);
+  animation: domis-dot-mesh-drift 23s ease-in-out infinite reverse;
+  mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 132px at var(--domis-dot-x, 50%) var(--domis-dot-y, 50%),
+    rgb(0 0 0 / 0.98) 0%,
+    rgb(0 0 0 / 0.35) 52%,
+    transparent 74%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-mode: alpha;
+  transition: opacity 0.22s ease-out;
+}
+
+.dcs-domis-red > * {
+  position: relative;
+  z-index: 1;
+}
+
+.domis-cs .dcs-home-feature-card {
+  --domis-dot-x: 50%;
+  --domis-dot-y: 50%;
+  --domis-dot-heat: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .domis-cs .dcs-media:not(.dcs-media-hero-shot)::before,
+  .domis-cs .dcs-home-feature-card::before,
+  .dcs-domis-red::before {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .domis-cs .dcs-media:not(.dcs-media-hero-shot)::after,
+  .domis-cs .dcs-home-feature-card::after,
+  .dcs-domis-red::after {
+    animation: none;
+    opacity: 0 !important;
+  }
 }
 
 /* Labels / chrome sitting on the red media field (not inside white mock cards) */
@@ -458,6 +618,26 @@
   height: auto;
 }
 
+/* Full hero product capture — edge-to-edge in the coral frame */
+.domis-cs .dcs-media.dcs-media-hero-shot {
+  aspect-ratio: auto;
+  height: auto;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.domis-cs .dcs-media.dcs-media-hero-shot .dcs-hero-product-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  cursor: zoom-in;
+  user-select: none;
+}
+
 .domis-cs .dcs-img-block {
   margin-top: 0;
   margin-bottom: var(--dcs-step);
@@ -496,62 +676,32 @@
   min-width: 0;
 }
 
-.domis-cs .dcs-known-slide {
-  width: min(44rem, calc(100% - 3.75rem));
-}
-
-.domis-cs .dcs-known-slide-card {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 22rem;
-  padding: 2.5rem;
-}
-
-.domis-cs .dcs-known-slide-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  text-align: center;
-  max-width: 28rem;
-}
-
-.domis-cs .dcs-known-slide-title {
-  margin: 0;
-  color: #fff;
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.domis-cs .dcs-known-slide-card .dcs-placeholder-label {
-  color: #fff;
-  font-size: 1.05rem;
-  line-height: 1.45;
-}
-
-@media (max-width: 760px) {
-  .domis-cs .dcs-known-slide {
-    width: calc(100% - 2rem);
-  }
-
-  .domis-cs .dcs-known-slide-card {
-    min-height: 16rem;
-    aspect-ratio: 5 / 4;
-  }
-
-  .domis-cs .dcs-known-slide-title {
-    font-size: 1.15rem;
-  }
-}
-
 .domis-cs .dcs-media.dcs-media-image {
   aspect-ratio: auto;
   height: auto;
   justify-content: center;
   padding: 1.5rem;
+}
+
+/* Mondrian: sharp art inset inside the rounded Domis-red media frame */
+.domis-cs .dcs-media.dcs-mondrian {
+  aspect-ratio: 16 / 10;
+  padding: 2.25rem;
+}
+
+.domis-cs .dcs-media.dcs-mondrian img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 2px;
+  /* Match weight of Mondrian grid strokes in the art */
+  border: 8px solid #0c0c0e;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 6px 14px rgba(0, 0, 0, 0.16),
+    0 18px 36px rgba(0, 0, 0, 0.2);
 }
 
 .domis-cs .dcs-gemini-shot {

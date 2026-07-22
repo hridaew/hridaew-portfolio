@@ -36,12 +36,14 @@ function prefersReducedMotion(): boolean {
 }
 
 /** Zoom + blur of page shell before wipe (seconds) */
-const PRE_WIPE = 0.18;
+const PRE_WIPE = 0.12;
 /** How much the curtain wipe overlaps the end of the blur (larger = wipe starts sooner) */
-const PRE_WIPE_OVERLAP = 0.14;
+const PRE_WIPE_OVERLAP = 0.1;
 /** Curtain covers viewport */
-const WIPE_IN = 0.34;
-const WIPE_OUT = 0.36;
+const WIPE_IN = 0.24;
+const WIPE_OUT = 0.26;
+/** Fire navigate while curtain still covers (~70% of wipe-in) so RSC loads under cover */
+const NAVIGATE_BEFORE_WIPE_END = 0.08;
 const EASE_PRE = "power2.out";
 const EASE_IN = "power3.inOut";
 const EASE_OUT = "power3.inOut";
@@ -74,9 +76,10 @@ export function PageTransitionProvider({
         const shell = shellRef.current;
         if (!curtain || !isTransitioning.current) return;
 
+        // Path changed under the curtain — reveal immediately (no artificial settle).
         const reduced = prefersReducedMotion();
 
-        const timer = setTimeout(() => {
+        const reveal = () => {
             const isGoingHome = pathname === "/";
 
             if (reduced) {
@@ -115,7 +118,7 @@ export function PageTransitionProvider({
                     {
                         scale: 1,
                         filter: "blur(0px)",
-                        duration: 0.2,
+                        duration: 0.16,
                         ease: EASE_OUT,
                     },
                     0
@@ -129,11 +132,20 @@ export function PageTransitionProvider({
                     duration: WIPE_OUT,
                     ease: EASE_OUT,
                 },
-                shell ? 0.04 : 0
+                shell ? 0.02 : 0
             );
-        }, 50);
+        };
 
-        return () => clearTimeout(timer);
+        // Double-rAF: wait one frame for the new route to paint under the curtain.
+        let raf2 = 0;
+        const raf1 = requestAnimationFrame(() => {
+            raf2 = requestAnimationFrame(reveal);
+        });
+
+        return () => {
+            cancelAnimationFrame(raf1);
+            cancelAnimationFrame(raf2);
+        };
     }, [pathname]);
 
     const transitionTo = useCallback(
@@ -176,11 +188,7 @@ export function PageTransitionProvider({
 
             curtain.style.display = "block";
 
-            const tl = gsap.timeline({
-                onComplete: () => {
-                    router.push(href);
-                },
-            });
+            const tl = gsap.timeline();
 
             tl.set(curtain, {
                 autoAlpha: 1,
@@ -193,8 +201,8 @@ export function PageTransitionProvider({
                 tl.to(
                     shell,
                     {
-                        scale: 0.97,
-                        filter: "blur(14px)",
+                        scale: 0.985,
+                        filter: "blur(10px)",
                         duration: PRE_WIPE,
                         ease: EASE_PRE,
                     },
@@ -210,6 +218,15 @@ export function PageTransitionProvider({
                     ease: EASE_IN,
                 },
                 shell ? `-=${PRE_WIPE_OVERLAP}` : 0
+            );
+
+            // Start the route while the curtain still covers — loads under cover.
+            tl.call(
+                () => {
+                    router.push(href);
+                },
+                undefined,
+                `-=${NAVIGATE_BEFORE_WIPE_END}`
             );
         },
         [router]

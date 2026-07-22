@@ -55,19 +55,19 @@ function BioProjectAnchor({
 export function BioSection() {
   const choom = useChoomLingo();
   return (
-    <div className="w-full font-[family-name:var(--font-geist)] text-base leading-6 text-white/80">
+    <div className="flex w-full flex-col gap-6 font-[family-name:var(--font-geist)] text-base leading-6 text-white/80">
       {choom ? (
         <>
-          <p>{CHOOM.bioP1}</p>
-          <p className="mt-6">{CHOOM.bioP2}</p>
+          <p className="m-0">{CHOOM.bioP1}</p>
+          <p className="m-0">{CHOOM.bioP2}</p>
         </>
       ) : (
         <>
-          <p>
+          <p className="m-0">
             I&apos;m a Product Designer obsessed with making, and I have 6 years of
             experience doing it.
           </p>
-          <p className="mt-6">
+          <p className="m-0">
             I&apos;ve designed features that help people understand their homes at{" "}
             <BioProjectAnchor slug="domis">Domis</BioProjectAnchor>, AR fitness
             for any space at{" "}
@@ -78,7 +78,7 @@ export function BioSection() {
             Alzheimer&apos;s at the{" "}
             <BioProjectAnchor slug="memory-care">SFCJL</BioProjectAnchor>.
           </p>
-          <p className="mt-6">
+          <p className="m-0">
             Most of it has meant designing for interaction models that barely
             exist yet. I focus on the user and learn by making, whether on the
             canvas, in code, or the physical world.

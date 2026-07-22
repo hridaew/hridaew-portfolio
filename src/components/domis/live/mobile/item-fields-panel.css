@@ -47,23 +47,13 @@
   height: 168px;
 }
 
-.domis-live.ifp .ifp-header {
-  margin: 0 24px 24px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 32px;
-  letter-spacing: 0;
-  color: var(--ifp-ink);
-}
-
-/* SharedSuggestionInput — 32 / w600 */
+/* Name — keep SharedSuggestionInput footprint; chrome visually off */
 .domis-live.ifp .ifp-name {
   margin: 0 24px 24px;
   padding: 12px;
+  border: 1px solid transparent;
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: var(--ifp-surface);
+  background: transparent;
   font-size: 32px;
   font-weight: 600;
   line-height: 1.15;
@@ -71,10 +61,39 @@
   min-height: 72px;
   display: flex;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .domis-live.ifp .ifp-name[data-empty="true"] {
   color: #cacaca;
+}
+
+.domis-live.ifp .ifp-name.ifp-reveal[data-on="false"] {
+  opacity: 0.55;
+}
+
+.domis-live.ifp .ifp-name.ifp-reveal[data-on="true"] {
+  opacity: 1;
+}
+
+/* Sequential reveal */
+.domis-live.ifp .ifp-reveal {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    color 0.45s ease;
+}
+
+.domis-live.ifp .ifp-photo.ifp-reveal[data-on="false"] {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.domis-live.ifp .ifp-photo.ifp-reveal[data-on="true"] {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* FormImageSection — 100×100 */
@@ -85,9 +104,15 @@
   margin: 0 24px 24px;
 }
 
-.domis-live.ifp .ifp-photo {
+.domis-live.ifp .ifp-photo-slot {
   position: relative;
   flex: none;
+  width: 100px;
+  height: 100px;
+}
+
+.domis-live.ifp .ifp-photo {
+  position: relative;
   width: 100px;
   height: 100px;
   border-radius: 16px;
@@ -105,7 +130,14 @@
   background: #f7f7f7;
 }
 
+.domis-live.ifp .ifp-photo-add[data-active="false"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .domis-live.ifp .ifp-photo-scanned {
+  position: absolute;
+  inset: 0;
   border-radius: 16px;
   border: 4px solid var(--ifp-teal-light);
   box-sizing: border-box;
@@ -277,14 +309,16 @@
   flex-direction: column;
   opacity: 0;
   transform: translateY(8px);
+  pointer-events: none;
   transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
-.domis-live.ifp .ifp-row[data-visible="true"] {
+.domis-live.ifp .ifp-row[data-on="true"] {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 .domis-live.ifp .ifp-row-inner {
