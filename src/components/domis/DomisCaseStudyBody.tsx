@@ -6,12 +6,14 @@ import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisConstraintDiagram } from "@/components/domis/DomisConstraintDiagram";
 import { DomisValueMultiply } from "@/components/domis/DomisValueMultiply";
-import { DomisValueFromEffort } from "@/components/domis/DomisValueFromEffort";
-import { DomisTrustDecision } from "@/components/domis/DomisTrustDecision";
-import { DomisReportMentalModel } from "@/components/domis/DomisReportMentalModel";
+import { DomisHomeKnowledgeJourney } from "@/components/domis/DomisHomeKnowledgeJourney";
+import { DomisAddressUserFlow } from "@/components/domis/DomisAddressUserFlow";
+import { DomisApplianceTaskFlow } from "@/components/domis/DomisApplianceTaskFlow";
+import { DomisReportAffinity } from "@/components/domis/DomisReportAffinity";
 import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
 import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
+import "@/components/domis/domis-ux-diagrams.css";
 import {
   ApplianceCaptureDemo,
   ApplianceV1V2Compare,
@@ -257,6 +259,16 @@ export function DomisCaseStudyBody() {
                   didn&rsquo;t know their own homes. Setting up Domis also
                   became the act of learning it.
                 </p>
+              </div>
+              <figure className="dcs-ux-figure">
+                <DomisHomeKnowledgeJourney />
+                <figcaption className="dcs-caption site-body">
+                  The problem is not that owners refuse to document their
+                  house. Home knowledge arrives dense, scatters, and fails
+                  exactly when a repair makes it urgent.
+                </figcaption>
+              </figure>
+              <div className="site-body text-white/65">
                 <p>
                   So to make setup feel as rewarding and informative as
                   possible, I designed Domis around one principle:
@@ -324,6 +336,13 @@ export function DomisCaseStudyBody() {
               the owner would have filled by hand.
             </p>
           </div>
+          <figure className="dcs-ux-figure">
+            <DomisAddressUserFlow />
+            <figcaption className="dcs-caption site-body">
+              The happy path is short. The design work was the branches: ambiguous
+              matches, thin records, and fields where sources disagree.
+            </figcaption>
+          </figure>
         </Reveal>
       </section>
 
@@ -341,26 +360,9 @@ export function DomisCaseStudyBody() {
               The same address can return different facts on different runs.
             </p>
             <p>
-              Rather than forcing a confident answer, I designed a trust rule:
-              show what agrees, stay quiet when it does not, and never lock the
-              owner out of a field.
-            </p>
-          </div>
-          <figure className="dcs-img-block">
-            <div className="dcs-media dcs-ux-diagram">
-              <DomisTrustDecision />
-            </div>
-            <figcaption className="dcs-caption site-body">
-              Agreement prefills. Disagreement leaves a blank. Missing data
-              waits for the owner. AI accelerates; the owner stays final
-              authority.
-            </figcaption>
-          </figure>
-          <div className="site-body text-white/65">
-            <p>
-              Under the hood that means researching the house more than once and
-              keeping what agrees — but the interaction the owner feels is the
-              quieter UI, not the pipeline.
+              Rather than forcing a confident answer, Domis only shows what
+              sources agree on, leaves blanks when they do not, and never locks
+              the owner out of a field.
             </p>
           </div>
         </Reveal>
@@ -450,6 +452,15 @@ export function DomisCaseStudyBody() {
               things owners actually need later: manuals, warranty, support,
               parts, and common failures.
             </p>
+          </div>
+          <figure className="dcs-ux-figure">
+            <DomisApplianceTaskFlow />
+            <figcaption className="dcs-caption site-body">
+              Same objective. The Domis path collapses the busywork between
+              noticing a need and having something useful on record.
+            </figcaption>
+          </figure>
+          <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
                 I asked my Google Gemini app about appliance labels to see what
@@ -555,49 +566,12 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure">
-          <div className="dcs-media dcs-media-fit">
-            <div className="dcs-affinity">
-              <div className="dcs-cluster">
-                <span className="dcs-ch">Report is stale</span>
-                <div className="dcs-note">
-                  &ldquo;That was six years ago. We redid the whole kitchen
-                  since.&rdquo;
-                </div>
-                <div className="dcs-note">
-                  &ldquo;Half of it&rsquo;s about problems we already fixed.&rdquo;
-                </div>
-                <div className="dcs-note dcs-fact">
-                  Report age at interview: 4–11 yrs
-                </div>
-              </div>
-              <div className="dcs-cluster">
-                <span className="dcs-ch">Never re-read</span>
-                <div className="dcs-note">
-                  &ldquo;I think it&rsquo;s in a drawer. Maybe the garage.&rdquo;
-                </div>
-                <div className="dcs-note">
-                  &ldquo;Read it once during closing. Never again.&rdquo;
-                </div>
-                <div className="dcs-note dcs-fact">
-                  0 of 9 had opened it in the past year
-                </div>
-              </div>
-              <div className="dcs-cluster">
-                <span className="dcs-ch">Doesn&rsquo;t know the home</span>
-                <div className="dcs-note">
-                  &ldquo;I couldn&rsquo;t tell you what brand the furnace
-                  is.&rdquo;
-                </div>
-                <div className="dcs-note">
-                  &ldquo;When was the roof done? No idea. Before us.&rdquo;
-                </div>
-                <div className="dcs-note dcs-fact">
-                  There could be data but it&rsquo;s not interpretable
-                </div>
-              </div>
-            </div>
-          </div>
+        <figure className="dcs-ux-figure">
+          <DomisReportAffinity />
+          <figcaption className="dcs-caption site-body">
+            Interview synthesis. The report is not a live model of the house —
+            so treating it as an automatic chore list would be wrong on arrival.
+          </figcaption>
         </figure>
       </Reveal>
 
@@ -612,15 +586,6 @@ export function DomisCaseStudyBody() {
               </strong>
             </p>
           </div>
-          <figure className="dcs-img-block">
-            <div className="dcs-media dcs-ux-diagram">
-              <DomisReportMentalModel />
-            </div>
-            <figcaption className="dcs-caption site-body">
-              Restraint is the design. Domis translates the report; the owner
-              decides what is still true.
-            </figcaption>
-          </figure>
         </Reveal>
       </section>
 
@@ -645,21 +610,12 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             Insights
           </p>
-          <figure className="dcs-img-block">
-            <div className="dcs-media dcs-ux-diagram">
-              <DomisValueFromEffort />
-            </div>
-            <figcaption className="dcs-caption site-body">
-              Across the product, the design contract stayed the same: ask for
-              the smallest useful input, return editable understanding, and
-              leave judgment with the owner.
-            </figcaption>
-          </figure>
           <div className="site-body text-white/65">
             <p>
               <strong className="text-white">Systems.</strong> AI output and
               human input share the same editable forms. Mobile and web sit on
-              one design system I own.
+              one design system I own. Different ingestion paths share one
+              contract: fill what you can, never lock the owner out.
             </p>
             <p>
               <strong className="text-white">Trust.</strong> AI is wrong
