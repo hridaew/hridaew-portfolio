@@ -25,98 +25,159 @@ export function DomisAddressUserFlow() {
         Create a home from an address — including when the data is unsure
       </p>
 
-      <div className="duf">
-        <div className="duf-row">
-          <span className="duf-node duf-node-start">Owner types address</span>
-          <span className="duf-arrow" aria-hidden>
-            →
-          </span>
-          <span className="duf-node duf-node-process">Resolve property candidates</span>
-        </div>
+      <div className="duf duf-address">
+        <p className="duf-scroll-hint" aria-hidden>
+          scroll -&gt;
+        </p>
 
-        <div className="duf-connector" aria-hidden>
-          <span className="duf-vline" />
-        </div>
+        <div className="duf-scroll">
+          <div className="duf-canvas">
+            <svg
+              className="duf-connectors"
+              viewBox="0 0 1360 390"
+              aria-hidden="true"
+            >
+              <defs>
+                <marker
+                  id="duf-arrow-address"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" />
+                </marker>
+              </defs>
 
-        <div className="duf-row">
-          <span className="duf-node duf-node-decision">
-            <span className="duf-decision-mark" aria-hidden />
-            <span className="duf-decision-text">Single confident match?</span>
-          </span>
-        </div>
+              <path className="duf-line" d="M 136 105 H 160" />
+              <path className="duf-line" d="M 290 105 H 330" />
+              <path className="duf-line" d="M 448 105 H 485" />
+              <path className="duf-line" d="M 389 164 V 259 H 485" />
+              <path className="duf-line" d="M 611 105 H 805" />
+              <path className="duf-line" d="M 619 259 H 642" />
+              <path className="duf-line" d="M 766 259 H 790 V 105 H 805" />
+              <path className="duf-line" d="M 923 105 H 960" />
+              <path className="duf-line" d="M 864 164 V 259 H 960" />
+              <path className="duf-line" d="M 1085 105 H 1100 V 163 H 1115" />
+              <path className="duf-line" d="M 1085 259 H 1100 V 163 H 1115" />
+              <path className="duf-line" d="M 1225 163 H 1238" />
+            </svg>
 
-        <div className="duf-branch">
-          <div className="duf-path">
-            <p className="duf-path-label">Yes</p>
-            <span className="duf-node duf-node-process">
-              Prefill agreed home facts
+            <span
+              className="duf-node duf-node-start"
+              style={{ left: 20, top: 78, width: 116 }}
+            >
+              Owner types address
             </span>
-            <span className="duf-arrow" aria-hidden>
-              ↓
+            <span
+              className="duf-node duf-node-process"
+              style={{ left: 160, top: 78, width: 130 }}
+            >
+              Resolve property candidates
             </span>
-            <span className="duf-node duf-node-process">
-              Owner reviews / edits any field
+
+            <span
+              className="duf-node duf-node-decision"
+              style={{ left: 330, top: 46 }}
+            >
+              <span className="duf-decision-mark" aria-hidden />
+              <span className="duf-decision-text">Single confident match?</span>
             </span>
+
+            <span
+              className="duf-branch-label"
+              style={{ left: 454, top: 78 }}
+            >
+              Yes
+            </span>
+            <span
+              className="duf-node duf-node-process"
+              style={{ left: 485, top: 78, width: 126 }}
+            >
+              Use single match as draft
+            </span>
+
+            <span
+              className="duf-branch-label"
+              style={{ left: 400, top: 218 }}
+            >
+              Ambiguous
+            </span>
+            <span
+              className="duf-node duf-node-process duf-node-branch"
+              style={{ left: 485, top: 230, width: 134 }}
+            >
+              Show 2-3 candidates
+            </span>
+            <span
+              className="duf-node duf-node-process duf-node-branch"
+              style={{ left: 642, top: 230, width: 124 }}
+            >
+              Owner picks or corrects
+            </span>
+
+            <span
+              className="duf-node duf-node-decision"
+              style={{ left: 805, top: 46 }}
+            >
+              <span className="duf-decision-mark" aria-hidden />
+              <span className="duf-decision-text">
+                Field-level source agreement?
+              </span>
+            </span>
+
+            <span
+              className="duf-branch-label"
+              style={{ left: 926, top: 78 }}
+            >
+              Agree
+            </span>
+            <span
+              className="duf-node duf-node-process"
+              style={{ left: 960, top: 78, width: 125 }}
+            >
+              Show trusted value
+            </span>
+
+            <span
+              className="duf-branch-label"
+              style={{ left: 874, top: 218 }}
+            >
+              Disagree / missing
+            </span>
+            <span
+              className="duf-node duf-node-process duf-node-branch"
+              style={{ left: 960, top: 230, width: 125 }}
+            >
+              Leave field blank
+            </span>
+
+            <span
+              className="duf-node duf-node-process duf-node-merge"
+              style={{ left: 1115, top: 132, width: 110 }}
+            >
+              Owner reviews / edits
+            </span>
+            <span
+              className="duf-node duf-node-end"
+              style={{ left: 1238, top: 129, width: 105 }}
+            >
+              Home profile exists, incomplete OK
+            </span>
+
+            <div className="duf-footnote" aria-label="Edge cases">
+              <span className="duf-footnote-label">Edge cases</span>
+              <div className="duf-edge-row">
+                {EDGES.map((edge) => (
+                  <span key={edge} className="duf-edge">
+                    {edge}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="duf-path">
-            <p className="duf-path-label">No / ambiguous</p>
-            <span className="duf-node duf-node-process">
-              Show 2–3 candidates with differentiating facts
-            </span>
-            <span className="duf-arrow" aria-hidden>
-              ↓
-            </span>
-            <span className="duf-node duf-node-process">
-              Owner picks or corrects the address
-            </span>
-          </div>
-        </div>
-
-        <div className="duf-connector" aria-hidden>
-          <span className="duf-vline" />
-          <span className="duf-merge-label">merge</span>
-          <span className="duf-vline" />
-        </div>
-
-        <div className="duf-row">
-          <span className="duf-node duf-node-decision">
-            <span className="duf-decision-mark" aria-hidden />
-            <span className="duf-decision-text">
-              Field-level source agreement?
-            </span>
-          </span>
-        </div>
-
-        <div className="duf-branch">
-          <div className="duf-path">
-            <p className="duf-path-label">Agree</p>
-            <span className="duf-node duf-node-process">Show the value</span>
-          </div>
-          <div className="duf-path">
-            <p className="duf-path-label">Disagree or missing</p>
-            <span className="duf-node duf-node-process">
-              Leave blank — owner fills later
-            </span>
-          </div>
-        </div>
-
-        <div className="duf-connector" aria-hidden>
-          <span className="duf-vline" />
-        </div>
-
-        <div className="duf-row">
-          <span className="duf-node duf-node-end">
-            Home profile exists — editable, incomplete is OK
-          </span>
-        </div>
-
-        <p className="duf-note">Edge cases designed for</p>
-        <div className="duf-edges">
-          {EDGES.map((edge) => (
-            <span key={edge} className="duf-edge">
-              {edge}
-            </span>
-          ))}
         </div>
       </div>
     </div>
