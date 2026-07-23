@@ -645,13 +645,6 @@ export function DomisCaseStudyBody() {
           <p className="dcs-heading site-subheading text-white">
             Insights
           </p>
-          <div className="site-body text-white/65">
-            <p>
-              Three surfaces. One interaction contract: take the smallest
-              action the owner will give, return what you can, and never take
-              judgment away from them.
-            </p>
-          </div>
           <figure className="dcs-img-block">
             <div className="dcs-media dcs-ux-diagram">
               <DomisValueFromEffort />

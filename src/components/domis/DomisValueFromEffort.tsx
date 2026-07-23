@@ -9,7 +9,7 @@ const LANES = [
     icon: "location_on",
     gives: "Type an address",
     returns: ["Property basics", "Home systems", "Avatar icon"],
-    control: "Edit any field. Fill blanks yourself.",
+    control: "Edit any field. Add what Domis can't verify.",
   },
   {
     title: "Appliance",
