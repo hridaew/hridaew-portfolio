@@ -47,7 +47,7 @@ export function DomisReportMentalModel() {
         </div>
         <p className="dud-sub">
           The report may no longer describe the house they live in. Auto tasks
-          arrive wrong.
+          risk arriving stale.
         </p>
         <div className="drm-risks">
           {RISKS.map((risk) => (
@@ -60,7 +60,7 @@ export function DomisReportMentalModel() {
 
       <article className="dud-card drm-col">
         <p className="dud-eyebrow">Domis model</p>
-        <p className="dud-title">Understanding, then judgment</p>
+        <p className="dud-title">Translate first. Let the owner judge.</p>
         <div className="drm-path" aria-hidden>
           <span className="dud-chip dud-chip-accent">Inspection PDF</span>
           <span className="dud-arrow dud-arrow-ink">→</span>

@@ -60,11 +60,11 @@ export function DomisTrustDecision() {
         <span className="dud-arrow" aria-hidden>
           →
         </span>
-        <span className="dud-chip">Domis researches the house</span>
+        <span className="dud-chip">Domis compares sources</span>
         <span className="dud-arrow" aria-hidden>
           →
         </span>
-        <span className="dud-chip">For each field…</span>
+        <span className="dud-chip">Each field gets a trust state</span>
       </div>
 
       <div className="dtd-branches">
@@ -91,7 +91,8 @@ export function DomisTrustDecision() {
       <div className="dtd-rule">
         <span className="dtd-rule-label">Trust rule</span>
         <p className="dtd-rule-text">
-          When Domis is unsure, the UI gets quieter. Every field stays editable.
+          If sources disagree, Domis withholds confidence instead of
+          manufacturing it. The owner can always edit.
         </p>
       </div>
     </div>

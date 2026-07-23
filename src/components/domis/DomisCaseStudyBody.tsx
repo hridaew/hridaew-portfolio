@@ -8,9 +8,7 @@ import { DomisConstraintDiagram } from "@/components/domis/DomisConstraintDiagra
 import { DomisValueMultiply } from "@/components/domis/DomisValueMultiply";
 import { DomisValueFromEffort } from "@/components/domis/DomisValueFromEffort";
 import { DomisTrustDecision } from "@/components/domis/DomisTrustDecision";
-import { DomisApplianceValueLadder } from "@/components/domis/DomisApplianceValueLadder";
 import { DomisReportMentalModel } from "@/components/domis/DomisReportMentalModel";
-import { DomisInsightsMatrix } from "@/components/domis/DomisInsightsMatrix";
 import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
 import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
@@ -273,23 +271,6 @@ export function DomisCaseStudyBody() {
                     <DomisValueMultiply />
                 </div>
               </figure>
-              <div className="site-body text-white/65">
-                <p>
-                  Across the product, that pattern looks the same: find the
-                  smallest thing an owner will actually do, return editable
-                  understanding, and keep them in charge.
-                </p>
-              </div>
-              <figure className="dcs-img-block">
-                <div className="dcs-media dcs-ux-diagram">
-                  <DomisValueFromEffort />
-                </div>
-                <figcaption className="dcs-caption site-body">
-                  Domis does not ask owners to document their home. It finds
-                  what they are already willing to give, then turns it into
-                  understanding they can edit.
-                </figcaption>
-              </figure>
             </div>
           </div>
         </Reveal>
@@ -465,20 +446,10 @@ export function DomisCaseStudyBody() {
               does not.
             </p>
             <p>
-              The owner&rsquo;s job is not to inventory a serial number. It is
-              to get help when something breaks. So the photo had to unlock more
-              than a filled form.
+              The model number was not the user goal. It was a key to the
+              things owners actually need later: manuals, warranty, support,
+              parts, and common failures.
             </p>
-          </div>
-          <figure className="dcs-img-block">
-            <div className="dcs-media dcs-ux-diagram">
-              <DomisApplianceValueLadder />
-            </div>
-            <figcaption className="dcs-caption site-body">
-              The model number is not the destination. It is the key.
-            </figcaption>
-          </figure>
-          <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
                 I asked my Google Gemini app about appliance labels to see what
@@ -683,8 +654,13 @@ export function DomisCaseStudyBody() {
           </div>
           <figure className="dcs-img-block">
             <div className="dcs-media dcs-ux-diagram">
-              <DomisInsightsMatrix />
+              <DomisValueFromEffort />
             </div>
+            <figcaption className="dcs-caption site-body">
+              Across the product, the design contract stayed the same: ask for
+              the smallest useful input, return editable understanding, and
+              leave judgment with the owner.
+            </figcaption>
           </figure>
           <div className="site-body text-white/65">
             <p>
