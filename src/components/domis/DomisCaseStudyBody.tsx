@@ -531,16 +531,9 @@ export function DomisCaseStudyBody() {
         <Reveal>
           <div className="site-body text-white/65">
             <p>
-              But a captured label is still just reference text.{" "}
-              <strong className="text-white">
-                The value is not in knowing the model number, it is in what the
-                model number unlocks.
-              </strong>
-            </p>
-            <p>
-              For v2 I refocused on what the owner actually needs. V1 reads the
-              plate; a search agent turns that into useful links, like support
-              and warranty pages.
+              V1 stopped at reading the plate. For v2 I pushed the same scan
+              further — support pages, warranty links, the things an owner
+              actually needs when something breaks.
             </p>
           </div>
         </Reveal>
