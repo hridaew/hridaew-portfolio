@@ -6,6 +6,11 @@ import { DomisMoreCards } from "@/components/domis/DomisMoreCards";
 import { DomisKnownCarousel } from "@/components/domis/DomisKnownCarousel";
 import { DomisConstraintDiagram } from "@/components/domis/DomisConstraintDiagram";
 import { DomisValueMultiply } from "@/components/domis/DomisValueMultiply";
+import { DomisValueFromEffort } from "@/components/domis/DomisValueFromEffort";
+import { DomisTrustDecision } from "@/components/domis/DomisTrustDecision";
+import { DomisApplianceValueLadder } from "@/components/domis/DomisApplianceValueLadder";
+import { DomisReportMentalModel } from "@/components/domis/DomisReportMentalModel";
+import { DomisInsightsMatrix } from "@/components/domis/DomisInsightsMatrix";
 import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
 import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
 import { DomisHomeFeatureCard } from "@/components/domis/DomisHomeFeatureCard";
@@ -268,6 +273,23 @@ export function DomisCaseStudyBody() {
                     <DomisValueMultiply />
                 </div>
               </figure>
+              <div className="site-body text-white/65">
+                <p>
+                  Across the product, that pattern looks the same: find the
+                  smallest thing an owner will actually do, return editable
+                  understanding, and keep them in charge.
+                </p>
+              </div>
+              <figure className="dcs-img-block">
+                <div className="dcs-media dcs-ux-diagram">
+                  <DomisValueFromEffort />
+                </div>
+                <figcaption className="dcs-caption site-body">
+                  Domis does not ask owners to document their home. It finds
+                  what they are already willing to give, then turns it into
+                  understanding they can edit.
+                </figcaption>
+              </figure>
             </div>
           </div>
         </Reveal>
@@ -316,28 +338,10 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               So I designed an address intelligence feature that maximizes the
-              value of a user provided home address.
+              value of a user provided home address. Type it once, and Domis
+              researches the house — then puts what it finds into the same form
+              the owner would have filled by hand.
             </p>
-            <p>
-              The address resolves the property through Google Places, which
-              hands off to a search agent that goes and researches the house.
-            </p>
-            <ol
-              className="dcs-process"
-              aria-label="Address intelligence pipeline"
-            >
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Google Places</span>
-                <span className="dcs-process-desc">Address discovery</span>
-              </li>
-              <li className="dcs-process-arrow" aria-hidden="true">
-                →
-              </li>
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Gemini Search</span>
-                <span className="dcs-process-desc">House research</span>
-              </li>
-            </ol>
           </div>
         </Reveal>
       </section>
@@ -350,51 +354,32 @@ export function DomisCaseStudyBody() {
           <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
-                AI search is non-deterministic.
+                The hard part is not finding data. It is deciding what the owner
+                should see when search is unsure.
               </strong>{" "}
-              The same address returns different results on different runs.
+              The same address can return different facts on different runs.
             </p>
             <p>
-              Rather than trying to engineer certainty, I ran the search three
-              times and kept what agreed across runs.
+              Rather than forcing a confident answer, I designed a trust rule:
+              show what agrees, stay quiet when it does not, and never lock the
+              owner out of a field.
             </p>
-            <ol
-              className="dcs-process"
-              aria-label="Address intelligence consensus pipeline"
-            >
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Input</span>
-                <span className="dcs-process-desc">Address</span>
-              </li>
-              <li className="dcs-process-arrow" aria-hidden="true">
-                →
-              </li>
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Google Places API</span>
-                <span className="dcs-process-desc">Address discovery</span>
-              </li>
-              <li className="dcs-process-arrow" aria-hidden="true">
-                →
-              </li>
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Gemini Search ×3</span>
-                <span className="dcs-process-desc">
-                  Searches with verification
-                </span>
-              </li>
-              <li className="dcs-process-arrow" aria-hidden="true">
-                →
-              </li>
-              <li className="dcs-process-step">
-                <span className="dcs-process-name">Gemini 2.5 Flash</span>
-                <span className="dcs-process-desc">
-                  Review and final data cleanup
-                </span>
-              </li>
-            </ol>
+          </div>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-ux-diagram">
+              <DomisTrustDecision />
+            </div>
+            <figcaption className="dcs-caption site-body">
+              Agreement prefills. Disagreement leaves a blank. Missing data
+              waits for the owner. AI accelerates; the owner stays final
+              authority.
+            </figcaption>
+          </figure>
+          <div className="site-body text-white/65">
             <p>
-              The results land in the same form the user would have filled in
-              themselves. Tap a field, type, done.
+              Under the hood that means researching the house more than once and
+              keeping what agrees — but the interaction the owner feels is the
+              quieter UI, not the pipeline.
             </p>
           </div>
         </Reveal>
@@ -480,10 +465,20 @@ export function DomisCaseStudyBody() {
               does not.
             </p>
             <p>
-              I wanted to explore how we can minimize user effort here, and
-              since a core part of logging an appliance is taking a photo, I
-              started there.
+              The owner&rsquo;s job is not to inventory a serial number. It is
+              to get help when something breaks. So the photo had to unlock more
+              than a filled form.
             </p>
+          </div>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-ux-diagram">
+              <DomisApplianceValueLadder />
+            </div>
+            <figcaption className="dcs-caption site-body">
+              The model number is not the destination. It is the key.
+            </figcaption>
+          </figure>
+          <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
                 I asked my Google Gemini app about appliance labels to see what
@@ -653,6 +648,15 @@ export function DomisCaseStudyBody() {
               </strong>
             </p>
           </div>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-ux-diagram">
+              <DomisReportMentalModel />
+            </div>
+            <figcaption className="dcs-caption site-body">
+              Restraint is the design. Domis translates the report; the owner
+              decides what is still true.
+            </figcaption>
+          </figure>
         </Reveal>
       </section>
 
@@ -679,19 +683,27 @@ export function DomisCaseStudyBody() {
           </p>
           <div className="site-body text-white/65">
             <p>
+              Three surfaces. One interaction contract: take the smallest
+              action the owner will give, return what you can, and never take
+              judgment away from them.
+            </p>
+          </div>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-ux-diagram">
+              <DomisInsightsMatrix />
+            </div>
+          </figure>
+          <div className="site-body text-white/65">
+            <p>
               <strong className="text-white">Systems.</strong> AI output and
               human input share the same editable forms. Mobile and web sit on
-              one design system I own. Consensus, capture, and report processing
-              are different pipelines with the same contract: fill what you can,
-              never lock the owner out.
+              one design system I own.
             </p>
             <p>
               <strong className="text-white">Trust.</strong> AI is wrong
               sometimes. We show disagreement instead of a confident wrong
-              answer, keep every field editable, and treat the report as
-              understanding, not an automatic chore list. Latency and cost of
-              ×3 search were accepted so the product could be honest under
-              non-determinism.
+              answer, and treat the report as understanding — not an automatic
+              chore list.
             </p>
             <p>
               <strong className="text-white">Collaboration.</strong> As founding
