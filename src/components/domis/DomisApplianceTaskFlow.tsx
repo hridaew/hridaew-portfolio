@@ -2,64 +2,119 @@
 
 import "./domis-ux-diagrams.css";
 
-const MANUAL = [
-  "Find the label",
-  "Read tiny model text",
-  "Type it in",
-  "Search the web",
-  "Compare results",
-  "Save a useful link",
-] as const;
-
-const DOMIS = [
-  "Photograph the label",
-  "Confirm brand / model",
-  "Manual, warranty, support, parts attached",
-] as const;
-
 /**
- * Task flow — one objective: identify an appliance and make it useful.
- * Compact linear comparison; does not duplicate the live capture demo.
+ * Task flow — one objective: add an appliance so it can be used later.
+ * Includes failure / recovery branches (not a manual-vs-product comparison).
  */
 export function DomisApplianceTaskFlow() {
   return (
     <div
       className="dud dud-board"
       role="img"
-      aria-label="Task flow comparing manual appliance lookup with Domis photo capture: fewer steps from noticing a need to having useful identity and links"
+      aria-label="Task flow for adding an appliance: open capture, photograph label, branch if unreadable or ambiguous, confirm identity, attach useful links, save to home with recovery paths for retake, manual entry, or partial save"
     >
       <p className="dud-type">Task flow</p>
       <p className="dud-heading">
-        Objective: identify an appliance and get something useful from it
+        Objective: add an appliance so it can be tagged in tasks and pro chats
       </p>
 
-      <div className="dtf" aria-hidden>
-        <span className="duf-node duf-node-start">Need help / repair</span>
-        <span className="duf-arrow">→</span>
-        <span className="duf-node duf-node-process">Capture identity</span>
-        <span className="duf-arrow">→</span>
-        <span className="duf-node duf-node-process">Confirm</span>
-        <span className="duf-arrow">→</span>
-        <span className="duf-node duf-node-end">Useful links + home record</span>
-      </div>
+      <div className="duf">
+        <div className="duf-row">
+          <span className="duf-node duf-node-start">Owner needs appliance on record</span>
+          <span className="duf-arrow" aria-hidden>
+            →
+          </span>
+          <span className="duf-node duf-node-process">Open capture</span>
+          <span className="duf-arrow" aria-hidden>
+            →
+          </span>
+          <span className="duf-node duf-node-decision">
+            <span className="duf-decision-mark" aria-hidden />
+            <span className="duf-decision-text">Can access the label?</span>
+          </span>
+        </div>
 
-      <div className="dtf-compare">
-        <div className="dtf-lane">
-          <p className="dtf-lane-label">Manual path</p>
-          <ol>
-            {MANUAL.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
+        <div className="duf-branch">
+          <div className="duf-path">
+            <p className="duf-path-label">Yes</p>
+            <span className="duf-node duf-node-process">Photograph the label</span>
+            <span className="duf-arrow" aria-hidden>
+              ↓
+            </span>
+            <span className="duf-node duf-node-decision">
+              <span className="duf-decision-mark" aria-hidden />
+              <span className="duf-decision-text">Photo readable?</span>
+            </span>
+            <div className="duf-branch duf-branch-nested">
+              <div className="duf-path">
+                <p className="duf-path-label">Yes</p>
+                <span className="duf-node duf-node-process">
+                  Extract brand / model candidates
+                </span>
+              </div>
+              <div className="duf-path">
+                <p className="duf-path-label">No</p>
+                <span className="duf-node duf-node-process">Retake photo</span>
+                <span className="duf-note-inline">or enter model manually</span>
+              </div>
+            </div>
+          </div>
+          <div className="duf-path">
+            <p className="duf-path-label">No</p>
+            <span className="duf-node duf-node-process">Enter brand / model by hand</span>
+            <span className="duf-note-inline">Partial record still allowed</span>
+          </div>
         </div>
-        <div className="dtf-lane dtf-lane-domis">
-          <p className="dtf-lane-label">Domis path</p>
-          <ol>
-            {DOMIS.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
+
+        <div className="duf-row">
+          <span className="duf-node duf-node-decision">
+            <span className="duf-decision-mark" aria-hidden />
+            <span className="duf-decision-text">Identity confident?</span>
+          </span>
         </div>
+
+        <div className="duf-branch">
+          <div className="duf-path">
+            <p className="duf-path-label">Confident</p>
+            <span className="duf-node duf-node-process">Owner confirms fields</span>
+          </div>
+          <div className="duf-path">
+            <p className="duf-path-label">Ambiguous / multi-match</p>
+            <span className="duf-node duf-node-process">
+              Owner picks candidate or corrects
+            </span>
+          </div>
+        </div>
+
+        <div className="duf-row">
+          <span className="duf-node duf-node-decision">
+            <span className="duf-decision-mark" aria-hidden />
+            <span className="duf-decision-text">Useful links found?</span>
+          </span>
+        </div>
+
+        <div className="duf-branch">
+          <div className="duf-path">
+            <p className="duf-path-label">Yes</p>
+            <span className="duf-node duf-node-process">
+              Attach manual / warranty / support
+            </span>
+          </div>
+          <div className="duf-path">
+            <p className="duf-path-label">No</p>
+            <span className="duf-node duf-node-process">
+              Save identity now — attach links later
+            </span>
+          </div>
+        </div>
+
+        <div className="duf-row">
+          <span className="duf-node duf-node-end">
+            Appliance on the home — usable even if incomplete
+          </span>
+        </div>
+
+        <p className="duf-note">Recovery paths: retake · manual entry · partial save · links later</p>
       </div>
     </div>
   );

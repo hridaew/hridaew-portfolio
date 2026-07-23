@@ -456,8 +456,8 @@ export function DomisCaseStudyBody() {
           <figure className="dcs-ux-figure">
             <DomisApplianceTaskFlow />
             <figcaption className="dcs-caption site-body">
-              Same objective. The Domis path collapses the busywork between
-              noticing a need and having something useful on record.
+              One objective, with recovery when the photo fails, identity is
+              ambiguous, or useful links are not found yet.
             </figcaption>
           </figure>
           <div className="site-body text-white/65">

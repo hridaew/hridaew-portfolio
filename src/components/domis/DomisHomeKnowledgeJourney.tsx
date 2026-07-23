@@ -3,86 +3,100 @@
 import "./domis-ux-diagrams.css";
 
 const STAGES = [
-  "Buying the home",
-  "Moving in",
-  "First repair",
-  "Looking things up",
-  "Calling a pro",
-  "Afterward",
+  "Closing / inspection",
+  "Move-in month",
+  "First breakdown",
+  "Trying to look it up",
+  "Talking to a pro",
+  "Weeks later",
 ] as const;
 
 const ROWS = [
   {
     label: "Actions",
     cells: [
-      "Gets inspection report, disclosures, manuals",
-      "Files PDFs and emails somewhere",
-      "Something breaks",
-      "Searches model numbers, old PDFs, camera roll",
-      "Describes the house from memory",
-      "Learned info disappears again",
+      "Receives 60+ page inspection PDF + appliance docs",
+      "Drops files into email / Drive / a drawer",
+      "Furnace fault or leak — needs model / age / history",
+      "Hunts PDF, camera roll, Google for the plate text",
+      "Dictates house details from memory on the phone",
+      "Learned facts stay in texts — not in a home record",
     ],
   },
   {
     label: "Thoughts",
     cells: [
-      "\u201cI\u2019ll read this later.\u201d",
-      "\u201cI should organize this.\u201d",
-      "\u201cWhat even is this appliance?\u201d",
-      "\u201cWhere did I put that report?\u201d",
-      "\u201cHope this is enough context.\u201d",
-      "\u201cI should save what I learned.\u201d",
+      "\u201cI\u2019ll read the report after we move in.\u201d",
+      "\u201cI should organize this someday.\u201d",
+      "\u201cWhat brand is this, and is it under warranty?\u201d",
+      "\u201cWhere did that inspection PDF go?\u201d",
+      "\u201cI sound like I don\u2019t know my own house.\u201d",
+      "\u201cI should save what the tech told me.\u201d",
     ],
   },
   {
     label: "Emotions",
     cells: [
-      "Overwhelmed",
-      "Optimistic",
-      "Anxious",
+      "Overloaded",
+      "Optimistic, busy",
+      "Stressed",
       "Frustrated",
-      "Dependent",
-      "Relief, then forgetting",
+      "Embarrassed / dependent",
+      "Relief, then drift",
     ],
     emotion: true as const,
   },
   {
     label: "Touchpoints",
     cells: [
-      "Inspection PDF, listing",
-      "Email, files, photos",
-      "Label, panel, memory",
-      "Search, inbox, camera",
-      "Contractor call / text",
-      "Notes app, memory",
+      "Inspection PDF, disclosures, manuals",
+      "Inbox, cloud folders, photos",
+      "Appliance label, breaker panel",
+      "Search, email, camera roll",
+      "Contractor call / text thread",
+      "Notes app, memory, receipts",
     ],
+  },
+  {
+    label: "Pain / breakdown",
+    cells: [
+      "Report is dense; unread after closing",
+      "Knowledge scatters across tools",
+      "Identity of systems unknown under stress",
+      "Retrieval fails when time-sensitive",
+      "Context expensive to reconstruct for pros",
+      "Learning is not retained as home knowledge",
+    ],
+    pain: true as const,
   },
 ] as const;
 
 const OPPORTUNITY = [
-  "Knowledge exists, but dense",
-  "Knowledge scatters",
-  "Need turns urgent",
-  "Retrieval fails",
-  "Context is expensive",
-  "Learning isn’t retained",
+  "Turn dense closing docs into understanding",
+  "Capture while energy is high",
+  "Make identity 1 small action",
+  "Shorten lookup to confirm, not hunt",
+  "Hand pros a shared home context",
+  "Keep what was learned on the property",
 ] as const;
 
 /**
- * Customer journey map — homeowner relationship with home knowledge over time.
- * Observational / research-led, not a Domis product pitch.
+ * Customer journey map — Domis-specific homeowner knowledge breakdown over time.
  */
 export function DomisHomeKnowledgeJourney() {
   return (
     <div
       className="dud dud-board"
       role="region"
-      aria-label="Customer journey map: how homeowners gain, lose, and struggle to retrieve home knowledge over time"
+      aria-label="Customer journey map: how homeowners gain, lose, and struggle to retrieve home knowledge from closing through a repair call"
     >
       <p className="dud-type">Customer journey map</p>
+      <p className="dud-meta">
+        Inputs: homeowner interviews · inspection reports · onboarding tests
+      </p>
       <p className="dud-heading">
-        Home knowledge appears at transitions, disappears in daily life, and
-        becomes urgent when something breaks
+        Home knowledge arrives at closing, scatters after move-in, and fails
+        under the stress of a repair
       </p>
 
       <div className="djm-scroll">
@@ -107,7 +121,11 @@ export function DomisHomeKnowledgeJourney() {
                   <td
                     key={`${row.label}-${cell}`}
                     className={
-                      "emotion" in row && row.emotion ? "djm-emo" : undefined
+                      "emotion" in row && row.emotion
+                        ? "djm-emo"
+                        : "pain" in row && row.pain
+                          ? "djm-pain"
+                          : undefined
                     }
                   >
                     {cell}

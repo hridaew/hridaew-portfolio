@@ -12,14 +12,13 @@ const EDGES = [
 
 /**
  * User flow — Address Intelligence with branching confidence / trust paths.
- * Flowchart language, not product UI cards.
  */
 export function DomisAddressUserFlow() {
   return (
     <div
       className="dud dud-board"
       role="img"
-      aria-label="User flow for creating a home from an address: type address, resolve property, branch on match confidence, then prefill only what sources agree on, always leaving fields editable"
+      aria-label="User flow for creating a home from an address with branching match confidence and field-level agreement"
     >
       <p className="dud-type">User flow</p>
       <p className="dud-heading">
@@ -33,10 +32,17 @@ export function DomisAddressUserFlow() {
             →
           </span>
           <span className="duf-node duf-node-process">Resolve property candidates</span>
-          <span className="duf-arrow" aria-hidden>
-            →
+        </div>
+
+        <div className="duf-connector" aria-hidden>
+          <span className="duf-vline" />
+        </div>
+
+        <div className="duf-row">
+          <span className="duf-node duf-node-decision">
+            <span className="duf-decision-mark" aria-hidden />
+            <span className="duf-decision-text">Single confident match?</span>
           </span>
-          <span className="duf-node duf-node-decision">Single confident match?</span>
         </div>
 
         <div className="duf-branch">
@@ -66,9 +72,18 @@ export function DomisAddressUserFlow() {
           </div>
         </div>
 
+        <div className="duf-connector" aria-hidden>
+          <span className="duf-vline" />
+          <span className="duf-merge-label">merge</span>
+          <span className="duf-vline" />
+        </div>
+
         <div className="duf-row">
           <span className="duf-node duf-node-decision">
-            Field-level source agreement?
+            <span className="duf-decision-mark" aria-hidden />
+            <span className="duf-decision-text">
+              Field-level source agreement?
+            </span>
           </span>
         </div>
 
@@ -83,6 +98,10 @@ export function DomisAddressUserFlow() {
               Leave blank — owner fills later
             </span>
           </div>
+        </div>
+
+        <div className="duf-connector" aria-hidden>
+          <span className="duf-vline" />
         </div>
 
         <div className="duf-row">
