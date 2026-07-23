@@ -3,10 +3,33 @@ import { SavorWafflingBody } from "@/components/savor/SavorWafflingBody";
 import { WafflingEntrance } from "@/components/shared/WafflingEntrance";
 import { PostPill } from "@/components/shared/PostPill";
 
+const savorTitle = "Savor: Video to 3D model tool";
+const savorDescription =
+  "Savor turns a phone video of an object into a photoreal 3D Gaussian splat, cleaned and explorable, running locally on your Mac.";
+const savorUrl = "https://hridaew.com/waffling/savor";
+const savorOgImage = {
+  url: "/assets/savor/og.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Savor — turn a phone video into a photoreal 3D Gaussian splat",
+};
+
 export const metadata: Metadata = {
-  title: "Savor: Video to 3D model tool · Hridae Walia",
-  description:
-    "Savor turns a phone video of an object into a photoreal 3D Gaussian splat, cleaned and explorable, running locally on your Mac.",
+  title: savorTitle,
+  description: savorDescription,
+  openGraph: {
+    title: savorTitle,
+    description: savorDescription,
+    url: savorUrl,
+    type: "article",
+    images: [savorOgImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: savorTitle,
+    description: savorDescription,
+    images: [savorOgImage.url],
+  },
 };
 
 export default function SavorWafflingPage() {
