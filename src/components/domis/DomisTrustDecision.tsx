@@ -48,7 +48,7 @@ export function DomisTrustDecision() {
     <div
       className="dud dtd"
       role="img"
-      aria-label="Trust decision: when search runs agree, Domis prefills; when they disagree, fields stay blank for review; when data is missing, the owner adds it. Every field stays editable."
+      aria-label="Trust decision: when sources agree, Domis prefills; when they disagree, Domis withholds confidence and leaves fields blank; when data is missing, the owner adds it. Every field stays editable."
     >
       <div className="dtd-start">
         <span className="dud-chip dud-chip-accent">
