@@ -260,12 +260,12 @@ export function DomisCaseStudyBody() {
                   became the act of learning it.
                 </p>
               </div>
-              <figure className="dcs-ux-figure">
+              <figure className="dcs-ux-figure dcs-ux-figure-wide">
                 <DomisHomeKnowledgeJourney />
                 <figcaption className="dcs-caption site-body">
-                  The problem is not that owners refuse to document their
-                  house. Home knowledge arrives dense, scatters, and fails
-                  exactly when a repair makes it urgent.
+                  Switch personas above. First-timers drown in closing docs;
+                  mid-journey owners (most Domis users) keep reconstructing the
+                  house under stress. The wave tracks emotional highs and lows.
                 </figcaption>
               </figure>
               <div className="site-body text-white/65">
