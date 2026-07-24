@@ -19,8 +19,8 @@
   --dfr-input-stroke: #6ea0c8;
   --dfr-lane-owner: rgba(120, 110, 160, 0.07);
   --dfr-lane-back: rgba(90, 140, 110, 0.08);
-  --dfr-font: var(--font-dm-sans), system-ui, sans-serif;
-  --dfr-display: var(--font-display), var(--font-dm-sans), system-ui, sans-serif;
+  --dfr-font: var(--font-geist), system-ui, sans-serif;
+  --dfr-display: var(--font-display), var(--font-geist), system-ui, sans-serif;
 
   min-height: 100vh;
   margin: 0;
