@@ -1,0 +1,17 @@
+/**
+ * Designer-authored Domis UX diagrams.
+ *
+ * Drop exports in `public/assets/domis/diagrams/` then set the path here.
+ * Prefer SVG; PNG/WebP @2x is fine for soft shadows. Leave `null` to keep
+ * the coded React fallback in the case study.
+ *
+ * Export notes: see `public/assets/domis/diagrams/README.md`
+ */
+export const domisUxDiagramAssets = {
+  addressUserFlow: null as string | null,
+  // Example once you export:
+  // addressUserFlow: "/assets/domis/diagrams/address-user-flow.svg",
+
+  applianceTaskFlow: null as string | null,
+  // applianceTaskFlow: "/assets/domis/diagrams/appliance-task-flow.svg",
+} as const;

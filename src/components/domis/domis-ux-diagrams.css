@@ -747,3 +747,34 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── Authored diagram embed (SVG/PNG from FigJam / Figma) ─── */
+
+.dux-embed-frame {
+  width: 100%;
+}
+
+.dux-embed-frame.duf-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-color: rgba(143, 164, 200, 0.35) transparent;
+  scrollbar-width: thin;
+}
+
+.dux-embed-img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  border-radius: 12px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* When the export is wider than the board, let scroll reveal it at native density */
+.dux-embed-frame.duf-scroll .dux-embed-img {
+  width: auto;
+  min-width: 100%;
+  max-height: none;
+}

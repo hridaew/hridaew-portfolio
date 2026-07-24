@@ -9,6 +9,8 @@ import { DomisValueMultiply } from "@/components/domis/DomisValueMultiply";
 import { DomisHomeKnowledgeJourney } from "@/components/domis/DomisHomeKnowledgeJourney";
 import { DomisAddressUserFlow } from "@/components/domis/DomisAddressUserFlow";
 import { DomisApplianceTaskFlow } from "@/components/domis/DomisApplianceTaskFlow";
+import { DomisUxDiagramEmbed } from "@/components/domis/DomisUxDiagramEmbed";
+import { domisUxDiagramAssets } from "@/components/domis/domis-ux-diagram-assets";
 import { DomisReportAffinity } from "@/components/domis/DomisReportAffinity";
 import { DomisAddressFeatureCard } from "@/components/domis/DomisAddressFeatureCard";
 import { DomisApplianceFeatureCard } from "@/components/domis/DomisApplianceFeatureCard";
@@ -354,9 +356,15 @@ export function DomisCaseStudyBody() {
               the owner would have filled by hand.
             </p>
           </div>
-          <figure className="dcs-ux-figure dcs-ux-figure-wide">
-            <DomisAddressUserFlow />
-          </figure>
+          <DomisUxDiagramEmbed
+            wide
+            scrollable
+            type="User flow"
+            heading="Create a home from an address"
+            src={domisUxDiagramAssets.addressUserFlow}
+            alt="User flow: enter address, choose autofill or type manually, Domis loads home facts, review or leave blanks, optional edits and photo, home created"
+            fallback={<DomisAddressUserFlow />}
+          />
         </Reveal>
       </section>
 
@@ -501,9 +509,15 @@ export function DomisCaseStudyBody() {
               the feature.
             </p>
           </div>
-          <figure className="dcs-ux-figure dcs-ux-figure-wide">
-            <DomisApplianceTaskFlow />
-          </figure>
+          <DomisUxDiagramEmbed
+            wide
+            scrollable
+            type="Task flow"
+            heading="Add an appliance so it can be tagged later"
+            src={domisUxDiagramAssets.applianceTaskFlow}
+            alt="Task flow: open capture, photograph label or enter manually, extract brand and model, confirm, attach links or save without them, appliance on home"
+            fallback={<DomisApplianceTaskFlow />}
+          />
         </Reveal>
       </section>
 
