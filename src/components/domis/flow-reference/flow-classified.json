@@ -1,0 +1,326 @@
+{
+  "address": {
+    "title": "Address intelligence",
+    "nodes": [
+      {
+        "id": "start",
+        "label": "Start",
+        "shape": "start_end",
+        "lane": "owner",
+        "note": "Journey begin only."
+      },
+      {
+        "id": "enter_address",
+        "label": "Enter address",
+        "shape": "input",
+        "lane": "owner",
+        "note": "Owner types or picks address data."
+      },
+      {
+        "id": "autofill_ok",
+        "label": "Autofill looks right?",
+        "labelLines": ["Autofill", "looks right?"],
+        "shape": "decision",
+        "lane": "owner",
+        "note": "True branch: Yes → choose, No → type."
+      },
+      {
+        "id": "choose_autofill",
+        "label": "Choose autofill",
+        "shape": "process",
+        "lane": "owner",
+        "note": "Selection action, not data entry."
+      },
+      {
+        "id": "type_manual",
+        "label": "Type manually",
+        "shape": "input",
+        "lane": "owner",
+        "note": "Owner supplies address text; prefer input over process."
+      },
+      {
+        "id": "resolve_address",
+        "label": "Resolve address",
+        "labelLines": ["Resolve address", "+ property context"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "System normalize / gather context job."
+      },
+      {
+        "id": "run_searches",
+        "label": "Run 3 searches",
+        "labelLines": ["Run 3 home-fact", "searches"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "Agent/system work performing searches."
+      },
+      {
+        "id": "source_results",
+        "label": "Source results",
+        "labelLines": ["Source results", "(3 runs)"],
+        "shape": "data",
+        "lane": "backend",
+        "note": "Held result sets from three runs."
+      },
+      {
+        "id": "cross_reference",
+        "label": "Cross-reference",
+        "labelLines": ["Review agent", "cross-references"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "Agent applies agreement rules."
+      },
+      {
+        "id": "consensus_payload",
+        "label": "Consensus payload",
+        "labelLines": ["Consensus fields", "or blanks"],
+        "shape": "data",
+        "lane": "backend",
+        "note": "Consensus payload is a returned dataset."
+      },
+      {
+        "id": "return_payload",
+        "label": "Return payload",
+        "shape": "process",
+        "lane": "backend",
+        "note": "Delivery of payload to owner form."
+      },
+      {
+        "id": "wait_facts",
+        "label": "Wait for facts",
+        "labelLines": ["Domis loads", "home facts"],
+        "shape": "process",
+        "lane": "owner",
+        "note": "Owner-visible waiting/system response; not the result set itself."
+      },
+      {
+        "id": "useful_data",
+        "label": "Useful data?",
+        "labelLines": ["Useful data", "returned?"],
+        "shape": "decision",
+        "lane": "owner",
+        "note": "Branch: Yes / Incomplete / Fail."
+      },
+      {
+        "id": "review_prefill",
+        "label": "Review prefill",
+        "labelLines": ["Review what", "came back"],
+        "shape": "process",
+        "lane": "owner",
+        "note": "Confirmation/review step, not field entry."
+      },
+      {
+        "id": "leave_blanks",
+        "label": "Leave blanks",
+        "labelLines": ["Leave blanks,", "fill later"],
+        "shape": "process",
+        "lane": "owner",
+        "note": "Accept incomplete state; no new data supplied here."
+      },
+      {
+        "id": "empty_form_manual",
+        "label": "Enter manually",
+        "labelLines": ["Empty form,", "enter manually"],
+        "shape": "input",
+        "lane": "owner",
+        "note": "Manual field entry after fail; prefer input."
+      },
+      {
+        "id": "edit_fields",
+        "label": "Edit fields",
+        "labelLines": ["Optional edits /", "name spaces"],
+        "shape": "input",
+        "lane": "owner",
+        "note": "Optional edits to fields/spaces = input."
+      },
+      {
+        "id": "edit_photo",
+        "label": "Edit home photo",
+        "labelLines": ["Edit or replace", "photo"],
+        "shape": "input",
+        "lane": "owner",
+        "note": "Photo upload/replace is capture input; Skip is edge only."
+      },
+      {
+        "id": "home_created",
+        "label": "Home created",
+        "shape": "start_end",
+        "lane": "owner",
+        "note": "Terminal success only."
+      }
+    ],
+    "edges": [
+      { "from": "start", "to": "enter_address", "label": null, "kind": "default" },
+      { "from": "enter_address", "to": "autofill_ok", "label": null, "kind": "default" },
+      { "from": "autofill_ok", "to": "choose_autofill", "label": "Yes", "kind": "yes" },
+      { "from": "autofill_ok", "to": "type_manual", "label": "No", "kind": "no" },
+      { "from": "choose_autofill", "to": "resolve_address", "label": null, "kind": "cross" },
+      { "from": "type_manual", "to": "resolve_address", "label": null, "kind": "cross" },
+      { "from": "resolve_address", "to": "run_searches", "label": null, "kind": "default" },
+      { "from": "run_searches", "to": "source_results", "label": null, "kind": "default" },
+      { "from": "source_results", "to": "cross_reference", "label": null, "kind": "default" },
+      { "from": "cross_reference", "to": "consensus_payload", "label": null, "kind": "default" },
+      { "from": "consensus_payload", "to": "return_payload", "label": null, "kind": "default" },
+      { "from": "return_payload", "to": "wait_facts", "label": null, "kind": "cross" },
+      { "from": "wait_facts", "to": "useful_data", "label": null, "kind": "default" },
+      { "from": "useful_data", "to": "review_prefill", "label": "Yes", "kind": "yes" },
+      { "from": "useful_data", "to": "leave_blanks", "label": "Incomplete", "kind": "default" },
+      { "from": "useful_data", "to": "empty_form_manual", "label": "Fail", "kind": "no" },
+      { "from": "review_prefill", "to": "edit_fields", "label": null, "kind": "default" },
+      { "from": "leave_blanks", "to": "edit_fields", "label": null, "kind": "default" },
+      { "from": "empty_form_manual", "to": "edit_fields", "label": null, "kind": "default" },
+      { "from": "edit_fields", "to": "edit_photo", "label": null, "kind": "default" },
+      { "from": "edit_photo", "to": "home_created", "label": null, "kind": "default" },
+      { "from": "edit_photo", "to": "home_created", "label": "Skip", "kind": "soft" }
+    ]
+  },
+  "appliance": {
+    "title": "Appliance intelligence",
+    "nodes": [
+      {
+        "id": "start",
+        "label": "Start",
+        "shape": "start_end",
+        "lane": "owner",
+        "note": "Journey begin only."
+      },
+      {
+        "id": "open_capture",
+        "label": "Open capture",
+        "shape": "process",
+        "lane": "owner",
+        "note": "Navigate/open tool; not start_end (Start already exists)."
+      },
+      {
+        "id": "photograph_label",
+        "label": "Photograph label",
+        "labelLines": ["Photograph", "the label"],
+        "shape": "input",
+        "lane": "owner",
+        "note": "Capture input; prefer input for photographing."
+      },
+      {
+        "id": "enter_manual",
+        "label": "Manual entry",
+        "shape": "input",
+        "lane": "owner",
+        "note": "Owner types brand/model; prefer input."
+      },
+      {
+        "id": "vision_extract",
+        "label": "Vision extract",
+        "labelLines": ["Vision model", "reads label"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "Model inference job."
+      },
+      {
+        "id": "vision_candidates",
+        "label": "Vision candidates",
+        "labelLines": ["Brand / model", "candidates"],
+        "shape": "data",
+        "lane": "backend",
+        "note": "Candidate result set held from vision."
+      },
+      {
+        "id": "extract_readable",
+        "label": "Extract readable?",
+        "labelLines": ["Extract", "readable?"],
+        "shape": "decision",
+        "lane": "owner",
+        "note": "Branch: Yes / Incomplete / No."
+      },
+      {
+        "id": "retake_photo",
+        "label": "Retake photo",
+        "shape": "process",
+        "lane": "owner",
+        "note": "Retake choice step (separate from capture); outcomes loop or manual."
+      },
+      {
+        "id": "confirm_identity",
+        "label": "Confirm identity",
+        "shape": "process",
+        "lane": "owner",
+        "note": "Confirmation step; optional tweaks are secondary to confirm."
+      },
+      {
+        "id": "search_links",
+        "label": "Search links",
+        "labelLines": ["Search manuals", "+ parts links"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "System search for manuals/parts."
+      },
+      {
+        "id": "link_results",
+        "label": "Link results",
+        "labelLines": ["Link results", "or none"],
+        "shape": "data",
+        "lane": "backend",
+        "note": "Held link result set (or empty)."
+      },
+      {
+        "id": "rank_attachments",
+        "label": "Rank attachments",
+        "labelLines": ["Rank useful", "attachments"],
+        "shape": "process",
+        "lane": "backend",
+        "note": "Ranking/scoring job."
+      },
+      {
+        "id": "return_links",
+        "label": "Return links",
+        "shape": "process",
+        "lane": "backend",
+        "note": "Return ranked candidates/links to owner UI (narrative F)."
+      },
+      {
+        "id": "attach_links",
+        "label": "Attach links",
+        "labelLines": ["Attach useful", "links"],
+        "shape": "process",
+        "lane": "owner",
+        "note": "UI action attaching useful links."
+      },
+      {
+        "id": "save_no_links",
+        "label": "Save without links",
+        "labelLines": ["Save without", "links"],
+        "shape": "process",
+        "lane": "owner",
+        "note": "Save action when no useful links found."
+      },
+      {
+        "id": "appliance_on_home",
+        "label": "Appliance on home",
+        "labelLines": ["Appliance", "on home"],
+        "shape": "start_end",
+        "lane": "owner",
+        "note": "Terminal success only."
+      }
+    ],
+    "edges": [
+      { "from": "start", "to": "open_capture", "label": null, "kind": "default" },
+      { "from": "open_capture", "to": "photograph_label", "label": null, "kind": "default" },
+      { "from": "open_capture", "to": "enter_manual", "label": "Skip", "kind": "soft" },
+      { "from": "photograph_label", "to": "vision_extract", "label": null, "kind": "cross" },
+      { "from": "vision_extract", "to": "vision_candidates", "label": null, "kind": "default" },
+      { "from": "vision_candidates", "to": "extract_readable", "label": null, "kind": "cross" },
+      { "from": "extract_readable", "to": "confirm_identity", "label": "Yes", "kind": "yes" },
+      { "from": "extract_readable", "to": "confirm_identity", "label": "Incomplete", "kind": "soft" },
+      { "from": "extract_readable", "to": "retake_photo", "label": "No", "kind": "no" },
+      { "from": "retake_photo", "to": "photograph_label", "label": null, "kind": "soft" },
+      { "from": "retake_photo", "to": "enter_manual", "label": null, "kind": "default" },
+      { "from": "enter_manual", "to": "confirm_identity", "label": null, "kind": "default" },
+      { "from": "confirm_identity", "to": "search_links", "label": null, "kind": "cross" },
+      { "from": "search_links", "to": "link_results", "label": null, "kind": "default" },
+      { "from": "link_results", "to": "rank_attachments", "label": null, "kind": "default" },
+      { "from": "rank_attachments", "to": "return_links", "label": null, "kind": "default" },
+      { "from": "return_links", "to": "attach_links", "label": null, "kind": "cross" },
+      { "from": "attach_links", "to": "appliance_on_home", "label": null, "kind": "default" },
+      { "from": "attach_links", "to": "save_no_links", "label": "Fail", "kind": "no" },
+      { "from": "save_no_links", "to": "appliance_on_home", "label": null, "kind": "default" }
+    ]
+  }
+}
