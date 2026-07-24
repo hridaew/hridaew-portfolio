@@ -208,13 +208,21 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Image-like zoom: CSS zoom scales layout + paint so the board can grow past margins */
+/* Image-like zoom: CSS zoom scales the whole board (toolbar + map) like an image.
+   Default is 100%; larger values may extend past the figure/column margins. */
 .domis-cs figure.dcs-ux-zoomable {
+  overflow: visible;
+}
+
+.domis-cs section:has(figure.dcs-ux-zoomable),
+.domis-cs .dcs-col:has(figure.dcs-ux-zoomable) {
   overflow: visible;
 }
 
 .domis-cs figure.dcs-ux-zoomable > .dud.djm {
   transform-origin: top center;
+  /* Ensure zoomed paint is not clipped by the board itself */
+  overflow: visible;
 }
 
 .djm-switch {

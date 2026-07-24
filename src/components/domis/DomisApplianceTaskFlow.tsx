@@ -1,18 +1,18 @@
 "use client";
 
 /**
- * Mermaid source of truth:
+ * Mermaid source of truth (topology only; renderer is horizontal editorial):
  *
  * graph TD
  *   open_capture(Open capture)
- *   photograph(Photograph label)
- *   extract_brand([Extract brand/model])
+ *   photograph(Photograph the label)
+ *   extract_brand([Extract brand / model])
  *   extract_ok{Extract readable?}
  *   confirm_identity(Confirm identity)
  *   attach_links(Attach useful links)
  *   appliance_on_home[Appliance on home]
  *   manual_entry(Manual entry)
- *   retake_photo(Retake)
+ *   retake_photo(Retake photo)
  *   save_no_links(Save without links)
  *
  *   open_capture --> photograph
@@ -78,6 +78,11 @@ function useDufScrollFade() {
 /**
  * Task flow: photograph a label, confirm identity, attach useful links.
  * Happy-path main rail; deviations aside, all rejoining.
+ *
+ * Geometry (main rail mid Y = 72; branch mid Y = 227):
+ *   open 20/43/115 | photo 170/45/130 | extract 330/45/145 | readable 505/13
+ *   confirm 655/45/130 | attach 820/45/140 | appliance 1100/43/160
+ *   manual 170/200/140 | retake 505/200/120 | save 820/200/145
  */
 export function DomisApplianceTaskFlow() {
   const { ref, className } = useDufScrollFade();
@@ -119,13 +124,13 @@ export function DomisApplianceTaskFlow() {
                 </marker>
               </defs>
 
-              {/* Open → Photograph */}
+              {/* Open → Photograph (right 135 → left 170) */}
               <path className="duf-line duf-line-arrow" d="M 135 72 H 170" />
 
-              {/* Skip / no camera → Manual entry */}
+              {/* Skip / no camera → Manual entry (open bottom mid → left mid) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 77 101 V 227 H 170"
+                d="M 78 101 V 227 H 170"
               />
 
               {/* Photograph → Extract */}
@@ -134,37 +139,37 @@ export function DomisApplianceTaskFlow() {
               {/* Extract → Readable? */}
               <path className="duf-line duf-line-arrow" d="M 475 72 H 505" />
 
-              {/* Yes → Confirm */}
+              {/* Yes → Confirm (right tip 623 → left 655) */}
               <path className="duf-line duf-line-arrow" d="M 623 72 H 655" />
 
-              {/* Incomplete → Confirm (over the top) */}
+              {/* Incomplete → Confirm (top tip across into Confirm top mid) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 564 13 V 2 H 720 V 45"
+                d="M 564 13 H 720 V 45"
               />
 
-              {/* No → Retake */}
+              {/* No → Retake (bottom tip → Retake top mid) */}
               <path
                 className="duf-line duf-line-arrow"
                 d="M 564 131 V 200"
               />
 
-              {/* Retake → Photograph (loop) */}
+              {/* Retake → Photograph loop (Retake bottom mid → Photograph bottom mid) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
                 d="M 565 254 H 235 V 99"
               />
 
-              {/* Retake → Manual entry */}
+              {/* Retake → Manual (Retake left mid → Manual right mid) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 505 227 H 340"
+                d="M 505 227 H 310"
               />
 
-              {/* Manual entry → Confirm */}
+              {/* Manual → Confirm (Manual bottom mid under rail into Confirm bottom) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 310 254 V 290 H 720 V 99"
+                d="M 240 254 V 300 H 720 V 99"
               />
 
               {/* Confirm → Attach links */}
@@ -173,7 +178,7 @@ export function DomisApplianceTaskFlow() {
               {/* Attach → Appliance on home */}
               <path className="duf-line duf-line-arrow" d="M 960 72 H 1100" />
 
-              {/* Links not found → Save without links */}
+              {/* Not found → Save without links */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
                 d="M 890 99 V 200"
@@ -205,7 +210,7 @@ export function DomisApplianceTaskFlow() {
             </span>
 
             <span
-              className="duf-node duf-node-process"
+              className="duf-node duf-node-process duf-node-wait"
               style={{ left: 330, top: 45, width: 145 }}
             >
               Extract brand / model
@@ -231,7 +236,7 @@ export function DomisApplianceTaskFlow() {
             <span className="duf-branch-label" style={{ left: 628, top: 58 }}>
               Yes
             </span>
-            <span className="duf-branch-label" style={{ left: 628, top: 8 }}>
+            <span className="duf-branch-label" style={{ left: 632, top: 18 }}>
               Incomplete
             </span>
 
@@ -252,8 +257,11 @@ export function DomisApplianceTaskFlow() {
               Retake photo
             </span>
 
-            <span className="duf-branch-label" style={{ left: 360, top: 208 }}>
-              or manual
+            <span className="duf-branch-label" style={{ left: 400, top: 208 }}>
+              Manual
+            </span>
+            <span className="duf-branch-label" style={{ left: 360, top: 262 }}>
+              Retake
             </span>
 
             <span

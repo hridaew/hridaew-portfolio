@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Mermaid source of truth (owner only, no system rail):
+ * Mermaid source of truth (topology only; renderer is horizontal editorial):
  *
  * graph TD
  *   enter_address(Enter address)
@@ -81,6 +81,12 @@ function useDufScrollFade() {
 /**
  * Owner-only user flow: create a home from an address.
  * Happy-path main rail; deviations aside, all rejoining.
+ *
+ * Geometry (main rail mid Y = 72):
+ *   enter 20/43/110 | autofill 155/13 | choose 295/45/130 | type 295/200/130
+ *   loads 480/45/150 | useful 660/13 | review 820/45/136
+ *   leave 820/185/150 | empty 820/275/150 | optional 1010/45/150
+ *   photo 1195/45/140 | home 1365/43/115
  */
 export function DomisAddressUserFlow() {
   const { ref, className } = useDufScrollFade();
@@ -120,22 +126,22 @@ export function DomisAddressUserFlow() {
                 </marker>
               </defs>
 
-              {/* Enter → Autofill decision */}
+              {/* Enter → Autofill (right edge 130 → left tip 155) */}
               <path className="duf-line duf-line-arrow" d="M 130 72 H 155" />
 
-              {/* Yes → Choose autofill (main rail) */}
+              {/* Yes → Choose autofill (right tip 273 → left 295) */}
               <path className="duf-line duf-line-arrow" d="M 273 72 H 295" />
 
-              {/* No → Type manually */}
+              {/* No → Type manually (bottom tip 214,131 → left mid 295,227) */}
               <path
                 className="duf-line duf-line-arrow"
                 d="M 214 131 V 227 H 295"
               />
 
-              {/* Choose autofill → merge */}
+              {/* Choose autofill → merge spine */}
               <path className="duf-line" d="M 425 72 H 452" />
 
-              {/* Type manually → merge */}
+              {/* Type manually → merge spine */}
               <path className="duf-line" d="M 425 227 H 452 V 72" />
 
               {/* Merge → Domis loads */}
@@ -144,31 +150,35 @@ export function DomisAddressUserFlow() {
               {/* Domis loads → Useful data? */}
               <path className="duf-line duf-line-arrow" d="M 630 72 H 660" />
 
-              {/* Yes → Review */}
+              {/* Yes → Review (right tip 778 → left 820) */}
               <path className="duf-line duf-line-arrow" d="M 778 72 H 820" />
 
-              {/* Incomplete → Leave blanks (left edge) */}
+              {/* Useful-data drop trunk from bottom tip */}
+              <path className="duf-line" d="M 719 131 V 212" />
+
+              {/* Incomplete → Leave blanks (trunk → left mid 820,212) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 719 131 V 212 H 820"
+                d="M 719 212 H 820"
               />
 
-              {/* Fail → Empty form (continuous into left edge mid) */}
+              {/* Fail → Empty form: continue trunk, then into left mid 820,302 */}
+              <path className="duf-line" d="M 719 212 V 302" />
               <path
                 className="duf-line duf-line-arrow"
-                d="M 768 105 V 302 H 820"
+                d="M 719 302 H 820"
               />
 
               {/* Review → Optional edits */}
               <path className="duf-line duf-line-arrow" d="M 956 72 H 1010" />
 
-              {/* Leave blanks → rejoin spine → Optional edits */}
+              {/* Leave blanks → rejoin spine (right mid 970,212) */}
               <path className="duf-line" d="M 970 212 H 990" />
 
-              {/* Empty form → rejoin spine → Optional edits */}
+              {/* Empty form → rejoin spine (right mid 970,302) */}
               <path className="duf-line" d="M 970 302 H 990" />
 
-              {/* Shared rejoin spine into Optional edits */}
+              {/* Shared rejoin spine into Optional edits left mid */}
               <path
                 className="duf-line duf-line-arrow"
                 d="M 990 302 V 72 H 1010"
@@ -183,7 +193,7 @@ export function DomisAddressUserFlow() {
               {/* Skip photo → Home created */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 1265 99 V 160 H 1422 V 101"
+                d="M 1265 99 V 160 H 1423 V 101"
               />
             </svg>
 
@@ -261,7 +271,7 @@ export function DomisAddressUserFlow() {
               Leave blanks, fill later
             </span>
 
-            <span className="duf-branch-label" style={{ left: 776, top: 258 }}>
+            <span className="duf-branch-label" style={{ left: 728, top: 258 }}>
               Fail
             </span>
             <span

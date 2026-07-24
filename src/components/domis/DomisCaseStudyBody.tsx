@@ -257,7 +257,7 @@ export function DomisCaseStudyBody() {
               middle, not ask them to become facility managers overnight.
             </p>
           </div>
-          <figure className="dcs-ux-figure dcs-ux-figure-wide">
+          <figure className="dcs-ux-figure dcs-ux-figure-wide dcs-ux-zoomable">
             <DomisHomeKnowledgeJourney />
             <figcaption className="dcs-caption site-body">
               First-timers drown in closing docs; mid-journey owners (most Domis
@@ -374,9 +374,10 @@ export function DomisCaseStudyBody() {
               The same address can return different facts on different runs.
             </p>
             <p>
-              Rather than forcing a confident answer, Domis only shows what
-              sources agree on, leaves blanks when they do not, and never locks
-              the owner out of a field.
+              Rather than forcing a confident answer, Domis does 3 searches,
+              cross references them, and only shows what sources agree on,
+              leaves blanks when they do not, and never locks the owner out of
+              a field.
             </p>
           </div>
         </Reveal>

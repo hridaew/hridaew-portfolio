@@ -20,11 +20,10 @@ type JourneyPersona = {
   opportunity: string[];
 };
 
-const SCALE_MIN = 0.9;
-const SCALE_MAX = 1.45;
+const SCALE_MIN = 0.85;
+const SCALE_MAX = 1.6;
 const SCALE_STEP = 0.1;
-/** Slightly larger than 1 so the map starts a bit bigger. */
-const SCALE_DEFAULT = 1.15;
+const SCALE_DEFAULT = 1;
 
 const PERSONAS: JourneyPersona[] = [
   {
@@ -265,6 +264,7 @@ export function DomisHomeKnowledgeJourney() {
       className="dud dud-board djm"
       role="region"
       aria-label={`Customer journey map for ${persona.label}: emotional highs and lows and home-knowledge breakdown across stages`}
+      style={{ zoom: scale }}
     >
       <div className="djm-toolbar">
         <p className="dud-type djm-toolbar-type">Customer journey map</p>
@@ -350,80 +350,75 @@ export function DomisHomeKnowledgeJourney() {
       </AnimatePresence>
 
       <div className="djm-scroll">
-        <div
-          className="djm-scale"
-          style={{ ["--djm-scale" as string]: scale }}
-        >
-          <div className="djm-wave-rail" aria-hidden>
-            <div className="djm-wave-gutter" />
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={persona.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <EmotionWave
-                  values={persona.emotionWave}
-                  gradientId={`djm-grad-${gradientId}-${persona.id}`}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
+        <div className="djm-wave-rail" aria-hidden>
+          <div className="djm-wave-gutter" />
           <AnimatePresence mode="wait">
             <motion.div
               key={persona.id}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
-              <table className="djm-table">
-                <thead>
-                  <tr>
-                    <th scope="col">
-                      <span className="sr-only">Dimension</span>
-                    </th>
-                    {persona.stages.map((stage) => (
-                      <th key={stage} scope="col">
-                        {stage}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {persona.rows.map((row) => (
-                    <tr key={row.label}>
-                      <th scope="row">{row.label}</th>
-                      {row.cells.map((cell) => (
-                        <td
-                          key={`${row.label}-${cell}`}
-                          className={
-                            row.tone === "emotion"
-                              ? "djm-emo"
-                              : row.tone === "pain"
-                                ? "djm-pain"
-                                : undefined
-                          }
-                        >
-                          {cell}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                  <tr className="djm-opp">
-                    <th scope="row">Opportunity</th>
-                    {persona.opportunity.map((cell) => (
-                      <td key={cell}>{cell}</td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+              <EmotionWave
+                values={persona.emotionWave}
+                gradientId={`djm-grad-${gradientId}-${persona.id}`}
+              />
             </motion.div>
           </AnimatePresence>
         </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={persona.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <table className="djm-table">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <span className="sr-only">Dimension</span>
+                  </th>
+                  {persona.stages.map((stage) => (
+                    <th key={stage} scope="col">
+                      {stage}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {persona.rows.map((row) => (
+                  <tr key={row.label}>
+                    <th scope="row">{row.label}</th>
+                    {row.cells.map((cell) => (
+                      <td
+                        key={`${row.label}-${cell}`}
+                        className={
+                          row.tone === "emotion"
+                            ? "djm-emo"
+                            : row.tone === "pain"
+                              ? "djm-pain"
+                              : undefined
+                        }
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+                <tr className="djm-opp">
+                  <th scope="row">Opportunity</th>
+                  {persona.opportunity.map((cell) => (
+                    <td key={cell}>{cell}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
