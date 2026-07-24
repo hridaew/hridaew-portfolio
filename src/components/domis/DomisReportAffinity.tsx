@@ -93,10 +93,9 @@ export function DomisReportAffinity() {
     <div
       className="dud dud-board"
       role="region"
-      aria-label="Affinity diagram from nine homeowner interviews about inspection reports"
+      aria-label="Affinity diagram from homeowner interviews about inspection reports"
     >
       <p className="dud-type">Affinity diagram</p>
-      <p className="dud-meta">n=9 homeowner interviews · inspection report ownership</p>
       <p className="dud-heading">
         Why owners ignore the inspection report
       </p>
@@ -123,11 +122,6 @@ export function DomisReportAffinity() {
           </section>
         ))}
       </div>
-
-      <p className="dad-implication-inline">
-        Implication: help owners understand findings and preserve context —
-        do not treat a stale PDF as a current chore list.
-      </p>
     </div>
   );
 }

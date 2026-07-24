@@ -32,7 +32,7 @@ export function DomisConstraintDiagram() {
           {WORKS_BEST_WITH.map((item) => (
             <li key={item.label} className="dcd-row">
               <span className="dcd-icon" aria-hidden>
-                <DomisLiveIcon name={item.icon} size={17} color="#525252" />
+                <DomisLiveIcon name={item.icon} size={17} color="currentColor" />
               </span>
               <span className="dcd-label">{item.label}</span>
             </li>
@@ -69,7 +69,7 @@ export function DomisConstraintDiagram() {
           {OWNER_KNOWS.map((item) => (
             <li key={item.label} className="dcd-row">
               <span className="dcd-icon" aria-hidden>
-                <DomisLiveIcon name={item.icon} size={17} color="#525252" />
+                <DomisLiveIcon name={item.icon} size={17} color="currentColor" />
               </span>
               <span className="dcd-label">{item.label}</span>
             </li>

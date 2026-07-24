@@ -96,7 +96,35 @@
   justify-content: center;
   align-self: stretch;
   width: 2.75rem;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Neutral board (no Domis coral media frame) */
+.dud-board.dcd-board {
+  padding: 1.35rem 1.25rem;
+}
+
+.dud-board.dcd-board .dcd .dcd-col {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.dud-board.dcd-board .dcd .dcd-eyebrow {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.dud-board.dcd-board .dcd .dcd-label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.dud-board.dcd-board .dcd .dcd-gap {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.dud-board.dcd-board .dcd .dcd-icon {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .dcd .dcd-gap-mark {

@@ -2,28 +2,19 @@
 
 import "./domis-ux-diagrams.css";
 
-const EDGES = [
-  "New build / thin records",
-  "Unit ambiguity",
-  "Spelling variants",
-  "Conflicting public data",
-  "User skips confirm",
-] as const;
-
 /**
- * User flow — Address Intelligence with branching confidence / trust paths.
+ * User flow — create a home from an address.
+ * Top rail: owner steps. Bottom rail: what the system does while they wait.
  */
 export function DomisAddressUserFlow() {
   return (
     <div
       className="dud dud-board"
       role="img"
-      aria-label="User flow for creating a home from an address with branching match confidence and field-level agreement"
+      aria-label="User flow: enter address, choose autofill or type manually, system looks up and researches the property, then owner reviews and edits details or the photo"
     >
       <p className="dud-type">User flow</p>
-      <p className="dud-heading">
-        Create a home from an address — including when the data is unsure
-      </p>
+      <p className="dud-heading">Create a home from an address</p>
 
       <div className="duf duf-address">
         <p className="duf-scroll-hint" aria-hidden>
@@ -31,10 +22,10 @@ export function DomisAddressUserFlow() {
         </p>
 
         <div className="duf-scroll">
-          <div className="duf-canvas">
+          <div className="duf-canvas duf-canvas-address">
             <svg
               className="duf-connectors"
-              viewBox="0 0 1360 390"
+              viewBox="0 0 1280 340"
               aria-hidden="true"
             >
               <defs>
@@ -51,132 +42,126 @@ export function DomisAddressUserFlow() {
                 </marker>
               </defs>
 
-              <path className="duf-line" d="M 136 105 H 160" />
-              <path className="duf-line" d="M 290 105 H 330" />
-              <path className="duf-line" d="M 448 105 H 485" />
-              <path className="duf-line" d="M 389 164 V 259 H 485" />
-              <path className="duf-line" d="M 611 105 H 805" />
-              <path className="duf-line" d="M 619 259 H 642" />
-              <path className="duf-line" d="M 766 259 H 790 V 105 H 805" />
-              <path className="duf-line" d="M 923 105 H 960" />
-              <path className="duf-line" d="M 864 164 V 259 H 960" />
-              <path className="duf-line" d="M 1085 105 H 1100 V 163 H 1115" />
-              <path className="duf-line" d="M 1085 259 H 1100 V 163 H 1115" />
-              <path className="duf-line" d="M 1225 163 H 1238" />
+              {/* Owner rail */}
+              <path className="duf-line" d="M 128 72 H 155" />
+              <path className="duf-line" d="M 285 72 H 310" />
+              <path className="duf-line" d="M 388 52 V 28 H 470" />
+              <path className="duf-line" d="M 388 92 V 116 H 470" />
+              <path className="duf-line" d="M 590 28 H 620 V 72 H 655" />
+              <path className="duf-line" d="M 590 116 H 620 V 72" />
+              <path className="duf-line" d="M 785 72 H 820" />
+              <path className="duf-line" d="M 950 72 H 985" />
+              <path className="duf-line" d="M 1115 72 H 1150" />
+
+              {/* Bridge owner → system */}
+              <path className="duf-line duf-line-soft" d="M 720 100 V 188" />
+
+              {/* System rail */}
+              <path className="duf-line duf-line-soft" d="M 250 230 H 310" />
+              <path className="duf-line duf-line-soft" d="M 430 230 H 490" />
+              <path className="duf-line duf-line-soft" d="M 610 230 H 670" />
             </svg>
+
+            <p className="duf-rail-label" style={{ left: 20, top: 18 }}>
+              Owner
+            </p>
 
             <span
               className="duf-node duf-node-start"
-              style={{ left: 20, top: 78, width: 116 }}
+              style={{ left: 20, top: 48, width: 108 }}
             >
-              Owner types address
-            </span>
-            <span
-              className="duf-node duf-node-process"
-              style={{ left: 160, top: 78, width: 130 }}
-            >
-              Resolve property candidates
+              Enter address
             </span>
 
             <span
               className="duf-node duf-node-decision"
-              style={{ left: 330, top: 46 }}
+              style={{ left: 155, top: 14 }}
             >
               <span className="duf-decision-mark" aria-hidden />
-              <span className="duf-decision-text">Single confident match?</span>
+              <span className="duf-decision-text">
+                Autofill match looks right?
+              </span>
             </span>
 
-            <span
-              className="duf-branch-label"
-              style={{ left: 454, top: 78 }}
-            >
+            <span className="duf-branch-label" style={{ left: 400, top: 6 }}>
               Yes
             </span>
             <span
               className="duf-node duf-node-process"
-              style={{ left: 485, top: 78, width: 126 }}
+              style={{ left: 470, top: 2, width: 120 }}
             >
-              Use single match as draft
+              Choose from autofill
             </span>
 
-            <span
-              className="duf-branch-label"
-              style={{ left: 400, top: 218 }}
-            >
-              Ambiguous
+            <span className="duf-branch-label" style={{ left: 400, top: 122 }}>
+              No
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 485, top: 230, width: 134 }}
+              style={{ left: 470, top: 98, width: 120 }}
             >
-              Show 2-3 candidates
-            </span>
-            <span
-              className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 642, top: 230, width: 124 }}
-            >
-              Owner picks or corrects
+              Type address manually
             </span>
 
             <span
-              className="duf-node duf-node-decision"
-              style={{ left: 805, top: 46 }}
+              className="duf-node duf-node-process duf-node-wait"
+              style={{ left: 655, top: 48, width: 130 }}
             >
-              <span className="duf-decision-mark" aria-hidden />
-              <span className="duf-decision-text">
-                Field-level source agreement?
-              </span>
+              Wait while Domis loads the home
             </span>
 
-            <span
-              className="duf-branch-label"
-              style={{ left: 926, top: 78 }}
-            >
-              Agree
-            </span>
             <span
               className="duf-node duf-node-process"
-              style={{ left: 960, top: 78, width: 125 }}
+              style={{ left: 820, top: 48, width: 130 }}
             >
-              Show trusted value
+              Review what came back
             </span>
 
             <span
-              className="duf-branch-label"
-              style={{ left: 874, top: 218 }}
+              className="duf-node duf-node-process"
+              style={{ left: 985, top: 48, width: 130 }}
             >
-              Disagree / missing
-            </span>
-            <span
-              className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 960, top: 230, width: 125 }}
-            >
-              Leave field blank
+              Edit details or name spaces
             </span>
 
-            <span
-              className="duf-node duf-node-process duf-node-merge"
-              style={{ left: 1115, top: 132, width: 110 }}
-            >
-              Owner reviews / edits
-            </span>
             <span
               className="duf-node duf-node-end"
-              style={{ left: 1238, top: 129, width: 105 }}
+              style={{ left: 1150, top: 48, width: 110 }}
             >
-              Home profile exists, incomplete OK
+              Edit or delete photo
             </span>
 
-            <div className="duf-footnote" aria-label="Edge cases">
-              <span className="duf-footnote-label">Edge cases</span>
-              <div className="duf-edge-row">
-                {EDGES.map((edge) => (
-                  <span key={edge} className="duf-edge">
-                    {edge}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <p className="duf-rail-label duf-rail-label-system" style={{ left: 20, top: 178 }}>
+              System
+            </p>
+            <p className="duf-system-note" style={{ left: 90, top: 176 }}>
+              Autosearch is not 100% reliable, so this runs in the background
+            </p>
+
+            <span
+              className="duf-node duf-node-system"
+              style={{ left: 130, top: 208, width: 120 }}
+            >
+              Address lookup
+            </span>
+            <span
+              className="duf-node duf-node-system"
+              style={{ left: 310, top: 208, width: 120 }}
+            >
+              Review candidates
+            </span>
+            <span
+              className="duf-node duf-node-system"
+              style={{ left: 490, top: 208, width: 120 }}
+            >
+              Gemini search
+            </span>
+            <span
+              className="duf-node duf-node-system"
+              style={{ left: 670, top: 208, width: 150 }}
+            >
+              Prefill agreed fields only
+            </span>
           </div>
         </div>
       </div>

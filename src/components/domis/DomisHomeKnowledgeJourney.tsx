@@ -1,9 +1,10 @@
 "use client";
 
 import { useId, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import "./domis-ux-diagrams.css";
 
-type PersonaId = "first" | "mid";
+type PersonaId = "mid" | "first";
 
 type JourneyPersona = {
   id: PersonaId;
@@ -22,90 +23,10 @@ type JourneyPersona = {
 
 const PERSONAS: JourneyPersona[] = [
   {
-    id: "first",
-    label: "First-time homeowner",
-    blurb: "Knowledge arrives all at once at closing — then scatters.",
-    stages: [
-      "Closing",
-      "Move-in",
-      "First breakdown",
-      "Looking it up",
-      "Talking to a pro",
-      "Weeks later",
-    ],
-    emotionWave: [32, 74, 28, 16, 20, 48],
-    rows: [
-      {
-        label: "Actions",
-        cells: [
-          "Gets inspection PDF + manuals",
-          "Files land in email / a drawer",
-          "Something fails — needs model & history",
-          "Hunts PDF, camera roll, Google",
-          "Piecing details together on the phone",
-          "Facts stay in texts, not on the home",
-        ],
-      },
-      {
-        label: "Thoughts",
-        cells: [
-          "\u201cI\u2019ll read this later.\u201d",
-          "\u201cI should organize this.\u201d",
-          "\u201cWhat brand is this?\u201d",
-          "\u201cWhere did that report go?\u201d",
-          "\u201cI have this somewhere\u2026\u201d",
-          "\u201cI should save what they said.\u201d",
-        ],
-      },
-      {
-        label: "Emotions",
-        cells: [
-          "Overloaded",
-          "Optimistic, busy",
-          "Stressed",
-          "Frustrated",
-          "Frustrated — info is everywhere",
-          "Relief, then drift",
-        ],
-        tone: "emotion",
-      },
-      {
-        label: "Touchpoints",
-        cells: [
-          "Inspection PDF, disclosures",
-          "Inbox, Drive, photos",
-          "Label, panel, memory",
-          "Search, email, camera",
-          "Pro call / text thread",
-          "Notes, receipts, memory",
-        ],
-      },
-      {
-        label: "Pain",
-        cells: [
-          "Dense, unread after closing",
-          "Knowledge scatters",
-          "Systems unknown under stress",
-          "Retrieval fails when urgent",
-          "Context hard to assemble for pros",
-          "Learning isn\u2019t retained",
-        ],
-        tone: "pain",
-      },
-    ],
-    opportunity: [
-      "Make closing docs understandable",
-      "Capture while energy is high",
-      "Identity in one small action",
-      "Confirm, don\u2019t hunt",
-      "Shared home context for pros",
-      "Keep learning on the property",
-    ],
-  },
-  {
     id: "mid",
     label: "Mid-journey homeowner",
-    blurb: "Most Domis users — years in, still reconstructing the house under stress.",
+    blurb:
+      "Most Domis users. Years in, still reconstructing the house under stress.",
     stages: [
       "Quiet period",
       "Something breaks",
@@ -144,7 +65,7 @@ const PERSONAS: JourneyPersona[] = [
           "Complacent",
           "Anxious",
           "Frustrated",
-          "Frustrated — info is everywhere",
+          "Frustrated. Info is everywhere",
           "Relieved, spent",
           "Resigned drift",
         ],
@@ -180,7 +101,88 @@ const PERSONAS: JourneyPersona[] = [
       "One place for home facts",
       "Hand pros a coherent brief",
       "Log the outcome on the home",
-      "Break the forget–repeat loop",
+      "Break the forget-repeat loop",
+    ],
+  },
+  {
+    id: "first",
+    label: "First-time homeowner",
+    blurb: "Knowledge arrives all at once at closing, then scatters.",
+    stages: [
+      "Closing",
+      "Move-in",
+      "First breakdown",
+      "Looking it up",
+      "Talking to a pro",
+      "Weeks later",
+    ],
+    emotionWave: [32, 74, 28, 16, 20, 48],
+    rows: [
+      {
+        label: "Actions",
+        cells: [
+          "Gets inspection PDF + manuals",
+          "Files land in email / a drawer",
+          "Something fails. Needs model and history",
+          "Hunts PDF, camera roll, Google",
+          "Piecing details together on the phone",
+          "Facts stay in texts, not on the home",
+        ],
+      },
+      {
+        label: "Thoughts",
+        cells: [
+          "\u201cI\u2019ll read this later.\u201d",
+          "\u201cI should organize this.\u201d",
+          "\u201cWhat brand is this?\u201d",
+          "\u201cWhere did that report go?\u201d",
+          "\u201cI have this somewhere\u2026\u201d",
+          "\u201cI should save what they said.\u201d",
+        ],
+      },
+      {
+        label: "Emotions",
+        cells: [
+          "Overloaded",
+          "Optimistic, busy",
+          "Stressed",
+          "Frustrated",
+          "Frustrated. Info is everywhere",
+          "Relief, then drift",
+        ],
+        tone: "emotion",
+      },
+      {
+        label: "Touchpoints",
+        cells: [
+          "Inspection PDF, disclosures",
+          "Inbox, Drive, photos",
+          "Label, panel, memory",
+          "Search, email, camera",
+          "Pro call / text thread",
+          "Notes, receipts, memory",
+        ],
+      },
+      {
+        label: "Pain",
+        cells: [
+          "Dense, unread after closing",
+          "Knowledge scatters",
+          "Systems unknown under stress",
+          "Retrieval fails when urgent",
+          "Context hard to assemble for pros",
+          "Learning isn\u2019t retained",
+        ],
+        tone: "pain",
+      },
+    ],
+    opportunity: [
+      "Make closing docs understandable",
+      "Capture while energy is high",
+      "Identity in one small action",
+      "Confirm, don\u2019t hunt",
+      "Shared home context for pros",
+      "Keep learning on the property",
     ],
   },
 ];
@@ -193,9 +195,9 @@ function EmotionWave({
   gradientId: string;
 }) {
   const width = 600;
-  const height = 56;
-  const padX = 8;
-  const padY = 8;
+  const height = 88;
+  const padX = 10;
+  const padY = 10;
   const innerW = width - padX * 2;
   const innerH = height - padY * 2;
 
@@ -218,11 +220,6 @@ function EmotionWave({
 
   return (
     <div className="djm-wave" aria-hidden>
-      <div className="djm-wave-labels">
-        <span>High</span>
-        <span>Emotion</span>
-        <span>Low</span>
-      </div>
       <svg
         className="djm-wave-svg"
         viewBox={`0 0 ${width} ${height}`}
@@ -230,14 +227,14 @@ function EmotionWave({
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(143, 164, 200, 0.35)" />
-            <stop offset="100%" stopColor="rgba(143, 164, 200, 0)" />
+            <stop offset="0%" stopColor="rgba(255, 90, 91, 0.4)" />
+            <stop offset="100%" stopColor="rgba(255, 90, 91, 0)" />
           </linearGradient>
         </defs>
         <path className="djm-wave-area" d={areaD} fill={`url(#${gradientId})`} />
         <path className="djm-wave-line" d={lineD} />
         {points.map((p, i) => (
-          <circle key={i} className="djm-wave-dot" cx={p.x} cy={p.y} r="2.4" />
+          <circle key={i} className="djm-wave-dot" cx={p.x} cy={p.y} r="2.6" />
         ))}
       </svg>
     </div>
@@ -245,13 +242,12 @@ function EmotionWave({
 }
 
 /**
- * Customer journey map — two personas with emotion wave + switcher.
- * Wider breakout figure; compressed rows for scanning.
+ * Customer journey map — mid-journey first, animated persona switch, red emotion wave.
  */
 export function DomisHomeKnowledgeJourney() {
   const [personaId, setPersonaId] = useState<PersonaId>("mid");
   const gradientId = useId().replace(/:/g, "");
-  const persona = PERSONAS.find((p) => p.id === personaId) ?? PERSONAS[1]!;
+  const persona = PERSONAS.find((p) => p.id === personaId) ?? PERSONAS[0]!;
 
   return (
     <div
@@ -262,9 +258,6 @@ export function DomisHomeKnowledgeJourney() {
       <div className="djm-header">
         <div>
           <p className="dud-type">Customer journey map</p>
-          <p className="dud-meta">
-            Inputs: homeowner interviews · inspection reports · onboarding tests
-          </p>
           <p className="dud-heading djm-heading">{persona.blurb}</p>
         </div>
 
@@ -282,11 +275,20 @@ export function DomisHomeKnowledgeJourney() {
                 role="tab"
                 aria-selected={selected}
                 className={
-                  selected ? "djm-switch-btn djm-switch-btn-active" : "djm-switch-btn"
+                  selected
+                    ? "djm-switch-btn djm-switch-btn-active"
+                    : "djm-switch-btn"
                 }
                 onClick={() => setPersonaId(p.id)}
               >
-                {p.label}
+                {selected ? (
+                  <motion.span
+                    layoutId="djm-switch-pill"
+                    className="djm-switch-pill"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                ) : null}
+                <span className="djm-switch-label">{p.label}</span>
                 {p.id === "mid" ? (
                   <span className="djm-switch-tag">Most users</span>
                 ) : null}
@@ -299,52 +301,73 @@ export function DomisHomeKnowledgeJourney() {
       <div className="djm-scroll">
         <div className="djm-wave-rail" aria-hidden>
           <div className="djm-wave-gutter" />
-          <EmotionWave
-            values={persona.emotionWave}
-            gradientId={`djm-grad-${gradientId}`}
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={persona.id}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <EmotionWave
+                values={persona.emotionWave}
+                gradientId={`djm-grad-${gradientId}-${persona.id}`}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
-        <table className="djm-table" key={persona.id}>
-          <thead>
-            <tr>
-              <th scope="col">
-                <span className="sr-only">Dimension</span>
-              </th>
-              {persona.stages.map((stage) => (
-                <th key={stage} scope="col">
-                  {stage}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {persona.rows.map((row) => (
-              <tr key={row.label}>
-                <th scope="row">{row.label}</th>
-                {row.cells.map((cell) => (
-                  <td
-                    key={`${row.label}-${cell}`}
-                    className={
-                      row.tone === "emotion"
-                        ? "djm-emo"
-                        : row.tone === "pain"
-                          ? "djm-pain"
-                          : undefined
-                    }
-                  >
-                    {cell}
-                  </td>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={persona.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <table className="djm-table">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <span className="sr-only">Dimension</span>
+                  </th>
+                  {persona.stages.map((stage) => (
+                    <th key={stage} scope="col">
+                      {stage}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {persona.rows.map((row) => (
+                  <tr key={row.label}>
+                    <th scope="row">{row.label}</th>
+                    {row.cells.map((cell) => (
+                      <td
+                        key={`${row.label}-${cell}`}
+                        className={
+                          row.tone === "emotion"
+                            ? "djm-emo"
+                            : row.tone === "pain"
+                              ? "djm-pain"
+                              : undefined
+                        }
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-            <tr className="djm-opp">
-              <th scope="row">Opportunity</th>
-              {persona.opportunity.map((cell) => (
-                <td key={cell}>{cell}</td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+                <tr className="djm-opp">
+                  <th scope="row">Opportunity</th>
+                  {persona.opportunity.map((cell) => (
+                    <td key={cell}>{cell}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

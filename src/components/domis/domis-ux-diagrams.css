@@ -107,17 +107,25 @@
 
 @media (min-width: 768px) {
   .domis-cs figure.dcs-ux-figure.dcs-ux-figure-wide {
-    width: calc(100% + 8.5rem);
-    margin-left: -4.25rem;
-    margin-right: -4.25rem;
+    width: calc(100% + 11rem);
+    margin-left: -5.5rem;
+    margin-right: -5.5rem;
   }
 }
 
 @media (min-width: 1100px) {
   .domis-cs figure.dcs-ux-figure.dcs-ux-figure-wide {
-    width: calc(100% + 12rem);
-    margin-left: -6rem;
-    margin-right: -6rem;
+    width: calc(100% + 16rem);
+    margin-left: -8rem;
+    margin-right: -8rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .domis-cs figure.dcs-ux-figure.dcs-ux-figure-wide {
+    width: calc(100% + 20rem);
+    margin-left: -10rem;
+    margin-right: -10rem;
   }
 }
 
@@ -147,11 +155,12 @@
 }
 
 .djm-switch-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   margin: 0;
-  padding: 0.4rem 0.75rem;
+  padding: 0.42rem 0.8rem;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -162,9 +171,8 @@
   letter-spacing: -0.01em;
   line-height: 1.2;
   cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    color 160ms ease;
+  transition: color 180ms ease;
+  isolation: isolate;
 }
 
 .djm-switch-btn:hover {
@@ -177,11 +185,23 @@
 }
 
 .djm-switch-btn-active {
-  background: rgba(143, 164, 200, 0.18);
   color: var(--dud-ink);
 }
 
+.djm-switch-pill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgba(143, 164, 200, 0.2);
+}
+
+.djm-switch-label {
+  position: relative;
+}
+
 .djm-switch-tag {
+  position: relative;
   padding: 0.12rem 0.4rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
@@ -221,22 +241,22 @@
 .djm-wave-svg {
   display: block;
   width: 100%;
-  height: 2.75rem;
+  height: 5.25rem;
   overflow: visible;
 }
 
 .djm-wave-line {
   fill: none;
-  stroke: var(--dud-accent);
-  stroke-width: 1.75;
+  stroke: #ff5a5b;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .djm-wave-dot {
   fill: #141416;
-  stroke: var(--dud-accent);
-  stroke-width: 1.35;
+  stroke: #ff5a5b;
+  stroke-width: 1.5;
 }
 
 .djm-scroll {
@@ -351,6 +371,12 @@
   text-transform: uppercase;
 }
 
+@media (max-width: 1200px) {
+  .duf-scroll-hint {
+    display: block;
+  }
+}
+
 .duf-canvas {
   position: relative;
   min-width: 100%;
@@ -364,14 +390,58 @@
   isolation: isolate;
 }
 
-.duf-address .duf-canvas {
-  width: 1360px;
-  height: 390px;
+.duf-address .duf-canvas,
+.duf-canvas-address {
+  width: 1280px;
+  height: 340px;
 }
 
-.duf-appliance .duf-canvas {
-  width: 1640px;
-  height: 470px;
+.duf-appliance .duf-canvas,
+.duf-canvas-appliance {
+  width: 980px;
+  height: 140px;
+}
+
+.duf-rail-label {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dud-faint);
+}
+
+.duf-rail-label-system {
+  color: rgba(143, 164, 200, 0.7);
+}
+
+.duf-system-note {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.66rem;
+  line-height: 1.3;
+  color: var(--dud-faint);
+}
+
+.duf-node-wait {
+  border-style: dashed;
+  border-color: rgba(143, 164, 200, 0.4);
+  background: rgba(143, 164, 200, 0.08);
+}
+
+.duf-node-system {
+  border-radius: 10px;
+  border-color: rgba(143, 164, 200, 0.28);
+  background: rgba(143, 164, 200, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 500;
+}
+
+.duf-line-soft {
+  opacity: 0.45;
 }
 
 .duf-connectors {

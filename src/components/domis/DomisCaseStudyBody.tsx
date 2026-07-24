@@ -238,53 +238,75 @@ export function DomisCaseStudyBody() {
               </ul>
             </div>
 
-            <div>
-              <p className="dcs-heading site-subheading text-white">
-                Key challenge
-              </p>
-              <div className="site-body text-white/65">
-                <p>
-                  Domis only works if it knows your home, but listing every
-                  space, appliance, and nuance by hand is painful.
-                </p>
-              </div>
-              <figure className="dcs-img-block">
-                <div className="dcs-media dcs-constraint">
-                    <DomisConstraintDiagram />
-                </div>
-              </figure>
-              <div className="site-body text-white/65">
-                <p>
-                  When people tried to set up a home profile, many realized they
-                  didn&rsquo;t know their own homes. Setting up Domis also
-                  became the act of learning it.
-                </p>
-              </div>
-              <figure className="dcs-ux-figure dcs-ux-figure-wide">
-                <DomisHomeKnowledgeJourney />
-                <figcaption className="dcs-caption site-body">
-                  Switch personas above. First-timers drown in closing docs;
-                  mid-journey owners (most Domis users) keep reconstructing the
-                  house under stress. The wave tracks emotional highs and lows.
-                </figcaption>
-              </figure>
-              <div className="site-body text-white/65">
-                <p>
-                  So to make setup feel as rewarding and informative as
-                  possible, I designed Domis around one principle:
-                </p>
-                <p className="mt-3 font-medium text-white">
-                  Extract the maximum value from the smallest action the user is
-                  willing to take.
-                </p>
-              </div>
-              <figure className="dcs-img-block">
-                <div className="dcs-media dcs-value-multiply">
-                    <DomisValueMultiply />
-                </div>
-              </figure>
-            </div>
           </div>
+        </Reveal>
+      </section>
+
+      <hr className="dcs-rule" />
+
+      <section id="user-problem" className="dcs-col dcs-block">
+        <Reveal>
+          <p className="dcs-heading site-subheading text-white">
+            User problem
+          </p>
+          <div className="site-body text-white/65">
+            <p>
+              Before designing features, I needed to understand how homeowners
+              actually hold knowledge about their houses, and where that
+              knowledge breaks down. Domis has to meet people in that messy
+              middle, not ask them to become facility managers overnight.
+            </p>
+          </div>
+          <figure className="dcs-ux-figure dcs-ux-figure-wide">
+            <DomisHomeKnowledgeJourney />
+            <figcaption className="dcs-caption site-body">
+              First-timers drown in closing docs; mid-journey owners (most Domis
+              users) keep reconstructing the house under stress.
+            </figcaption>
+          </figure>
+          <div className="site-body text-white/65">
+            <p>
+              When people tried to set up a home profile, many realized they
+              didn&rsquo;t know their own homes. Setting up Domis also became
+              the act of learning it.
+            </p>
+          </div>
+        </Reveal>
+      </section>
+
+      <hr className="dcs-rule" />
+
+      <section id="challenge" className="dcs-col dcs-block">
+        <Reveal>
+          <p className="dcs-heading site-subheading text-white">
+            Key challenge
+          </p>
+          <div className="site-body text-white/65">
+            <p>
+              Domis only works if it knows your home, but listing every space,
+              appliance, and nuance by hand is painful.
+            </p>
+          </div>
+          <figure className="dcs-ux-figure">
+            <div className="dud dud-board dcd-board">
+              <DomisConstraintDiagram />
+            </div>
+          </figure>
+          <div className="site-body text-white/65">
+            <p>
+              So to make setup feel as rewarding and informative as possible, I
+              designed Domis around one principle:
+            </p>
+            <p className="mt-3 font-medium text-white">
+              Extract the maximum value from the smallest action the user is
+              willing to take.
+            </p>
+          </div>
+          <figure className="dcs-img-block">
+            <div className="dcs-media dcs-value-multiply">
+              <DomisValueMultiply />
+            </div>
+          </figure>
         </Reveal>
       </section>
 
@@ -332,16 +354,12 @@ export function DomisCaseStudyBody() {
             <p>
               So I designed an address intelligence feature that maximizes the
               value of a user provided home address. Type it once, and Domis
-              researches the house — then puts what it finds into the same form
+              researches the house, then puts what it finds into the same form
               the owner would have filled by hand.
             </p>
           </div>
-          <figure className="dcs-ux-figure">
+          <figure className="dcs-ux-figure dcs-ux-figure-wide">
             <DomisAddressUserFlow />
-            <figcaption className="dcs-caption site-body">
-              The happy path is short. The design work was the branches: ambiguous
-              matches, thin records, and fields where sources disagree.
-            </figcaption>
           </figure>
         </Reveal>
       </section>
@@ -369,9 +387,9 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure">
-          <div className="dcs-media">
-              <ConsensusRunsPanel />
+        <figure className="dcs-ux-figure">
+          <div className="dud dud-board crp-board">
+            <ConsensusRunsPanel />
           </div>
           <figcaption className="dcs-caption site-body">
             Three searches, then a review agent checks. Two matches are enough
@@ -452,15 +470,6 @@ export function DomisCaseStudyBody() {
               things owners actually need later: manuals, warranty, support,
               parts, and common failures.
             </p>
-          </div>
-          <figure className="dcs-ux-figure">
-            <DomisApplianceTaskFlow />
-            <figcaption className="dcs-caption site-body">
-              One objective, with recovery when the photo fails, identity is
-              ambiguous, or useful links are not found yet.
-            </figcaption>
-          </figure>
-          <div className="site-body text-white/65">
             <p>
               <strong className="text-white">
                 I asked my Google Gemini app about appliance labels to see what
@@ -495,6 +504,9 @@ export function DomisCaseStudyBody() {
               the feature.
             </p>
           </div>
+          <figure className="dcs-ux-figure dcs-ux-figure-wide">
+            <DomisApplianceTaskFlow />
+          </figure>
         </Reveal>
       </section>
 
@@ -514,7 +526,7 @@ export function DomisCaseStudyBody() {
           <div className="site-body text-white/65">
             <p>
               V1 stopped at reading the plate. For v2 I pushed the same scan
-              further — support pages, warranty links, the things an owner
+              further: support pages, warranty links, the things an owner
               actually needs when something breaks.
             </p>
           </div>
@@ -568,10 +580,6 @@ export function DomisCaseStudyBody() {
       <Reveal>
         <figure className="dcs-ux-figure">
           <DomisReportAffinity />
-          <figcaption className="dcs-caption site-body">
-            Interview synthesis. The report is not a live model of the house —
-            so treating it as an automatic chore list would be wrong on arrival.
-          </figcaption>
         </figure>
       </Reveal>
 
@@ -595,8 +603,8 @@ export function DomisCaseStudyBody() {
               <InspectionToTasksDemo />
           </div>
           <figcaption className="dcs-caption site-body">
-            One PDF in. From 64 pages of construction and real estate lingo to
-            things you can actually comprehend.
+            From 64 pages of construction and real estate lingo to things you
+            can actually comprehend.
           </figcaption>
         </figure>
       </Reveal>
@@ -619,8 +627,8 @@ export function DomisCaseStudyBody() {
             </p>
             <p>
               <strong className="text-white">Trust.</strong> AI is wrong
-              sometimes. We show disagreement instead of a confident wrong
-              answer, and treat the report as understanding — not an automatic
+              sometimes.               We show disagreement instead of a confident wrong
+              answer, and treat the report as understanding, not an automatic
               chore list.
             </p>
             <p>
