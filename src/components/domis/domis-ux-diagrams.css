@@ -360,6 +360,44 @@
   scrollbar-width: thin;
 }
 
+/* Soft edge fades when horizontally scrollable (toggled via scroll listener) */
+.duf-scroll-fade-left {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 100%);
+  mask-image: linear-gradient(90deg, transparent, #000 24px, #000 100%);
+}
+
+.duf-scroll-fade-right {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    #000 calc(100% - 24px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    #000 calc(100% - 24px),
+    transparent
+  );
+}
+
+.duf-scroll-fade-left.duf-scroll-fade-right {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 24px,
+    #000 calc(100% - 24px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 24px,
+    #000 calc(100% - 24px),
+    transparent
+  );
+}
+
 .duf-scroll-hint {
   display: none;
   margin: -0.35rem 0 0.6rem;
@@ -392,38 +430,14 @@
 
 .duf-address .duf-canvas,
 .duf-canvas-address {
-  width: 1280px;
-  height: 340px;
+  width: 1520px;
+  height: 290px;
 }
 
 .duf-appliance .duf-canvas,
 .duf-canvas-appliance {
-  width: 980px;
-  height: 140px;
-}
-
-.duf-rail-label {
-  position: absolute;
-  z-index: 2;
-  margin: 0;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--dud-faint);
-}
-
-.duf-rail-label-system {
-  color: rgba(143, 164, 200, 0.7);
-}
-
-.duf-system-note {
-  position: absolute;
-  z-index: 2;
-  margin: 0;
-  font-size: 0.66rem;
-  line-height: 1.3;
-  color: var(--dud-faint);
+  width: 1340px;
+  height: 280px;
 }
 
 .duf-node-wait {
@@ -432,16 +446,8 @@
   background: rgba(143, 164, 200, 0.08);
 }
 
-.duf-node-system {
-  border-radius: 10px;
-  border-color: rgba(143, 164, 200, 0.28);
-  background: rgba(143, 164, 200, 0.08);
-  color: rgba(255, 255, 255, 0.78);
-  font-weight: 500;
-}
-
 .duf-line-soft {
-  opacity: 0.45;
+  opacity: 0.5;
 }
 
 .duf-connectors {
@@ -463,11 +469,11 @@
   vector-effect: non-scaling-stroke;
 }
 
-.duf-address .duf-line {
+.duf-address .duf-line-arrow {
   marker-end: url("#duf-arrow-address");
 }
 
-.duf-appliance .duf-line {
+.duf-appliance .duf-line-arrow {
   marker-end: url("#duf-arrow-appliance");
 }
 
@@ -559,48 +565,6 @@
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-.duf-footnote,
-.duf-recovery-row {
-  position: absolute;
-  right: 20px;
-  bottom: 17px;
-  left: 20px;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.42rem;
-  padding-top: 0.72rem;
-  border-top: 1px solid var(--dud-line);
-}
-
-.duf-footnote-label {
-  color: var(--dud-faint);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.duf-edge-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.34rem;
-}
-
-.duf-edge,
-.duf-recovery-item {
-  padding: 0.22rem 0.46rem;
-  border: 1px solid var(--dud-line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.025);
-  color: var(--dud-muted);
-  font-size: 0.66rem;
-  font-weight: 500;
-  line-height: 1.1;
 }
 
 @media (max-width: 720px) {
