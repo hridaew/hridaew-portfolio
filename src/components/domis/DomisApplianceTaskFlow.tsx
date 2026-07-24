@@ -107,7 +107,7 @@ export function DomisApplianceTaskFlow() {
           <div className="duf-canvas duf-canvas-appliance">
             <svg
               className="duf-connectors"
-              viewBox="0 0 1340 340"
+              viewBox="0 0 1340 360"
               aria-hidden="true"
             >
               <defs>
@@ -124,10 +124,10 @@ export function DomisApplianceTaskFlow() {
                 </marker>
               </defs>
 
-              {/* Open → Photograph (right 135 → left 170) */}
+              {/* Open → Photograph */}
               <path className="duf-line duf-line-arrow" d="M 135 72 H 170" />
 
-              {/* Skip / no camera → Manual entry (open bottom mid → left mid) */}
+              {/* Skip / no camera → Manual entry */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
                 d="M 78 101 V 227 H 170"
@@ -139,37 +139,34 @@ export function DomisApplianceTaskFlow() {
               {/* Extract → Readable? */}
               <path className="duf-line duf-line-arrow" d="M 475 72 H 505" />
 
-              {/* Yes → Confirm (right tip 623 → left 655) */}
+              {/* Yes → Confirm */}
               <path className="duf-line duf-line-arrow" d="M 623 72 H 655" />
 
-              {/* Incomplete → Confirm (top tip across into Confirm top mid) */}
+              {/* Incomplete → Confirm (over top into Confirm top mid) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
                 d="M 564 13 H 720 V 45"
               />
 
-              {/* No → Retake (bottom tip → Retake top mid) */}
-              <path
-                className="duf-line duf-line-arrow"
-                d="M 564 131 V 200"
-              />
+              {/* No → Retake */}
+              <path className="duf-line duf-line-arrow" d="M 564 131 V 200" />
 
-              {/* Retake → Photograph loop (Retake bottom mid → Photograph bottom mid) */}
-              <path
-                className="duf-line duf-line-arrow duf-line-soft"
-                d="M 565 254 H 235 V 99"
-              />
-
-              {/* Retake → Manual (Retake left mid → Manual right mid) */}
+              {/* Retake → Manual (left mid → Manual right mid) */}
               <path
                 className="duf-line duf-line-arrow"
                 d="M 505 227 H 310"
               />
 
-              {/* Manual → Confirm (Manual bottom mid under rail into Confirm bottom) */}
+              {/* Retake → Photograph loop: drop below branch row, then up into Photo */}
+              <path
+                className="duf-line duf-line-arrow duf-line-soft"
+                d="M 565 254 V 275 H 235 V 99"
+              />
+
+              {/* Manual → Confirm: under everything, up into Confirm bottom */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 240 254 V 300 H 720 V 99"
+                d="M 240 254 V 318 H 720 V 99"
               />
 
               {/* Confirm → Attach links */}
@@ -257,10 +254,10 @@ export function DomisApplianceTaskFlow() {
               Retake photo
             </span>
 
-            <span className="duf-branch-label" style={{ left: 400, top: 208 }}>
+            <span className="duf-branch-label" style={{ left: 390, top: 208 }}>
               Manual
             </span>
-            <span className="duf-branch-label" style={{ left: 360, top: 262 }}>
+            <span className="duf-branch-label" style={{ left: 380, top: 262 }}>
               Retake
             </span>
 
