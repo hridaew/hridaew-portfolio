@@ -397,8 +397,21 @@ function FlowBoard({
           if (!from || !to) return null;
           const key = edgeKey(edge);
           const d = layout.edgePaths?.[key] ?? autoPath(from, to, edge.kind);
-          const labelX = (from.cx + to.cx) / 2;
-          const labelY = (from.cy + to.cy) / 2 - 8;
+          // Place branch labels near the source node so they stay readable
+          let labelX = from.cx + 18;
+          let labelY = from.cy - 14;
+          if (edge.kind === "no" || to.cy > from.cy + 20) {
+            labelX = from.cx + 10;
+            labelY = from.y + from.h + 14;
+          }
+          if (edge.label === "Incomplete") {
+            labelX = from.cx + 8;
+            labelY = from.y - 8;
+          }
+          if (edge.label === "Skip" || edge.label === "Not found") {
+            labelX = from.cx - 10;
+            labelY = from.y + from.h + 16;
+          }
           return (
             <g key={key}>
               <path
