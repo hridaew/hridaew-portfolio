@@ -319,7 +319,7 @@
       { "from": "rank_attachments", "to": "return_links", "label": null, "kind": "default" },
       { "from": "return_links", "to": "attach_links", "label": null, "kind": "cross" },
       { "from": "attach_links", "to": "appliance_on_home", "label": null, "kind": "default" },
-      { "from": "attach_links", "to": "save_no_links", "label": "Fail", "kind": "no" },
+      { "from": "attach_links", "to": "save_no_links", "label": "Not found", "kind": "no" },
       { "from": "save_no_links", "to": "appliance_on_home", "label": null, "kind": "default" }
     ]
   }

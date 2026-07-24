@@ -24,5 +24,17 @@ To prevent massive, unreadable spaghettis:
 - Keep node text short (under 5 words). Put long details in a separate markdown bullet list below the diagram.
 - Map the "Happy Path" straight down the center column, and push error handling/edge cases out to the sides.
 
-## 5. Portfolio rendering note (this repo)
-For Domis case-study React components, first produce the Mermaid `graph TD` as the source of truth, then translate it into the dark editorial SVG/HTML flow using the same topology (happy path as main rail; deviations as side branches that rejoin). No orphan connectors. No em dashes in labels.
+## 5. Shape legend for Domis reference boards (STRICT)
+When building `/domis/flow-reference` style diagrams (example flowchart legend), classify every moment before drawing:
+- **start_end** — squircle — journey begin or terminal success only
+- **decision** — diamond — branching question with labeled outcomes
+- **process** — rectangle — work performed (UI action, system/agent job, confirm/wait)
+- **data** — cylinder — datasets, payloads, result sets held or returned
+- **input** — parallelogram — owner provides or edits information (type, capture, manual fields)
+
+Do not default everything to process. Prefer `input` for supplying/changing data and `data` for result payloads.
+
+Pipeline: write narrative (`docs/domis-flow-narratives.md`) → classify to `flow-classified.json` → layout/render.
+
+## 6. Portfolio rendering note (this repo)
+For Domis case-study React components, first produce the Mermaid `graph TD` as the source of truth, then translate it into the dark editorial SVG/HTML flow using the same topology (happy path as main rail; deviations as side branches that rejoin). No orphan connectors. No em dashes in labels. Prefer authored SVG/PNG embeds for case-study address/appliance boards when available.
