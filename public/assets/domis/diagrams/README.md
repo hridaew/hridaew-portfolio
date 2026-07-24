@@ -8,7 +8,7 @@ Coded React flows stay as fallback until a path is set.
 
 | Diagram | Suggested file |
 | --- | --- |
-| Address user flow | `address-user-flow.svg` (or `.png`) |
+| Address user flow | `address-intelligence-lanes.svg` (live) |
 | Appliance task flow | `appliance-task-flow.svg` (or `.png`) |
 
 ## Export from FigJam / Figma

@@ -1,7 +1,7 @@
 "use client";
 
 import classified from "./flow-classified.json";
-import { addressLayout, applianceLayout, type FlowLayout } from "./flow-layouts";
+import { applianceLayout, type FlowLayout } from "./flow-layouts";
 import "./flow-reference.css";
 
 type Shape = "start_end" | "decision" | "process" | "data" | "input";
@@ -537,9 +537,13 @@ function Legend() {
   );
 }
 
+const ADDRESS_AUTHORED_SRC =
+  "/assets/domis/diagrams/address-intelligence-lanes.svg";
+
 /**
  * Standalone reference built from classified flow JSON.
  * Pipeline: narrative → shape classification → this board.
+ * Address board prefers the Figma-authored SVG when present.
  * Open /domis/flow-reference
  */
 export function DomisFlowReference() {
@@ -552,15 +556,26 @@ export function DomisFlowReference() {
         <p className="dfr-kicker">Domis · UX reference</p>
         <h1 className="dfr-title">Address + appliance flows</h1>
         <p className="dfr-lede">
-          Built from a written narrative, then shape-classified (start/end,
-          decision, process, data, input) before layout. Owner lane on top;
-          Backend / AI below. Green = Yes, red = No / fail, blue-grey = cross-lane.
+          Address flow is the Figma export (colors + inner-shadow FX). Appliance
+          still uses the narrative → classify → layout board. Green = Yes, red =
+          No / fail.
         </p>
 
         <section className="dfr-section">
           <h2 className="dfr-section-title">1. {address.title}</h2>
-          <ShapeCounts flow={address} />
-          <FlowBoard flow={address} layout={addressLayout} prefix="addr" />
+          <p className="dfr-counts">
+            <strong>Figma authored</strong> · Owner + Backend / AI lanes ·
+            start/end, decision, process, data, input
+          </p>
+          <div className="dfr-authored-frame">
+            <img
+              className="dfr-authored-img"
+              src={ADDRESS_AUTHORED_SRC}
+              alt="Address intelligence dual-lane user flow"
+              width={4309}
+              height={1304}
+            />
+          </div>
         </section>
 
         <section className="dfr-section">
@@ -572,8 +587,10 @@ export function DomisFlowReference() {
         <Legend />
 
         <p className="dfr-note">
-          Source: <code>docs/domis-flow-narratives.md</code> →{" "}
-          <code>flow-classified.json</code> → this page.{" "}
+          Address SVG: <code>public/assets/domis/diagrams/address-intelligence-lanes.svg</code>
+          {" · "}
+          Appliance: <code>docs/domis-flow-narratives.md</code> →{" "}
+          <code>flow-classified.json</code>.{" "}
           <a href="/domis">Back to Domis case study</a>
           {" · "}
           <a href="/domis/flow-reference">Permalink</a>

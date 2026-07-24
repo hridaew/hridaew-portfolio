@@ -92,6 +92,22 @@
   box-shadow: 0 18px 40px rgba(42, 42, 50, 0.06);
 }
 
+.dfr-authored-frame {
+  overflow: auto;
+  border: 1px solid rgba(42, 42, 50, 0.1);
+  border-radius: 18px;
+  background: #faf9fc;
+  box-shadow: 0 18px 40px rgba(42, 42, 50, 0.06);
+  -webkit-overflow-scrolling: touch;
+}
+
+.dfr-authored-img {
+  display: block;
+  width: max(100%, 1100px);
+  height: auto;
+  max-width: none;
+}
+
 .dfr-svg {
   display: block;
   min-width: 100%;

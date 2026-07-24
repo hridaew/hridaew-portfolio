@@ -8,9 +8,7 @@
  * Export notes: see `public/assets/domis/diagrams/README.md`
  */
 export const domisUxDiagramAssets = {
-  addressUserFlow: null as string | null,
-  // Example once you export:
-  // addressUserFlow: "/assets/domis/diagrams/address-user-flow.svg",
+  addressUserFlow: "/assets/domis/diagrams/address-intelligence-lanes.svg",
 
   applianceTaskFlow: null as string | null,
   // applianceTaskFlow: "/assets/domis/diagrams/appliance-task-flow.svg",
