@@ -1,7 +1,7 @@
 "use client";
 
 import classified from "./flow-classified.json";
-import { applianceLayout, type FlowLayout } from "./flow-layouts";
+import type { FlowLayout } from "./flow-layouts";
 import "./flow-reference.css";
 
 type Shape = "start_end" | "decision" | "process" | "data" | "input";
@@ -539,11 +539,13 @@ function Legend() {
 
 const ADDRESS_AUTHORED_SRC =
   "/assets/domis/diagrams/address-intelligence-lanes.svg";
+const APPLIANCE_AUTHORED_SRC =
+  "/assets/domis/diagrams/appliance-task-flow.svg";
 
 /**
  * Standalone reference built from classified flow JSON.
  * Pipeline: narrative → shape classification → this board.
- * Address board prefers the Figma-authored SVG when present.
+ * Both boards prefer the Figma-authored SVG when present.
  * Open /domis/flow-reference
  */
 export function DomisFlowReference() {
@@ -556,9 +558,8 @@ export function DomisFlowReference() {
         <p className="dfr-kicker">Domis · UX reference</p>
         <h1 className="dfr-title">Address + appliance flows</h1>
         <p className="dfr-lede">
-          Address flow is the Figma export (colors + inner-shadow FX). Appliance
-          still uses the narrative → classify → layout board. Green = Yes, red =
-          No / fail.
+          Figma exports with dark-board colors and start/stop-style inner-shadow
+          FX on every node. Green = Yes, red = No / fail.
         </p>
 
         <section className="dfr-section">
@@ -572,25 +573,37 @@ export function DomisFlowReference() {
               className="dfr-authored-img"
               src={ADDRESS_AUTHORED_SRC}
               alt="Address intelligence dual-lane user flow"
-              width={4309}
-              height={1304}
+              width={3987}
+              height={1112}
             />
           </div>
         </section>
 
         <section className="dfr-section">
           <h2 className="dfr-section-title">2. {appliance.title}</h2>
-          <ShapeCounts flow={appliance} />
-          <FlowBoard flow={appliance} layout={applianceLayout} prefix="app" />
+          <p className="dfr-counts">
+            <strong>Figma authored</strong> · Task flow · start/end, decision,
+            process, data, input
+          </p>
+          <div className="dfr-authored-frame">
+            <img
+              className="dfr-authored-img"
+              src={APPLIANCE_AUTHORED_SRC}
+              alt="Appliance intelligence task flow"
+              width={4716}
+              height={909}
+            />
+          </div>
         </section>
 
         <Legend />
 
         <p className="dfr-note">
-          Address SVG: <code>public/assets/domis/diagrams/address-intelligence-lanes.svg</code>
+          Address SVG:{" "}
+          <code>public/assets/domis/diagrams/address-intelligence-lanes.svg</code>
           {" · "}
-          Appliance: <code>docs/domis-flow-narratives.md</code> →{" "}
-          <code>flow-classified.json</code>.{" "}
+          Appliance SVG:{" "}
+          <code>public/assets/domis/diagrams/appliance-task-flow.svg</code>.{" "}
           <a href="/domis">Back to Domis case study</a>
           {" · "}
           <a href="/domis/flow-reference">Permalink</a>

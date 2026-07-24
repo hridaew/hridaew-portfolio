@@ -34,7 +34,6 @@ const CLUSTERS: { theme: string; notes: Note[] }[] = [
         text: "\u201cI only cared whether the house was a bad purchase.\u201d",
         source: "P8",
       },
-      { text: "0 of 9 had opened it in the past year", fact: true },
     ],
   },
   {
@@ -73,7 +72,6 @@ const CLUSTERS: { theme: string; notes: Note[] }[] = [
         text: "\u201cI think it\u2019s in a drawer. Maybe the garage.\u201d",
         source: "P9",
       },
-      { text: "Report age at interview: 4\u201311 yrs", fact: true },
     ],
   },
   {

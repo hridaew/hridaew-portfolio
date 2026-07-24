@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -13,47 +13,98 @@ interface RevealProps {
   scroller?: string | Element | null;
 }
 
-export function Reveal({ children, delay = 0, className = "", scroller }: RevealProps) {
+export function Reveal({
+  children,
+  delay = 0,
+  className = "",
+  scroller,
+}: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
-
     const el = ref.current;
+    if (!el) return;
 
-    // Initial state
-    gsap.set(el, { opacity: 0, y: 32 });
+    let revealed = false;
+    let trigger: ScrollTrigger | null = null;
 
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      scroller: scroller || window, // Use custom scroller if provided
-      start: "top bottom-=50px", // More generous start
-      once: true,
-      onEnter: () => {
+    const show = (immediate = false) => {
+      if (revealed) return;
+      revealed = true;
+      if (immediate) {
+        gsap.set(el, { opacity: 1, y: 0 });
+      } else {
         gsap.to(el, {
           opacity: 1,
           y: 0,
           duration: 0.7,
           delay,
           ease: "power3.out",
-          overwrite: "auto"
+          overwrite: "auto",
         });
-      },
-      // Fix for fast scroll: if we scroll past before init, show immediately
-      onRefresh: (self) => {
-        if (self.progress > 0 && self.isActive) {
-          gsap.set(el, { opacity: 1, y: 0 });
-        }
       }
+      trigger?.kill();
+      trigger = null;
+      io.disconnect();
+    };
+
+    const inView = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || 0;
+      // Visible enough that the user can see it (incl. near page end)
+      return rect.top < vh - 24 && rect.bottom > 24;
+    };
+
+    gsap.set(el, { opacity: 0, y: 32 });
+
+    // IntersectionObserver is reliable with Lenis + bottom-of-page cases
+    // where ScrollTrigger start positions go stale after layout above shifts.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) show(false);
+      },
+      { root: null, rootMargin: "0px 0px -24px 0px", threshold: 0.01 },
+    );
+    io.observe(el);
+
+    trigger = ScrollTrigger.create({
+      trigger: el,
+      scroller: scroller || undefined,
+      start: "top bottom-=40px",
+      once: true,
+      onEnter: () => show(false),
+      onRefresh: () => {
+        if (!revealed && inView()) show(true);
+      },
     });
 
-    // Safety check: if already in view on mount
-    if (trigger.isActive) {
-      gsap.set(el, { opacity: 1, y: 0 });
-    }
+    if (inView()) show(true);
 
-    return () => trigger.kill();
-  }, [delay]);
+    const onRefresh = () => {
+      if (!revealed && inView()) show(true);
+    };
+    ScrollTrigger.addEventListener("refresh", onRefresh);
+
+    // Late layout (images, live demos) — re-measure a few times after mount.
+    const t1 = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    const t2 = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+      if (!revealed && inView()) show(true);
+    }, 700);
+    const t3 = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+      if (!revealed && inView()) show(true);
+    }, 1600);
+
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      window.clearTimeout(t3);
+      ScrollTrigger.removeEventListener("refresh", onRefresh);
+      io.disconnect();
+      trigger?.kill();
+    };
+  }, [delay, scroller]);
 
   return (
     <div ref={ref} className={className}>

@@ -359,6 +359,7 @@ export function DomisCaseStudyBody() {
           <DomisUxDiagramEmbed
             wide
             scrollable
+            zoomable
             type="User flow"
             heading="Create a home from an address"
             src={domisUxDiagramAssets.addressUserFlow}
@@ -512,6 +513,7 @@ export function DomisCaseStudyBody() {
           <DomisUxDiagramEmbed
             wide
             scrollable
+            zoomable
             type="Task flow"
             heading="Add an appliance so it can be tagged later"
             src={domisUxDiagramAssets.applianceTaskFlow}
@@ -546,12 +548,9 @@ export function DomisCaseStudyBody() {
 
       <Reveal>
         <figure className="dcs-ux-figure">
-          <div className="dud dud-board avc-board">
-            <ApplianceV1V2Compare />
-          </div>
+          <ApplianceV1V2Compare />
           <figcaption className="dcs-caption site-body">
-            Same scan. One version knows the model number, the other knows what
-            to do with it.
+            From raw data to actionable items
           </figcaption>
         </figure>
       </Reveal>
@@ -569,8 +568,9 @@ export function DomisCaseStudyBody() {
           </figure>
           <div className="site-body text-white/65">
             <p>
-              Before any of the above, I went looking for what a homeowner
-              already has.
+              A key part of my research was around meeting the user where they
+              were, and I went looking for what information homeowners already
+              possess.
             </p>
             <p>
               Every homeowner has an inspection report. It is also long,

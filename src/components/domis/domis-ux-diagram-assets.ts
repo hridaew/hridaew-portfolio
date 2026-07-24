@@ -8,8 +8,6 @@
  * Export notes: see `public/assets/domis/diagrams/README.md`
  */
 export const domisUxDiagramAssets = {
-  addressUserFlow: "/assets/domis/diagrams/address-intelligence-lanes.svg",
-
-  applianceTaskFlow: null as string | null,
-  // applianceTaskFlow: "/assets/domis/diagrams/appliance-task-flow.svg",
+  addressUserFlow: "/assets/domis/diagrams/address-intelligence-lanes.svg?v=dark-connectors",
+  applianceTaskFlow: "/assets/domis/diagrams/appliance-task-flow.svg?v=dark-connectors",
 } as const;

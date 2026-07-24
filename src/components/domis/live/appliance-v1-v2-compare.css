@@ -16,10 +16,6 @@
   color: var(--avc-ink);
 }
 
-.avc-board .domis-live.avc {
-  max-width: none;
-}
-
 .domis-live.avc .avc-twoup {
   display: flex;
   gap: 16px;

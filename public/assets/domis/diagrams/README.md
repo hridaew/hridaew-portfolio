@@ -9,7 +9,13 @@ Coded React flows stay as fallback until a path is set.
 | Diagram | Suggested file |
 | --- | --- |
 | Address user flow | `address-intelligence-lanes.svg` (live) |
-| Appliance task flow | `appliance-task-flow.svg` (or `.png`) |
+| Appliance task flow | `appliance-task-flow.svg` (live) |
+
+Re-process Figma exports for dark board + node inner shadows:
+
+```bash
+node scripts/process-ux-diagrams.mjs
+```
 
 ## Export from FigJam / Figma
 
@@ -23,7 +29,7 @@ Coded React flows stay as fallback until a path is set.
 ### Tips
 
 - Bake titles (“User flow”, “Create a home…”) into the export **or** leave them out and keep the React `type` / `heading` props.
-- Wide flows can stay wider than the column; the embed uses the same wide breakout + horizontal scroll as before.
+- Wide flows use the journey-map breakout, scroll horizontally with edge fades, and zoom by scaling the diagram width.
 - Avoid live Figma/FigJam embeds on the case study (scroll fights, auth, wrong chrome). Static SVG/PNG is the portfolio path.
 - Keep node text short; connectors should be drawn in the design tool so nothing “almost connects.”
 

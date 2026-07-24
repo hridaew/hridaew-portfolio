@@ -246,7 +246,7 @@ function EmotionWave({
 }
 
 /**
- * Customer journey map with fixed tab bar, zoom controls, red emotion wave.
+ * User journey map with fixed tab bar, zoom controls, red emotion wave.
  */
 export function DomisHomeKnowledgeJourney() {
   const [personaId, setPersonaId] = useState<PersonaId>("mid");
@@ -263,11 +263,11 @@ export function DomisHomeKnowledgeJourney() {
     <div
       className="dud dud-board djm"
       role="region"
-      aria-label={`Customer journey map for ${persona.label}: emotional highs and lows and home-knowledge breakdown across stages`}
+      aria-label={`User journey map for ${persona.label}: emotional highs and lows and home-knowledge breakdown across stages`}
       style={{ zoom: scale }}
     >
       <div className="djm-toolbar">
-        <p className="dud-type djm-toolbar-type">Customer journey map</p>
+        <p className="dud-type djm-toolbar-type">User journey map</p>
 
         <div className="djm-toolbar-controls">
           <div

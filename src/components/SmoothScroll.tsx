@@ -21,18 +21,30 @@ export function SmoothScroll() {
         lenis.on("scroll", ScrollTrigger.update);
 
         // Sync GSAP ticker with Lenis raf
-        gsap.ticker.add((time) => {
+        const onTick = (time: number) => {
             lenis.raf(time * 1000);
-        });
-
+        };
+        gsap.ticker.add(onTick);
         gsap.ticker.lagSmoothing(0);
+
+        // Re-measure triggers after layout settles / viewport changes so
+        // bottom-of-page Reveals don't stay stuck at opacity 0.
+        let refreshTimer = 0;
+        const scheduleRefresh = () => {
+            window.clearTimeout(refreshTimer);
+            refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 80);
+        };
+        window.addEventListener("resize", scheduleRefresh);
+        window.addEventListener("load", scheduleRefresh);
+        scheduleRefresh();
 
         return () => {
             (window as any).__lenis = undefined;
+            window.clearTimeout(refreshTimer);
+            window.removeEventListener("resize", scheduleRefresh);
+            window.removeEventListener("load", scheduleRefresh);
             lenis.destroy();
-            gsap.ticker.remove((time) => {
-                lenis.raf(time * 1000);
-            });
+            gsap.ticker.remove(onTick);
         };
     }, []);
 
