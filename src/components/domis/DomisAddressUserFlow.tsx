@@ -1,5 +1,39 @@
 "use client";
 
+/**
+ * Mermaid source of truth (owner only, no system rail):
+ *
+ * graph TD
+ *   enter_address(Enter address)
+ *   autofill_ok{Autofill looks right?}
+ *   choose_autofill(Choose autofill)
+ *   type_manually(Type manually)
+ *   loads_facts([Domis loads home facts])
+ *   useful_data{Useful data returned?}
+ *   review(Review what came back)
+ *   leave_blanks(Leave blanks, fill later)
+ *   empty_form(Empty form, enter manually)
+ *   optional_edits(Optional edits / name spaces)
+ *   edit_photo(Edit or replace photo)
+ *   home_created[Home created]
+ *
+ *   enter_address --> autofill_ok
+ *   autofill_ok -->|Yes| choose_autofill
+ *   autofill_ok -->|No| type_manually
+ *   choose_autofill --> loads_facts
+ *   type_manually --> loads_facts
+ *   loads_facts --> useful_data
+ *   useful_data -->|Yes| review
+ *   useful_data -->|Incomplete| leave_blanks
+ *   useful_data -->|Fail| empty_form
+ *   review --> optional_edits
+ *   leave_blanks --> optional_edits
+ *   empty_form --> optional_edits
+ *   optional_edits --> edit_photo
+ *   edit_photo --> home_created
+ *   edit_photo -->|Skip| home_created
+ */
+
 import { useEffect, useRef, useState } from "react";
 import "./domis-ux-diagrams.css";
 
@@ -46,7 +80,7 @@ function useDufScrollFade() {
 
 /**
  * Owner-only user flow: create a home from an address.
- * Main rail + lower deviation rail (manual entry, incomplete/fail load, skip photo).
+ * Happy-path main rail; deviations aside, all rejoining.
  */
 export function DomisAddressUserFlow() {
   const { ref, className } = useDufScrollFade();
@@ -69,7 +103,7 @@ export function DomisAddressUserFlow() {
           <div className="duf-canvas duf-canvas-address">
             <svg
               className="duf-connectors"
-              viewBox="0 0 1520 290"
+              viewBox="0 0 1520 380"
               aria-hidden="true"
             >
               <defs>
@@ -89,56 +123,56 @@ export function DomisAddressUserFlow() {
               {/* Enter → Autofill decision */}
               <path className="duf-line duf-line-arrow" d="M 130 72 H 155" />
 
-              {/* Yes → Choose autofill */}
-              <path
-                className="duf-line duf-line-arrow"
-                d="M 214 13 V 4 H 300 V 39 H 315"
-              />
+              {/* Yes → Choose autofill (main rail) */}
+              <path className="duf-line duf-line-arrow" d="M 273 72 H 295" />
 
               {/* No → Type manually */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 214 131 V 145 H 315"
+                d="M 214 131 V 227 H 295"
               />
 
-              {/* Choose autofill → merge point */}
-              <path className="duf-line" d="M 445 39 H 462 V 72" />
+              {/* Choose autofill → merge */}
+              <path className="duf-line" d="M 425 72 H 452" />
 
-              {/* Type manually → merge point */}
-              <path className="duf-line" d="M 445 145 H 462 V 72" />
+              {/* Type manually → merge */}
+              <path className="duf-line" d="M 425 227 H 452 V 72" />
 
               {/* Merge → Domis loads */}
-              <path className="duf-line duf-line-arrow" d="M 462 72 H 490" />
+              <path className="duf-line duf-line-arrow" d="M 452 72 H 480" />
 
               {/* Domis loads → Useful data? */}
-              <path className="duf-line duf-line-arrow" d="M 640 72 H 675" />
+              <path className="duf-line duf-line-arrow" d="M 630 72 H 660" />
 
-              {/* Useful → Review */}
-              <path className="duf-line duf-line-arrow" d="M 793 72 H 835" />
+              {/* Yes → Review */}
+              <path className="duf-line duf-line-arrow" d="M 778 72 H 820" />
 
-              {/* Incomplete → Leave blanks */}
+              {/* Incomplete → Leave blanks (left edge) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 734 131 V 200 H 820"
+                d="M 719 131 V 212 H 820"
               />
 
-              {/* Fail → Empty form (route below leave-blanks) */}
+              {/* Fail → Empty form (continuous into left edge mid) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 793 110 V 240 H 1065 V 227"
+                d="M 768 105 V 302 H 820"
               />
 
               {/* Review → Optional edits */}
-              <path className="duf-line duf-line-arrow" d="M 971 72 H 1010" />
+              <path className="duf-line duf-line-arrow" d="M 956 72 H 1010" />
 
-              {/* Leave blanks → Optional edits */}
+              {/* Leave blanks → rejoin spine → Optional edits */}
+              <path className="duf-line" d="M 970 212 H 990" />
+
+              {/* Empty form → rejoin spine → Optional edits */}
+              <path className="duf-line" d="M 970 302 H 990" />
+
+              {/* Shared rejoin spine into Optional edits */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 970 200 H 985 V 99 H 1010"
+                d="M 990 302 V 72 H 1010"
               />
-
-              {/* Empty form → Optional edits */}
-              <path className="duf-line duf-line-arrow" d="M 1065 173 V 99" />
 
               {/* Optional edits → Edit or replace photo */}
               <path className="duf-line duf-line-arrow" d="M 1160 72 H 1195" />
@@ -146,10 +180,10 @@ export function DomisAddressUserFlow() {
               {/* Edit photo → Home created */}
               <path className="duf-line duf-line-arrow" d="M 1335 72 H 1365" />
 
-              {/* Skip photo → Home created (enter at bottom of end node) */}
+              {/* Skip photo → Home created */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 1265 99 V 200 H 1422 V 101"
+                d="M 1265 99 V 160 H 1422 V 101"
               />
             </svg>
 
@@ -170,36 +204,36 @@ export function DomisAddressUserFlow() {
               </span>
             </span>
 
-            <span className="duf-branch-label" style={{ left: 268, top: 2 }}>
+            <span className="duf-branch-label" style={{ left: 278, top: 52 }}>
               Yes
             </span>
             <span
               className="duf-node duf-node-process"
-              style={{ left: 315, top: 12, width: 130 }}
+              style={{ left: 295, top: 45, width: 130 }}
             >
               Choose autofill
             </span>
 
-            <span className="duf-branch-label" style={{ left: 268, top: 148 }}>
+            <span className="duf-branch-label" style={{ left: 228, top: 168 }}>
               No
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 315, top: 118, width: 130 }}
+              style={{ left: 295, top: 200, width: 130 }}
             >
               Type manually
             </span>
 
             <span
               className="duf-node duf-node-process duf-node-wait"
-              style={{ left: 490, top: 45, width: 150 }}
+              style={{ left: 480, top: 45, width: 150 }}
             >
               Domis loads home facts
             </span>
 
             <span
               className="duf-node duf-node-decision"
-              style={{ left: 675, top: 13 }}
+              style={{ left: 660, top: 13 }}
             >
               <span className="duf-decision-mark" aria-hidden />
               <span className="duf-decision-text">
@@ -207,32 +241,32 @@ export function DomisAddressUserFlow() {
               </span>
             </span>
 
-            <span className="duf-branch-label" style={{ left: 800, top: 58 }}>
+            <span className="duf-branch-label" style={{ left: 786, top: 58 }}>
               Yes
             </span>
             <span
               className="duf-node duf-node-process"
-              style={{ left: 835, top: 45, width: 136 }}
+              style={{ left: 820, top: 45, width: 136 }}
             >
               Review what came back
             </span>
 
-            <span className="duf-branch-label" style={{ left: 735, top: 168 }}>
+            <span className="duf-branch-label" style={{ left: 728, top: 168 }}>
               Incomplete
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 820, top: 173, width: 150 }}
+              style={{ left: 820, top: 185, width: 150 }}
             >
               Leave blanks, fill later
             </span>
 
-            <span className="duf-branch-label" style={{ left: 800, top: 148 }}>
+            <span className="duf-branch-label" style={{ left: 776, top: 258 }}>
               Fail
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 990, top: 173, width: 150 }}
+              style={{ left: 820, top: 275, width: 150 }}
             >
               Empty form, enter manually
             </span>
@@ -251,7 +285,7 @@ export function DomisAddressUserFlow() {
               Edit or replace photo
             </span>
 
-            <span className="duf-branch-label" style={{ left: 1280, top: 168 }}>
+            <span className="duf-branch-label" style={{ left: 1288, top: 128 }}>
               Skip
             </span>
 

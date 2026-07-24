@@ -208,10 +208,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-.djm-scale {
-  transform: scale(var(--djm-scale, 1));
-  transform-origin: top left;
-  width: calc(100% / var(--djm-scale, 1));
+/* Image-like zoom: CSS zoom scales layout + paint so the board can grow past margins */
+.domis-cs figure.dcs-ux-zoomable {
+  overflow: visible;
+}
+
+.domis-cs figure.dcs-ux-zoomable > .dud.djm {
+  transform-origin: top center;
 }
 
 .djm-switch {
@@ -502,13 +505,13 @@
 .duf-address .duf-canvas,
 .duf-canvas-address {
   width: 1520px;
-  height: 290px;
+  height: 380px;
 }
 
 .duf-appliance .duf-canvas,
 .duf-canvas-appliance {
   width: 1340px;
-  height: 300px;
+  height: 340px;
 }
 
 .duf-node-wait {

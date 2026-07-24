@@ -1,5 +1,36 @@
 "use client";
 
+/**
+ * Mermaid source of truth:
+ *
+ * graph TD
+ *   open_capture(Open capture)
+ *   photograph(Photograph label)
+ *   extract_brand([Extract brand/model])
+ *   extract_ok{Extract readable?}
+ *   confirm_identity(Confirm identity)
+ *   attach_links(Attach useful links)
+ *   appliance_on_home[Appliance on home]
+ *   manual_entry(Manual entry)
+ *   retake_photo(Retake)
+ *   save_no_links(Save without links)
+ *
+ *   open_capture --> photograph
+ *   open_capture -->|Skip / no camera| manual_entry
+ *   photograph --> extract_brand
+ *   extract_brand --> extract_ok
+ *   extract_ok -->|Yes| confirm_identity
+ *   extract_ok -->|Incomplete| confirm_identity
+ *   extract_ok -->|No| retake_photo
+ *   retake_photo -->|Retake| photograph
+ *   retake_photo -->|Manual| manual_entry
+ *   manual_entry --> confirm_identity
+ *   confirm_identity --> attach_links
+ *   attach_links --> appliance_on_home
+ *   attach_links -->|Not found| save_no_links
+ *   save_no_links --> appliance_on_home
+ */
+
 import { useEffect, useRef, useState } from "react";
 import "./domis-ux-diagrams.css";
 
@@ -46,7 +77,7 @@ function useDufScrollFade() {
 
 /**
  * Task flow: photograph a label, confirm identity, attach useful links.
- * Main rail + lower deviation rail (manual entry, retake, save without links).
+ * Happy-path main rail; deviations aside, all rejoining.
  */
 export function DomisApplianceTaskFlow() {
   const { ref, className } = useDufScrollFade();
@@ -71,7 +102,7 @@ export function DomisApplianceTaskFlow() {
           <div className="duf-canvas duf-canvas-appliance">
             <svg
               className="duf-connectors"
-              viewBox="0 0 1340 300"
+              viewBox="0 0 1340 340"
               aria-hidden="true"
             >
               <defs>
@@ -94,61 +125,64 @@ export function DomisApplianceTaskFlow() {
               {/* Skip / no camera → Manual entry */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 77 101 V 200 H 200"
+                d="M 77 101 V 227 H 170"
               />
 
               {/* Photograph → Extract */}
-              <path className="duf-line duf-line-arrow" d="M 300 72 H 340" />
+              <path className="duf-line duf-line-arrow" d="M 300 72 H 330" />
 
               {/* Extract → Readable? */}
-              <path className="duf-line duf-line-arrow" d="M 480 72 H 515" />
+              <path className="duf-line duf-line-arrow" d="M 475 72 H 505" />
 
               {/* Yes → Confirm */}
-              <path className="duf-line duf-line-arrow" d="M 633 72 H 675" />
+              <path className="duf-line duf-line-arrow" d="M 623 72 H 655" />
 
-              {/* Incomplete → Confirm (distinct upper arc) */}
+              {/* Incomplete → Confirm (over the top) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 574 20 H 740 V 45 H 675"
+                d="M 564 13 V 2 H 720 V 45"
               />
 
               {/* No → Retake */}
-              <path className="duf-line duf-line-arrow" d="M 574 131 V 173" />
+              <path
+                className="duf-line duf-line-arrow"
+                d="M 564 131 V 200"
+              />
 
-              {/* Retake → Photograph (loop under branch row) */}
+              {/* Retake → Photograph (loop) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 570 227 V 255 H 235 V 99"
+                d="M 565 254 H 235 V 99"
               />
 
-              {/* or manual → Manual entry */}
+              {/* Retake → Manual entry */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 633 110 V 255 H 270 V 227"
+                d="M 505 227 H 340"
               />
 
-              {/* Manual entry → Confirm (rejoin under branch row) */}
+              {/* Manual entry → Confirm */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 340 227 V 255 H 740 V 99"
+                d="M 310 254 V 290 H 720 V 99"
               />
 
               {/* Confirm → Attach links */}
-              <path className="duf-line duf-line-arrow" d="M 805 72 H 850" />
+              <path className="duf-line duf-line-arrow" d="M 785 72 H 820" />
 
               {/* Attach → Appliance on home */}
-              <path className="duf-line duf-line-arrow" d="M 990 72 H 1140" />
+              <path className="duf-line duf-line-arrow" d="M 960 72 H 1100" />
 
               {/* Links not found → Save without links */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 920 99 V 200 H 1000"
+                d="M 890 99 V 200"
               />
 
-              {/* Save without links → Appliance on home (enter at bottom) */}
+              {/* Save without links → Appliance on home */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 1145 200 H 1220 V 101"
+                d="M 965 227 H 1180 V 101"
               />
             </svg>
 
@@ -172,21 +206,21 @@ export function DomisApplianceTaskFlow() {
 
             <span
               className="duf-node duf-node-process"
-              style={{ left: 340, top: 45, width: 140 }}
+              style={{ left: 330, top: 45, width: 145 }}
             >
               Extract brand / model
             </span>
 
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 200, top: 173, width: 140 }}
+              style={{ left: 170, top: 200, width: 140 }}
             >
               Manual entry
             </span>
 
             <span
               className="duf-node duf-node-decision"
-              style={{ left: 515, top: 13 }}
+              style={{ left: 505, top: 13 }}
             >
               <span className="duf-decision-mark" aria-hidden />
               <span className="duf-decision-text">
@@ -194,16 +228,16 @@ export function DomisApplianceTaskFlow() {
               </span>
             </span>
 
-            <span className="duf-branch-label" style={{ left: 638, top: 58 }}>
+            <span className="duf-branch-label" style={{ left: 628, top: 58 }}>
               Yes
             </span>
-            <span className="duf-branch-label" style={{ left: 638, top: 22 }}>
+            <span className="duf-branch-label" style={{ left: 628, top: 8 }}>
               Incomplete
             </span>
 
             <span
               className="duf-node duf-node-process"
-              style={{ left: 675, top: 45, width: 130 }}
+              style={{ left: 655, top: 45, width: 130 }}
             >
               Confirm identity
             </span>
@@ -213,35 +247,35 @@ export function DomisApplianceTaskFlow() {
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 510, top: 173, width: 120 }}
+              style={{ left: 505, top: 200, width: 120 }}
             >
               Retake photo
             </span>
 
-            <span className="duf-branch-label" style={{ left: 350, top: 248 }}>
+            <span className="duf-branch-label" style={{ left: 360, top: 208 }}>
               or manual
             </span>
 
             <span
               className="duf-node duf-node-process"
-              style={{ left: 850, top: 45, width: 140 }}
+              style={{ left: 820, top: 45, width: 140 }}
             >
               Attach useful links
             </span>
 
-            <span className="duf-branch-label" style={{ left: 930, top: 148 }}>
+            <span className="duf-branch-label" style={{ left: 900, top: 148 }}>
               Not found
             </span>
             <span
               className="duf-node duf-node-process duf-node-branch"
-              style={{ left: 1000, top: 173, width: 145 }}
+              style={{ left: 820, top: 200, width: 145 }}
             >
               Save without links
             </span>
 
             <span
               className="duf-node duf-node-end"
-              style={{ left: 1140, top: 43, width: 160 }}
+              style={{ left: 1100, top: 43, width: 160 }}
             >
               Appliance on home
             </span>
