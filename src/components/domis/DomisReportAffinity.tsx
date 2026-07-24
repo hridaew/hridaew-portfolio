@@ -4,6 +4,20 @@ import "./domis-ux-diagrams.css";
 
 type Note = { text: string; source?: string; fact?: boolean };
 
+/** Distinct sticky colors per participant (P1–P9). */
+const PARTICIPANT_STYLE: Record<string, { bg: string; ink: string; tag: string }> =
+  {
+    P1: { bg: "#f6cfc9", ink: "#3a1f1c", tag: "#7a3b34" },
+    P2: { bg: "#fde2b8", ink: "#3d2a12", tag: "#8a5a18" },
+    P3: { bg: "#e8f0c8", ink: "#2a3314", tag: "#5a6b28" },
+    P4: { bg: "#cfeee3", ink: "#16352c", tag: "#2f6b57" },
+    P5: { bg: "#cfe0f7", ink: "#1a2a42", tag: "#355987" },
+    P6: { bg: "#ddd4f5", ink: "#2a2142", tag: "#5a488a" },
+    P7: { bg: "#f5d0e6", ink: "#3a1f30", tag: "#7a3b5f" },
+    P8: { bg: "#d7ebe7", ink: "#1d3330", tag: "#3a6660" },
+    P9: { bg: "#f3e0c8", ink: "#3a2a16", tag: "#7a5a2e" },
+  };
+
 const CLUSTERS: { theme: string; notes: Note[] }[] = [
   {
     theme: "Treated as a one-time transaction",
@@ -86,7 +100,7 @@ const CLUSTERS: { theme: string; notes: Note[] }[] = [
 ];
 
 /**
- * Affinity diagram — interview synthesis that drove the Report Processor pivot.
+ * Affinity diagram with per-participant sticky colors.
  */
 export function DomisReportAffinity() {
   return (
@@ -96,28 +110,41 @@ export function DomisReportAffinity() {
       aria-label="Affinity diagram from homeowner interviews about inspection reports"
     >
       <p className="dud-type">Affinity diagram</p>
-      <p className="dud-heading">
-        Why owners ignore the inspection report
-      </p>
+      <p className="dud-heading">Why owners ignore the inspection report</p>
 
       <div className="dad">
         {CLUSTERS.map((cluster) => (
           <section key={cluster.theme} className="dad-cluster">
             <h3 className="dad-theme">{cluster.theme}</h3>
             <ul className="dad-notes">
-              {cluster.notes.map((note) => (
-                <li
-                  key={note.text}
-                  className={
-                    note.fact ? "dad-note dad-note-fact" : "dad-note"
-                  }
-                >
-                  <span>{note.text}</span>
-                  {note.source ? (
-                    <span className="dad-source">{note.source}</span>
-                  ) : null}
-                </li>
-              ))}
+              {cluster.notes.map((note) => {
+                const style =
+                  note.source && !note.fact
+                    ? PARTICIPANT_STYLE[note.source]
+                    : undefined;
+                return (
+                  <li
+                    key={note.text}
+                    className={
+                      note.fact ? "dad-note dad-note-fact" : "dad-note"
+                    }
+                    style={
+                      style
+                        ? {
+                            background: style.bg,
+                            color: style.ink,
+                            ["--dad-tag" as string]: style.tag,
+                          }
+                        : undefined
+                    }
+                  >
+                    <span>{note.text}</span>
+                    {note.source ? (
+                      <span className="dad-source">{note.source}</span>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ))}

@@ -119,7 +119,7 @@ export function DomisAddressUserFlow() {
               {/* Incomplete → Leave blanks */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 729 131 V 200 H 820"
+                d="M 734 131 V 200 H 820"
               />
 
               {/* Fail → Empty form (route below leave-blanks) */}
@@ -146,10 +146,10 @@ export function DomisAddressUserFlow() {
               {/* Edit photo → Home created */}
               <path className="duf-line duf-line-arrow" d="M 1335 72 H 1365" />
 
-              {/* Skip photo → Home created */}
+              {/* Skip photo → Home created (enter at bottom of end node) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 1265 99 V 200 H 1422 V 72"
+                d="M 1265 99 V 200 H 1422 V 101"
               />
             </svg>
 
@@ -227,7 +227,7 @@ export function DomisAddressUserFlow() {
               Leave blanks, fill later
             </span>
 
-            <span className="duf-branch-label" style={{ left: 990, top: 248 }}>
+            <span className="duf-branch-label" style={{ left: 800, top: 148 }}>
               Fail
             </span>
             <span

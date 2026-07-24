@@ -264,13 +264,6 @@ export function DomisCaseStudyBody() {
               users) keep reconstructing the house under stress.
             </figcaption>
           </figure>
-          <div className="site-body text-white/65">
-            <p>
-              When people tried to set up a home profile, many realized they
-              didn&rsquo;t know their own homes. Setting up Domis also became
-              the act of learning it.
-            </p>
-          </div>
         </Reveal>
       </section>
 
@@ -286,11 +279,14 @@ export function DomisCaseStudyBody() {
               Domis only works if it knows your home, but listing every space,
               appliance, and nuance by hand is painful.
             </p>
+            <p>
+              When people tried to set up a home profile, many realized they
+              didn&rsquo;t know their own homes. Setting up Domis also became
+              the act of learning it.
+            </p>
           </div>
           <figure className="dcs-ux-figure">
-            <div className="dud dud-board dcd-board">
-              <DomisConstraintDiagram />
-            </div>
+            <DomisConstraintDiagram />
           </figure>
           <div className="site-body text-white/65">
             <p>
@@ -302,8 +298,8 @@ export function DomisCaseStudyBody() {
               willing to take.
             </p>
           </div>
-          <figure className="dcs-img-block">
-            <div className="dcs-media dcs-value-multiply">
+          <figure className="dcs-ux-figure">
+            <div className="dud dud-board dvm-board">
               <DomisValueMultiply />
             </div>
           </figure>
@@ -534,9 +530,9 @@ export function DomisCaseStudyBody() {
       </section>
 
       <Reveal>
-        <figure className="dcs-figure">
-          <div className="dcs-media dcs-media-fit">
-              <ApplianceV1V2Compare />
+        <figure className="dcs-ux-figure">
+          <div className="dud dud-board avc-board">
+            <ApplianceV1V2Compare />
           </div>
           <figcaption className="dcs-caption site-body">
             Same scan. One version knows the model number, the other knows what

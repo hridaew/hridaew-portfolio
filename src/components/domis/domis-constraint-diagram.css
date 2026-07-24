@@ -99,11 +99,8 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* Neutral board (no Domis coral media frame) */
-.dud-board.dcd-board {
-  padding: 1.35rem 1.25rem;
-}
-
+/* De-themed on dark case-study figures (no coral frame, no outer shell) */
+.domis-cs figure.dcs-ux-figure .dcd .dcd-col,
 .dud-board.dcd-board .dcd .dcd-col {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -111,20 +108,28 @@
   color: rgba(255, 255, 255, 0.88);
 }
 
+.domis-cs figure.dcs-ux-figure .dcd .dcd-eyebrow,
 .dud-board.dcd-board .dcd .dcd-eyebrow {
   color: rgba(255, 255, 255, 0.4);
 }
 
+.domis-cs figure.dcs-ux-figure .dcd .dcd-label,
 .dud-board.dcd-board .dcd .dcd-label {
   color: rgba(255, 255, 255, 0.78);
 }
 
+.domis-cs figure.dcs-ux-figure .dcd .dcd-gap,
 .dud-board.dcd-board .dcd .dcd-gap {
   color: rgba(255, 255, 255, 0.45);
 }
 
+.domis-cs figure.dcs-ux-figure .dcd .dcd-icon,
 .dud-board.dcd-board .dcd .dcd-icon {
   color: rgba(255, 255, 255, 0.55);
+}
+
+.domis-cs figure.dcs-ux-figure .dcd .dcd-col {
+  min-height: 14rem;
 }
 
 .dcd .dcd-gap-mark {

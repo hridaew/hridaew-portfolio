@@ -11,7 +11,6 @@ type JourneyPersona = {
   label: string;
   blurb: string;
   stages: string[];
-  /** Emotion valence 0–100 (higher = better) for the wave above the map */
   emotionWave: number[];
   rows: {
     label: string;
@@ -20,6 +19,12 @@ type JourneyPersona = {
   }[];
   opportunity: string[];
 };
+
+const SCALE_MIN = 0.9;
+const SCALE_MAX = 1.45;
+const SCALE_STEP = 0.1;
+/** Slightly larger than 1 so the map starts a bit bigger. */
+const SCALE_DEFAULT = 1.15;
 
 const PERSONAS: JourneyPersona[] = [
   {
@@ -242,12 +247,18 @@ function EmotionWave({
 }
 
 /**
- * Customer journey map — mid-journey first, animated persona switch, red emotion wave.
+ * Customer journey map with fixed tab bar, zoom controls, red emotion wave.
  */
 export function DomisHomeKnowledgeJourney() {
   const [personaId, setPersonaId] = useState<PersonaId>("mid");
+  const [scale, setScale] = useState(SCALE_DEFAULT);
   const gradientId = useId().replace(/:/g, "");
   const persona = PERSONAS.find((p) => p.id === personaId) ?? PERSONAS[0]!;
+
+  const zoomOut = () =>
+    setScale((s) => Math.max(SCALE_MIN, Number((s - SCALE_STEP).toFixed(2))));
+  const zoomIn = () =>
+    setScale((s) => Math.min(SCALE_MAX, Number((s + SCALE_STEP).toFixed(2))));
 
   return (
     <div
@@ -255,119 +266,164 @@ export function DomisHomeKnowledgeJourney() {
       role="region"
       aria-label={`Customer journey map for ${persona.label}: emotional highs and lows and home-knowledge breakdown across stages`}
     >
-      <div className="djm-header">
-        <div>
-          <p className="dud-type">Customer journey map</p>
-          <p className="dud-heading djm-heading">{persona.blurb}</p>
-        </div>
+      <div className="djm-toolbar">
+        <p className="dud-type djm-toolbar-type">Customer journey map</p>
 
-        <div
-          className="djm-switch"
-          role="tablist"
-          aria-label="Journey persona"
-        >
-          {PERSONAS.map((p) => {
-            const selected = p.id === personaId;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                className={
-                  selected
-                    ? "djm-switch-btn djm-switch-btn-active"
-                    : "djm-switch-btn"
-                }
-                onClick={() => setPersonaId(p.id)}
-              >
-                {selected ? (
-                  <motion.span
-                    layoutId="djm-switch-pill"
-                    className="djm-switch-pill"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  />
-                ) : null}
-                <span className="djm-switch-label">{p.label}</span>
-                {p.id === "mid" ? (
-                  <span className="djm-switch-tag">Most users</span>
-                ) : null}
-              </button>
-            );
-          })}
+        <div className="djm-toolbar-controls">
+          <div
+            className="djm-switch"
+            role="tablist"
+            aria-label="Journey persona"
+          >
+            {PERSONAS.map((p) => {
+              const selected = p.id === personaId;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  className={
+                    selected
+                      ? "djm-switch-btn djm-switch-btn-active"
+                      : "djm-switch-btn"
+                  }
+                  onClick={() => setPersonaId(p.id)}
+                >
+                  {selected ? (
+                    <motion.span
+                      layoutId="djm-switch-pill"
+                      className="djm-switch-pill"
+                      transition={{
+                        type: "spring",
+                        stiffness: 420,
+                        damping: 34,
+                      }}
+                    />
+                  ) : null}
+                  <span className="djm-switch-label">{p.label}</span>
+                  {p.id === "mid" ? (
+                    <span className="djm-switch-tag">Most users</span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="djm-zoom" role="group" aria-label="Zoom journey map">
+            <button
+              type="button"
+              className="djm-zoom-btn"
+              onClick={zoomOut}
+              disabled={scale <= SCALE_MIN}
+              aria-label="Zoom out"
+            >
+              −
+            </button>
+            <span className="djm-zoom-value" aria-live="polite">
+              {Math.round(scale * 100)}%
+            </span>
+            <button
+              type="button"
+              className="djm-zoom-btn"
+              onClick={zoomIn}
+              disabled={scale >= SCALE_MAX}
+              aria-label="Zoom in"
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
 
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={persona.id}
+          className="dud-heading djm-heading"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -3 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {persona.blurb}
+        </motion.p>
+      </AnimatePresence>
+
       <div className="djm-scroll">
-        <div className="djm-wave-rail" aria-hidden>
-          <div className="djm-wave-gutter" />
+        <div
+          className="djm-scale"
+          style={{ ["--djm-scale" as string]: scale }}
+        >
+          <div className="djm-wave-rail" aria-hidden>
+            <div className="djm-wave-gutter" />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={persona.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <EmotionWave
+                  values={persona.emotionWave}
+                  gradientId={`djm-grad-${gradientId}-${persona.id}`}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={persona.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             >
-              <EmotionWave
-                values={persona.emotionWave}
-                gradientId={`djm-grad-${gradientId}-${persona.id}`}
-              />
+              <table className="djm-table">
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <span className="sr-only">Dimension</span>
+                    </th>
+                    {persona.stages.map((stage) => (
+                      <th key={stage} scope="col">
+                        {stage}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {persona.rows.map((row) => (
+                    <tr key={row.label}>
+                      <th scope="row">{row.label}</th>
+                      {row.cells.map((cell) => (
+                        <td
+                          key={`${row.label}-${cell}`}
+                          className={
+                            row.tone === "emotion"
+                              ? "djm-emo"
+                              : row.tone === "pain"
+                                ? "djm-pain"
+                                : undefined
+                          }
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="djm-opp">
+                    <th scope="row">Opportunity</th>
+                    {persona.opportunity.map((cell) => (
+                      <td key={cell}>{cell}</td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
             </motion.div>
           </AnimatePresence>
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={persona.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <table className="djm-table">
-              <thead>
-                <tr>
-                  <th scope="col">
-                    <span className="sr-only">Dimension</span>
-                  </th>
-                  {persona.stages.map((stage) => (
-                    <th key={stage} scope="col">
-                      {stage}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {persona.rows.map((row) => (
-                  <tr key={row.label}>
-                    <th scope="row">{row.label}</th>
-                    {row.cells.map((cell) => (
-                      <td
-                        key={`${row.label}-${cell}`}
-                        className={
-                          row.tone === "emotion"
-                            ? "djm-emo"
-                            : row.tone === "pain"
-                              ? "djm-pain"
-                              : undefined
-                        }
-                      >
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                <tr className="djm-opp">
-                  <th scope="row">Opportunity</th>
-                  {persona.opportunity.map((cell) => (
-                    <td key={cell}>{cell}</td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </motion.div>
-        </AnimatePresence>
       </div>
     </div>
   );

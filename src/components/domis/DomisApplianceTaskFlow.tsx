@@ -71,7 +71,7 @@ export function DomisApplianceTaskFlow() {
           <div className="duf-canvas duf-canvas-appliance">
             <svg
               className="duf-connectors"
-              viewBox="0 0 1340 280"
+              viewBox="0 0 1340 300"
               aria-hidden="true"
             >
               <defs>
@@ -106,31 +106,31 @@ export function DomisApplianceTaskFlow() {
               {/* Yes → Confirm */}
               <path className="duf-line duf-line-arrow" d="M 633 72 H 675" />
 
-              {/* Incomplete → Confirm */}
+              {/* Incomplete → Confirm (distinct upper arc) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 633 48 H 655 V 45 H 675"
+                d="M 574 20 H 740 V 45 H 675"
               />
 
               {/* No → Retake */}
-              <path className="duf-line duf-line-arrow" d="M 569 131 V 173" />
+              <path className="duf-line duf-line-arrow" d="M 574 131 V 173" />
 
-              {/* Retake → Photograph (loop) */}
+              {/* Retake → Photograph (loop under branch row) */}
               <path
                 className="duf-line duf-line-arrow duf-line-soft"
-                d="M 500 200 H 235 V 99"
+                d="M 570 227 V 255 H 235 V 99"
               />
 
-              {/* or manual → Manual entry (exit right of decision, under Retake) */}
+              {/* or manual → Manual entry */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 633 100 V 240 H 270 V 227"
+                d="M 633 110 V 255 H 270 V 227"
               />
 
-              {/* Manual entry → Confirm (rejoin) */}
+              {/* Manual entry → Confirm (rejoin under branch row) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 340 200 H 700 V 72"
+                d="M 340 227 V 255 H 740 V 99"
               />
 
               {/* Confirm → Attach links */}
@@ -145,10 +145,10 @@ export function DomisApplianceTaskFlow() {
                 d="M 920 99 V 200 H 1000"
               />
 
-              {/* Save without links → Appliance on home */}
+              {/* Save without links → Appliance on home (enter at bottom) */}
               <path
                 className="duf-line duf-line-arrow"
-                d="M 1145 200 H 1220 V 72"
+                d="M 1145 200 H 1220 V 101"
               />
             </svg>
 
