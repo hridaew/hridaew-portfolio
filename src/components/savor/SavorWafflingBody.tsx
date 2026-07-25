@@ -3,6 +3,12 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { DeferredVideo } from "@/components/DeferredVideo";
+import {
+  SAVOR_OPENING,
+  SAVOR_P3,
+  SAVOR_STORY_P1,
+  SAVOR_TITLE,
+} from "@/data/waffling-article-copy";
 import { cn } from "@/lib/utils";
 
 const IMG = {
@@ -97,7 +103,7 @@ export function SavorWafflingBody() {
   return (
     <div className={cn(SAVOR_COLUMN, "flex flex-col gap-12 pt-16 pb-24 md:pt-24 md:pb-28")}>
       <h1 className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-white/80">
-        Savor: Video to 3D model tool
+        {SAVOR_TITLE}
       </h1>
 
       {/* Hero trailer */}
@@ -121,12 +127,7 @@ export function SavorWafflingBody() {
       {/* What it is */}
       <section className="flex w-full flex-col gap-4">
         <SectionTitle>What it is</SectionTitle>
-        <Body>
-          Savor turns an ordinary video of an object into a 3D Gaussian splat: a photoreal capture
-          you can orbit and zoom on screen. Walk a slow circle around something with your phone,
-          feed Savor the video, and a minute or two later the object is floating in 3D, lifted out
-          of whatever room it was sitting in.
-        </Body>
+        <Body>{SAVOR_OPENING}</Body>
         <Body>
           I built a completely Mac-native version. Frames come out through{" "}
           <TechTerm
@@ -151,20 +152,13 @@ export function SavorWafflingBody() {
           handles the viewer. There&apos;s also a Windows/Linux version that wraps a third-party
           stack. Neither talks to a cloud.
         </Body>
-        <Body>
-          This is a research preview and being updated. You can install it through the terminal
-          further down.
-        </Body>
+        <Body>{SAVOR_P3}</Body>
       </section>
 
       {/* The story */}
       <section className="flex w-full flex-col gap-4">
         <SectionTitle>The story</SectionTitle>
-        <Body>
-          I love cyberpunk, especially the idea of braindances: stepping into a moment and looking
-          around it. When I found Gaussian splatting, the cyberpunk reality felt closer than ever
-          before.
-        </Body>
+        <Body>{SAVOR_STORY_P1}</Body>
         <Body>
           There&apos;s this sculpture at the Legion of Honor: Rodin&apos;s <em>Mighty Hand</em>. I
           love it. I keep going back. Photos don&apos;t do it justice; it&apos;s a 3D sculpture. I

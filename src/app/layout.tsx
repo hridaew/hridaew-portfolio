@@ -31,12 +31,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hridae Walia - Product Designer",
   description:
-    "Product Designer with 5+ years of experience delivering end-to-end, research-led products at scale. Expert in designing and prototyping high-craft experiences across mobile, web, tangible, and AR/VR platforms.",
+    "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale. Expert in designing and prototyping high-craft experiences across mobile, web, tangible, and AR/VR platforms.",
   metadataBase: new URL("https://hridaew.com"),
   openGraph: {
     title: "Hridae Walia - Product Designer",
     description:
-      "Product Designer with 5+ years of experience delivering end-to-end, research-led products at scale.",
+      "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale.",
     url: "https://hridaew.com",
     siteName: "Hridae Walia Portfolio",
     locale: "en_US",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Hridae Walia - Product Designer",
     description:
-      "Product Designer with 5+ years of experience delivering end-to-end, research-led products at scale.",
+      "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale.",
     images: ["/social-open-graph.png"],
   },
 };

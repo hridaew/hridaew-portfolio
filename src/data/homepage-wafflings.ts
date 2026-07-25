@@ -1,8 +1,18 @@
+import {
+  BUTTER_CHICKEN_CARD_PREVIEW,
+  ORCA_CARD_PREVIEW,
+  ORCA_TITLE,
+  RECORDER_CARD_CAPTION,
+  SAVOR_CARD_PREVIEW,
+  SAVOR_TITLE,
+} from "@/data/waffling-article-copy";
+
 export interface WafflingData {
   title: string;
   /** Small mono label above title (Figma node 16684:801 — Domis Design). */
   eyebrow?: string;
   imageSrc?: string;
+  /** Same wording as the article opening (or card-only body for WIP posts). */
   previewText: string;
   href?: string;
   /** 1 = full, 0.5 = dimmed, 0.25 = extra-faint */
@@ -17,10 +27,9 @@ export interface WafflingData {
 
 export const homepageWafflings: WafflingData[] = [
   {
-    title: "Savor",
+    title: SAVOR_TITLE,
     imageSrc: "/assets/savor/card-poster.jpg",
-    previewText:
-      "Phone video of an object in, photoreal 3D Gaussian splat out. Orbit it, zoom it, room cut away. Runs locally on your Mac.",
+    previewText: SAVOR_CARD_PREVIEW,
     href: "/waffling/savor",
     opacity: 1,
     taperedRim: true,
@@ -28,8 +37,7 @@ export const homepageWafflings: WafflingData[] = [
   {
     title: "Butter Chicken Recipe",
     imageSrc: "/assets/home/waffling-butterchicken.png",
-    previewText:
-      "A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.\n\nBefore you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.\n\nIngredients:",
+    previewText: BUTTER_CHICKEN_CARD_PREVIEW,
     href: "/butter-chicken",
     opacity: 1,
     taperedRim: true,
@@ -38,8 +46,16 @@ export const homepageWafflings: WafflingData[] = [
     title: "Recorder-Proto",
     imageSrc: "/assets/recorder/card.png",
     imageHero: true,
-    previewText: "I wanted to make something cool from a mundane task.",
+    previewText: RECORDER_CARD_CAPTION,
     href: "/waffling/recorder",
+    opacity: 1,
+    taperedRim: true,
+  },
+  {
+    title: ORCA_TITLE,
+    imageSrc: "/assets/orca/card.jpg",
+    previewText: ORCA_CARD_PREVIEW,
+    href: "/waffling/orca",
     opacity: 1,
     taperedRim: true,
   },

@@ -1,4 +1,8 @@
 import type { jsPDF } from "jspdf";
+import {
+  BUTTER_CHICKEN_INTRO_P1,
+  BUTTER_CHICKEN_INTRO_P2,
+} from "@/data/waffling-article-copy";
 import { CONTACT_EMAIL } from "@/lib/contactEmail";
 
 /** Shareable URL that opens the recipe page (`/butter-chicken`). */
@@ -59,8 +63,8 @@ export async function downloadButterChickenRecipePdf(): Promise<void> {
   y += 30;
 
   const paragraphs: string[] = [
-    `A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.`,
-    `Before you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.`,
+    BUTTER_CHICKEN_INTRO_P1,
+    BUTTER_CHICKEN_INTRO_P2,
     `Email me a photo if you make this, please: ${CONTACT_EMAIL}`,
   ];
 

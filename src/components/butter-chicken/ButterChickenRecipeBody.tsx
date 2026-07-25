@@ -12,6 +12,10 @@ import {
   buildButterChickenRecipeShareUrl,
   downloadButterChickenRecipePdf,
 } from "@/lib/butterChickenRecipePdf";
+import {
+  BUTTER_CHICKEN_INTRO_P1,
+  BUTTER_CHICKEN_INTRO_P2,
+} from "@/data/waffling-article-copy";
 import { cn } from "@/lib/utils";
 
 /** Same spine as `HOME_COLUMN` but slightly tighter side gutters inside the modal sheet. */
@@ -533,7 +537,7 @@ export function ButterChickenRecipeBody() {
 
       {/* Intro */}
       <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">
-        {`A few people have asked me for my Butter Chicken Recipe and I don't know where else to put it, so why not here.`}
+        {BUTTER_CHICKEN_INTRO_P1}
       </p>
 
       {/* Reference photos */}
@@ -576,7 +580,7 @@ export function ButterChickenRecipeBody() {
 
       {/* Second intro paragraph */}
       <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">
-        {`Before you read the ingredients, note that this is a vibes-based recipe: the ingredients are correct, but the amounts may vary. Increase the Kashmiri red chili powder if you want more heat, and if anything doesn't taste right, it's usually salt or butter. The key insight I've learned on my butter chicken journey is that the taste scales linearly with how much butter you put in it.`}
+        {BUTTER_CHICKEN_INTRO_P2}
       </p>
 
       <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">

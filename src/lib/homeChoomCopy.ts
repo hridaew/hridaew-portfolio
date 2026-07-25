@@ -105,6 +105,11 @@ export const CHOOM_WAFFLINGS: {
     preview: "Forged chrome from a gonk routine — preem side gig, choom.",
   },
   {
+    title: "Saving Baby J — arcade throw, boat sink, calf free",
+    preview:
+      "Walk-up arcade: hurl orca plushies at a hit board, crack the boat, spring Baby J. Preem museum chrome, choom.",
+  },
+  {
     title: "Experiment — claws on the smart slab",
     preview:
       "Smart slabs answer then forget — stateless ghosts. I’m wiring persistent memory so the box holds your thoughts like gear, not gomi.",

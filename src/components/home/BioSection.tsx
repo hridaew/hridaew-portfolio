@@ -65,7 +65,9 @@ export function BioSection() {
         <>
           <p className="m-0">
             I&apos;m a Product Designer obsessed with making, and I have 6 years of
-            experience doing it.
+            experience designing for interaction models that barely exist yet. I
+            focus on the user and learn by making, whether on the canvas, in
+            code, or the physical world.
           </p>
           <p className="m-0">
             I&apos;ve designed features that help people understand their homes at{" "}
@@ -77,11 +79,6 @@ export function BioSection() {
             tangible, accessible experiences for people living with
             Alzheimer&apos;s at the{" "}
             <BioProjectAnchor slug="memory-care">SFCJL</BioProjectAnchor>.
-          </p>
-          <p className="m-0">
-            Most of it has meant designing for interaction models that barely
-            exist yet. I focus on the user and learn by making, whether on the
-            canvas, in code, or the physical world.
           </p>
         </>
       )}

@@ -33,13 +33,13 @@ export interface HomepageProject {
 export const homepageProjects: HomepageProject[] = [
   {
     slug: "domis",
-    title: "Designing an AI-powered home maintenance app",
+    title: "Designing Domis, a home maintenance app that learns your home as you use it",
     description:
-      "Leveraging AI to make the inventory and task tracking experience a joy rather than a pain.",
+      "Building Domis from zero, including how it learns a house from an address, a photo, and an inspection report. Making the most of the smallest action a user will take.",
     bgColor: "#ff5a5b",
     orbColor1: "rgba(211,153,153,0.6)",
     orbColor2: "rgba(255,37,37,0.8)",
-    contextTags: ["Consumer App", "AI"],
+    contextTags: ["Consumer App", "AI", "0 to 1"],
     cards: [
       {
         imageSrc: "/assets/home/domis-card1-tasks-composite.png",

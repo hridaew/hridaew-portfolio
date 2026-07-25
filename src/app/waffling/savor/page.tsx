@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { SavorWafflingBody } from "@/components/savor/SavorWafflingBody";
 import { WafflingEntrance } from "@/components/shared/WafflingEntrance";
 import { PostPill } from "@/components/shared/PostPill";
+import { SAVOR_OPENING, SAVOR_TITLE } from "@/data/waffling-article-copy";
 
-const savorTitle = "Savor: Video to 3D model tool";
-const savorDescription =
-  "Savor turns a phone video of an object into a photoreal 3D Gaussian splat, cleaned and explorable, running locally on your Mac.";
+/** Meta stays on the first paragraph, not the full overflow card preview. */
+const savorDescription = SAVOR_OPENING;
 const savorUrl = "https://hridaew.com/waffling/savor";
 const savorOgImage = {
   url: "/assets/savor/og.jpg",
@@ -15,10 +15,10 @@ const savorOgImage = {
 };
 
 export const metadata: Metadata = {
-  title: savorTitle,
+  title: SAVOR_TITLE,
   description: savorDescription,
   openGraph: {
-    title: savorTitle,
+    title: SAVOR_TITLE,
     description: savorDescription,
     url: savorUrl,
     type: "article",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: savorTitle,
+    title: SAVOR_TITLE,
     description: savorDescription,
     images: [savorOgImage.url],
   },
@@ -38,7 +38,7 @@ export default function SavorWafflingPage() {
       <WafflingEntrance>
         <SavorWafflingBody />
       </WafflingEntrance>
-      <PostPill title="Savor" />
+      <PostPill title={SAVOR_TITLE} />
     </main>
   );
 }
