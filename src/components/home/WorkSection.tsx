@@ -84,11 +84,11 @@ function ProjectTitleLink({
         playClick();
         transitionTo(href);
       }}
-      className="group inline-flex min-w-0 max-w-full items-center gap-2 rounded-sm font-[family-name:var(--font-geist)] text-base font-bold leading-normal text-white transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0e]"
+      className="group relative inline-flex min-w-0 max-w-full items-center rounded-sm font-[family-name:var(--font-geist)] text-base font-bold leading-normal text-white transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0e]"
     >
-      <span className="min-w-0 text-balance">{label}</span>
+      <span className="min-w-0">{label}</span>
       <ArrowRight
-        className="size-[1.05rem] shrink-0 -translate-x-1.5 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+        className="pointer-events-none absolute top-1/2 left-full ml-2 size-[1.05rem] shrink-0 -translate-x-1.5 -translate-y-1/2 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
         aria-hidden
         strokeWidth={2.25}
       />
