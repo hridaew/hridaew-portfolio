@@ -132,16 +132,17 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
   const onHomePointerMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       const el = homeRootRef.current;
+      const left = leftPaneRef.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
-      const midX = r.left + r.width / 2;
-      const rightW = Math.max(1, r.width / 2);
+      const splitX = left ? left.getBoundingClientRect().right : r.left + r.width / 2;
+      const rightW = Math.max(1, r.right - splitX);
       const h = Math.max(1, r.height);
-      if (e.clientX < midX) {
+      if (e.clientX < splitX) {
         el.style.setProperty("--home-dot-heat", "0");
         return;
       }
-      const x = Math.min(100, Math.max(0, ((e.clientX - midX) / rightW) * 100));
+      const x = Math.min(100, Math.max(0, ((e.clientX - splitX) / rightW) * 100));
       const y = Math.min(100, Math.max(0, ((e.clientY - r.top) / h) * 100));
       el.style.setProperty("--home-dot-x", `${x}%`);
       el.style.setProperty("--home-dot-y", `${y}%`);
@@ -166,7 +167,7 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
       onPointerLeave={onHomePointerLeave}
     >
       <div
-        className="pointer-events-none absolute inset-y-0 left-1/2 right-0 -z-10 overflow-hidden"
+        className="home-split-right-mesh pointer-events-none absolute inset-y-0 right-0 -z-10 overflow-hidden"
         aria-hidden
       >
         <div className="home-page-dot-mesh absolute inset-0" />
@@ -175,7 +176,7 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
 
       <ObscuraLiquidGlassFilterSvg />
 
-      <div className="relative z-[1] grid h-full min-h-0 w-full grid-cols-2">
+      <div className="home-split-grid relative z-[1] grid h-full min-h-0 w-full">
         <div
           ref={leftPaneRef}
           data-home-pane="left"
@@ -310,14 +311,35 @@ function StackHome({ revealMotion }: { revealMotion: boolean }) {
   );
 }
 
+function HomeShell({
+  layoutMode,
+  revealMotion,
+}: {
+  layoutMode: HomeLayoutMode;
+  revealMotion: boolean;
+}) {
+  return layoutMode === "split" ? (
+    <SplitHome revealMotion={revealMotion} />
+  ) : (
+    <StackHome revealMotion={revealMotion} />
+  );
+}
+
 export function HomePage() {
   const layoutMode = useHomeLayoutMode();
   const reduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
   const [hasSwitchedLayout, setHasSwitchedLayout] = useState(false);
   const prevModeRef = useRef<HomeLayoutMode | null>(null);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     if (prevModeRef.current === null) {
+      // Lock the real client mode — do not treat SSR→client as a switch.
       prevModeRef.current = layoutMode;
       return;
     }
@@ -325,10 +347,20 @@ export function HomePage() {
       prevModeRef.current = layoutMode;
       setHasSwitchedLayout(true);
     }
-  }, [layoutMode]);
+  }, [layoutMode, mounted]);
+
+  // Avoid SSR stack → client split flash that kills RevealOnLoad.
+  if (!mounted) {
+    return <div className="min-h-dvh w-full bg-paper" aria-hidden />;
+  }
 
   const revealMotion = !hasSwitchedLayout;
   const fadeDuration = reduceMotion ? 0 : 0.2;
+
+  // First paint: RevealOnLoad only — no shell opacity crossfade.
+  if (!hasSwitchedLayout) {
+    return <HomeShell layoutMode={layoutMode} revealMotion={revealMotion} />;
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -351,11 +383,7 @@ export function HomePage() {
         }}
         className="min-w-0 w-full"
       >
-        {layoutMode === "split" ? (
-          <SplitHome revealMotion={revealMotion} />
-        ) : (
-          <StackHome revealMotion={revealMotion} />
-        )}
+        <HomeShell layoutMode={layoutMode} revealMotion={revealMotion} />
       </motion.div>
     </AnimatePresence>
   );

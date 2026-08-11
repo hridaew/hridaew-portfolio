@@ -1631,11 +1631,21 @@ video.work-gallery-card-video::-webkit-media-controls-enclosure {
 /* ── Home layout: fluid gutters + work-card stage scale ── */
 html[data-home-layout="split"] {
   --home-gutter: clamp(16px, 3.5vw, 104px);
-  /* Right pane ≈ half viewport; card fills column measure */
+  --home-split-left-max: 720px;
+  /* Left is min(720px, 50vw); right gets the rest */
+  --home-split-left: min(var(--home-split-left-max), 50vw);
   --home-work-card-max: min(
     696px,
-    calc(50vw - (var(--home-gutter) * 2) - 12px)
+    calc(100vw - var(--home-split-left) - (var(--home-gutter) * 2) - 12px)
   );
+}
+
+html[data-home-layout="split"] .home-split-grid {
+  grid-template-columns: minmax(0, var(--home-split-left)) minmax(0, 1fr);
+}
+
+html[data-home-layout="split"] .home-split-right-mesh {
+  left: var(--home-split-left);
 }
 
 html[data-home-layout="stack"] {
