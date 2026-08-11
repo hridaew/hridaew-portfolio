@@ -24,6 +24,7 @@ import {
   type ProjectCardData,
 } from "@/data/homepage-projects";
 import { usePageTransition } from "@/components/PageTransition";
+import { useSheetNav } from "@/components/sheet/SheetNav";
 import { playClick } from "@/lib/audio";
 import {
   detectSvgBackdropFilterUrl,
@@ -73,18 +74,21 @@ function ProjectTitleLink({
 }) {
   const href = projectPath(slug);
   const { transitionTo } = usePageTransition();
+  const { prefetchSheet } = useSheetNav();
   const label = displayTitle ?? title;
 
   return (
     <Link
       href={href}
       scroll={false}
+      onPointerEnter={() => prefetchSheet(href)}
+      onFocus={() => prefetchSheet(href)}
       onClick={(e) => {
         e.preventDefault();
         playClick();
         transitionTo(href);
       }}
-      className="group relative inline-flex min-w-0 max-w-full items-center rounded-sm font-[family-name:var(--font-geist)] text-base font-bold leading-normal text-white transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0e]"
+      className="group relative inline-flex min-w-0 max-w-full items-center rounded-sm font-[family-name:var(--font-geist)] text-base font-bold leading-normal text-ink transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--paper)]"
     >
       <span className="min-w-0">{label}</span>
       <ArrowRight
@@ -229,6 +233,7 @@ function GalleryCard({
   fluid?: boolean;
 }) {
   const { transitionTo } = usePageTransition();
+  const { prefetchSheet } = useSheetNav();
   const reduceTapMotion = useReducedMotion();
   const cardTapRef = useRef<{ x: number; y: number } | null>(null);
   const cardShellRef = useRef<HTMLDivElement>(null);
@@ -427,6 +432,10 @@ function GalleryCard({
     cardTapRef.current = { x: e.clientX, y: e.clientY };
   }, []);
 
+  const warmSheet = useCallback(() => {
+    prefetchSheet(projectHref);
+  }, [prefetchSheet, projectHref]);
+
   const onCardPointerUp = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
       const s = cardTapRef.current;
@@ -483,7 +492,7 @@ function GalleryCard({
       role="link"
       tabIndex={0}
       aria-label={`Open case study: ${projectTitle}`}
-      className={`flex shrink-0 snap-center flex-col items-start outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0c0e] ${
+      className={`flex shrink-0 snap-center flex-col items-start outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.24] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--paper)] ${
         mcesFog ? "cursor-mces-gallery-card" : "cursor-pointer"
       } ${fluid ? "w-full min-w-0 gap-4" : "gap-4"}`}
       whileTap={reduceTapMotion ? undefined : { scale: 0.95 }}
@@ -495,6 +504,8 @@ function GalleryCard({
       }}
       onPointerDown={onCardPointerDown}
       onPointerUp={onCardPointerUp}
+      onPointerEnter={warmSheet}
+      onFocus={warmSheet}
       onKeyDown={onCardKeyDown}
     >
       <div
@@ -504,7 +515,9 @@ function GalleryCard({
         }${obscuraLiquidLens && obscuraPointerOver ? " cursor-none" : ""}${
           mcesFog ? " cursor-mces-gallery-card" : ""
         } ${
-          fluid ? "h-auto w-full aspect-[696/392]" : "h-[392px] w-[696px]"
+          fluid
+            ? "h-auto w-full aspect-[696/392]"
+            : "home-work-card-frame"
         }`}
         style={cardShellStyle}
         onPointerEnter={
@@ -527,6 +540,8 @@ function GalleryCard({
             : undefined
         }
       >
+        {/* Desktop: scale 696×392 design stage to the frame (container query). */}
+        <div className={fluid ? "contents" : "home-work-card-stage"}>
         {/*
           Decorations (orbs, optional Domis dots, optional MCES fog, optional Virdio foil) sit in
           an isolated layer so mix-blend effects only composite with orbs/bg — not with card
@@ -570,9 +585,9 @@ function GalleryCard({
 
           {virdioIridescent && (
             <div className="absolute inset-0 overflow-hidden rounded-2xl">
-              <div className="absolute left-1/2 top-1/2 h-[210%] w-[210%] -translate-x-1/2 -translate-y-1/2 transition-[transform] duration-500 ease-out group-hover/virdio-card:scale-[1.05]">
+              <div className="absolute left-1/2 top-1/2 h-[210%] w-[210%] -translate-x-1/2 -translate-y-1/2 transition-[transform] duration-150 ease-out group-hover/virdio-card:scale-[1.05]">
                 <div
-                  className="virdio-iridescent-foil h-full w-full opacity-[0.42] transition-opacity duration-300 ease-out group-hover/virdio-card:opacity-[0.64] mix-blend-soft-light blur-3xl"
+                  className="virdio-iridescent-foil h-full w-full opacity-[0.42] transition-opacity duration-150 ease-out group-hover/virdio-card:opacity-[0.64] mix-blend-soft-light blur-3xl"
                   style={{
                     background:
                       "conic-gradient(from 0deg at var(--virdio-foil-x, 50%) var(--virdio-foil-y, 50%), rgba(230, 210, 255, 0.42), rgba(120, 200, 255, 0.36), rgba(255, 175, 235, 0.34), rgba(165, 250, 225, 0.28), rgba(210, 175, 255, 0.4), rgba(230, 210, 255, 0.42))",
@@ -639,7 +654,7 @@ function GalleryCard({
 
           {/* Dev note for future video swap — inside media layer so it never stacks above art */}
           {card.videoNote && (
-            <p className="absolute left-1/2 -translate-x-1/2 top-1/2 font-[family-name:var(--font-geist-mono)] text-xs text-white uppercase whitespace-nowrap pointer-events-none opacity-0">
+            <p className="absolute left-1/2 -translate-x-1/2 top-1/2 font-[family-name:var(--font-geist-mono)] text-xs text-ink uppercase whitespace-nowrap pointer-events-none opacity-0">
               {card.videoNote}
             </p>
           )}
@@ -655,10 +670,10 @@ function GalleryCard({
             <div
               className={
                 obscuraSvgBackdrop
-                  ? "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
+                  ? "rounded-full border border-ink/[0.096] shadow-[0_4px_12px_rgb(var(--ink-rgb)/0.1),0_16px_48px_rgb(var(--ink-rgb)/0.18)] ring-1 ring-ink/[0.06] will-change-transform"
                   : obscuraSafariReticle
                     ? "rounded-full will-change-transform obscura-liquid-lens-reticle"
-                    : "rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform obscura-liquid-lens-fallback"
+                    : "rounded-full border border-ink/[0.096] shadow-[0_4px_12px_rgb(var(--ink-rgb)/0.1),0_16px_48px_rgb(var(--ink-rgb)/0.18)] ring-1 ring-ink/[0.06] will-change-transform obscura-liquid-lens-fallback"
               }
               style={{
                 width: OBSCURA_LIQUID_GLASS_LENS_PX,
@@ -680,9 +695,10 @@ function GalleryCard({
             x={obscuraLens.x}
             y={obscuraLens.y}
             mediaEl={mediaRef.current}
-            containerSelector=".relative.shrink-0.overflow-clip.rounded-2xl"
+            containerSelector=".home-work-card-frame, .relative.shrink-0.overflow-clip.rounded-2xl"
           />
         )}
+        </div>
       </div>
 
       {/* Caption — 16px inset; select-text so drag on carousel does not block copying caption */}
@@ -690,7 +706,7 @@ function GalleryCard({
         className={`${fluid ? "pl-0" : HOME_CARD_CAPTION_PAD} select-text`}
         data-carousel-allow-select
       >
-        <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50">
+        <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-ink-muted">
           {captionOverride ?? card.caption}
         </p>
       </div>
@@ -712,7 +728,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
       className="flex w-full scroll-mt-[88px] flex-col items-stretch gap-8"
     >
       {/* Title + description — same left spine as Bio / Toolkit (parent HOME_COLUMN padding) */}
-      <div className="flex w-full flex-col gap-4 text-white/80">
+      <div className="flex w-full flex-col gap-4 text-ink-secondary">
         <ProjectTitleLink
           slug={project.slug}
           title={project.title}
@@ -729,7 +745,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
           >
             {project.contextTags?.map((tag) => (
               <li key={tag}>
-                <span className="inline-flex rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/70 backdrop-blur-sm">
+                <span className="inline-flex rounded-full border border-ink/[0.12] bg-ink/[0.03] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-ink-secondary backdrop-blur-sm">
                   {tag}
                 </span>
               </li>
@@ -737,7 +753,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
             {project.recognitionChips?.map((chip, i) => (
               <li key={chip.label}>
                 <span
-                  className="inline-flex max-w-full rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-white/80 backdrop-blur-sm"
+                  className="inline-flex max-w-full rounded-full border border-ink/[0.12] bg-ink/[0.03] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[0.8125rem] leading-snug text-ink-secondary backdrop-blur-sm"
                   title={chip.title ?? chip.label}
                   aria-label={chip.title ?? chip.label}
                 >
@@ -755,7 +771,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
               R&amp;D for the MCES, a multi-modal interactive installation by{" "}
               <a
                 href="https://www.mortatidesign.com/projects/memory-care-experience-station"
-                className="underline decoration-solid text-inherit hover:text-white"
+                className="underline decoration-solid text-inherit hover:text-ink"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -847,7 +863,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
 function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex w-full items-center gap-4">
-      <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50 whitespace-nowrap">
+      <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-ink-muted whitespace-nowrap">
         {label}
       </p>
       <div className="w-[80px] h-px" aria-hidden="true">

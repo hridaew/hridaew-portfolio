@@ -13,7 +13,11 @@ export const WAFFLING_RETURN_Y_KEY = "wafflingReturnY";
 export function rememberHomeScrollForWafflingReturn(): void {
   if (typeof window === "undefined") return;
   try {
-    sessionStorage.setItem(WAFFLING_RETURN_Y_KEY, String(window.scrollY));
+    const rightPane = document.querySelector<HTMLElement>(
+      '[data-home-pane="right"]',
+    );
+    const y = rightPane ? rightPane.scrollTop : window.scrollY;
+    sessionStorage.setItem(WAFFLING_RETURN_Y_KEY, String(y));
   } catch {
     // sessionStorage may be unavailable in privacy modes; navigation still works.
   }
@@ -59,6 +63,16 @@ export function getHomeWafflingsSection(): HTMLElement | null {
 export function scrollHomeWafflingsIntoView(options: { immediate?: boolean } = {}): boolean {
   const el = getHomeWafflingsSection();
   if (!el) return false;
+  const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
+  if (pane) {
+    const paneTop = pane.getBoundingClientRect().top;
+    const elTop = el.getBoundingClientRect().top;
+    pane.scrollTo({
+      top: Math.max(0, pane.scrollTop + (elTop - paneTop) - 80),
+      behavior: options.immediate === false ? "smooth" : "auto",
+    });
+    return true;
+  }
   const immediate = options.immediate !== false;
   const lenis = getLenis();
   if (lenis) {

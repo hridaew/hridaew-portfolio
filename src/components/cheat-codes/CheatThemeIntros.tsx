@@ -44,7 +44,7 @@ function SkipButton({ onClick, variant = "light" }: { onClick: () => void; varia
     <button
       type="button"
       onClick={onClick}
-      className="rounded border border-white/30 bg-black/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-white/90 backdrop-blur-sm transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+      className="rounded border border-ink/[0.24] bg-black/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-ink backdrop-blur-sm transition-colors hover:bg-ink/[0.05] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.4]"
     >
       Skip
     </button>
@@ -108,7 +108,7 @@ export function Theme2004Intro({ onComplete, onSkip, theme }: IntroBaseProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="cheat-2004-title"
-      className={`pointer-events-auto fixed inset-0 flex min-h-dvh items-center justify-center bg-[#245edc] p-4 font-mono text-sm text-white ${PORTAL_Z}`}
+      className={`pointer-events-auto fixed inset-0 flex min-h-dvh items-center justify-center bg-[#245edc] p-4 font-mono text-sm text-ink ${PORTAL_Z}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(180deg,transparent_0_2px,rgba(0,0,0,0.04)_2px_4px)]" />
       <div className="absolute right-4 top-4 z-[2]">
@@ -118,7 +118,7 @@ export function Theme2004Intro({ onComplete, onSkip, theme }: IntroBaseProps) {
         className="relative z-[1] w-full max-w-lg border border-[#0a246a] bg-[#ece9d8] text-black shadow-[inset_1px_1px_0_#fff,inset_-1px_-1px_0_#aca899,2px_2px_8px_rgba(0,0,0,0.35)]"
         style={{ borderRadius: 0 }}
       >
-        <div className="flex items-center justify-between border-b border-[#0a246a] bg-gradient-to-b from-[#245edc] to-[#1941a5] px-2 py-1 text-xs font-bold text-white">
+        <div className="flex items-center justify-between border-b border-[#0a246a] bg-gradient-to-b from-[#245edc] to-[#1941a5] px-2 py-1 text-xs font-bold text-ink">
           <span id="cheat-2004-title" className="select-none">
             Theme Pack Setup
           </span>
@@ -134,7 +134,7 @@ export function Theme2004Intro({ onComplete, onSkip, theme }: IntroBaseProps) {
               <span className="flex h-[14px] w-[15px] items-center justify-center border border-[#0a246a] bg-[#2b6bd6] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
                 □
               </span>
-              <span className="flex h-[14px] w-[15px] items-center justify-center border border-[#0a246a] bg-[#c75050] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
+              <span className="flex h-[14px] w-[15px] items-center justify-center border border-[#0a246a] bg-[#c75050] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
                 ×
               </span>
             </span>

@@ -19,6 +19,8 @@ export function HeroTextAnimation({
     delay = 0.2,
 }: HeroTextAnimationProps) {
     const containerRef = useRef<HTMLDivElement>(null);
+    // JSX whitespace / `{" "}` can make `children` a non-string at runtime.
+    const text = typeof children === "string" ? children : String(children ?? "");
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -105,7 +107,7 @@ export function HeroTextAnimation({
 
     // For typewriter variant, split by words instead of chars
     if (variant === "typewriter") {
-        const words = children.split(" ");
+        const words = text.split(" ");
         return (
             <div ref={containerRef} className={`overflow-hidden ${className}`}>
                 {words.map((word, i) => (
@@ -118,7 +120,7 @@ export function HeroTextAnimation({
     }
 
     // Split into characters, preserving spaces
-    const chars = children.split("");
+    const chars = text.split("");
 
     return (
         <div ref={containerRef} className={`overflow-hidden ${className}`}>

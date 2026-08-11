@@ -25,8 +25,6 @@ export const CHOOM = {
     "Half a decade on the clock: AR sweat rituals at Virdio, full-sensory braindance install at OBSCURA for the corpo museum crowd, and haptic rigs for chooms in neural fog — MCES lane, dignity-forward, output you can netrun in meatspace.",
   bioP3:
     "Prints on file: CCA Interaction Design, UW Seattle HCI master — pure scratch on the creds, no gonk noise.",
-  footerBuildNote:
-    "Compiled this NET on Figma shards → Figma Make stack → Claude Code + Cursor + Antigravity — preem toolchain while the eddies held out",
   cheatPlaceholder: "CUT ICE · ENTER RUNTIME CODE",
   cheatConfirm: "EXEC",
   wafflingsSectionLabel: "SIDE CHANNELS · WAFFLESTACK",

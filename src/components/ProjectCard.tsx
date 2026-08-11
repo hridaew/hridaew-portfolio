@@ -260,7 +260,7 @@ export function ProjectCard({
               }}
             >
               <div
-                className={`overflow-hidden relative ${asset.hasBorder ? "border border-white dark:border-[var(--border-card)]" : ""}`}
+                className={`overflow-hidden relative ${asset.hasBorder ? "border border-ink dark:border-[var(--border-card)]" : ""}`}
                 style={{
                   width: asset.width,
                   height: asset.height,

@@ -28,7 +28,7 @@ export function FeatureCard({
         <motion.div
             className={
                 isDark
-                    ? "w-full min-w-0 rounded-2xl overflow-hidden border border-white/10 bg-white/5 flex flex-col"
+                    ? "w-full min-w-0 rounded-2xl overflow-hidden border border-ink/[0.08] bg-ink/[0.025] flex flex-col"
                     : "w-full min-w-0 rounded-2xl overflow-hidden border border-neutral-100 bg-neutral-50 flex flex-col"
             }
             whileHover={{
@@ -43,8 +43,8 @@ export function FeatureCard({
             <div
                 className={
                     isDark
-                        ? "relative flex w-full shrink-0 flex-[0_0_auto] items-stretch justify-center bg-white/5 p-0 border-b border-white/10"
-                        : "relative flex w-full shrink-0 flex-[0_0_auto] items-stretch justify-center bg-white p-0 border-b border-neutral-200"
+                        ? "relative flex w-full shrink-0 flex-[0_0_auto] items-stretch justify-center bg-ink/[0.025] p-0 border-b border-ink/[0.08]"
+                        : "relative flex w-full shrink-0 flex-[0_0_auto] items-stretch justify-center bg-paper-raised p-0 border-b border-neutral-200"
                 }
             >
                 {hasImage ? (
@@ -59,8 +59,8 @@ export function FeatureCard({
                         loading="lazy"
                     />
                 ) : (
-                    <div className={isDark ? "absolute inset-0 flex items-center justify-center border-b border-dashed border-white/10" : "absolute inset-0 flex items-center justify-center border-b border-dashed border-neutral-200"}>
-                        <span className={isDark ? "site-body text-white/25 text-left" : "site-body text-neutral-300 text-left"}>
+                    <div className={isDark ? "absolute inset-0 flex items-center justify-center border-b border-dashed border-ink/[0.08]" : "absolute inset-0 flex items-center justify-center border-b border-dashed border-neutral-200"}>
+                        <span className={isDark ? "site-body text-ink-subtle text-left" : "site-body text-ink-secondary text-left"}>
                             Screenshot coming
                         </span>
                     </div>
@@ -69,10 +69,10 @@ export function FeatureCard({
 
             {/* Text */}
             <div className="p-5 md:p-6 flex flex-col flex-1">
-                <h3 className={isDark ? "site-subheading text-white mb-2 text-left" : "site-subheading text-neutral-900 mb-2 text-left"}>
+                <h3 className={isDark ? "site-subheading text-ink mb-2 text-left" : "site-subheading text-neutral-900 mb-2 text-left"}>
                     {title}
                 </h3>
-                <p className={isDark ? "site-body text-white/65 text-left" : "site-body text-neutral-500 text-left"}>
+                <p className={isDark ? "site-body text-ink-muted text-left" : "site-body text-ink-muted text-left"}>
                     {description}
                 </p>
             </div>

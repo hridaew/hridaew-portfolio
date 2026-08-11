@@ -3,12 +3,12 @@
 .domis-live.chp {
   --chp-bg: #f7f7f7;
   --chp-surface: #ffffff;
-  --chp-ink: #525252;
-  --chp-muted: #818181;
-  --chp-faint: #c8c8c8;
-  --chp-line: #efefef;
-  --chp-line-soft: #e5e5e5;
-  --chp-manual-bg: #f3f4f6;
+  --chp-ink: #2f2f2f;
+  --chp-muted: #5c5c5c;
+  --chp-faint: #8a8a8a;
+  --chp-line: #e4e4e4;
+  --chp-line-soft: #d8d8d8;
+  --chp-manual-bg: #eceef1;
   --chp-accent: #005750;
   --chp-accent-fill: rgba(0, 87, 80, 0.4);
   --chp-font: var(--font-domis-outfit), system-ui, sans-serif;
@@ -50,7 +50,7 @@
   background: var(--chp-bg);
   border: 1px solid #fff;
   border-radius: 32px;
-  box-shadow: -1px 2px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
   overflow: hidden;
 }
 
@@ -102,7 +102,7 @@
   background: var(--chp-surface);
   border: 1px solid var(--chp-line);
   border-radius: var(--chp-radius-field);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-1);
 }
 
 .domis-live.chp .chp-search[data-focused="true"] {
@@ -191,8 +191,19 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  opacity: 0.45;
+  /* Dim via tokens, not whole-subtree opacity — opacity washed labels to near-white. */
+  opacity: 1;
   transition: opacity 0.45s ease;
+}
+
+.domis-live.chp .chp-manual[data-emphasized="false"] .chp-manual-label,
+.domis-live.chp .chp-manual[data-emphasized="false"] .chp-field-label {
+  color: var(--chp-faint);
+}
+
+.domis-live.chp .chp-manual[data-emphasized="false"] .chp-input {
+  background: #f3f4f6;
+  color: var(--chp-faint);
 }
 
 .domis-live.chp .chp-manual[data-emphasized="true"] {

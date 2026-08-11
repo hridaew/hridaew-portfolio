@@ -1,9 +1,9 @@
 /* Key-challenge constraint diagram — two cards, no outer shell */
 
 .dcd {
-  --dcd-bg: #f7f7f7;
-  --dcd-ink: #1a1c1e;
-  --dcd-muted: #818181;
+  --dcd-bg: var(--paper-sunken);
+  --dcd-ink: var(--ink);
+  --dcd-muted: var(--ink-muted);
   --dcd-font: var(--font-domis-outfit), system-ui, sans-serif;
 
   box-sizing: border-box;
@@ -30,11 +30,11 @@
   min-height: 16rem;
   padding: 1.75rem 1.6rem;
   background: var(--dcd-bg);
-  border: 0;
+  border: 1px solid rgb(var(--ink-rgb) / 0.1);
   border-radius: 18px;
   box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.05);
+    0 1px 2px rgb(var(--ink-rgb) / 0.04),
+    0 4px 14px rgb(var(--ink-rgb) / 0.05);
 }
 
 .domis-cs .dcd .dcd-eyebrow {
@@ -80,6 +80,7 @@
   height: 1.15rem;
   background: none;
   border-radius: 0;
+  color: var(--dcd-muted);
 }
 
 .dcd .dcd-label {
@@ -96,36 +97,38 @@
   justify-content: center;
   align-self: stretch;
   width: 2.75rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgb(var(--ink-rgb) / 0.35);
 }
 
-/* De-themed on dark case-study figures (no coral frame, no outer shell) */
+/* Inside case-study figures / boards — same light paper read */
 .domis-cs figure.dcs-ux-figure .dcd .dcd-col,
 .dud-board.dcd-board .dcd .dcd-col {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: none;
-  color: rgba(255, 255, 255, 0.88);
+  background: var(--paper-raised);
+  border: 1px solid rgb(var(--ink-rgb) / 0.1);
+  box-shadow:
+    0 1px 2px rgb(var(--ink-rgb) / 0.04),
+    0 4px 14px rgb(var(--ink-rgb) / 0.05);
+  color: var(--ink);
 }
 
 .domis-cs figure.dcs-ux-figure .dcd .dcd-eyebrow,
 .dud-board.dcd-board .dcd .dcd-eyebrow {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--ink-muted);
 }
 
 .domis-cs figure.dcs-ux-figure .dcd .dcd-label,
 .dud-board.dcd-board .dcd .dcd-label {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
 }
 
 .domis-cs figure.dcs-ux-figure .dcd .dcd-gap,
 .dud-board.dcd-board .dcd .dcd-gap {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgb(var(--ink-rgb) / 0.35);
 }
 
 .domis-cs figure.dcs-ux-figure .dcd .dcd-icon,
 .dud-board.dcd-board .dcd .dcd-icon {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--ink-muted);
 }
 
 .domis-cs figure.dcs-ux-figure .dcd .dcd-col {

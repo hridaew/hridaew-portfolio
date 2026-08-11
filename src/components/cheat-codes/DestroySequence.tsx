@@ -315,7 +315,7 @@ export function DestroySequence() {
             <button
               type="button"
               onClick={skipPrelude}
-              className="rounded border border-white/20 bg-white/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-white/90 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="rounded border border-ink/[0.16] bg-ink/[0.05] px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-ink hover:bg-ink/[0.075] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.32]"
             >
               Skip
             </button>
@@ -358,7 +358,7 @@ export function DestroySequence() {
           )}
           {phase === "shake" && (
             <div className="pointer-events-none fixed left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2">
-              <div className="rounded-xl bg-red-600/90 px-8 py-4 text-center text-white shadow-lg">
+              <div className="rounded-xl bg-red-600/90 px-8 py-4 text-center text-ink shadow-lg">
                 <p className="type-h1 tabular-nums font-mono leading-none">{countdown}</p>
               </div>
             </div>
@@ -380,16 +380,16 @@ function DestroyDoneScreen() {
   const stamp = useMemo(() => new Date().toISOString(), []);
 
   return (
-    <div className="pointer-events-auto fixed inset-0 flex min-h-dvh flex-col items-center justify-center gap-5 bg-white px-4">
-      <div className="max-w-md text-center font-mono text-[10px] uppercase leading-relaxed text-neutral-500">
+    <div className="pointer-events-auto fixed inset-0 flex min-h-dvh flex-col items-center justify-center gap-5 bg-paper-raised px-4">
+      <div className="max-w-md text-center font-mono text-[10px] uppercase leading-relaxed text-ink-muted">
         <p className="tracking-[0.2em]">Post-incident summary (internal)</p>
-        <p className="mt-1 text-neutral-400">
-          <span className="text-neutral-600">Case</span> {incidentId}
+        <p className="mt-1 text-ink-muted">
+          <span className="text-ink-subtle">Case</span> {incidentId}
         </p>
         <p className="mt-0.5">
-          <span className="text-neutral-600">Timestamp</span> {stamp}
+          <span className="text-ink-subtle">Timestamp</span> {stamp}
         </p>
-        <p className="mt-2 text-[9px] normal-case leading-snug text-neutral-400">
+        <p className="mt-2 text-[9px] normal-case leading-snug text-ink-muted">
           Outcome: operator invoked “destroy” on a personal site. No databases were harmed.
         </p>
       </div>
@@ -407,11 +407,11 @@ function DestroyDoneScreen() {
           🐹
         </span>
       )}
-      <p className="max-w-sm text-center text-lg text-neutral-600">why would you do that</p>
+      <p className="max-w-sm text-center text-lg text-ink-subtle">why would you do that</p>
       <button
         type="button"
         onClick={() => window.location.reload()}
-        className="mt-4 rounded-full border border-neutral-300 px-4 py-2 text-sm text-neutral-500 opacity-0 transition-colors hover:bg-neutral-100 animate-[destroyReloadFade_0.3s_ease_2.5s_forwards]"
+        className="mt-4 rounded-full border border-neutral-300 px-4 py-2 text-sm text-ink-muted opacity-0 transition-colors hover:bg-neutral-100 animate-[destroyReloadFade_0.3s_ease_2.5s_forwards]"
       >
         reload
       </button>

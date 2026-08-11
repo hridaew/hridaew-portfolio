@@ -73,25 +73,25 @@ const MarketComparison = ({ className }: { className?: string }) => {
                             "rounded-xl border p-5 md:p-6 text-left flex flex-col items-start gap-3",
                             c.highlighted
                                 ? "bg-violet-500/10 border-violet-400/35"
-                                : "bg-white/[0.04] border-white/10"
+                                : "bg-ink/[0.02] border-ink/[0.08]"
                         )}
                     >
                         <div className={cn(
                             "w-10 h-10 flex items-center justify-center",
-                            c.highlighted ? "text-violet-300" : "text-white/40"
+                            c.highlighted ? "text-violet-700" : "text-ink-subtle"
                         )}>
                             {c.icon}
                         </div>
                         <div>
                             <p className={cn(
                                 "type-body",
-                                c.highlighted ? "text-violet-200" : "text-white"
+                                c.highlighted ? "text-violet-900" : "text-ink"
                             )}>
                                 {c.name}
                             </p>
                             <p className={cn(
                                 "type-caption mt-0.5",
-                                c.highlighted ? "text-violet-300/90" : "text-white/45"
+                                c.highlighted ? "text-violet-700/85" : "text-ink-subtle"
                             )}>
                                 {c.detail}
                             </p>

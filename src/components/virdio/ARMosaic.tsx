@@ -32,7 +32,7 @@ const GALLERY_IMAGES = [...GALLERY_IMAGES_UNSORTED].sort((a, b) =>
 
 /** Same horizontal gallery as home project cards: Embla + wheel/trackpad, drag-free inertia. */
 const SLIDE_SHELL =
-  "relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-[0px_4px_24px_0px_rgba(0,0,0,0.45)] aspect-[696/392] w-[min(696px,calc(100vw-2rem))]";
+  "relative overflow-hidden rounded-2xl border border-ink/[0.08] bg-paper-sunken shadow-[0_1px_2px_rgb(43_42_39/0.04),0_4px_14px_rgb(43_42_39/0.06)] aspect-[696/392] w-[min(696px,calc(100vw-2rem))]";
 
 interface ARMosaicProps {
   className?: string;
@@ -46,7 +46,7 @@ export function ARMosaic({ className }: ARMosaicProps) {
     >
       <div className={SITE_COLUMN}>
         <div className="mb-6 w-full min-w-0 text-left md:mb-8">
-          <p className="site-label text-left text-white/40">The AR Exercise Library</p>
+          <p className="site-label text-left text-ink-subtle">The AR Exercise Library</p>
         </div>
 
         <ProjectCarousel className={HOME_PROJECT_EMBLA_VIEWPORT}>

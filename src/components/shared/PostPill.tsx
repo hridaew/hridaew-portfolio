@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CaseStudyCloseControl } from "@/components/virdio/CloseButton";
 import { cn } from "@/lib/utils";
 import {
@@ -11,11 +11,16 @@ import {
 
 export function PostPill({ title, onClose }: { title: string; onClose?: () => void }) {
   const [visible, setVisible] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 650);
     return () => clearTimeout(t);
   }, []);
+
+  const enterExit = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.28, ease: [0.25, 1, 0.5, 1] as const };
 
   return (
     <AnimatePresence>
@@ -24,7 +29,7 @@ export function PostPill({ title, onClose }: { title: string; onClose?: () => vo
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+          transition={enterExit}
           className="fixed bottom-6 left-1/2 z-50 isolate -translate-x-1/2"
           style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         >
@@ -54,4 +59,3 @@ export function PostPill({ title, onClose }: { title: string; onClose?: () => vo
     </AnimatePresence>
   );
 }
-

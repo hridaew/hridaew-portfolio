@@ -223,7 +223,7 @@ export function AnimatedCard({
         />
         <div
           aria-hidden="true"
-          className="absolute border-[3px] border-solid border-white inset-0 rounded-[clamp(20px,14.06px+1.524vw,36px)] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
+          className="absolute border-[3px] border-solid border-ink inset-0 rounded-[clamp(20px,14.06px+1.524vw,36px)] shadow-[0px_24px_64px_0px_rgba(0,0,0,0.15)] pointer-events-none"
         />
 
       </motion.div>

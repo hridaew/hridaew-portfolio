@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { gridProjects } from "@/data/project-grid";
 import { usePageTransition } from "@/components/PageTransition";
 import { playClick } from "@/lib/audio";
@@ -22,6 +22,7 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
   const [atEnd, setAtEnd] = useState(false);
   const [visible, setVisible] = useState(false);
   const pillRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   const currentIndex = gridProjects.findIndex((p) => p.slug === projectSlug);
   const current = gridProjects[currentIndex];
@@ -51,6 +52,14 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
     transitionTo(next.href);
   };
 
+  const enterExit = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.28, ease: [0.25, 1, 0.5, 1] as const };
+  // mode="wait" nearly doubles perceived time — keep each leg at 0.12s
+  const labelSwap = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.12, ease: [0.25, 1, 0.5, 1] as const };
+
   return (
     <AnimatePresence>
       {visible && (
@@ -59,7 +68,7 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          transition={enterExit}
           className="fixed bottom-6 left-1/2 z-50 isolate -translate-x-1/2"
           style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         >
@@ -77,8 +86,12 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
                 "flex h-11 min-h-11 items-center gap-2 px-5",
                 atEnd ? "cursor-pointer" : "cursor-default"
               )}
-              transition={{ layout: { duration: 0.35, ease: [0.25, 1, 0.5, 1] } }}
-              whileTap={atEnd ? { scale: 0.97 } : undefined}
+              transition={{
+                layout: reduceMotion
+                  ? { duration: 0 }
+                  : { duration: 0.25, ease: [0.25, 1, 0.5, 1] },
+              }}
+              whileTap={atEnd && !reduceMotion ? { scale: 0.97 } : undefined}
             >
               <AnimatePresence mode="wait" initial={false}>
                 {atEnd ? (
@@ -87,7 +100,7 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
                     initial={{ opacity: 0, filter: "blur(4px)" }}
                     animate={{ opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, filter: "blur(4px)" }}
-                    transition={{ duration: 0.25 }}
+                    transition={labelSwap}
                     className={cn(
                       caseStudyFloatForeground,
                       "flex items-center gap-2 whitespace-nowrap"
@@ -117,7 +130,7 @@ export function CaseStudyPill({ projectSlug }: CaseStudyPillProps) {
                     initial={{ opacity: 0, filter: "blur(4px)" }}
                     animate={{ opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, filter: "blur(4px)" }}
-                    transition={{ duration: 0.25 }}
+                    transition={labelSwap}
                     className={cn(caseStudyFloatForeground, "whitespace-nowrap")}
                   >
                     {current.title}

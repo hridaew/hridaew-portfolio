@@ -200,10 +200,10 @@ export function PunchBag({ className }: PunchBagProps) {
 
         {/* PPM Meter */}
         <div className="flex flex-col items-center gap-2 pb-2">
-          <span className="type-caption-medium uppercase text-white/40 text-left">
+          <span className="type-caption-medium uppercase text-ink-subtle text-left">
             PPM
           </span>
-          <div className="relative w-5 h-[140px] rounded-full bg-white/10 border border-white/15 overflow-hidden">
+          <div className="relative w-5 h-[140px] rounded-full bg-ink/[0.05] border border-ink/[0.12] overflow-hidden">
             <div
               ref={ppmBarRef}
               className="absolute bottom-0 left-0 w-full rounded-full"
@@ -213,7 +213,7 @@ export function PunchBag({ className }: PunchBagProps) {
               }}
             />
           </div>
-          <span className="type-body text-white/70 tabular-nums text-left">
+          <span className="type-body text-ink-secondary tabular-nums text-left">
             {ppm}
           </span>
         </div>
@@ -221,10 +221,10 @@ export function PunchBag({ className }: PunchBagProps) {
 
       {/* Counter */}
       <div className="flex items-center gap-3">
-        <span className="type-h1 text-white text-left">
+        <span className="type-h1 text-ink text-left">
           {count}
         </span>
-        <span className="type-body text-white/55 text-left">
+        <span className="type-body text-ink-muted text-left">
           {count === 1 ? "punch" : "punches"}
         </span>
       </div>

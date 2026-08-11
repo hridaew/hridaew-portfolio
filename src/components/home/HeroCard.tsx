@@ -58,6 +58,8 @@ const MOTION_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const MOTION_DURATION = 0.4;
 /** Collapsed hero shell height — keeps p-8 bottom margin with the larger avatar. */
 const COLLAPSED_CARD_HEIGHT = 208;
+/** Expanded shell may grow down to the viewport bottom, minus this margin. */
+const EXPANDED_BOTTOM_MARGIN_PX = 32;
 
 /** Opening height tween — `y` bump waits until this finishes (same pattern as close). */
 const OPEN_HEIGHT_DURATION = 0.52;
@@ -310,7 +312,7 @@ function HeroSignatureMark({
             onClick={onReplay}
             aria-label={replayLabel}
             title={replayTitle}
-            className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
+            className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28] focus-visible:ring-offset-2 focus-visible:ring-offset-paper touch-manipulation"
           >
             <motion.img
               key={avatarReplayTick}
@@ -378,10 +380,13 @@ function ExpandToggle({
       onClick={onToggle}
       aria-expanded={isExpanded}
       aria-controls={controlsId}
-      className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-white/[0.03] px-3 transition-colors hover:bg-white/[0.08]"
+      className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-[#1c1c1c]/[0.045] px-3 transition-colors hover:bg-[#1c1c1c]/[0.08]"
       aria-label={isExpanded ? ariaLabelExpanded : ariaLabelCollapsed}
     >
-      <span className="text-[13px] font-medium leading-none text-white/80">
+      <span
+        className="text-[13px] font-medium leading-none"
+        style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}
+      >
         About
       </span>
       <svg
@@ -396,9 +401,9 @@ function ExpandToggle({
           style={{ transformOrigin: "16px 16px" }}
         >
           <motion.path
-            fill="white"
+            fill="#1c1c1c"
             fillOpacity={0.8}
-            style={{ mixBlendMode: "screen" }}
+            style={{ mixBlendMode: "luminosity" }}
             initial={false}
             animate={{
               d: isExpanded
@@ -504,14 +509,23 @@ export function HeroCard() {
   const syncPortalPosition = useCallback(() => {
     const anchor = anchorRef.current;
     const frame = portalFrameRef.current;
+    const shell = cardShellRef.current;
     if (!anchor || !frame) return;
     const r = anchor.getBoundingClientRect();
-    const top = window.scrollY + r.top;
-    const left = window.scrollX + r.left;
     const width = Math.min(r.width, 656);
-    frame.style.top = `${top}px`;
-    frame.style.left = `${left}px`;
+    // `fixed` + viewport coords — works with document scroll and nested home panes.
+    frame.style.position = "fixed";
+    frame.style.top = `${r.top}px`;
+    frame.style.left = `${r.left}px`;
     frame.style.width = `${width}px`;
+    // Cap expanded growth: top stays on the anchor, bottom ≤ viewport − 32px.
+    if (shell) {
+      const maxH = Math.max(
+        COLLAPSED_CARD_HEIGHT,
+        window.innerHeight - r.top - EXPANDED_BOTTOM_MARGIN_PX,
+      );
+      shell.style.maxHeight = `${maxH}px`;
+    }
   }, []);
 
   useEffect(() => {
@@ -531,7 +545,7 @@ export function HeroCard() {
     return undefined;
   }, [isExpanded, syncPortalPosition, isMobile]);
 
-  /** Lock document scroll + Lenis while expanded so only the hero panel scrolls. */
+  /** Lock document / Lenis / home panes while expanded so only the hero panel scrolls. */
   useEffect(() => {
     if (!isExpanded) return;
     const lenis = (
@@ -544,16 +558,34 @@ export function HeroCard() {
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     lenis?.stop();
+    const panes = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-home-pane]"),
+    );
+    const prevPaneOverflow = panes.map((p) => p.style.overflow);
+    panes.forEach((p) => {
+      p.style.overflow = "hidden";
+    });
     return () => {
       document.documentElement.style.overflow = prevHtmlOverflow;
       document.body.style.overflow = prevBodyOverflow;
-      lenis?.start();
+      // Twin-pane home keeps Lenis stopped; don't restart it on collapse.
+      if (!document.querySelector("[data-home-split-panes]")) {
+        lenis?.start();
+      }
+      panes.forEach((p, i) => {
+        p.style.overflow = prevPaneOverflow[i] ?? "";
+      });
     };
   }, [isExpanded]);
 
-  /** Jump to top when expanding so the portaled card anchor isn’t clipped mid-page. */
+  /** Jump scroll parents to top when expanding so the portaled card isn’t clipped. */
   useLayoutEffect(() => {
     if (!isExpanded) return;
+    let node: HTMLElement | null = anchorRef.current;
+    while (node) {
+      if (node.scrollTop > 0) node.scrollTop = 0;
+      node = node.parentElement;
+    }
     window.scrollTo(0, 0);
     (
       window as unknown as {
@@ -587,7 +619,11 @@ export function HeroCard() {
     if (!mounted) return;
     syncPortalPosition();
     window.addEventListener("resize", syncPortalPosition);
-    window.addEventListener("scroll", syncPortalPosition, { passive: true });
+    // Capture: nested pane scroll does not bubble, but fires on the document path.
+    document.addEventListener("scroll", syncPortalPosition, {
+      passive: true,
+      capture: true,
+    });
 
     // RevealOnLoad translates the anchor; transform won't fire ResizeObserver,
     // so re-sync through the reveal and once it settles.
@@ -615,7 +651,7 @@ export function HeroCard() {
 
     return () => {
       window.removeEventListener("resize", syncPortalPosition);
-      window.removeEventListener("scroll", syncPortalPosition);
+      document.removeEventListener("scroll", syncPortalPosition, true);
       cancelAnimationFrame(raf);
       ro?.disconnect();
       lenis?.off("scroll", syncPortalPosition);
@@ -740,8 +776,9 @@ export function HeroCard() {
   /* ── Mobile: static inline card, collapsed only, no portal ── */
   if (isMobile) {
     return (
-      <div className="relative isolate w-full min-w-0">
-        <div className="flex min-h-[208px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]">
+      <div className="relative isolate w-full min-w-0 rounded-[32px] shadow-e1">
+        {/* Shadow above overflow-hidden so elevation isn’t clipped */}
+        <div className="flex min-h-[208px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] border border-ink/[0.07] bg-paper-raised/70 backdrop-blur-[54.45px]">
           <div
             className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
             aria-hidden
@@ -778,14 +815,22 @@ export function HeroCard() {
               <div className="flex min-w-0 flex-col gap-4">
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <h1
-                    className="font-[family-name:var(--font-display)] text-[22px] font-bold leading-normal text-white/80 whitespace-nowrap"
+                    className="font-[family-name:var(--font-display)] text-[22px] font-bold leading-normal whitespace-nowrap"
                     style={{
                       fontVariationSettings: "'opsz' 14, 'wdth' 100",
+                      color: "rgba(28,28,28,0.8)",
+                      mixBlendMode: "luminosity",
                     }}
                   >
                     {choom ? CHOOM.heroName : "Hridae Walia"}
                   </h1>
-                  <p className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal text-white/60">
+                  <p
+                    className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal"
+                    style={{
+                      color: "rgba(28,28,28,0.55)",
+                      mixBlendMode: "luminosity",
+                    }}
+                  >
                     {choom ? CHOOM.heroRole : "Product Designer"}
                   </p>
                 </div>
@@ -797,9 +842,15 @@ export function HeroCard() {
                     href={CV_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                    className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"
                   >
-                    <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                    <span
+                      className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold"
+                      style={{
+                        color: "rgba(28,28,28,0.8)",
+                        mixBlendMode: "luminosity",
+                      }}
+                    >
                       {choom ? CHOOM.cvLabel : "CV"}
                     </span>
                   </a>
@@ -808,9 +859,15 @@ export function HeroCard() {
                     href={LI_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                    className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"
                   >
-                    <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                    <span
+                      className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold"
+                      style={{
+                        color: "rgba(28,28,28,0.8)",
+                        mixBlendMode: "luminosity",
+                      }}
+                    >
                       {choom ? CHOOM.liLabel : "in"}
                     </span>
                   </a>
@@ -821,7 +878,7 @@ export function HeroCard() {
 
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-white/10"
+            className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-ink/[0.08]"
           />
         </div>
       </div>
@@ -842,22 +899,31 @@ export function HeroCard() {
           onClick={() => setIsExpanded(false)}
         />
       ) : null}
+      {/*
+        Two layers only:
+        1) Plain portal frame — Framer must not own top/left (it resets them).
+        2) Motion card — shadow + height/y/scale live here (no overflow), so bumps
+           and press don’t leave a second silhouette behind.
+        Inner glass clips orbs/content with overflow-hidden.
+      */}
       <div
         ref={portalFrameRef}
         data-testid="hero-card-shell"
-        className="absolute w-full min-w-0 max-w-[656px]"
-        style={{ zIndex: PORTAL_Z, transformOrigin: "top left" }}
+        className="fixed w-full min-w-0 max-w-[656px]"
+        style={{ zIndex: PORTAL_Z }}
       >
       <motion.div
         ref={cardShellRef}
-        className="flex min-h-[208px] w-full min-w-0 max-h-[calc(100vh-224px)] flex-col overflow-hidden rounded-[32px]"
-        style={{ transformOrigin: "50% 0" }}
+        className="flex min-h-[208px] w-full min-w-0 flex-col rounded-[32px] shadow-e1"
+        style={{ transformOrigin: "50% 9%" }}
         initial={false}
         onPointerDown={onHeroShellPointerDown}
         onPointerUp={onHeroShellPointerUp}
         onPointerCancel={onHeroShellPointerCancel}
         animate={{
           height: isExpanded ? "auto" : COLLAPSED_CARD_HEIGHT,
+          scale:
+            reduceMotion || isExpanded ? 1 : blankShellPressed ? 0.97 : 1,
           y:
             isExpanded && openVerticalBump === "playing"
               ? [...CARD_OPEN_BUMP_Y]
@@ -869,6 +935,12 @@ export function HeroCard() {
           height: {
             duration: isExpanded ? OPEN_HEIGHT_DURATION : MOTION_DURATION,
             ease: MOTION_EASE,
+          },
+          scale: {
+            type: "spring",
+            stiffness: 400,
+            damping: 27,
+            mass: 0.95,
           },
           y:
             isExpanded && openVerticalBump === "playing"
@@ -888,23 +960,7 @@ export function HeroCard() {
                 : { duration: 0.12, ease: MOTION_EASE },
         }}
       >
-      <motion.div
-        className="flex min-h-0 h-full w-full min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit] bg-[rgba(29,29,29,0.7)] backdrop-blur-[54.45px]"
-        style={{ transformOrigin: "50% 9%" }}
-        initial={false}
-        animate={{
-          scale:
-            reduceMotion || isExpanded ? 1 : blankShellPressed ? 0.97 : 1,
-        }}
-        transition={{
-          scale: {
-            type: "spring",
-            stiffness: 400,
-            damping: 27,
-            mass: 0.95,
-          },
-        }}
-      >
+      <div className="relative flex min-h-0 h-full w-full min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit] border border-ink/[0.07] bg-paper-raised/70 backdrop-blur-[54.45px]">
       <div
         className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
         aria-hidden
@@ -923,9 +979,14 @@ export function HeroCard() {
         </div>
       </div>
 
-      <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8">
+      <div
+        className={cn(
+          "relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-10 overflow-hidden rounded-[inherit] p-8",
+          isExpanded && "h-full",
+        )}
+      >
         <div className="flex shrink-0 flex-col gap-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <HeroSignatureMark
               avatarReplayTick={avatarReplayTick}
               avatarBurst={avatarBurst}
@@ -953,13 +1014,15 @@ export function HeroCard() {
             <div className="flex min-w-0 flex-col gap-1.5 pr-2">
               <h1
                 className={cn(
-                  "grid min-w-0 items-baseline gap-x-1.5 font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80",
+                  "grid min-w-0 items-baseline gap-x-1.5 font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal",
                   showPronunciation
                     ? "grid-cols-[auto_minmax(0,1fr)]"
                     : "grid-cols-[auto_0fr]",
                 )}
                 style={{
                   fontVariationSettings: "'opsz' 14, 'wdth' 100",
+                  color: "rgba(28,28,28,0.8)",
+                  mixBlendMode: "luminosity",
                 }}
                 onPointerEnter={() => setShowPronunciation(true)}
                 onPointerLeave={() => setShowPronunciation(false)}
@@ -980,9 +1043,11 @@ export function HeroCard() {
                       ? CHOOM.heroPronShow
                       : "Hridae Walia, pronunciation ri-they waaliaa"
                   }
-                  className="min-w-0 border-0 bg-transparent p-0 text-left font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416] touch-manipulation"
+                  className="min-w-0 border-0 bg-transparent p-0 text-left font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28] focus-visible:ring-offset-2 focus-visible:ring-offset-paper touch-manipulation"
                   style={{
                     fontVariationSettings: "'opsz' 14, 'wdth' 100",
+                    color: "rgba(28,28,28,0.8)",
+                    mixBlendMode: "luminosity",
                   }}
                 >
                   {choom ? CHOOM.heroName : "Hridae Walia"}
@@ -1001,15 +1066,25 @@ export function HeroCard() {
                     transition={
                       reduceMotion
                         ? { duration: 0 }
-                        : { duration: 0.48, ease: [0.15, 1, 0.38, 1] }
+                        : { duration: 0.25, ease: [0.15, 1, 0.38, 1] }
                     }
-                    className="inline-block font-[family-name:var(--font-dm-sans)] text-[15px] font-semibold tracking-wide text-white/45"
+                    className="inline-block font-[family-name:var(--font-dm-sans)] text-[15px] font-semibold tracking-wide"
+                    style={{
+                      color: "rgba(28,28,28,0.45)",
+                      mixBlendMode: "luminosity",
+                    }}
                   >
                     · ri-they waaliaa
                   </motion.span>
                 </span>
               </h1>
-              <p className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal text-white/60">
+              <p
+                className="font-[family-name:var(--font-geist)] text-base font-semibold leading-normal"
+                style={{
+                  color: "rgba(28,28,28,0.55)",
+                  mixBlendMode: "luminosity",
+                }}
+              >
                 {choom ? CHOOM.heroRole : "Product Designer"}
               </p>
             </div>
@@ -1021,9 +1096,15 @@ export function HeroCard() {
                 href={CV_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"
               >
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                <span
+                  className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold"
+                  style={{
+                    color: "rgba(28,28,28,0.8)",
+                    mixBlendMode: "luminosity",
+                  }}
+                >
                   {choom ? CHOOM.cvLabel : "CV"}
                 </span>
               </a>
@@ -1032,9 +1113,15 @@ export function HeroCard() {
                 href={LI_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-2xl bg-white/[0.03] transition-colors hover:bg-white/[0.06]"
+                className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"
               >
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold text-white/80">
+                <span
+                  className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold"
+                  style={{
+                    color: "rgba(28,28,28,0.8)",
+                    mixBlendMode: "luminosity",
+                  }}
+                >
                   {choom ? CHOOM.liLabel : "in"}
                 </span>
               </a>
@@ -1050,9 +1137,17 @@ export function HeroCard() {
             pointerEvents: isExpanded ? "auto" : "none",
           }}
           transition={{ duration: 0.3, delay: isExpanded ? 0.1 : 0 }}
-          className="relative min-h-0 w-full min-w-0"
+          className={cn(
+            "relative min-h-0 w-full min-w-0",
+            isExpanded && "flex min-h-0 flex-1 flex-col",
+          )}
         >
-          <div className="relative isolate min-h-0 w-full min-w-0">
+          <div
+            className={cn(
+              "relative isolate min-h-0 w-full min-w-0",
+              isExpanded && "flex min-h-0 flex-1 flex-col",
+            )}
+          >
             {/*
               Mask fades scroll content to transparent; without a different tone behind it,
               the glass card shows through and the taper disappears. This layer sits under the
@@ -1065,7 +1160,12 @@ export function HeroCard() {
             />
             <div
               data-testid="hero-card-expanded-scroll"
-              className="relative z-[2] scrollbar-hide max-h-[calc(100vh-224px-11rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+              className={cn(
+                // Pull into the card's p-8 so side shadows/tilts can paint in that
+                // gutter without shifting content (content stays aligned via px-8).
+                "relative z-[2] scrollbar-hide -mx-8 w-[calc(100%+4rem)] min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain px-8",
+                isExpanded && "min-h-0 flex-1",
+              )}
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to bottom, black 0%, black calc(100% - 5rem), rgba(0,0,0,0.5) calc(100% - 2.5rem), transparent 100%)",
@@ -1091,11 +1191,11 @@ export function HeroCard() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-white/10"
+          className="pointer-events-none absolute inset-0 z-[5] rounded-[32px] border border-ink/[0.08]"
         />
+      </div>
       </motion.div>
-      </motion.div>
-    </div>
+      </div>
     </>
   );
 

@@ -25,7 +25,7 @@ const WAYNE_IMAGES = [
 
 /** Same interaction model as Virdio `ARMosaic`: Embla drag-free + wheel/trackpad. */
 const SLIDE_SHELL =
-  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden border border-neutral-800 bg-neutral-950 shadow-[0px_4px_24px_0px_rgba(0,0,0,0.35)]";
+  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden border border-ink/[0.1] bg-paper-sunken shadow-e3";
 
 interface WayneCarouselProps {
   className?: string;
@@ -54,7 +54,7 @@ export function WayneCarousel({ className }: WayneCarouselProps) {
           </div>
         ))}
       </ProjectCarousel>
-      <p className="site-gallery-caption mt-3 text-left text-neutral-500">
+      <p className="site-gallery-caption mt-3 text-left text-ink-muted">
         Wayne Wong&apos;s hidden archive — hundreds of unexposed 35mm photographs from post-war
         Japan, 1946
       </p>

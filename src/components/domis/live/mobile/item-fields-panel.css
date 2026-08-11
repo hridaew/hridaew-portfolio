@@ -3,10 +3,10 @@
 .domis-live.ifp {
   --ifp-bg: #f7f7f7;
   --ifp-surface: #ffffff;
-  --ifp-ink: #525252;
+  --ifp-ink: #2f2f2f;
   --ifp-active: #1a1c1e;
-  --ifp-muted: #818181;
-  --ifp-faint: #c8c8c8;
+  --ifp-muted: #5c5c5c;
+  --ifp-faint: #8a8a8a;
   --ifp-line: #f4f4f4;
   --ifp-chip: #f7f7f7;
   --ifp-unselected: #efefef;
@@ -65,7 +65,7 @@
 }
 
 .domis-live.ifp .ifp-name[data-empty="true"] {
-  color: #cacaca;
+  color: var(--ifp-faint);
 }
 
 .domis-live.ifp .ifp-name.ifp-reveal[data-on="false"] {
@@ -171,7 +171,7 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-  color: #c8c8c8;
+  color: var(--ifp-faint);
 }
 
 .domis-live.ifp .ifp-photo-hint[data-hidden="true"] {
@@ -377,7 +377,7 @@
 }
 
 .domis-live.ifp .ifp-row-value[data-empty="true"] {
-  color: #c8c8c8;
+  color: var(--ifp-faint);
   opacity: 0.7;
   font-weight: 500;
 }
@@ -445,7 +445,7 @@
   font-weight: 500;
   line-height: 24px;
   letter-spacing: 0.15px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-2);
 }
 
 .domis-live.ifp .ifp-footer-row {
@@ -464,7 +464,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, #ffffff 0%, #ededed 100%);
   color: var(--ifp-ink);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-2);
 }
 
 .domis-live.ifp .ifp-save-btn {

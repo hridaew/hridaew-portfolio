@@ -36,7 +36,7 @@ const NOTE_W = 168;
 const NOTE_H = 168;
 
 const GLASS_SURFACE =
-    "border border-white/12 bg-[rgba(29,29,29,0.72)] shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[54.45px]";
+    "border border-ink/[0.08] bg-paper-raised/[0.72] shadow-e3 backdrop-blur-[54.45px]";
 
 type PanelPhase = "closed" | "opening" | "open" | "closing" | "collapsing";
 
@@ -425,7 +425,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                     className="fixed inset-0 z-[150] cursor-none"
                     onClick={handlePlacement}
                 >
-                    <div className="pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full border border-white/10 bg-[rgba(29,29,29,0.72)] px-4 py-2 text-left text-white/90 shadow-lg shadow-black/40 backdrop-blur-[54.45px] type-body">
+                    <div className="pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full border border-ink/[0.08] bg-paper-raised/[0.85] px-4 py-2 text-left text-ink shadow-e3 backdrop-blur-[54.45px] type-body">
                         Click to stick · Esc to cancel
                     </div>
 
@@ -507,7 +507,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                           initial={false}
                                           exit={{ opacity: 0 }}
                                           transition={quickOut}
-                                          className="absolute inset-0 rounded-[14px] border border-white/10 bg-[rgba(29,29,29,0.45)] shadow-[0_8px_24px_rgba(0,0,0,0.28)] backdrop-blur-[40px] will-change-transform"
+                                          className="absolute inset-0 rounded-[14px] border border-ink/[0.08] bg-paper-raised/[0.5] shadow-e2 backdrop-blur-[40px] will-change-transform"
                                           style={{
                                               transform: isHoveringStack
                                                   ? `rotate(${(i - 0.5) * 8}deg) translateY(${-i * 3}px)`
@@ -568,11 +568,11 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                             : "none",
                                     }}
                                 >
-                                    <span className="whitespace-nowrap font-[family-name:var(--font-geist-mono)] text-xs leading-none text-white/70">
+                                    <span className="whitespace-nowrap font-[family-name:var(--font-geist-mono)] text-xs leading-none text-ink-secondary">
                                         Leave me a note!
                                     </span>
                                     <span
-                                        className="flex items-center justify-center font-semibold leading-none text-white/85 type-body-lg"
+                                        className="flex items-center justify-center font-semibold leading-none text-ink type-body-lg"
                                         aria-hidden
                                     >
                                         +
@@ -596,7 +596,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                     }}
                                 >
                                     <div className="flex items-start justify-between gap-3">
-                                        <p className="text-left leading-relaxed text-white/60 type-caption">
+                                        <p className="text-left leading-relaxed text-ink-muted type-caption">
                                             Leave a note. Only you and Hridae can see
                                             yours.
                                         </p>
@@ -607,7 +607,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                             }
                                             onClick={closeComposer}
                                             aria-label="Close sticky note form"
-                                            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08]"
+                                            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-ink/[0.08] bg-ink/[0.02] text-ink-secondary transition-colors hover:bg-ink/[0.04]"
                                         >
                                             <span
                                                 className="rotate-45 font-semibold leading-none type-body-lg"
@@ -689,8 +689,8 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                                     className={cn(
                                                         "size-6 rounded-full border transition-transform",
                                                         selectedColor === color
-                                                            ? "scale-110 border-white shadow-md ring-2 ring-white/40 ring-offset-1 ring-offset-[#1d1d1d]"
-                                                            : "border-white/15 hover:scale-105"
+                                                            ? "scale-110 border-ink shadow-md ring-2 ring-ink/[0.32] ring-offset-1 ring-offset-[#1d1d1d]"
+                                                            : "border-ink/[0.12] hover:scale-105"
                                                     )}
                                                     style={{
                                                         backgroundColor: color,
@@ -708,7 +708,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                             }
                                             onClick={handleSubmit}
                                             disabled={!message.trim()}
-                                            className="rounded-full border border-white/15 bg-white/90 px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-wide text-[#141416] transition-opacity hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                                            className="rounded-full border border-ink/[0.12] bg-white/90 px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-wide text-[#141416] transition-opacity hover:bg-paper-raised disabled:cursor-not-allowed disabled:opacity-35"
                                         >
                                             Stick it
                                         </motion.button>

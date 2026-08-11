@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
+import { useScroller } from "@/components/sheet/scroller-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,6 +28,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const scroller = useScroller();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -37,16 +39,33 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
+      // Nested sheet overflow + Framer panel transform make GSAP pin jitter.
+      // Use native sticky there; keep ScrollTrigger pin on the window page.
+      const inSheet = Boolean(scroller);
+
+      const syncStickyHeight = () => {
+        if (!inSheet || !scroller) return;
+        pinContainer.style.height = `${scroller.clientHeight}px`;
+      };
+
+      if (inSheet) {
+        pinContainer.style.position = "sticky";
+        pinContainer.style.top = "0";
+        syncStickyHeight();
+      }
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          pin: pinContainer,
+          scroller: scroller ?? undefined,
+          pin: inSheet ? false : pinContainer,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
-          anticipatePin: 1,
-          pinSpacing: true,
+          scrub: true,
+          anticipatePin: inSheet ? 0 : 1,
+          pinSpacing: !inSheet,
           invalidateOnRefresh: true,
+          onRefresh: syncStickyHeight,
         },
       });
 
@@ -56,21 +75,18 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
         const position = (i + 0.7) * segmentDuration;
         const duration = 0.3 * segmentDuration;
 
-        // Fade out current image
         tl.to(
           imageRefs.current[i],
           { opacity: 0, duration, ease: "none" },
           position
         );
 
-        // Fade in next image
         tl.to(
           imageRefs.current[i + 1],
           { opacity: 1, duration, ease: "none" },
           position
         );
 
-        // Dim previous label
         tl.to(
           labelRefs.current[i],
           {
@@ -82,7 +98,6 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
           position
         );
 
-        // Highlight next label
         tl.to(
           labelRefs.current[i + 1],
           {
@@ -95,7 +110,6 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
         );
       }
 
-      // Progress bar: scaleX from 0 to 1 across entire timeline
       tl.fromTo(
         progressBar,
         { scaleX: 0 },
@@ -103,27 +117,63 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
         0
       );
 
+      const onResize = () => {
+        syncStickyHeight();
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener("resize", onResize);
+
       return () => {
+        window.removeEventListener("resize", onResize);
         tl.kill();
+        if (inSheet) {
+          pinContainer.style.position = "";
+          pinContainer.style.top = "";
+          pinContainer.style.height = "";
+        }
       };
     });
 
     return () => {
       mm.revert();
     };
+  }, [scroller]);
+
+  useEffect(() => {
+    // Images set the section's intrinsic height — refresh after decode
+    let pending = STEPS.length;
+    let refreshed = false;
+    const done = () => {
+      pending -= 1;
+      if (pending <= 0 && !refreshed) {
+        refreshed = true;
+        ScrollTrigger.refresh();
+      }
+    };
+
+    for (const step of STEPS) {
+      const img = new Image();
+      img.src = step.image;
+      if (img.complete) {
+        done();
+      } else {
+        img.onload = done;
+        img.onerror = done;
+      }
+    }
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className={cn("relative isolate bg-[#0c0c0e] md:h-[500vh]", className)}
+      className={cn("relative isolate bg-paper md:h-[500vh]", className)}
     >
       <div
         ref={pinContainerRef}
         className="relative z-20 md:h-screen flex items-center justify-center py-16 md:py-0"
       >
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 md:p-10 overflow-hidden">
+          <div className="bg-ink/[0.02] border border-ink/[0.08] rounded-2xl p-6 md:p-10 overflow-hidden">
             {/* Desktop: stacked images */}
             <div className="relative w-full overflow-hidden rounded-lg hidden md:block">
               {/* Invisible spacer image to set container height */}
@@ -166,7 +216,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
                     className="w-full h-auto object-contain rounded-lg"
                     loading="eager"
                   />
-                  <p className="type-caption text-white/45 text-left mt-2">
+                  <p className="type-caption text-ink-subtle text-left mt-2">
                     {step.label}
                   </p>
                 </div>
@@ -175,7 +225,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
 
             {/* Progress bar (desktop only) */}
             <div className="hidden md:block mt-6">
-              <div className="h-[2px] bg-white/10 rounded-full overflow-hidden">
+              <div className="h-[2px] bg-ink/[0.05] rounded-full overflow-hidden">
                 <div
                   ref={progressBarRef}
                   className="h-full bg-white/70 rounded-full origin-left"
@@ -183,7 +233,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
                 />
               </div>
 
-              {/* Step labels — !text-white keeps fill on the light text even when GSAP scrubs opacity/fontWeight */}
+              {/* Step labels — !text-ink keeps fill on the light text even when GSAP scrubs opacity/fontWeight */}
               <div className="flex justify-between mt-3">
                 {STEPS.map((step, i) => (
                   <span
@@ -191,7 +241,7 @@ function ScrollRevealFlow({ className }: ScrollRevealFlowProps) {
                     ref={(el) => {
                       labelRefs.current[i] = el;
                     }}
-                    className="type-body text-left !text-white"
+                    className="type-body text-left !text-ink"
                     style={{
                       opacity: i === 0 ? 1 : 0.4,
                       fontWeight: i === 0 ? 500 : 400,

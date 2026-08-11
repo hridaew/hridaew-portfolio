@@ -32,9 +32,9 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
     );
 
     return (
-        <div className="flex w-full flex-wrap items-center justify-start gap-8 py-8">
+        <div className="flex w-auto shrink-0 items-center justify-start gap-2.5">
             {/* Input field */}
-            <div className="relative w-[280px] h-11 rounded-3xl bg-white/10 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex items-center justify-between px-4">
+            <div className="relative flex h-9 w-[240px] items-center justify-between rounded-2xl bg-ink/[0.05] px-3">
                 <input
                     type="text"
                     value={value}
@@ -43,18 +43,18 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
                     placeholder={
                         choom ? CHOOM.cheatPlaceholder : "ENTER CHEAT CODE:"
                     }
-                    className="bg-transparent font-[family-name:var(--font-geist-mono)] text-xs text-white placeholder:text-white/50 focus:outline-none w-full uppercase"
+                    className="w-full bg-transparent font-[family-name:var(--font-geist-mono)] text-[11px] uppercase text-ink placeholder:text-ink-muted focus:outline-none"
                     autoComplete="off"
                     spellCheck={false}
                 />
 
                 {/* Tooltip "?" */}
-                <div className="relative group shrink-0 ml-2">
-                    <span className="font-[family-name:var(--font-geist-mono)] text-xs text-white underline decoration-solid cursor-default">
+                <div className="group relative ml-2 shrink-0">
+                    <span className="cursor-default font-[family-name:var(--font-geist-mono)] text-[11px] text-ink-muted underline decoration-solid">
                         ?
                     </span>
-                    <div className="absolute bottom-full right-0 mb-2 w-[240px] px-3 py-2.5 rounded-lg bg-[#1d1d1d] border border-white/10 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 text-left z-10">
-                        <p className="font-[family-name:var(--font-geist-mono)] text-[10px] text-white/60 space-y-1 text-left">
+                    <div className="pointer-events-none absolute bottom-full right-0 z-10 mb-2 w-[240px] rounded-lg border border-ink/[0.08] bg-paper-raised px-3 py-2.5 text-left opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                        <p className="space-y-1 text-left font-[family-name:var(--font-geist-mono)] text-[10px] text-ink-muted">
                             <span className="block">
                                 {choom ? CHOOM.cheatClue1 : "Clue 1: Slang word for \u201cfriend\u201d in the year 2077"}
                             </span>
@@ -72,16 +72,28 @@ export function CheatCodeInput({ onActivate }: CheatCodeInputProps) {
                 </div>
             </div>
 
-            {/* Confirm button */}
+            {/* Submit — Enter key icon */}
             <button
                 type="button"
                 onClick={handleSubmit}
-                className="relative flex h-11 w-[72px] cursor-pointer items-center justify-center overflow-hidden rounded-3xl bg-white/10 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-colors hover:bg-white/[0.15]"
+                aria-label={choom ? CHOOM.cheatConfirm : "Enter"}
+                className="relative flex size-9 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-ink/[0.05] transition-colors hover:bg-ink/[0.075]"
             >
                 <SkeuomorphicRim className="z-0" />
-                <span className="relative z-[1] font-[family-name:var(--font-geist-mono)] text-xs uppercase whitespace-nowrap text-white">
-                    {choom ? CHOOM.cheatConfirm : "Confirm"}
-                </span>
+                <svg
+                    className="relative z-[1] size-4 text-ink-muted"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden
+                >
+                    <path
+                        d="M3 3.5h7.5A2.5 2.5 0 0 1 13 6v5.5M13 11.5H5.5M7.25 9.25 5.5 11.5l1.75 2.25"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </svg>
             </button>
         </div>
     );

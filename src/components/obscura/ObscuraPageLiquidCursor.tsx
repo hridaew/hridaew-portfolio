@@ -16,9 +16,15 @@ import { ThreeGlassLensFallback } from "./ThreeGlassLensFallback";
 
 /**
  * Home Obscura gallery card uses this liquid-glass puck + cursor-none on hover.
- * On the case study page we mirror that as the default cursor for the whole route.
+ * On the case study page / sheet we mirror that as the default cursor for the route.
  */
-export function ObscuraPageLiquidCursor() {
+export function ObscuraPageLiquidCursor({
+  /** Sheet panel is z-[200]; elevate so the puck isn’t trapped underneath. */
+  elevated = false,
+}: {
+  elevated?: boolean;
+} = {}) {
+  const layerZ = elevated ? "z-[210]" : "z-[25]";
   const reduceMotion = useReducedMotion();
   const [isTouch, setIsTouch] = useState(false);
   const engine = useBrowserEngine();
@@ -77,12 +83,12 @@ export function ObscuraPageLiquidCursor() {
       <ObscuraLiquidGlassFilterSvg />
       {engine === "chromium" ? (
         <div
-          className="pointer-events-none fixed left-0 top-0 z-[25] h-0 w-0"
+          className={`pointer-events-none fixed left-0 top-0 h-0 w-0 ${layerZ}`}
           style={{ left: lens.x, top: lens.y }}
           aria-hidden
         >
           <div
-            className="rounded-full border border-white/12 shadow-[0_16px_52px_rgba(0,0,0,0.55)] ring-1 ring-white/5 will-change-transform"
+            className="rounded-full border border-ink/[0.096] shadow-[0_4px_12px_rgb(var(--ink-rgb)/0.1),0_16px_48px_rgb(var(--ink-rgb)/0.18)] ring-1 ring-ink/[0.06] will-change-transform"
             style={{
               width: OBSCURA_LIQUID_GLASS_LENS_PX,
               height: OBSCURA_LIQUID_GLASS_LENS_PX,
@@ -97,7 +103,7 @@ export function ObscuraPageLiquidCursor() {
           />
         </div>
       ) : (
-        <div className="pointer-events-none fixed left-0 top-0 z-[25] h-0 w-0">
+        <div className={`pointer-events-none fixed left-0 top-0 h-0 w-0 ${layerZ}`}>
           <ThreeGlassLensFallback
             x={lens.x}
             y={lens.y}

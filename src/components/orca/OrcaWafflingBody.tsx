@@ -29,7 +29,7 @@ const ORCA_COLUMN =
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-white/80">
+    <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
       {children}
     </h4>
   );
@@ -45,7 +45,7 @@ function Body({
   return (
     <p
       className={cn(
-        "font-[family-name:var(--font-geist)] text-base font-normal leading-[1.5] text-white/80",
+        "font-[family-name:var(--font-geist)] text-base font-normal leading-[1.5] text-ink-secondary",
         className,
       )}
     >
@@ -56,7 +56,7 @@ function Body({
 
 function Caption({ children }: { children: ReactNode }) {
   return (
-    <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/60">
+    <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
       {children}
     </p>
   );
@@ -75,7 +75,7 @@ function Figure({
 }) {
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="relative w-full overflow-hidden rounded-xl bg-black/40 shadow-[0px_4px_24px_6px_rgba(0,0,0,0.35)]">
+      <div className="relative w-full overflow-hidden rounded-xl bg-black/40 shadow-e2">
         <Image
           src={src}
           alt={alt}
@@ -102,7 +102,7 @@ function FigurePair({
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
       {[left, right].map((fig) => (
         <div key={fig.src} className="flex min-w-0 flex-col gap-2">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-black/40 shadow-[0px_4px_24px_6px_rgba(0,0,0,0.35)]">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-black/40 shadow-e2">
             <Image
               src={fig.src}
               alt={fig.alt}
@@ -126,11 +126,11 @@ export function OrcaWafflingBody() {
         "flex flex-col gap-12 pt-16 pb-24 md:pt-24 md:pb-28",
       )}
     >
-      <h1 className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-white/80">
+      <h1 className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-ink-secondary">
         {ORCA_TITLE}
       </h1>
 
-      <div className="relative w-full overflow-hidden rounded-xl bg-black shadow-[0px_4px_24px_6px_rgba(0,0,0,0.35)]">
+      <div className="relative w-full overflow-hidden rounded-xl bg-black shadow-e2">
         <DeferredVideo
           src="/assets/orca/story.mp4"
           poster="/assets/orca/hero-poster.jpg"

@@ -19,7 +19,14 @@ interface ExpandableStackProps {
 }
 
 const defaultThumb =
-  "max-h-[220px] md:max-h-[260px] w-auto max-w-[min(100%,360px)] object-contain rounded-lg shadow-lg border border-neutral-200/60";
+  "max-h-[220px] md:max-h-[260px] w-auto max-w-[min(100%,360px)] object-contain rounded-lg shadow-e2 border border-neutral-200/60";
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
 
 export function ExpandableStack({
   images,
@@ -36,6 +43,9 @@ export function ExpandableStack({
     if (!containerRef.current) return;
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
     const count = cards.length;
+    const reduce = prefersReducedMotion();
+    const duration = reduce ? 0 : 0.28;
+    const stagger = reduce ? 0 : 0.03;
 
     if (!expanded) {
       const container = containerRef.current;
@@ -45,7 +55,7 @@ export function ExpandableStack({
 
       gsap.to(container, {
         height: totalHeight,
-        duration: 0.5,
+        duration,
         ease: "power2.out",
       });
 
@@ -58,18 +68,24 @@ export function ExpandableStack({
           y: yPos,
           rotation: 0,
           scale: 1,
-          duration: 0.5,
-          ease: "back.out(1.2)",
-          delay: i * 0.06,
+          duration,
+          ease: reduce ? "none" : "power2.out",
+          delay: i * stagger,
         });
       });
     } else {
-      const stackRotations = count === 3 ? [-4, 1.5, 5] : images.map((_, i) => (i - (count - 1) / 2) * 4);
-      const stackOffsets = count === 3 ? [-20, 0, 20] : images.map((_, i) => (i - (count - 1) / 2) * 16);
+      const stackRotations =
+        count === 3
+          ? [-4, 1.5, 5]
+          : images.map((_, i) => (i - (count - 1) / 2) * 4);
+      const stackOffsets =
+        count === 3
+          ? [-20, 0, 20]
+          : images.map((_, i) => (i - (count - 1) / 2) * 16);
 
       gsap.to(containerRef.current, {
         height: stackHeight,
-        duration: 0.45,
+        duration,
         ease: "power2.out",
       });
 
@@ -79,9 +95,9 @@ export function ExpandableStack({
           y: 0,
           rotation: stackRotations[i],
           scale: 1,
-          duration: 0.45,
+          duration,
           ease: "power2.out",
-          delay: (count - 1 - i) * 0.04,
+          delay: (count - 1 - i) * stagger,
         });
       });
     }
@@ -89,8 +105,14 @@ export function ExpandableStack({
     setExpanded(!expanded);
   }, [expanded, images, stackHeight]);
 
-  const stackRotations = images.length === 3 ? [-4, 1.5, 5] : images.map((_, i) => (i - (images.length - 1) / 2) * 4);
-  const stackOffsets = images.length === 3 ? [-20, 0, 20] : images.map((_, i) => (i - (images.length - 1) / 2) * 16);
+  const stackRotations =
+    images.length === 3
+      ? [-4, 1.5, 5]
+      : images.map((_, i) => (i - (images.length - 1) / 2) * 4);
+  const stackOffsets =
+    images.length === 3
+      ? [-20, 0, 20]
+      : images.map((_, i) => (i - (images.length - 1) / 2) * 16);
 
   const thumbCls = thumbnailClassName ?? defaultThumb;
 
@@ -105,7 +127,9 @@ export function ExpandableStack({
         {images.map((img, i) => (
           <div
             key={img.src}
-            ref={(el) => { cardsRef.current[i] = el; }}
+            ref={(el) => {
+              cardsRef.current[i] = el;
+            }}
             className="absolute"
             style={{
               transform: `translateX(${stackOffsets[i]}px) rotate(${stackRotations[i]}deg)`,
@@ -121,7 +145,12 @@ export function ExpandableStack({
           </div>
         ))}
       </div>
-      <p className={cn("type-caption text-neutral-400 mt-4 text-left", hintClassName)}>
+      <p
+        className={cn(
+          "type-caption text-ink-muted mt-4 text-left",
+          hintClassName,
+        )}
+      >
         {expanded ? "Click to collapse" : "Click to expand"}
       </p>
     </div>

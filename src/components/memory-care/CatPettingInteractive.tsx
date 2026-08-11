@@ -175,7 +175,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
         <g ref={tvRef} opacity="0.5">
           <rect x="185" y="10" width="90" height="55" rx="6" fill="#1a1a1a" stroke="#737373" strokeWidth="1.5" />
           <polygon points="225,28 225,48 242,38" fill="#737373" opacity="0.6" />
-          <text x="230" y="78" textAnchor="middle" className="site-gallery-caption normal-case fill-white/45">TV</text>
+          <text x="230" y="78" textAnchor="middle" className="site-gallery-caption normal-case fill-ink/[0.495]">TV</text>
         </g>
 
         {/* Speaker (top-left) */}
@@ -183,7 +183,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           <rect x="35" y="70" width="60" height="50" rx="8" fill="#1a1a1a" stroke="#737373" strokeWidth="1.5" />
           <circle cx="65" cy="90" r="10" fill="none" stroke="#737373" strokeWidth="1.5" />
           <circle cx="65" cy="90" r="4" fill="#737373" />
-          <text x="65" y="135" textAnchor="middle" className="site-gallery-caption normal-case fill-white/45">Speaker</text>
+          <text x="65" y="135" textAnchor="middle" className="site-gallery-caption normal-case fill-ink/[0.495]">Speaker</text>
         </g>
 
         {/* Cat (center) — interactive zone */}
@@ -208,7 +208,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
             height="100"
             preserveAspectRatio="xMidYMid meet"
           />
-          <text x="230" y="218" textAnchor="middle" className="site-gallery-caption normal-case fill-white/45">Cat (pet me!)</text>
+          <text x="230" y="218" textAnchor="middle" className="site-gallery-caption normal-case fill-ink/[0.495]">Cat (pet me!)</text>
         </g>
 
         {/* Haptic Emitter Left */}
@@ -218,7 +218,7 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           <path d="M82 260 Q85 265 82 270" fill="none" stroke="#737373" strokeWidth="1.5" />
           <path d="M88 258 Q92 265 88 272" fill="none" stroke="#737373" strokeWidth="1.5" />
           <path d="M94 256 Q99 265 94 274" fill="none" stroke="#737373" strokeWidth="1.5" />
-          <text x="95" y="305" textAnchor="middle" className="site-gallery-caption normal-case fill-white/45">Haptic L</text>
+          <text x="95" y="305" textAnchor="middle" className="site-gallery-caption normal-case fill-ink/[0.495]">Haptic L</text>
         </g>
 
         {/* Haptic Emitter Right */}
@@ -228,11 +228,11 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
           <path d="M352 260 Q355 265 352 270" fill="none" stroke="#737373" strokeWidth="1.5" />
           <path d="M358 258 Q362 265 358 272" fill="none" stroke="#737373" strokeWidth="1.5" />
           <path d="M364 256 Q369 265 364 274" fill="none" stroke="#737373" strokeWidth="1.5" />
-          <text x="365" y="305" textAnchor="middle" className="site-gallery-caption normal-case fill-white/45">Haptic R</text>
+          <text x="365" y="305" textAnchor="middle" className="site-gallery-caption normal-case fill-ink/[0.495]">Haptic R</text>
         </g>
       </svg>
 
-      <p className="type-body text-left text-white/45">
+      <p className="type-body text-left text-ink-subtle">
         {isPetting ? "The system is responding to your touch..." : "Hover over the cat to activate the experience"}
       </p>
     </div>

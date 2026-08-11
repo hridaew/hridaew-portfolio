@@ -1,14 +1,14 @@
 /* v1/v2 appliance compare — neutral editorial (not Domis product chrome). */
 
 .domis-live.avc {
-  --avc-bg: rgba(255, 255, 255, 0.04);
-  --avc-surface: rgba(255, 255, 255, 0.06);
-  --avc-ink: rgba(255, 255, 255, 0.86);
-  --avc-active: rgba(255, 255, 255, 0.94);
-  --avc-muted: rgba(255, 255, 255, 0.52);
-  --avc-faint: rgba(255, 255, 255, 0.28);
-  --avc-line: rgba(255, 255, 255, 0.12);
-  --avc-chip: rgba(255, 255, 255, 0.08);
+  --avc-bg: rgb(var(--ink-rgb) / 0.04);
+  --avc-surface: rgb(var(--ink-rgb) / 0.06);
+  --avc-ink: var(--ink);
+  --avc-active: var(--ink);
+  --avc-muted: var(--ink-muted);
+  --avc-faint: var(--ink-subtle);
+  --avc-line: rgb(var(--ink-rgb) / 0.12);
+  --avc-chip: rgb(var(--ink-rgb) / 0.08);
   --avc-font: var(--font-dm-sans), system-ui, sans-serif;
   width: 100%;
   max-width: none;

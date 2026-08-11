@@ -49,7 +49,7 @@ export function DualPerspective({
             active === "spectator" ? "opacity-0 pointer-events-none" : "opacity-100"
           )}
         >
-          <h3 className="type-h3 text-white text-left m-0">The Curator</h3>
+          <h3 className="type-h3 text-left m-0 text-white">The Curator</h3>
           <div
             className={cn(
               "grid transition-all",
@@ -67,7 +67,7 @@ export function DualPerspective({
                     : "delay-0 opacity-0 blur-[8px]"
                 )}
               >
-                <p className="type-body text-neutral-300 m-0 text-left">
+                <p className="type-body m-0 text-left text-white/85">
                   The viewer enters the booth and scans Wayne&apos;s photos through a viewfinder. Their gaze drives the narrative — dwell on faces and the story shifts to people.
                 </p>
               </div>
@@ -100,7 +100,7 @@ export function DualPerspective({
             active === "curator" ? "opacity-0 pointer-events-none" : "opacity-100"
           )}
         >
-          <h3 className="type-h3 text-white text-left m-0">The Spectator</h3>
+          <h3 className="type-h3 text-left m-0 text-white">The Spectator</h3>
           <div
             className={cn(
               "grid transition-all",
@@ -118,7 +118,7 @@ export function DualPerspective({
                     : "delay-0 opacity-0 blur-[8px]"
                 )}
               >
-                <p className="type-body text-neutral-300 m-0 text-left">
+                <p className="type-body m-0 text-left text-white/85">
                   Outside the booth, an audience watches a projection of the viewer&apos;s journey. A gaze reticle shows what they&apos;re looking at, turning &quot;looking&quot; into performance.
                 </p>
               </div>

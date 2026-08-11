@@ -131,11 +131,11 @@ export function BeforeAfterSlider({
       {/* Slider handle */}
       <div
         ref={sliderRef}
-        className="absolute top-0 bottom-0 w-[3px] bg-white shadow-lg -translate-x-1/2 pointer-events-none"
+        className="absolute top-0 bottom-0 w-[3px] bg-paper-raised shadow-lg -translate-x-1/2 pointer-events-none"
         style={{ left: "50%" }}
       >
         {/* Drag handle circle */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-paper-raised shadow-lg flex items-center justify-center">
           <svg
             width="20"
             height="20"
@@ -155,10 +155,10 @@ export function BeforeAfterSlider({
       </div>
 
       {/* Labels */}
-      <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-white backdrop-blur-sm site-gallery-caption">
+      <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-ink backdrop-blur-sm site-gallery-caption">
         {beforeLabel}
       </span>
-      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-white backdrop-blur-sm site-gallery-caption">
+      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-left text-ink backdrop-blur-sm site-gallery-caption">
         {afterLabel}
       </span>
     </div>

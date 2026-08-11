@@ -1,56 +1,61 @@
 "use client";
 
 /**
- * Icons live in `/public/tool-icons` (copied from repo `tool-icons/`).
+ * Light-mode Pixar-style 3D marks in `/public/tool-icons/light/`.
  */
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
 const TOOLKIT_ITEMS = [
-  { name: "Figma", file: "Frame 16256.png" },
-  { name: "Figma Make", file: "9dd7913d750d5e2519330ccdbdbc0e24ba58c93e-24x24 1.png" },
-  { name: "Claude Code", file: "Frame 16257.png" },
-  { name: "Cursor", file: "APP_ICON_3D_DARK 1.png" },
-  { name: "XCode", file: "Frame 16260.png" },
-  { name: "Origami Studio", file: "Frame 16262.png" },
-  { name: "ProtoPie", file: "Frame 16261.png" },
-  { name: "Spatial.app", file: "Frame 16258.png" },
+  { name: "Pencil", file: "pencil.webp" },
+  { name: "Paper", file: "paper.webp" },
+  { name: "Figma", file: "figma.webp" },
+  { name: "Cursor", file: "cursor.webp" },
+  { name: "Claude Code", file: "claude.webp" },
+  { name: "XCode", file: "xcode.webp" },
+  { name: "Origami", file: "origami.webp" },
+  { name: "ProtoPie", file: "protopie.webp" },
+  { name: "Notion", file: "notion.webp" },
 ] as const;
 
 function iconSrc(file: string) {
-  return `/tool-icons/${encodeURIComponent(file)}`;
+  return `/tool-icons/light/fill/${encodeURIComponent(file)}`;
 }
 
 export function ToolkitSection() {
   const choom = useChoomLingo();
   return (
     <div className="flex w-full flex-col items-start gap-[16px] overflow-visible">
-      <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-white/50">
+      <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-ink-muted">
         {choom ? CHOOM.toolkitLabel : "Current Toolkit"}
       </p>
       <div
         role="toolbar"
         aria-label="Current toolkit"
-        className="flex items-end gap-1 overflow-visible"
+        className="flex items-end gap-1.5 overflow-visible"
       >
         {TOOLKIT_ITEMS.map((item) => (
           <div
             key={item.file}
-            data-toolkit-icon-tile
             className="group relative flex flex-col items-center justify-end overflow-visible"
           >
             <span
-              className="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap font-[family-name:var(--font-geist-mono)] text-[10px] uppercase leading-none tracking-wide text-white/75 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+              className="pointer-events-none absolute bottom-full left-1/2 mb-1.5 -translate-x-1/2 whitespace-nowrap font-[family-name:var(--font-geist-mono)] text-[10px] uppercase leading-none tracking-wide text-ink-secondary opacity-0 transition-opacity duration-150 group-hover:opacity-100"
               aria-hidden
             >
               {item.name}
             </span>
-            <img
-              src={iconSrc(item.file)}
-              alt={item.name}
-              draggable={false}
-              className="size-8 shrink-0 object-contain"
-            />
+            <div
+              data-toolkit-icon-tile
+              className="size-9 shrink-0 overflow-hidden rounded-[10px] bg-white shadow-[0_1px_2px_rgb(var(--ink-rgb)/0.06),0_2px_6px_rgb(var(--ink-rgb)/0.04)]"
+            >
+              <img
+                src={iconSrc(item.file)}
+                alt={item.name}
+                draggable={false}
+                className="size-full object-cover"
+              />
+            </div>
           </div>
         ))}
       </div>

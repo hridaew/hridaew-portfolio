@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { HOME_COLUMN } from "@/components/home/homeGrid";
 import { CheatCodeInput } from "@/components/CheatCodeInput";
 import { DestroySequence } from "@/components/cheat-codes/DestroySequence";
 import { ButterChicken } from "@/components/cheat-codes/ButterChicken";
@@ -86,10 +85,8 @@ export function HomeCheatEasterEggs() {
         />
       )}
 
-      <div className="relative z-0 mt-[120px]">
-        <div className={HOME_COLUMN}>
-          <CheatCodeInput onActivate={handleCheatCode} />
-        </div>
+      <div className="relative z-0 shrink-0">
+        <CheatCodeInput onActivate={handleCheatCode} />
       </div>
 
       {activeCheat === "destroy" && <DestroySequence />}

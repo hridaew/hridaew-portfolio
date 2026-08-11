@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScroller } from "@/components/sheet/scroller-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,13 +18,24 @@ export function Reveal({
   children,
   delay = 0,
   className = "",
-  scroller,
+  scroller: scrollerProp,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const sheetScroller = useScroller();
+  const scroller = scrollerProp ?? sheetScroller;
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (prefersReducedMotion) {
+      gsap.set(el, { opacity: 1, y: 0 });
+      return;
+    }
 
     let revealed = false;
     let trigger: ScrollTrigger | null = null;

@@ -35,7 +35,7 @@ export function DevImageUploader({ onUpload, label = "Upload Image" }: { onUploa
     };
 
     return (
-        <label className="cursor-pointer group relative flex items-center justify-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full border border-white/10 transition-colors text-white/60 hover:text-white type-caption-medium font-mono uppercase text-left">
+        <label className="cursor-pointer group relative flex items-center justify-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full border border-ink/[0.08] transition-colors text-ink-muted hover:text-ink type-caption-medium font-mono uppercase text-left">
             <Upload className="w-4 h-4" />
             <span>{uploading ? "Uploading..." : label}</span>
             <input

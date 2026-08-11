@@ -31,7 +31,7 @@ interface GazeSimulatorProps {
 const REGIONS: GazeRegion[] = [
   { id: "environments", label: "Environments", x: 50, y: 5, width: 45, height: 50, color: "#22c55e" },
   { id: "faces", label: "Faces", x: 15, y: 10, width: 25, height: 35, color: "#ef4444" },
-  { id: "occupation", label: "Occupation", x: 45, y: 55, width: 50, height: 40, color: "#eab308" },
+  { id: "occupation", label: "Occupation", x: 45, y: 55, width: 50, height: 40, color: "#b45309" },
   { id: "clothing", label: "Clothing", x: 5, y: 45, width: 35, height: 45, color: "#a855f7" },
 ];
 
@@ -217,7 +217,7 @@ export function GazeSimulator({
         </div>
 
         {/* Instruction overlay */}
-        <div className="pointer-events-none absolute bottom-4 left-4 max-w-[min(calc(100%-2rem),20rem)] bg-black/60 px-4 py-2 text-left text-neutral-300 opacity-0 backdrop-blur-sm transition-opacity duration-300 type-caption group-hover:opacity-100">
+        <div className="pointer-events-none absolute bottom-4 left-4 max-w-[min(calc(100%-2rem),20rem)] bg-black/60 px-4 py-2 text-left text-white/90 opacity-0 backdrop-blur-sm transition-opacity duration-300 type-caption group-hover:opacity-100">
           Move your cursor to explore — dwell to discover
         </div>
       </div>

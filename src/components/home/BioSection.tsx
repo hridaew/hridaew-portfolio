@@ -5,6 +5,15 @@ import { playClick } from "@/lib/audio";
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 
+const BIO_ICON_SIZE = 24;
+
+const BIO_ICONS: Record<string, string> = {
+  domis: "/assets/home/bio-icons/domis.webp",
+  virdio: "/assets/home/bio-icons/virdio.webp",
+  obscura: "/assets/home/bio-icons/mohai.webp",
+  "memory-care": "/assets/home/bio-icons/sfcjl.webp",
+};
+
 function scrollToHomeProject(slug: string) {
   const el = document.getElementById(slug);
   if (!el) return;
@@ -41,13 +50,28 @@ function BioProjectAnchor({
     [slug]
   );
 
+  const iconSrc = BIO_ICONS[slug];
+
   return (
     <a
       href={`#${slug}`}
       onClick={onClick}
-      className="font-[family-name:var(--font-geist)] font-medium text-white underline decoration-solid transition-colors hover:text-white/90"
+      className="whitespace-nowrap font-[family-name:var(--font-geist)] font-medium text-ink transition-colors hover:text-ink"
     >
-      {children}
+      {iconSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={iconSrc}
+          alt=""
+          width={BIO_ICON_SIZE}
+          height={BIO_ICON_SIZE}
+          draggable={false}
+          className="mr-1 inline-block size-6 shrink-0 align-[-0.35em] object-contain"
+        />
+      ) : null}
+      <span className="underline decoration-solid underline-offset-[3px]">
+        {children}
+      </span>
     </a>
   );
 }
@@ -55,7 +79,7 @@ function BioProjectAnchor({
 export function BioSection() {
   const choom = useChoomLingo();
   return (
-    <div className="flex w-full flex-col gap-6 font-[family-name:var(--font-geist)] text-base leading-6 text-white/80">
+    <div className="flex w-full flex-col gap-6 font-[family-name:var(--font-geist)] text-base leading-6 text-ink-secondary">
       {choom ? (
         <>
           <p className="m-0">{CHOOM.bioP1}</p>

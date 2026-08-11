@@ -347,10 +347,10 @@ export function ButterChickenRecipeModalProvider({ children }: { children: React
                                           {/** Glass lives on a non-animated inner node so Framer transform/exit filter lifecycles do not retarget `backdrop-filter` sampling. */}
                                           <div
                                               className={cn(
-                                                  "relative flex min-h-0 flex-1 flex-col overflow-hidden border border-white/10 bg-[rgba(29,29,29,0.78)] backdrop-blur-[140px]",
+                                                  "relative flex min-h-0 flex-1 flex-col overflow-hidden border border-ink/[0.08] bg-[rgba(29,29,29,0.78)] backdrop-blur-[140px]",
                                                   isMobileSheet
-                                                      ? "rounded-b-none rounded-t-[32px] border-b-0 shadow-[0_-12px_48px_rgba(0,0,0,0.42)]"
-                                                      : "rounded-[40px] shadow-[0_24px_80px_rgba(0,0,0,0.55)]",
+                                                      ? "rounded-b-none rounded-t-[32px] border-b-0 shadow-[0_-2px_6px_rgb(var(--ink-rgb)/0.05),0_-8px_24px_rgb(var(--ink-rgb)/0.06),0_-20px_48px_rgb(var(--ink-rgb)/0.06)]"
+                                                      : "rounded-[40px] shadow-e3",
                                               )}
                                           >
                                               <div

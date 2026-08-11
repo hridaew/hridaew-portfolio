@@ -1,15 +1,15 @@
 /* Neutral editorial UX artifacts — not Domis product chrome.
-   Sit on the dark case-study page without coral media frames. */
+   Sit on the paper case-study page without coral media frames. */
 
 .dud {
-  --dud-ink: rgba(255, 255, 255, 0.9);
-  --dud-muted: rgba(255, 255, 255, 0.55);
-  --dud-faint: rgba(255, 255, 255, 0.32);
-  --dud-line: rgba(255, 255, 255, 0.14);
-  --dud-fill: rgba(255, 255, 255, 0.04);
-  --dud-fill-2: rgba(255, 255, 255, 0.07);
-  --dud-accent: #8fa4c8;
-  --dud-accent-soft: rgba(143, 164, 200, 0.16);
+  --dud-ink: var(--ink);
+  --dud-muted: var(--ink-muted);
+  --dud-faint: var(--ink-subtle);
+  --dud-line: rgb(var(--ink-rgb) / 0.14);
+  --dud-fill: rgb(var(--ink-rgb) / 0.035);
+  --dud-fill-2: rgb(var(--ink-rgb) / 0.06);
+  --dud-accent: #46618f;
+  --dud-accent-soft: rgba(70, 97, 143, 0.12);
   --dud-sticky: #ece7d8;
   --dud-sticky-ink: #2c2a24;
   --dud-sticky-fact: #d8e2f2;
@@ -66,7 +66,7 @@
   padding: 1.35rem 1.25rem 1.4rem;
   border: 1px solid var(--dud-line);
   border-radius: 14px;
-  background: #141416;
+  background: var(--paper-raised);
 }
 
 .domis-cs figure.dcs-ux-figure > .dcs-caption {
@@ -79,7 +79,7 @@
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--dud-faint);
+  color: var(--dud-muted);
 }
 
 .dud-heading {
@@ -164,7 +164,7 @@
   padding: 0.18rem;
   border: 1px solid var(--dud-line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(var(--ink-rgb) / 0.03);
 }
 
 .djm-zoom-btn {
@@ -186,7 +186,7 @@
 }
 
 .djm-zoom-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgb(var(--ink-rgb) / 0.05);
 }
 
 .djm-zoom-btn:disabled {
@@ -232,7 +232,7 @@
   padding: 0.2rem;
   border: 1px solid var(--dud-line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(var(--ink-rgb) / 0.03);
 }
 
 .djm-switch-btn {
@@ -285,7 +285,7 @@
   position: relative;
   padding: 0.12rem 0.4rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--ink-rgb) / 0.07);
   color: var(--dud-faint);
   font-size: 0.6rem;
   font-weight: 600;
@@ -307,7 +307,7 @@
 }
 
 .djm-wave-gutter {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgb(var(--ink-rgb) / 0.07);
 }
 
 .djm-wave {
@@ -335,7 +335,7 @@
 }
 
 .djm-wave-dot {
-  fill: #141416;
+  fill: var(--paper-raised);
   stroke: #ff5a5b;
   stroke-width: 1.5;
 }
@@ -359,7 +359,7 @@
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid var(--dud-line);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgb(var(--ink-rgb) / 0.07);
   font-size: 0.72rem;
   line-height: 1.34;
 }
@@ -390,7 +390,7 @@
   position: sticky;
   left: 0;
   z-index: 1;
-  background: #141416;
+  background: var(--paper-raised);
 }
 
 .djm-table tbody tr:last-child th,
@@ -409,7 +409,7 @@
 }
 
 .djm-pain {
-  color: rgba(255, 200, 180, 0.85);
+  color: #8a4a32;
   font-weight: 500;
 }
 
@@ -500,12 +500,12 @@
 .duf-canvas {
   position: relative;
   min-width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(var(--ink-rgb) / 0.07);
   border-radius: 12px;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    #141416;
+    linear-gradient(rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px),
+    var(--paper-raised);
   background-size: 44px 44px;
   isolation: isolate;
 }
@@ -572,8 +572,8 @@
   min-height: 54px;
   padding: 0.48rem 0.58rem;
   border: 1px solid var(--dud-line);
-  background: rgba(255, 255, 255, 0.045);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  background: rgb(var(--ink-rgb) / 0.035);
+  box-shadow: var(--shadow-2);
   color: var(--dud-ink);
   font-size: 0.73rem;
   font-weight: 600;
@@ -639,7 +639,7 @@
   padding: 0.14rem 0.34rem;
   border: 1px solid rgba(143, 164, 200, 0.22);
   border-radius: 999px;
-  background: #141416;
+  background: var(--paper-raised);
   color: var(--dud-accent);
   font-size: 0.58rem;
   font-weight: 700;
@@ -704,7 +704,7 @@
   font-size: 0.78rem;
   line-height: 1.4;
   border-radius: 2px;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 0 rgb(var(--ink-rgb) / 0.12);
 }
 
 .dad-note-fact {
@@ -775,7 +775,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-color: rgba(143, 164, 200, 0.45) rgba(255, 255, 255, 0.04);
+  scrollbar-color: rgba(70, 97, 143, 0.45) rgb(var(--ink-rgb) / 0.035);
   scrollbar-width: thin;
   border-radius: 12px;
   padding-bottom: 0.35rem;
@@ -795,7 +795,7 @@
 }
 
 .dux-embed-frame.duf-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--ink-rgb) / 0.035);
   border-radius: 999px;
 }
 

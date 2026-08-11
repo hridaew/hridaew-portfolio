@@ -3,6 +3,9 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScroller } from "@/components/sheet/scroller-context";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface TextRevealProps {
     children: string;
@@ -21,6 +24,7 @@ export function TextReveal({
 }: TextRevealProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const words = children.split(" ");
+    const scroller = useScroller();
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -39,12 +43,13 @@ export function TextReveal({
                 ease: "power3.out",
                 scrollTrigger: {
                     trigger: containerRef.current,
+                    scroller: scroller ?? undefined,
                     start: "top 90%",
                     once: true,
                 },
             }
         );
-    }, [delay, duration, stagger]);
+    }, [delay, duration, stagger, scroller]);
 
     return (
         <div ref={containerRef} className={`overflow-hidden ${className}`}>

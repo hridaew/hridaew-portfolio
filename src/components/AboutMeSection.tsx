@@ -125,7 +125,7 @@ export function AboutMeSection() {
                                 {/* Main image — spans full height, clickable */}
                                 <div
                                     ref={el => { bentoImgRefs.current[0] = el; }}
-                                    className="row-span-2 cursor-pointer overflow-hidden rounded-3xl border border-white/70"
+                                    className="row-span-2 cursor-pointer overflow-hidden rounded-3xl border border-ink/[0.56]"
                                     style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
                                     onClick={() => setImageExpanded(true)}
                                 >
@@ -140,7 +140,7 @@ export function AboutMeSection() {
                                 {/* Whiteboard / working photo — taller */}
                                 <div
                                     ref={el => { bentoImgRefs.current[1] = el; }}
-                                    className="overflow-hidden rounded-3xl border border-white/70"
+                                    className="overflow-hidden rounded-3xl border border-ink/[0.56]"
                                     style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
                                 >
                                     <img
@@ -153,7 +153,7 @@ export function AboutMeSection() {
                                 {/* Childhood / glasses photo — smaller */}
                                 <div
                                     ref={el => { bentoImgRefs.current[2] = el; }}
-                                    className="overflow-hidden rounded-3xl border border-white/70"
+                                    className="overflow-hidden rounded-3xl border border-ink/[0.56]"
                                     style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.08)", willChange: "transform" }}
                                 >
                                     <img
@@ -167,7 +167,7 @@ export function AboutMeSection() {
                         </Reveal>
 
                         <Reveal delay={0.1}>
-                            <p className="type-body italic text-neutral-400 mb-2 text-left">
+                            <p className="type-body italic text-ink-muted mb-2 text-left">
                                 (pronounced ri-they waliaa)
                             </p>
                             <div className="space-y-6 text-left">
@@ -347,7 +347,7 @@ export function AboutMeSection() {
 
                             {/* Caption text */}
                             <motion.p
-                                className="relative z-10 mt-6 type-body-lg text-white/80 max-w-[500px] text-left"
+                                className="relative z-10 mt-6 type-body-lg text-ink-secondary max-w-[500px] text-left"
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}

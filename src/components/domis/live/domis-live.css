@@ -84,7 +84,7 @@
   border: 0;
   border-radius: var(--domis-phone-radius);
   background: var(--domis-phone-bezel);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-3);
   padding: var(--domis-phone-bezel-width);
 }
 

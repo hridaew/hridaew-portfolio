@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { OrcaWafflingBody } from "@/components/orca/OrcaWafflingBody";
 import { WafflingEntrance } from "@/components/shared/WafflingEntrance";
 import { PostPill } from "@/components/shared/PostPill";
-import { ForceDark } from "@/components/shared/ForceDark";
 import { ORCA_OPENING, ORCA_TITLE } from "@/data/waffling-article-copy";
 
 /** Meta stays on the first paragraph, not the full overflow card preview. */
@@ -35,8 +34,7 @@ export const metadata: Metadata = {
 
 export default function OrcaWafflingPage() {
   return (
-    <main className="relative min-h-[100dvh] w-full overflow-x-hidden bg-[#0c0c0e] text-white">
-      <ForceDark />
+    <main className="relative min-h-[100dvh] w-full overflow-x-hidden bg-paper text-ink">
       <WafflingEntrance>
         <OrcaWafflingBody />
       </WafflingEntrance>

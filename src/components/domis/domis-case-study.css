@@ -1,11 +1,11 @@
-/* Domis case-study body — prototype mockups scoped for the dark editorial page */
+/* Domis case-study body — prototype mockups on the light paper editorial page */
 .domis-cs {
-  --dcs-text: #f4f4f5;
-  --dcs-muted: rgba(255, 255, 255, 0.45);
-  --dcs-faint: rgba(255, 255, 255, 0.28);
-  --dcs-line: rgba(255, 255, 255, 0.12);
-  --dcs-surface: rgba(255, 255, 255, 0.05);
-  --dcs-surface-2: rgba(255, 255, 255, 0.08);
+  --dcs-text: var(--ink);
+  --dcs-muted: var(--ink-muted);
+  --dcs-faint: var(--ink-subtle);
+  --dcs-line: rgb(var(--ink-rgb) / 0.12);
+  --dcs-surface: rgb(var(--ink-rgb) / 0.04);
+  --dcs-surface-2: rgb(var(--ink-rgb) / 0.07);
   --dcs-ai: #5b8cff;
   --dcs-ai-soft: rgba(91, 140, 255, 0.18);
   --dcs-mock: #ffffff;
@@ -119,7 +119,7 @@
   padding: 1rem 1.1rem;
   border-radius: 12px;
   border: 1px solid var(--dcs-line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--ink-rgb) / 0.03);
   transition:
     border-color 200ms ease,
     background-color 200ms ease,
@@ -127,8 +127,8 @@
 }
 
 .domis-cs .dcs-role-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgb(var(--ink-rgb) / 0.18);
+  background: rgb(var(--ink-rgb) / 0.055);
   transform: translateY(-1px);
 }
 
@@ -565,7 +565,7 @@
   padding: 0.7rem 0.75rem;
   border-radius: 10px;
   border: 1px solid var(--dcs-line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--ink-rgb) / 0.03);
 }
 
 .domis-cs .dcs-process-name {
@@ -697,7 +697,7 @@
   object-position: center;
   border-radius: 2px;
   /* Match weight of Mondrian grid strokes in the art */
-  border: 8px solid #0c0c0e;
+  border: 8px solid var(--paper);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.12),
     0 6px 14px rgba(0, 0, 0, 0.16),
@@ -708,7 +708,7 @@
   width: min(100%, 560px);
   border-radius: 14px;
   overflow: hidden;
-  background: #0c0c0e;
+  background: var(--paper);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.22),
     0 2px 8px rgba(0, 0, 0, 0.1);
@@ -736,7 +736,7 @@
 .domis-cs figcaption.dcs-caption {
   width: 100%;
   margin-top: 0.875rem;
-  color: var(--dcs-muted);
+  color: var(--ink-secondary);
 }
 
 /* mockup primitives (light product UI) */
@@ -1538,7 +1538,7 @@
 }
 
 .domis-cs .dcs-flip:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline: 2px solid rgb(var(--ink-rgb) / 0.45);
   outline-offset: 3px;
   border-radius: 22px;
 }
@@ -1588,7 +1588,9 @@
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 1px 2px rgb(var(--ink-rgb) / 0.04),
+    0 4px 12px rgb(var(--ink-rgb) / 0.05);
 }
 
 .domis-cs .dcs-flip-front {
@@ -1646,7 +1648,7 @@
 .domis-cs .dcs-more > .dcs-caption {
   width: 100%;
   margin-top: 0.875rem;
-  color: var(--dcs-muted);
+  color: var(--ink-secondary);
 }
 
 .domis-cs .dcs-swatches {

@@ -49,7 +49,12 @@ function ArrowBackIosNew() {
   );
 }
 
-export function VoiceRecorder() {
+export function VoiceRecorder({
+  /** Fit the phone stage into a parent (sheet) instead of locking the viewport. */
+  embed = false,
+}: {
+  embed?: boolean;
+} = {}) {
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecording, setHasRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -595,15 +600,16 @@ export function VoiceRecorder() {
   return (
     <div
       ref={wrapperRef}
-      className="flex items-center justify-center bg-[#1a1a1a]"
+      className="flex items-center justify-center bg-paper-sunken"
       style={{
-        width: "100vw",
-        height: "100dvh",
+        width: embed ? "100%" : "100vw",
+        height: embed ? "100%" : "100dvh",
+        minHeight: embed ? 720 : undefined,
         overflow: "hidden",
-        paddingTop: "env(safe-area-inset-top)",
-        paddingRight: "env(safe-area-inset-right)",
-        paddingBottom: "env(safe-area-inset-bottom)",
-        paddingLeft: "env(safe-area-inset-left)",
+        paddingTop: embed ? 0 : "env(safe-area-inset-top)",
+        paddingRight: embed ? 0 : "env(safe-area-inset-right)",
+        paddingBottom: embed ? 0 : "env(safe-area-inset-bottom)",
+        paddingLeft: embed ? 0 : "env(safe-area-inset-left)",
       }}
     >
       {/* Outer scale target. Bezel in mockup view; passthrough on mobile. */}
@@ -616,7 +622,7 @@ export function VoiceRecorder() {
           borderRadius: isMockupView ? "60px" : "0",
           background: isMockupView ? "#0b0b0b" : "transparent",
           boxShadow: isMockupView
-            ? "0 0 0 1.5px #2a2a2a, 0 30px 60px -10px rgba(0,0,0,0.65), 0 12px 24px -8px rgba(0,0,0,0.45)"
+            ? "0 0 0 1.5px #2a2a2a, 0 30px 60px -10px rgb(var(--ink-rgb) / 0.28), 0 12px 24px -8px rgb(var(--ink-rgb) / 0.18)"
             : "none",
         }}
       >
@@ -648,22 +654,23 @@ export function VoiceRecorder() {
           )}
 
           {/* Back button — 1:1 with the prototype's `<Back />` element, just
-              wrapped in `next/link` so it actually goes home. (`PostPill` at
-              the bottom-center of the viewport is the portfolio's standard
-              waffling chrome and is rendered by `RecorderShell`.) */}
+              wrapped in `next/link` so it actually goes home. Hidden when the
+              sheet supplies its own close chrome. */}
+          {!embed && (
           <Link
             href="/"
             aria-label="Back to home"
-            className="absolute left-[24px] size-[56px] z-50 bg-white content-stretch flex items-center justify-center px-[8px] py-[4px] rounded-[32px]"
+            className="absolute left-[24px] size-[56px] z-50 bg-paper-raised content-stretch flex items-center justify-center px-[8px] py-[4px] rounded-[32px]"
             style={{ bottom: safeBottomPad, WebkitTapHighlightColor: "transparent" }}
             data-name="Back"
           >
             <div
               aria-hidden="true"
-              className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[32px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.15)]"
+              className="absolute border border-solid border-ink inset-0 pointer-events-none rounded-[32px] shadow-e2"
             />
             <ArrowBackIosNew />
           </Link>
+          )}
 
           <div className="overflow-clip absolute bottom-0 rounded-[32px] w-[390px] h-[470px]">
             {/* Background */}
@@ -676,11 +683,11 @@ export function VoiceRecorder() {
                     "linear-gradient(147.458deg, rgb(217, 217, 217) 0%, rgb(181, 181, 181) 100%)",
                 }}
               />
-              <div className="absolute inset-0 rounded-[inherit] shadow-[inset_-2px_-2px_2px_0px_rgba(0,0,0,0.5),inset_2px_1px_1px_0px_white,inset_0px_0px_0px_1px_rgba(0,0,0,0.5)]" />
+              <div className="absolute inset-0 rounded-[inherit] shadow-[inset_-2px_-2px_2px_0px_rgb(var(--ink-rgb)/0.28),inset_2px_1px_1px_0px_white,inset_0px_0px_0px_1px_rgb(var(--ink-rgb)/0.28)]" />
             </div>
 
             {/* Header bar */}
-            <div className="absolute bg-black h-[58px] left-[16px] rounded-[20px] shadow-[-0.5px_-0.5px_0.5px_0px_rgba(0,0,0,0.5),0.5px_0.5px_0.5px_0px_white] top-[16px] w-[358px]" />
+            <div className="absolute bg-black h-[58px] left-[16px] rounded-[20px] shadow-[-0.5px_-0.5px_0.5px_0px_rgb(var(--ink-rgb)/0.35),0.5px_0.5px_0.5px_0px_white] top-[16px] w-[358px]" />
 
             {/* Header title */}
             {isEditingTitle ? (
@@ -962,7 +969,7 @@ export function VoiceRecorder() {
                       "linear-gradient(145.838deg, rgb(217, 217, 217) 0%, rgb(181, 181, 181) 100%)",
                   }}
                 />
-                <div className="absolute inset-0 rounded-bl-[2px] rounded-br-[32px] rounded-tl-[2px] rounded-tr-[2px] shadow-[inset_0px_2px_4px_0px_rgba(0,0,0,0.8),inset_-2px_-2px_2px_0px_rgba(0,0,0,0.5),inset_3px_5px_1px_0px_white,inset_0px_0px_0px_1px_rgba(0,0,0,0.5)]" />
+                <div className="absolute inset-0 rounded-bl-[2px] rounded-br-[32px] rounded-tl-[2px] rounded-tr-[2px] shadow-[inset_0px_2px_4px_0px_rgb(var(--ink-rgb)/0.35),inset_-2px_-2px_2px_0px_rgb(var(--ink-rgb)/0.22),inset_3px_5px_1px_0px_white,inset_0px_0px_0px_1px_rgb(var(--ink-rgb)/0.28)]" />
               </div>
 
               {/* Pressed layer — fades in when recording */}
@@ -988,7 +995,7 @@ export function VoiceRecorder() {
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute left-0 top-[3px] w-[71px] h-[88px] rounded-bl-[2px] rounded-br-[32px] rounded-tl-[2px] rounded-tr-[2px] shadow-[inset_0px_2px_4px_0px_rgba(0,0,0,0.8),inset_-2px_-2px_2px_0px_rgba(0,0,0,0.5),inset_3px_5px_1px_0px_white,inset_0px_0px_0px_1px_rgba(0,0,0,0.5)]"
+                  className="absolute left-0 top-[3px] w-[71px] h-[88px] rounded-bl-[2px] rounded-br-[32px] rounded-tl-[2px] rounded-tr-[2px] shadow-[inset_0px_2px_4px_0px_rgb(var(--ink-rgb)/0.35),inset_-2px_-2px_2px_0px_rgb(var(--ink-rgb)/0.22),inset_3px_5px_1px_0px_white,inset_0px_0px_0px_1px_rgb(var(--ink-rgb)/0.28)]"
                 />
                 <div
                   aria-hidden="true"
@@ -1052,10 +1059,10 @@ export function VoiceRecorder() {
                   }}
                   aria-label="Delete recording"
                 >
-                  <div className="bg-white content-stretch cursor-pointer flex items-center justify-center relative rounded-[32px] size-full">
+                  <div className="bg-paper-raised content-stretch cursor-pointer flex items-center justify-center relative rounded-[32px] size-full">
                     <div
                       aria-hidden="true"
-                      className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[32px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.15)]"
+                      className="absolute border border-solid border-ink inset-0 pointer-events-none rounded-[32px] shadow-e2"
                     />
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1076,10 +1083,10 @@ export function VoiceRecorder() {
                   }}
                   aria-label="Save recording"
                 >
-                  <div className="bg-white content-stretch cursor-pointer flex items-center justify-center relative rounded-[32px] size-full">
+                  <div className="bg-paper-raised content-stretch cursor-pointer flex items-center justify-center relative rounded-[32px] size-full">
                     <div
                       aria-hidden="true"
-                      className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[32px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.15)]"
+                      className="absolute border border-solid border-ink inset-0 pointer-events-none rounded-[32px] shadow-e2"
                     />
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path

@@ -373,8 +373,8 @@ export function HeroFaceBadge({
       className={cn(
         "relative inline-flex w-auto shrink-0 cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0",
         BADGE_HEIGHT_CLASS,
-        "touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
-        "focus-visible:ring-offset-2 focus-visible:ring-offset-[#141416]",
+        "touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28]",
+        "focus-visible:ring-offset-2 focus-visible:ring-offset-paper",
         spinning && "cursor-default",
         className,
       )}
@@ -402,15 +402,15 @@ export function HeroFaceBadge({
             } as CSSProperties
           }
         >
-          {/* Soft ground shadow — dark only, keep it tight */}
+          {/* Soft ground shadow — light cream sheet: keep contact soft, not heavy */}
           <span
             className="pointer-events-none absolute inset-0"
             style={{
               ...FACE_MASK,
               transform: `translate(${PIN_DEPTH_PX * PIN_EXTRUDE_X + 0.5}px, ${PIN_DEPTH_PX * PIN_EXTRUDE_Y + 1}px)`,
-              background: "#000",
-              filter: "blur(1.5px)",
-              opacity: 0.35,
+              background: "#1c1c1c",
+              filter: "blur(2.5px)",
+              opacity: 0.14,
             }}
           />
 

@@ -39,7 +39,7 @@ export function RecorderShell() {
     }, []);
 
     return (
-        <div className="fixed inset-0 z-[60] bg-[#1a1a1a]">
+        <div className="fixed inset-0 z-[60] bg-paper-sunken">
             <WafflingEntrance className="size-full">
                 <VoiceRecorder />
             </WafflingEntrance>

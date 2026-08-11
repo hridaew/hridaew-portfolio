@@ -175,7 +175,7 @@ function mountOrb(
     "inset:0",
     "border-radius:50%",
     "overflow:hidden",
-    "box-shadow:0 14px 32px rgba(0,0,0,0.48),inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -14px 28px rgba(0,0,0,0.3)",
+    "box-shadow:0 3px 8px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.35),inset 0 -4px 10px rgba(0,0,0,0.1)",
     "border:1px solid rgba(255,255,255,0.2)",
     "background:radial-gradient(120% 120% at 30% 22%,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 34%,rgba(0,0,0,0.22) 100%)",
     noSelect,

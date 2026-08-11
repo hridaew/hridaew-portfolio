@@ -37,7 +37,7 @@ export function DomisCaseStudyBody() {
         <Reveal>
           <div className="dcs-overview-stack">
             <div>
-              <p className="dcs-heading site-subheading text-white">
+              <p className="dcs-heading site-subheading text-ink">
                 What is Domis
               </p>
               <figure className="dcs-img-block">
@@ -45,7 +45,7 @@ export function DomisCaseStudyBody() {
                   <HeroProductShot />
                 </div>
               </figure>
-              <div className="site-body text-white/65">
+              <div className="site-body text-ink-muted">
                 <p>
                   Domis helps homeowners keep track of their homes. What needs
                   fixing, what&rsquo;s about to break, and what that appliance
@@ -62,17 +62,17 @@ export function DomisCaseStudyBody() {
             </div>
 
             <div>
-              <p className="dcs-heading site-subheading text-white">
+              <p className="dcs-heading site-subheading text-ink">
                 My role
               </p>
-              <p className="site-body text-white/65">
+              <p className="site-body text-ink-muted">
                 I joined as the Founding Product Designer and work on 0→1
                 design across mobile and web.
               </p>
             </div>
 
             <div id="role">
-              <p className="dcs-heading site-subheading text-white">
+              <p className="dcs-heading site-subheading text-ink">
                 My responsibilities
               </p>
               <ul className="dcs-roles">
@@ -102,7 +102,7 @@ export function DomisCaseStudyBody() {
                       />
                     </svg>
                   </span>
-                  <span className="site-body text-white/65">
+                  <span className="site-body text-ink-muted">
                     Own product design end to end, along with the design system it
                     ships on.
                   </span>
@@ -153,7 +153,7 @@ export function DomisCaseStudyBody() {
                       />
                     </svg>
                   </span>
-                  <span className="site-body text-white/65">
+                  <span className="site-body text-ink-muted">
                     Define the phases of design and development, and what gets built
                     when.
                   </span>
@@ -208,7 +208,7 @@ export function DomisCaseStudyBody() {
                       />
                     </svg>
                   </span>
-                  <span className="site-body text-white/65">
+                  <span className="site-body text-ink-muted">
                     Work directly with leadership and engineering on how the product
                     takes shape.
                   </span>
@@ -232,7 +232,7 @@ export function DomisCaseStudyBody() {
                       />
                     </svg>
                   </span>
-                  <span className="site-body text-white/65">
+                  <span className="site-body text-ink-muted">
                     Define how Domis uses AI, and design and prototype those
                     implementations myself.
                   </span>
@@ -248,10 +248,10 @@ export function DomisCaseStudyBody() {
 
       <section id="user-problem" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             User problem
           </p>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               Before designing features, I needed to understand how homeowners
               actually hold knowledge about their houses, and where that
@@ -273,10 +273,10 @@ export function DomisCaseStudyBody() {
 
       <section id="challenge" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             Key challenge
           </p>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               Domis only works if it knows your home, but listing every space,
               appliance, and nuance by hand is painful.
@@ -290,12 +290,12 @@ export function DomisCaseStudyBody() {
           <figure className="dcs-ux-figure">
             <DomisConstraintDiagram />
           </figure>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               So to make setup feel as rewarding and informative as possible, I
               designed Domis around one principle:
             </p>
-            <p className="mt-3 font-medium text-white">
+            <p className="mt-3 font-medium text-ink">
               Extract the maximum value from the smallest action the user is
               willing to take.
             </p>
@@ -313,13 +313,13 @@ export function DomisCaseStudyBody() {
 
       <section id="known" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             The home, known
           </p>
           <figure className="dcs-img-block dcs-known-breakout">
               <DomisKnownCarousel />
           </figure>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               This is what an owner who understands their house looks like in
               software. A filled property. Tasks tracked with tagged appliances.
@@ -335,25 +335,23 @@ export function DomisCaseStudyBody() {
 
       <section id="address" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             Address Intelligence
           </p>
           <figure className="dcs-img-block">
               <DomisAddressFeatureCard />
           </figure>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
-              <strong className="text-white">
+              <strong className="text-ink">
                 The first thing anyone does in Domis is type their address.
               </strong>{" "}
-              That is the entire ask, and it is roughly the maximum a new user
-              will tolerate before deciding whether this is worth their time.
+              That is the entire ask — about as much as a new user will give.
             </p>
             <p>
-              So I designed an address intelligence feature that maximizes the
-              value of a user provided home address. Type it once, and Domis
-              researches the house, then puts what it finds into the same form
-              the owner would have filled by hand.
+              So I designed address intelligence around that single input: type
+              an address once, and Domis researches the house and fills the form
+              the owner would have completed by hand.
             </p>
           </div>
           <DomisUxDiagramEmbed
@@ -371,12 +369,12 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             The challenge
           </p>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
-              <strong className="text-white">
+              <strong className="text-ink">
                 The hard part is not finding data. It is deciding what the owner
                 should see when search is unsure.
               </strong>{" "}
@@ -417,7 +415,7 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <p className="site-body text-white/65">
+          <p className="site-body text-ink-muted">
             Address Intelligence also pulls photos of the property and generates
             a clean icon for it. Small thing, but a recognizable avatar matters
             when someone manages more than one property, and it is replaceable
@@ -454,13 +452,13 @@ export function DomisCaseStudyBody() {
 
       <section id="appliance" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             Appliance Intelligence
           </p>
           <figure className="dcs-img-block">
               <DomisApplianceFeatureCard />
           </figure>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               Logging your appliances is one of the first useful things to do in
               Domis, since it lets them be tagged in tasks and in conversations
@@ -477,7 +475,7 @@ export function DomisCaseStudyBody() {
               parts, and common failures.
             </p>
             <p>
-              <strong className="text-white">
+              <strong className="text-ink">
                 I asked my Google Gemini app about appliance labels to see what
                 it could give me.
               </strong>
@@ -504,7 +502,7 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               With the Gemini test as proof of concept, I moved on to designing
               the feature.
@@ -536,7 +534,7 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               V1 stopped at reading the plate. For v2 I pushed the same scan
               further: support pages, warranty links, the things an owner
@@ -560,13 +558,13 @@ export function DomisCaseStudyBody() {
 
       <section id="report" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             Report Processor
           </p>
           <figure className="dcs-img-block">
               <DomisHomeFeatureCard />
           </figure>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               A key part of my research was around meeting the user where they
               were, and I went looking for what information homeowners already
@@ -579,7 +577,7 @@ export function DomisCaseStudyBody() {
             <p>
               However, no one cares about the inspection report. Our interviews
               explained why.{" "}
-              <strong className="text-white">
+              <strong className="text-ink">
                 People had been in their homes long enough that the report no
                 longer described the house they were living in.
               </strong>
@@ -596,10 +594,10 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               That changed what the feature should be.{" "}
-              <strong className="text-white">
+              <strong className="text-ink">
                 Not a diagnostic that generates a to-do list, which would be
                 wrong on arrival, but a way to understand the house.
               </strong>
@@ -626,24 +624,24 @@ export function DomisCaseStudyBody() {
 
       <section id="insights" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             Insights
           </p>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
-              <strong className="text-white">Systems.</strong> AI output and
+              <strong className="text-ink">Systems.</strong> AI output and
               human input share the same editable forms. Mobile and web sit on
               one design system I own. Different ingestion paths share one
               contract: fill what you can, never lock the owner out.
             </p>
             <p>
-              <strong className="text-white">Trust.</strong> AI is wrong
+              <strong className="text-ink">Trust.</strong> AI is wrong
               sometimes.               We show disagreement instead of a confident wrong
               answer, and treat the report as understanding, not an automatic
               chore list.
             </p>
             <p>
-              <strong className="text-white">Collaboration.</strong> As founding
+              <strong className="text-ink">Collaboration.</strong> As founding
               PD I set phases with leadership and eng: what ships when, and what
               the AI is allowed to claim. I define and prototype the AI
               surfaces; engineering owns the pipeline under that contract.
@@ -657,16 +655,16 @@ export function DomisCaseStudyBody() {
 
       <section id="more" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-white">
+          <p className="dcs-heading site-subheading text-ink">
             And more!
           </p>
-          <div className="site-body text-white/65">
+          <div className="site-body text-ink-muted">
             <p>
               Domis is recently launched and rapidly updating.
             </p>
             <p>
               The lens has not changed.{" "}
-              <strong className="text-white">
+              <strong className="text-ink">
                 Find the smallest thing the user is willing to do, and return as
                 much as possible for it.
               </strong>

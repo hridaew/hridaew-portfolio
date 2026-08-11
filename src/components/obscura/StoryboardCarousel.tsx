@@ -25,7 +25,7 @@ const STORYBOARD_FRAMES = [
 
 /** Full editorial column width; image keeps natural aspect ratio (no crop). */
 const SLIDE_SHELL =
-  "relative w-full min-w-0 overflow-hidden border border-neutral-800 bg-neutral-950 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.35)]";
+  "relative w-full min-w-0 overflow-hidden border border-ink/[0.1] bg-paper-sunken shadow-[0_1px_2px_rgb(43_42_39/0.04),0_4px_14px_rgb(43_42_39/0.06)]";
 
 interface StoryboardCarouselProps {
   className?: string;

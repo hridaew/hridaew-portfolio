@@ -37,7 +37,7 @@ export function InspirationsGallery() {
                     {inspirations.map((item, i) => (
                         <Reveal key={i} delay={i * 0.03} className="break-inside-avoid mb-3">
                             <div
-                                className="group relative w-full overflow-hidden rounded-lg transition-all duration-300 ease-out border border-white/30 ring-1 ring-white/20"
+                                className="group relative w-full overflow-hidden rounded-lg transition-all duration-300 ease-out border border-ink/[0.24] ring-1 ring-ink/[0.16]"
                                 style={{ transform: "scale(1)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
                                 onMouseEnter={(e) => {
                                     const el = e.currentTarget;
@@ -60,7 +60,7 @@ export function InspirationsGallery() {
                                     loading="lazy"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out">
-                                    <p className="type-caption text-white text-left">
+                                    <p className="type-caption text-ink text-left">
                                         {item.caption}
                                     </p>
                                 </div>

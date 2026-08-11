@@ -80,7 +80,7 @@ export function DragDropImage({ initialSrc, alt, className, onImageClick }: Drag
                     onClick={() => onImageClick?.(src)}
                 />
             ) : (
-                <div className="w-full h-full min-h-[300px] bg-neutral-100 flex items-center justify-center border-2 border-dashed border-neutral-300 text-neutral-400">
+                <div className="w-full h-full min-h-[300px] bg-neutral-100 flex items-center justify-center border-2 border-dashed border-neutral-300 text-ink-muted">
                     <span className="type-caption-medium font-mono uppercase text-left">Drop Image Here</span>
                 </div>
             )}
@@ -88,19 +88,19 @@ export function DragDropImage({ initialSrc, alt, className, onImageClick }: Drag
             {/* Overlay for Drag State */}
             {isDragging && (
                 <div className="absolute inset-0 bg-[#E4DAFF]/50 backdrop-blur-sm flex items-center justify-center z-20 pointer-events-none">
-                    <Upload className="w-12 h-12 text-white animate-bounce" />
+                    <Upload className="w-12 h-12 text-ink animate-bounce" />
                 </div>
             )}
 
             {/* Hover Upload Hint */}
-            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur text-white flex gap-2 items-center px-3 py-1.5 rounded-full type-caption font-mono pointer-events-none z-10 text-left">
+            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur text-ink flex gap-2 items-center px-3 py-1.5 rounded-full type-caption font-mono pointer-events-none z-10 text-left">
                 <Upload className="w-3 h-3" />
                 <span>Drag & Drop to Replace</span>
             </div>
 
             {uploading && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
-                    <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-4 border-ink/[0.24] border-t-white rounded-full animate-spin" />
                 </div>
             )}
         </div>

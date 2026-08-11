@@ -105,7 +105,7 @@ function ParallaxAlbumCard({
         >
           {/* Front Face */}
           <div 
-            className="absolute inset-0 backface-hidden rounded-[4px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.4)]"
+            className="absolute inset-0 backface-hidden rounded-[4px] shadow-e3"
             style={{ backfaceVisibility: "hidden" }}
           >
             <Image
@@ -128,7 +128,7 @@ function ParallaxAlbumCard({
           </div>
 
           <div 
-            className="absolute inset-0 backface-hidden rotate-y-180 rounded-[4px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.4)] bg-black"
+            className="absolute inset-0 backface-hidden rotate-y-180 rounded-[4px] shadow-e3 bg-black"
             style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}
           >
             <Image
@@ -181,7 +181,7 @@ export function AlbumArt({ title, frontSrc, backSrc, layoutIdBase }: AlbumProps)
         className="group relative size-[178px] shrink-0 overflow-visible rounded-[2px]"
       >
         <span
-          className="pointer-events-none absolute top-full left-1/2 z-[1] mt-3 max-w-[min(280px,calc(100vw-32px))] -translate-x-1/2 text-center font-[family-name:var(--font-geist-mono)] text-[10px] font-normal uppercase leading-tight tracking-wide text-white/75 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute top-full left-1/2 z-[1] mt-3 max-w-[min(280px,calc(100vw-32px))] -translate-x-1/2 text-center font-[family-name:var(--font-geist-mono)] text-[10px] font-normal uppercase leading-tight tracking-wide text-ink-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           aria-hidden
         >
           {title}

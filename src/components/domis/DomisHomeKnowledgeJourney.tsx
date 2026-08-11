@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./domis-ux-diagrams.css";
 
 type PersonaId = "mid" | "first";
@@ -252,7 +252,9 @@ export function DomisHomeKnowledgeJourney() {
   const [personaId, setPersonaId] = useState<PersonaId>("mid");
   const [scale, setScale] = useState(SCALE_DEFAULT);
   const gradientId = useId().replace(/:/g, "");
+  const reduceMotion = useReducedMotion();
   const persona = PERSONAS.find((p) => p.id === personaId) ?? PERSONAS[0]!;
+  const swapDuration = reduceMotion ? 0 : 0.12;
 
   const zoomOut = () =>
     setScale((s) => Math.max(SCALE_MIN, Number((s - SCALE_STEP).toFixed(2))));
@@ -292,7 +294,7 @@ export function DomisHomeKnowledgeJourney() {
                 >
                   {selected ? (
                     <motion.span
-                      layoutId="djm-switch-pill"
+                      layoutId={reduceMotion ? undefined : "djm-switch-pill"}
                       className="djm-switch-pill"
                       transition={{
                         type: "spring",
@@ -343,7 +345,7 @@ export function DomisHomeKnowledgeJourney() {
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -3 }}
-          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: swapDuration, ease: [0.22, 1, 0.36, 1] }}
         >
           {persona.blurb}
         </motion.p>
@@ -358,7 +360,7 @@ export function DomisHomeKnowledgeJourney() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: swapDuration, ease: [0.22, 1, 0.36, 1] }}
             >
               <EmotionWave
                 values={persona.emotionWave}
@@ -374,7 +376,7 @@ export function DomisHomeKnowledgeJourney() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: swapDuration, ease: [0.22, 1, 0.36, 1] }}
           >
             <table className="djm-table">
               <thead>

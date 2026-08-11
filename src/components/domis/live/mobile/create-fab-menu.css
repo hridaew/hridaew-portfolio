@@ -214,7 +214,7 @@
     ),
     radial-gradient(circle at 72% 78%, rgba(0, 0, 0, 0.55) 0%, transparent 50%);
   border: 1px solid #ffffff;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-2);
 }
 
 .domis-live.cfm .cfm-fab:focus-visible {

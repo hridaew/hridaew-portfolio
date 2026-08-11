@@ -33,7 +33,7 @@ export interface HomepageProject {
 export const homepageProjects: HomepageProject[] = [
   {
     slug: "domis",
-    title: "Designing Domis, a home maintenance app that learns your home as you use it",
+    title: "Shipping Domis, a home maintenance app that learns your home as you use it",
     description:
       "Building Domis from zero, including how it learns a house from an address, a photo, and an inspection report. Making the most of the smallest action a user will take.",
     bgColor: "#ff5a5b",

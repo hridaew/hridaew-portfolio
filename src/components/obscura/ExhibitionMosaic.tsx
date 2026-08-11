@@ -20,7 +20,7 @@ const EXHIBITION_IMAGES = [
 
 /** Match Virdio AR library: Embla row + lightbox slides; Obscura chrome. */
 const SLIDE_SHELL =
-  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden border border-neutral-800 bg-neutral-950 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.35)]";
+  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden border border-ink/[0.1] bg-paper-sunken shadow-e3";
 
 interface ExhibitionMosaicProps {
   className?: string;
@@ -50,7 +50,7 @@ export function ExhibitionMosaic({ className }: ExhibitionMosaicProps) {
         ))}
       </ProjectCarousel>
 
-      <p className="site-gallery-caption mt-3 text-left text-neutral-500">
+      <p className="site-gallery-caption mt-3 text-left text-ink-muted">
         Exhibition Day at MOHAI — September 13, 2025
       </p>
     </div>

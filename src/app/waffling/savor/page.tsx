@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function SavorWafflingPage() {
   return (
-    <main className="relative min-h-[100dvh] w-full overflow-x-hidden bg-[#0c0c0e] text-white">
+    <main className="relative min-h-[100dvh] w-full overflow-x-hidden bg-paper text-ink">
       <WafflingEntrance>
         <SavorWafflingBody />
       </WafflingEntrance>

@@ -10,6 +10,9 @@ import {
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import gsap from "gsap";
+import { isSheetHref } from "@/lib/case-study-sheets";
+import { useSheetNav } from "@/components/sheet/SheetNav";
+import { isHomeSplitLayout } from "@/lib/home-layout";
 
 interface PageTransitionContextValue {
     transitionTo: (href: string) => void;
@@ -48,9 +51,8 @@ const EASE_PRE = "power2.out";
 const EASE_IN = "power3.inOut";
 const EASE_OUT = "power3.inOut";
 
-/** Solid shell color — avoids white flashes from `bg-background` on mixed light/dark routes */
 const CURTAIN_CLASS =
-    "fixed inset-0 z-[100] bg-[#0c0c0e] will-change-transform";
+    "fixed inset-0 z-[100] bg-paper will-change-transform";
 
 export function PageTransitionProvider({
     children,
@@ -59,6 +61,7 @@ export function PageTransitionProvider({
 }) {
     const router = useRouter();
     const pathname = usePathname();
+    const { openSheet } = useSheetNav();
     const curtainRef = useRef<HTMLDivElement>(null);
     const shellRef = useRef<HTMLDivElement>(null);
     const isTransitioning = useRef(false);
@@ -151,6 +154,18 @@ export function PageTransitionProvider({
     const transitionTo = useCallback(
         (href: string) => {
             if (isTransitioning.current) return;
+
+            // Sheets only in twin-pane home. Soft-nav intercept would stick the
+            // home underlay in stack — hard-nav to the real case-study page.
+            if (isSheetHref(href)) {
+                if (isHomeSplitLayout()) {
+                    openSheet(href);
+                    return;
+                }
+                window.location.assign(href);
+                return;
+            }
+
             isTransitioning.current = true;
 
             const curtain = curtainRef.current;
@@ -229,15 +244,15 @@ export function PageTransitionProvider({
                 `-=${NAVIGATE_BEFORE_WIPE_END}`
             );
         },
-        [router]
+        [router, openSheet]
     );
 
     return (
         <PageTransitionContext.Provider value={{ transitionTo }}>
-            {/* Letterboxing during shell scale/blur shows behind the transformed layer; keep it #0c0c0e (not :root body #fafafa). */}
+            {/* Letterboxing behind the transformed shell during scale/blur */}
             <div
                 aria-hidden
-                className="pointer-events-none fixed inset-0 z-0 bg-[#0c0c0e]"
+                className="pointer-events-none fixed inset-0 z-0 bg-paper"
             />
             <div
                 ref={shellRef}

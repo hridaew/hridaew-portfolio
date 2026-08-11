@@ -14,7 +14,7 @@ function AboutSection() {
   return (
     <div className="flex w-full min-w-0 flex-col items-start gap-8 sm:flex-row">
       <div className="flex w-full max-w-[128px] shrink-0 flex-col items-start gap-2 sm:w-[128px]">
-        <div className="relative size-[128px] shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
+        <div className="relative size-[128px] shrink-0 rounded-lg shadow-e2">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
             <Image
               alt="Portrait at Valve Software"
@@ -25,11 +25,11 @@ function AboutSection() {
             />
           </div>
         </div>
-        <p className="w-full min-w-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-[18px] text-white/50">
+        <p className="w-full min-w-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-[18px] text-ink-muted">
           This is me at valve software :D
         </p>
       </div>
-      <div className="min-w-0 max-w-[432px] flex-1 font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/80 whitespace-pre-wrap">
+      <div className="min-w-0 max-w-[432px] flex-1 font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-secondary whitespace-pre-wrap">
         <p className="mb-0 leading-6">
           {`Being the son of an engineer and an artist it would be easy to guess where my interests would lie, I'm an Interaction/Product/Experience/Everything Designer because I love making things that work and get a response out of people — whether it be from sensory stimuli or something as simple as getting a task done. `}
         </p>
@@ -49,16 +49,16 @@ function ExperienceSection() {
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
+            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
               Experience
             </p>
           </div>
         </div>
       </div>
-      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-white/[0.02] py-4">
+      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-ink/[0.02] py-4">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-xl border border-white/10"
+          className="pointer-events-none absolute inset-0 rounded-xl border border-ink/[0.08]"
         />
         <ExpBlock
           title="Domis"
@@ -100,8 +100,8 @@ function ExpDivider() {
           aria-hidden
         >
           <line
-            stroke="white"
-            strokeOpacity={0.1}
+            stroke="#1c1c1c"
+            strokeOpacity={0.18}
             strokeWidth={0.5}
             style={{ mixBlendMode: "luminosity" }}
             x2="432"
@@ -128,10 +128,10 @@ function ExpBlock({
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-white/80">
+            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-ink-secondary">
               {title}
             </p>
-            <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-white/60">
+            <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-ink-muted">
               {date}
             </p>
           </div>
@@ -140,7 +140,7 @@ function ExpBlock({
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/60">
+            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-muted">
               {body}
             </p>
           </div>
@@ -156,16 +156,16 @@ function EducationSection() {
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
+            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
               Education
             </p>
           </div>
         </div>
       </div>
-      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-white/[0.02] py-4">
+      <div className="relative flex w-full min-w-0 shrink-0 flex-col items-start gap-4 rounded-xl bg-ink/[0.02] py-4">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-xl border border-white/10"
+          className="pointer-events-none absolute inset-0 rounded-xl border border-ink/[0.08]"
         />
         {(
           [
@@ -187,10 +187,10 @@ function EducationSection() {
               <div className="relative w-full shrink-0">
                 <div className="flex size-full flex-row items-center justify-center">
                   <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-white/80">
+                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-ink-secondary">
                       {block.school}
                     </p>
-                    <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-white/60">
+                    <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-ink-muted">
                       {block.year}
                     </p>
                   </div>
@@ -199,7 +199,7 @@ function EducationSection() {
               <div className="relative w-full shrink-0">
                 <div className="flex size-full flex-row items-center justify-center">
                   <div className="relative flex size-full items-center justify-center px-4">
-                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-white/60">
+                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-muted">
                       {block.degree}
                     </p>
                   </div>
@@ -215,9 +215,9 @@ function EducationSection() {
 
 function SideImages() {
   return (
-    <div className="flex w-32 shrink-0 flex-col items-center justify-center gap-8 pt-[25px]">
+    <div className="flex w-32 shrink-0 flex-col items-center justify-center gap-8 overflow-visible pt-[25px]">
       <TiltFrame rotation="-rotate-[4deg]">
-        <div className="relative size-32 shrink-0 rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.3)]">
+        <div className="relative size-32 shrink-0 rounded-lg shadow-e2">
           <Image
             alt=""
             fill
@@ -228,7 +228,7 @@ function SideImages() {
         </div>
       </TiltFrame>
       <TiltFrame rotation="rotate-[4deg]">
-        <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
+        <div className="relative size-32 shrink-0 rounded-2xl shadow-e2">
           <Image
             alt=""
             fill
@@ -239,7 +239,7 @@ function SideImages() {
         </div>
       </TiltFrame>
       <TiltFrame rotation="-rotate-[4deg]">
-        <div className="relative size-32 shrink-0 rounded-2xl shadow-[0px_0px_16px_0px_rgba(0,0,0,0.15)]">
+        <div className="relative size-32 shrink-0 rounded-2xl shadow-e2">
           <Image
             alt=""
             fill
@@ -275,7 +275,7 @@ function TiltFrame({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex size-[136.617px] shrink-0 items-center justify-center">
+    <div className="relative flex size-[136.617px] shrink-0 items-center justify-center overflow-visible">
       <div className={`flex-none ${rotation}`}>{children}</div>
     </div>
   );
@@ -298,12 +298,12 @@ function ExperienceEducationSection() {
 function Top3Section() {
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col items-start justify-center gap-8">
-      <div className="relative w-full shrink-0 font-[family-name:var(--font-geist)] text-base font-semibold leading-none text-white/60">
+      <div className="relative w-full shrink-0 font-[family-name:var(--font-geist)] text-base font-semibold leading-none text-ink-muted">
         <p className="leading-normal">Top 3:</p>
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
+        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
           Games:
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
@@ -311,7 +311,7 @@ function Top3Section() {
             role="button"
             tabIndex={0}
             aria-label="Cyberpunk 2077 cover"
-            className="relative h-[220px] w-[157px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            className="relative h-[220px] w-[157px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
             onClick={() => playBiochipMalfunctionHeroGame()}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
@@ -331,7 +331,7 @@ function Top3Section() {
             role="button"
             tabIndex={0}
             aria-label="Half-Life 2 cover"
-            className="relative h-[220px] w-[159px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            className="relative h-[220px] w-[159px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
             onClick={() => playHalfLife2HeroGameCover()}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
@@ -354,7 +354,7 @@ function Top3Section() {
             role="button"
             tabIndex={0}
             aria-label="Third game cover"
-            className="relative h-[219.302px] w-[156px] shrink-0 cursor-pointer rounded-[5px] shadow-[0px_8px_16px_0px_rgba(0,0,0,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/45"
+            className="relative h-[219.302px] w-[156px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
             onClick={() => playGame3HeroCover()}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
@@ -374,7 +374,7 @@ function Top3Section() {
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
+        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
           Albums:
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2 overflow-visible">
@@ -412,11 +412,11 @@ function Top3Section() {
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-white/50">
+        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
           moves:
         </p>
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">
-          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
+          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <Image
                 alt=""
@@ -428,7 +428,7 @@ function Top3Section() {
               />
             </div>
           </div>
-          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
+          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <Image
                 alt=""
@@ -440,7 +440,7 @@ function Top3Section() {
               />
             </div>
           </div>
-          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.3)]">
+          <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2px]">
               <Image
                 alt=""
@@ -462,7 +462,7 @@ function Top3Section() {
 export function HeroCardExpandedBody() {
   return (
     <div className="relative w-full min-w-0">
-      <div className="sticky top-0 z-10 h-px w-full bg-white/15" aria-hidden />
+      <div className="sticky top-0 z-10 h-px w-full bg-ink/[0.075]" aria-hidden />
       <div className="flex w-full min-w-0 flex-col items-start gap-10 pt-8">
         <div className="flex w-full min-w-0 flex-col items-start gap-8">
           <AboutSection />

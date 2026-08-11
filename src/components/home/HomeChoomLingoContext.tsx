@@ -7,7 +7,11 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { startChoomAmbient, stopChoomAmbient } from "@/lib/choomUiAudio";
+import {
+  preloadChoomUiAudio,
+  startChoomAmbient,
+  stopChoomAmbient,
+} from "@/lib/choomUiAudio";
 import { useHomeChoomTheme } from "@/lib/useHomeChoomTheme";
 
 const ChoomLingoContext = createContext(false);
@@ -17,6 +21,7 @@ export function HomeChoomLingoProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isChoom) {
+      preloadChoomUiAudio();
       startChoomAmbient();
       return () => stopChoomAmbient();
     }

@@ -260,7 +260,7 @@ export function WhiteboardCanvas() {
                                 }}
                             >
                                 <div
-                                    className="bg-white p-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-shadow duration-200"
+                                    className="bg-paper-raised p-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-shadow duration-200"
                                 >
                                     <img
                                         src={img.src}

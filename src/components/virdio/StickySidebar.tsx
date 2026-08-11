@@ -58,7 +58,7 @@ export function StickySidebar() {
                             {activeSection === section.id && (
                                 <motion.div
                                     layoutId="activeSectionPill"
-                                    className="absolute inset-0 rounded-full bg-neutral-900"
+                                    className="absolute inset-0 rounded-full bg-paper-sunken"
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 />
                             )}
@@ -66,8 +66,8 @@ export function StickySidebar() {
                                 className={cn(
                                     "type-caption-medium transition-colors duration-300 relative z-10 text-left",
                                     activeSection === section.id
-                                        ? "text-white"
-                                        : "text-neutral-400 group-hover:text-neutral-700"
+                                        ? "text-ink"
+                                        : "text-ink-muted group-hover:text-neutral-700"
                                 )}
                             >
                                 {section.number}
@@ -80,7 +80,7 @@ export function StickySidebar() {
                                     "block type-caption-medium transition-all duration-300 text-left",
                                     activeSection === section.id
                                         ? "translate-x-0 opacity-100 text-neutral-900"
-                                        : "-translate-x-3 opacity-0 text-neutral-500 group-hover:translate-x-0 group-hover:opacity-100"
+                                        : "-translate-x-3 opacity-0 text-ink-muted group-hover:translate-x-0 group-hover:opacity-100"
                                 )}
                             >
                                 {section.label}

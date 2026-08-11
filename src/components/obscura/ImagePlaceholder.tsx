@@ -21,7 +21,7 @@ export function ImagePlaceholder({
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-950",
+        "relative overflow-hidden bg-gradient-to-br from-paper-sunken to-paper-sunken",
         fullBleed && "h-full min-h-0",
         className
       )}
@@ -44,7 +44,7 @@ export function ImagePlaceholder({
 
       {/* Variant decorations */}
       {variant === "frame" && !fullBleed && (
-        <div className="absolute inset-4 border border-neutral-700/40" />
+        <div className="absolute inset-4 border border-ink/[0.1]" />
       )}
 
       {variant === "viewfinder" && (
@@ -67,12 +67,12 @@ export function ImagePlaceholder({
           {/* Film sprocket holes */}
           <div className="absolute left-2 top-0 bottom-0 flex flex-col justify-between py-3">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-4 w-2.5 bg-neutral-800/60" />
+              <div key={i} className="h-4 w-2.5 bg-ink/[0.04]" />
             ))}
           </div>
           <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-between py-3">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-4 w-2.5 bg-neutral-800/60" />
+              <div key={i} className="h-4 w-2.5 bg-ink/[0.04]" />
             ))}
           </div>
         </>
@@ -80,7 +80,7 @@ export function ImagePlaceholder({
 
       {/* Label — fill via right/bottom + size so top/left stay unset (matches preview tweaks) */}
       <div className="absolute bottom-0 right-0 flex h-full w-full items-center justify-center">
-        <span className="type-body-lg text-neutral-600 text-left">
+        <span className="type-body-lg text-ink-subtle text-left">
           {label}
         </span>
       </div>

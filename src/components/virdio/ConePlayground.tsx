@@ -55,7 +55,7 @@ const COLORS = {
   primaryLight: "#A78BFA",
   primaryGlow: "rgba(124, 58, 237, 0.25)",
   particleColors: ["#7C3AED", "#A78BFA", "#C4B5FD", "#8B5CF6"],
-  gridLine: "rgba(255, 255, 255, 0.06)",
+  gridLine: "rgba(43, 42, 39, 0.10)",
   calibrationLine: "#7C3AED",
 };
 
@@ -195,8 +195,8 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
         const fh = f.h * h;
 
         // Semi-transparent fill
-        ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+        ctx.fillStyle = "rgba(43, 42, 39, 0.04)";
+        ctx.strokeStyle = "rgba(43, 42, 39, 0.12)";
         ctx.lineWidth = 1;
 
         ctx.beginPath();
@@ -205,7 +205,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
         ctx.stroke();
 
         // Label
-        ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
+        ctx.fillStyle = "rgba(43, 42, 39, 0.45)";
         ctx.font = "10px system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -369,8 +369,9 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
 
     // Clear with floor gradient
     const floorGrad = ctx.createLinearGradient(0, 0, 0, h);
-    floorGrad.addColorStop(0, "#16161a");
-    floorGrad.addColorStop(1, "#0c0c0e");
+    // Canvas can't read CSS vars — keep these in sync with --paper-sunken/--paper.
+    floorGrad.addColorStop(0, "#ebebea");
+    floorGrad.addColorStop(1, "#f4f4f3");
     ctx.fillStyle = floorGrad;
     ctx.fillRect(0, 0, w, h);
 
@@ -562,10 +563,10 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="bg-white/[0.04] rounded-2xl border border-white/10 overflow-hidden">
+      <div className="bg-ink/[0.02] rounded-2xl border border-ink/[0.08] overflow-hidden">
         {/* Header label */}
         <div className="flex items-center justify-between px-5 py-3.5">
-          <div className="type-body text-left text-white/80">
+          <div className="type-body text-left text-ink-secondary">
             {isCalibrated ? (
               <span className="type-caption-medium text-emerald-400 flex items-center gap-1.5">
                 <svg
@@ -587,9 +588,9 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
                 Calibration complete
               </span>
             ) : (
-              <span className="text-white/55">
+              <span className="text-ink-muted">
                 Tap to place cones
-                <span className="text-white/40 ml-1.5">
+                <span className="text-ink-subtle ml-1.5">
                   ({coneCount}/{MAX_CONES})
                 </span>
               </span>
@@ -597,7 +598,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
           </div>
           <button
             onClick={resetAll}
-            className="type-caption text-white/45 hover:text-white/75 transition-colors px-2.5 py-1 rounded-md hover:bg-white/10 cursor-pointer text-left"
+            className="type-caption text-ink-subtle hover:text-ink-secondary transition-colors px-2.5 py-1 rounded-md hover:bg-ink/[0.05] cursor-pointer text-left"
           >
             Reset
           </button>
@@ -621,7 +622,7 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
 
         {/* Footer hint */}
         <div className="px-5 py-3 ">
-          <p className="type-caption text-white/40 text-left">
+          <p className="type-caption text-ink-subtle text-left">
             {isCalibrated
               ? "Double-click a cone to remove it. Drag to reposition."
               : "Place 2 cones at opposite corners to define your workout zone. Drag to move, double-click to remove."}

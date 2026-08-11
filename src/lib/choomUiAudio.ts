@@ -11,7 +11,22 @@ const ASSETS = {
   heroExpand: "/assets/choom-ui/skill-advancing.mp3",
 } as const;
 
+type AssetKey = keyof typeof ASSETS;
+
+/** Subtle volumes — UI wiki default ~0.3 for chrome. */
+const VOL: Record<AssetKey, number> = {
+  clickOpen: 0.28,
+  clickClose: 0.26,
+  loading: 0.24,
+  ambient: 0.08,
+  heroExpand: 0.3,
+};
+
+const HL2_GAME_COVER_PICKUP = "/assets/hero-expanded-games/hl2-pick-up-that-can-1.mp3";
+const GAME3_HEART_WHISPER = "/assets/hero-expanded-games/heart-whisper-6-klickaud.mp3";
+
 let ambientEl: HTMLAudioElement | null = null;
+const pool = new Map<string, HTMLAudioElement>();
 
 /** After `playChoomClick()`, the next `playChoomClick()` uses the other clip. */
 let clickAlternateUseOpenNext = true;
@@ -21,22 +36,42 @@ function prefersReducedUiMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function playOneShot(src: string, volume: number): void {
+function getPooled(src: string, volume: number): HTMLAudioElement {
+  let a = pool.get(src);
+  if (!a) {
+    a = new Audio(src);
+    a.preload = "auto";
+    a.load();
+    pool.set(src, a);
+  }
+  a.volume = volume;
+  return a;
+}
+
+function playPooled(src: string, volume: number): void {
   try {
-    const a = new Audio(src);
-    a.volume = volume;
+    const a = getPooled(src, volume);
+    a.currentTime = 0;
     void a.play().catch(() => {});
   } catch {
     /* ignore */
   }
 }
 
+/** Prefetch common choom one-shots (safe to call on theme enter). */
+export function preloadChoomUiAudio(): void {
+  if (typeof window === "undefined") return;
+  (Object.keys(ASSETS) as AssetKey[]).forEach((key) => {
+    getPooled(ASSETS[key], VOL[key]);
+  });
+}
+
 /** Opening vs closing phone contact, alternating per call. */
 export function playChoomClick(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(
+  playPooled(
     clickAlternateUseOpenNext ? ASSETS.clickOpen : ASSETS.clickClose,
-    0.52,
+    clickAlternateUseOpenNext ? VOL.clickOpen : VOL.clickClose,
   );
   clickAlternateUseOpenNext = !clickAlternateUseOpenNext;
 }
@@ -44,7 +79,7 @@ export function playChoomClick(): void {
 /** Dedicated “close” UI (e.g. hero card collapse); next `playChoomClick()` is opening. */
 export function playChoomClickClosing(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(ASSETS.clickClose, 0.5);
+  playPooled(ASSETS.clickClose, VOL.clickClose);
   clickAlternateUseOpenNext = true;
 }
 
@@ -56,40 +91,36 @@ export function playChoomLoadingStart(): void {
   const now = Date.now();
   if (now - lastLoadingStartMs < 500) return;
   lastLoadingStartMs = now;
-  playOneShot(ASSETS.loading, 0.36);
+  playPooled(ASSETS.loading, VOL.loading);
 }
 
 /** Expanded hero “Games” row — first cover (Cyberpunk 2077). Any theme; not deduped. */
 export function playBiochipMalfunctionHeroGame(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(ASSETS.loading, 0.4);
+  playPooled(ASSETS.loading, 0.28);
 }
-
-const HL2_GAME_COVER_PICKUP = "/assets/hero-expanded-games/hl2-pick-up-that-can-1.mp3";
 
 /** Expanded hero “Games” row — second cover (Half-Life 2). Any theme; not deduped. */
 export function playHalfLife2HeroGameCover(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(HL2_GAME_COVER_PICKUP, 0.48);
+  playPooled(HL2_GAME_COVER_PICKUP, 0.32);
 }
-
-const GAME3_HEART_WHISPER = "/assets/hero-expanded-games/heart-whisper-6-klickaud.mp3";
 
 /** Expanded hero “Games” row — third cover. Any theme; not deduped. */
 export function playGame3HeroCover(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(GAME3_HEART_WHISPER, 0.48);
+  playPooled(GAME3_HEART_WHISPER, 0.32);
 }
 
 export function playChoomHeroExpand(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(ASSETS.heroExpand, 0.44);
+  playPooled(ASSETS.heroExpand, VOL.heroExpand);
 }
 
 /** Theme intro finished / choom HUD live — same asset as ambient bed, one-shot stinger. */
 export function playChoomThemeReady(): void {
   if (prefersReducedUiMotion()) return;
-  playOneShot(ASSETS.ambient, 0.38);
+  playPooled(ASSETS.ambient, 0.22);
 }
 
 export function startChoomAmbient(): void {
@@ -98,7 +129,7 @@ export function startChoomAmbient(): void {
   try {
     const a = new Audio(ASSETS.ambient);
     a.loop = true;
-    a.volume = 0.09;
+    a.volume = VOL.ambient;
     a.setAttribute("playsinline", "");
     ambientEl = a;
     void a.play().catch(() => {});

@@ -65,7 +65,7 @@ function RecipeImageFade({
       className={frameClass}
       initial={{ opacity: 0.06, y: frame === "fill" ? 6 : 4 }}
       animate={{ opacity: loaded ? 1 : 0.06, y: loaded ? 0 : frame === "fill" ? 6 : 4 }}
-      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
       <Image
         {...rest}
@@ -125,15 +125,15 @@ function IngredientRow({
             draggable={false}
           />
         </div>
-        <p className="min-w-0 flex-1 truncate font-[family-name:var(--font-geist)] text-[15px] font-normal leading-[1.4] text-white/80">
+        <p className="min-w-0 flex-1 truncate font-[family-name:var(--font-geist)] text-[15px] font-normal leading-[1.4] text-ink-secondary">
           {name}
         </p>
-        <p className="shrink-0 font-[family-name:var(--font-geist-mono)] text-sm font-normal leading-[1.4] text-white/50">
+        <p className="shrink-0 font-[family-name:var(--font-geist-mono)] text-sm font-normal leading-[1.4] text-ink-muted">
           {amount}
         </p>
       </div>
       {note && (
-        <p className="px-4 pb-1 text-right font-[family-name:var(--font-geist-mono)] text-[11px] font-normal leading-[1.4] text-white/40 italic">
+        <p className="px-4 pb-1 text-right font-[family-name:var(--font-geist-mono)] text-[11px] font-normal leading-[1.4] text-ink-subtle italic">
           {note}
         </p>
       )}
@@ -142,7 +142,7 @@ function IngredientRow({
 }
 
 function IngredientDivider() {
-  return <div className="mx-4 h-px bg-white/[0.06]" />;
+  return <div className="mx-4 h-px bg-ink/[0.03]" />;
 }
 
 function IngredientCard({
@@ -154,13 +154,13 @@ function IngredientCard({
 }) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <p className="font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-[0.1em] text-white/40">
+      <p className="font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-[0.1em] text-ink-subtle">
         {label}
       </p>
-      <div className="relative flex w-full flex-col rounded-xl bg-white/[0.02] py-1.5">
+      <div className="relative flex w-full flex-col rounded-xl bg-ink/[0.02] py-1.5">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-xl border border-white/[0.08]"
+          className="pointer-events-none absolute inset-0 rounded-xl border border-ink/[0.064]"
         />
         {children}
       </div>
@@ -173,10 +173,10 @@ function IngredientCard({
 function StepBadge({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="inline-flex h-[22px] items-center rounded-full border border-white/15 bg-white/[0.04] px-2.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-medium uppercase tracking-[0.1em] text-white/50">
+      <span className="inline-flex h-[22px] items-center rounded-full border border-ink/[0.12] bg-ink/[0.02] px-2.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-medium uppercase tracking-[0.1em] text-ink-muted">
         {label}
       </span>
-      <div className="h-px flex-1 bg-white/[0.08]" />
+      <div className="h-px flex-1 bg-ink/[0.04]" />
     </div>
   );
 }
@@ -193,10 +193,10 @@ function Instruction({
   if (sub) {
     return (
       <div className="flex items-start gap-2.5 pl-9">
-        <span className="mt-[3px] flex size-[18px] shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-geist-mono)] text-[9px] text-white/30">
+        <span className="mt-[3px] flex size-[18px] shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-geist-mono)] text-[9px] text-ink-subtle">
           {n}
         </span>
-        <p className="min-w-0 flex-1 font-[family-name:var(--font-geist)] text-sm leading-[1.5] text-white/60">
+        <p className="min-w-0 flex-1 font-[family-name:var(--font-geist)] text-sm leading-[1.5] text-ink-muted">
           {children}
         </p>
       </div>
@@ -204,10 +204,10 @@ function Instruction({
   }
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-[2px] flex size-6 shrink-0 items-center justify-center rounded-full border border-white/15 font-[family-name:var(--font-geist-mono)] text-[11px] text-white/50">
+      <span className="mt-[2px] flex size-6 shrink-0 items-center justify-center rounded-full border border-ink/[0.12] font-[family-name:var(--font-geist-mono)] text-[11px] text-ink-muted">
         {n}
       </span>
-      <p className="min-w-0 flex-1 font-[family-name:var(--font-geist)] text-base leading-[1.5] text-white/80">
+      <p className="min-w-0 flex-1 font-[family-name:var(--font-geist)] text-base leading-[1.5] text-ink-secondary">
         {children}
       </p>
     </div>
@@ -305,7 +305,7 @@ function StepImage({
                   decoding="async"
                 />
                 {caption ? (
-                  <p className="max-w-[min(96vw,40rem)] text-center font-[family-name:var(--font-geist-mono)] text-xs leading-snug text-white/70">
+                  <p className="max-w-[min(96vw,40rem)] text-center font-[family-name:var(--font-geist-mono)] text-xs leading-snug text-ink-secondary">
                     {caption}
                   </p>
                 ) : null}
@@ -313,7 +313,7 @@ function StepImage({
               <motion.button
                 ref={closeBtnRef}
                 type="button"
-                className="absolute top-[max(1rem,calc(env(safe-area-inset-top)+0.5rem))] right-[max(1rem,calc(env(safe-area-inset-right)+0.5rem))] flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/10 backdrop-blur-md"
+                className="absolute top-[max(1rem,calc(env(safe-area-inset-top)+0.5rem))] right-[max(1rem,calc(env(safe-area-inset-right)+0.5rem))] flex size-10 cursor-pointer items-center justify-center rounded-full bg-ink/[0.05] backdrop-blur-md"
                 initial={{ opacity: 0, scale: 0.88 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.88 }}
@@ -352,7 +352,7 @@ function StepImage({
           type="button"
           onClick={() => setLightboxOpen(true)}
           className={cn(
-            "relative w-full shrink-0 cursor-zoom-in overflow-hidden rounded text-left outline-none transition-[opacity,transform] duration-150 ease-out hover:opacity-95 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-white/50",
+            "relative w-full shrink-0 cursor-zoom-in overflow-hidden rounded text-left outline-none transition-[opacity,transform] duration-150 ease-out hover:opacity-95 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ink/[0.4]",
             aspect === "tall" ? "h-[128px]" : "h-[112px]",
           )}
           aria-label={enlargeLabel}
@@ -370,7 +370,7 @@ function StepImage({
           />
         </button>
         {caption && (
-          <p className="w-full font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/70 text-right">
+          <p className="w-full font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-secondary text-right">
             {caption}
           </p>
         )}
@@ -382,9 +382,9 @@ function StepImage({
 
 /* ── main body ──────────────────────────────────────────────────── */
 
-/** Hero `ExpandToggle` chrome: `rounded-full bg-white/[0.03]` + hover/active. */
+/** Hero `ExpandToggle` chrome: `rounded-full bg-ink/[0.02]` + hover/active. */
 const RECIPE_CHROME_ICON_BTN =
-  "relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03] transition-colors duration-75 ease-out hover:bg-white/[0.08] active:bg-white/[0.16] disabled:pointer-events-none disabled:opacity-40" as const;
+  "relative size-8 shrink-0 cursor-pointer rounded-full bg-ink/[0.02] transition-colors duration-75 ease-out hover:bg-ink/[0.04] active:bg-ink/[0.08] disabled:pointer-events-none disabled:opacity-40" as const;
 
 function ButterChickenRecipeTitleActions() {
   const [pdfBusy, setPdfBusy] = useState(false);
@@ -425,7 +425,7 @@ function ButterChickenRecipeTitleActions() {
         onClick={onDownloadPdf}
       >
         <Download
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-white/80"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-ink-secondary"
           strokeWidth={2}
           aria-hidden
         />
@@ -437,7 +437,7 @@ function ButterChickenRecipeTitleActions() {
         onClick={onShare}
       >
         <Share2
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-white/80"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[15px] -translate-x-1/2 -translate-y-1/2 text-ink-secondary"
           strokeWidth={2}
           aria-hidden
         />
@@ -479,8 +479,8 @@ export const ButterChickenRecipeCloseButton = forwardRef<
       aria-label="Close recipe"
       onClick={handleClick}
       className={cn(
-        "group relative size-8 shrink-0 cursor-pointer rounded-full bg-white/[0.03]",
-        "transition-colors duration-75 ease-out hover:bg-white/[0.08] active:bg-white/[0.16]",
+        "group relative size-8 shrink-0 cursor-pointer rounded-full bg-ink/[0.02]",
+        "transition-colors duration-75 ease-out hover:bg-ink/[0.04] active:bg-ink/[0.08]",
         "motion-reduce:transition-none",
         className,
       )}
@@ -497,7 +497,7 @@ export const ButterChickenRecipeCloseButton = forwardRef<
           d="M12 12l8 8m0-8l-8 8"
           strokeWidth="2"
           strokeLinecap="round"
-          className="stroke-white/80 transition-none group-active:stroke-white/35 motion-reduce:transition-none"
+          className="stroke-ink/[0.88] transition-none group-active:stroke-ink/[0.385] motion-reduce:transition-none"
           style={{ mixBlendMode: "screen" }}
         />
       </svg>
@@ -511,7 +511,7 @@ export function ButterChickenRecipeBody() {
       <div className="flex w-full flex-col gap-3">
         <h3
           id="butter-chicken-modal-title"
-          className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-white/80"
+          className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-ink-secondary"
         >
           Butter Chicken Recipe
         </h3>
@@ -520,7 +520,7 @@ export function ButterChickenRecipeBody() {
 
       {/* Hero image */}
       <div className="flex items-start">
-        <div className="relative size-[266px] shrink-0 overflow-hidden rounded-xl shadow-[0px_4px_24px_6px_rgba(182,60,23,0.15)]">
+        <div className="relative size-[266px] shrink-0 overflow-hidden rounded-xl shadow-[0_1px_2px_rgb(var(--ink-rgb)/0.05),0_4px_10px_rgb(182,60,23,0.08),0_12px_28px_rgb(182,60,23,0.06)]">
           <RecipeImageFade
             frame="fill"
             alt="Butter chicken"
@@ -536,7 +536,7 @@ export function ButterChickenRecipeBody() {
       </div>
 
       {/* Intro */}
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">
+      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
         {BUTTER_CHICKEN_INTRO_P1}
       </p>
 
@@ -555,7 +555,7 @@ export function ButterChickenRecipeBody() {
               draggable={false}
             />
           </div>
-          <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/60">
+          <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
             This is the benchmark, from the original Moti Mahal in Delhi.
           </p>
         </div>
@@ -572,25 +572,25 @@ export function ButterChickenRecipeBody() {
               draggable={false}
             />
           </div>
-          <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-white/60">
+          <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
             I had the opportunity to go in the back and watch the bossman make it.
           </p>
         </div>
       </div>
 
       {/* Second intro paragraph */}
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">
+      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
         {BUTTER_CHICKEN_INTRO_P2}
       </p>
 
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-white/80">
+      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
         Email me a photo if you make this, please:{" "}
         <CopyEmailPill />
       </p>
 
       {/* ─── Ingredients ─────────────────────────────────────────── */}
       <div className="flex w-full flex-col gap-6">
-        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-white/80">
+        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
           Ingredients
         </h4>
 
@@ -642,7 +642,7 @@ export function ButterChickenRecipeBody() {
 
       {/* ─── Instructions ────────────────────────────────────────── */}
       <div className="flex w-full flex-col gap-10">
-        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-white/80">
+        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
           Instructions
         </h4>
 

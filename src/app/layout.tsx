@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
+import { SheetNavProvider } from "@/components/sheet/SheetNav";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserEngineScript } from "@/components/BrowserEngineScript";
@@ -59,11 +60,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  sheet,
 }: Readonly<{
   children: React.ReactNode;
+  sheet: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <BrowserEngineScript />
       </head>
@@ -126,9 +129,12 @@ export default function RootLayout({
             </filter>
           </defs>
         </svg>
-        <PageTransitionProvider>
-          {children}
-        </PageTransitionProvider>
+        <SheetNavProvider>
+          <PageTransitionProvider>
+            {children}
+            {sheet}
+          </PageTransitionProvider>
+        </SheetNavProvider>
         <Toaster position="bottom-center" />
         <Analytics />
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
+import { playClick } from "@/lib/audio";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
@@ -427,7 +428,6 @@ export function ParticleIcon({ shape, className }: ParticleIconProps) {
   const rafRef = useRef<number>(0);
   const dprRef = useRef(1);
   const timeRef = useRef(0);
-  const audioCtxRef = useRef<AudioContext | null>(null);
 
   const initParticles = useCallback(() => {
     let raw: RawParticle[];
@@ -455,21 +455,7 @@ export function ParticleIcon({ shape, className }: ParticleIconProps) {
 
   const playDing = useCallback(() => {
     if (shape !== "speaker") return;
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    }
-    const ctx = audioCtxRef.current;
-    if (!ctx) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(800, ctx.currentTime);
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.2);
+    playClick();
   }, [shape]);
 
   const getCanvasCoords = useCallback((clientX: number, clientY: number): [number, number] => {
@@ -553,10 +539,6 @@ export function ParticleIcon({ shape, className }: ParticleIconProps) {
     rafRef.current = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(rafRef.current); };
   }, [initParticles, tick]);
-
-  useEffect(() => {
-    return () => { if (audioCtxRef.current) audioCtxRef.current.close(); };
-  }, []);
 
   return (
     <canvas

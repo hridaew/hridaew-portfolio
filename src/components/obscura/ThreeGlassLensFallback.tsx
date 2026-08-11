@@ -207,7 +207,7 @@ export function ThreeGlassLensFallback({
 
   return (
     <div
-      className="pointer-events-none absolute z-[25] will-change-transform rounded-full shadow-[0_16px_52px_rgba(0,0,0,0.55)] border border-white/12 ring-1 ring-white/5"
+      className="pointer-events-none absolute z-[25] will-change-transform rounded-full shadow-[0_4px_12px_rgb(var(--ink-rgb)/0.1),0_16px_48px_rgb(var(--ink-rgb)/0.18)] border border-ink/[0.096] ring-1 ring-ink/[0.06]"
       style={{
         left: x,
         top: y,
