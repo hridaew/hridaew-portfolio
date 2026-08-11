@@ -11,8 +11,8 @@ export const HOME_SPLIT_MIN_WIDTH = 1024;
 /** Hysteresis band so dragging the window across 1024 doesn't thrash. */
 export const HOME_SPLIT_HYSTERESIS_PX = 8;
 
-/** Left pane never grows past this; right takes remaining space. */
-export const HOME_SPLIT_LEFT_MAX_PX = 720;
+/** Hero card design width in the left pane (pane max = this + 2×gutter). */
+export const HOME_HERO_CARD_WIDTH_PX = 656;
 
 const MQ_SPLIT = `(min-width: ${HOME_SPLIT_MIN_WIDTH}px)`;
 

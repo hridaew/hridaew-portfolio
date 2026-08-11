@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HomePage } from "@/components/home/HomePage";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
+import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
+import { cn } from "@/lib/utils";
 import {
   consumeWafflingReturnScroll,
   scrollHomeToTopImmediate,
@@ -19,6 +21,10 @@ function getHomeRightPane(): HTMLElement | null {
 }
 
 export default function Home() {
+  const layoutMode = useHomeLayoutMode();
+  // Split locks the document and scrolls inside panes; stack needs normal page scroll.
+  const splitShell = layoutMode === "split";
+
   useEffect(() => {
     const pendingHash = sessionStorage.getItem("pendingHash");
     if (pendingHash) {
@@ -64,12 +70,22 @@ export default function Home() {
     <div
       data-cheat-theme-scope
       data-cheat-home-shell
-      className="relative h-dvh w-full max-w-[100vw] overflow-hidden"
+      className={cn(
+        "relative w-full max-w-[100vw]",
+        splitShell
+          ? "h-dvh overflow-hidden"
+          : "min-h-dvh overflow-x-clip overflow-y-visible",
+      )}
     >
       <HomeChoomLingoProvider>
         <div
           data-cheat-theme-scope
-          className="h-dvh w-full max-w-[100vw] overflow-hidden bg-paper transition-colors duration-500"
+          className={cn(
+            "w-full max-w-[100vw] bg-paper transition-colors duration-500",
+            splitShell
+              ? "h-dvh overflow-hidden"
+              : "min-h-dvh overflow-x-clip overflow-y-visible",
+          )}
         >
           <HomePage />
         </div>

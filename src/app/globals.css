@@ -1629,10 +1629,23 @@ video.work-gallery-card-video::-webkit-media-controls-enclosure {
 }
 
 /* ── Home layout: fluid gutters + work-card stage scale ── */
+html[data-home-layout] {
+  /* Matches left-pane bio / hero inner content width */
+  --home-text-measure: 592px;
+}
+
+html[data-home-layout] .home-text-measure {
+  max-width: var(--home-text-measure);
+}
+
 html[data-home-layout="split"] {
-  --home-gutter: clamp(16px, 3.5vw, 104px);
-  --home-split-left-max: 720px;
-  /* Left is min(720px, 50vw); right gets the rest */
+  /* Shared pane inset — left and right panels must match. */
+  --home-gutter: clamp(32px, 4vw, 80px);
+  /* Full hero card (656) + same gutter on both sides — grow the pane, don’t shrink the card */
+  --home-hero-card-width: 656px;
+  --home-split-left-max: calc(
+    var(--home-hero-card-width) + (var(--home-gutter) * 2)
+  );
   --home-split-left: min(var(--home-split-left-max), 50vw);
   --home-work-card-max: min(
     696px,
@@ -1648,6 +1661,24 @@ html[data-home-layout="split"] .home-split-right-mesh {
   left: var(--home-split-left);
 }
 
+/* Right pane: shared gutter to content. */
+html[data-home-layout="split"] .home-right-column {
+  max-width: none;
+  padding-left: var(--home-gutter);
+  padding-right: var(--home-gutter);
+}
+
+/*
+ * Left pane: keep hero −32px bleed so bio lines up with card inner content.
+ * Extra 32px padding absorbs the bleed so the card’s outer edge still sits
+ * `--home-gutter` from the pane (same optical inset as the right panel).
+ */
+html[data-home-layout="split"] .home-column {
+  max-width: none;
+  padding-left: calc(var(--home-gutter) + 32px);
+  padding-right: calc(var(--home-gutter) + 32px);
+}
+
 html[data-home-layout="stack"] {
   --home-gutter: clamp(16px, 6vw, 104px);
   --home-work-card-max: min(
@@ -1658,7 +1689,6 @@ html[data-home-layout="stack"] {
 
 html[data-home-layout] .home-column {
   /* Keep the old 592px text measure (800 − 2×104) even when gutters shrink. */
-  --home-text-measure: 592px;
   max-width: calc(var(--home-text-measure) + (var(--home-gutter) * 2));
   padding-left: var(--home-gutter);
   padding-right: var(--home-gutter);

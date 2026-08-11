@@ -14,7 +14,7 @@ import { BioSection } from "./BioSection";
 import { ToolkitSection } from "./ToolkitSection";
 import { WorkSection } from "./WorkSection";
 import { ObscuraLiquidGlassFilterSvg } from "./ObscuraLiquidGlassFilterSvg";
-import { HOME_COLUMN, HOME_HERO_BLEED } from "./homeGrid";
+import { HOME_COLUMN, HOME_HERO_BLEED, HOME_RIGHT_COLUMN } from "./homeGrid";
 import {
   ENABLE_HOME_CHEAT_CODES,
   ENABLE_WAFFLINGS_SECTION,
@@ -209,7 +209,7 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
 
         <div data-home-pane="right" className={PANE_SCROLL}>
           <div
-            className={`${HOME_COLUMN} flex flex-col gap-[120px]`}
+            className={`${HOME_RIGHT_COLUMN} flex flex-col gap-[120px]`}
             style={{ paddingTop: rightPadTop, paddingBottom: rightPadTop }}
           >
             <HomeReveal delay={0.2} enableMotion={revealMotion}>

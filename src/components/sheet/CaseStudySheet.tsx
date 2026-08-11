@@ -288,7 +288,7 @@ export function CaseStudySheet({
                 <button
                   type="button"
                   onClick={goToNext}
-                  className="group relative flex w-full items-center justify-between gap-6 rounded-2xl border border-ink/[0.07] bg-paper-raised p-6 text-left shadow-e1 transition-transform duration-150 ease-out active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28]"
+                  className="group relative flex w-full items-center rounded-2xl border border-ink/[0.07] bg-paper-raised p-6 text-left shadow-e1 transition-transform duration-150 ease-out active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28]"
                 >
                   {/* Elevate via opacity — avoid animating box-shadow directly */}
                   <span
@@ -302,12 +302,6 @@ export function CaseStudySheet({
                     <span className="mt-1 block type-h4 text-ink">
                       {next.label}
                     </span>
-                  </span>
-                  <span
-                    aria-hidden
-                    className="relative z-[1] shrink-0 text-ink-muted transition-transform duration-150 ease-out group-hover:translate-x-1"
-                  >
-                    →
                   </span>
                 </button>
               </div>

@@ -30,7 +30,11 @@ import {
   detectSvgBackdropFilterUrl,
   isLikelySafari,
 } from "@/lib/obscuraLiquidGlass";
-import { HOME_CARD_CAPTION_PAD, HOME_PROJECT_EMBLA_VIEWPORT } from "./homeGrid";
+import {
+  HOME_CARD_CAPTION_PAD,
+  HOME_PROJECT_EMBLA_VIEWPORT,
+  HOME_TEXT_MEASURE,
+} from "./homeGrid";
 import {
   OBSCURA_LIQUID_GLASS_FILTER_ID,
   OBSCURA_LIQUID_GLASS_LENS_PX,
@@ -727,8 +731,10 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
       id={project.slug}
       className="flex w-full scroll-mt-[88px] flex-col items-stretch gap-8"
     >
-      {/* Title + description — same left spine as Bio / Toolkit (parent HOME_COLUMN padding) */}
-      <div className="flex w-full flex-col gap-4 text-ink-secondary">
+      {/* Title + description — same measure as left-pane bio / hero inner spine */}
+      <div
+        className={`${HOME_TEXT_MEASURE} flex w-full flex-col gap-4 text-ink-secondary`}
+      >
         <ProjectTitleLink
           slug={project.slug}
           title={project.title}

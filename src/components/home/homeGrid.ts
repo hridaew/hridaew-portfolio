@@ -11,6 +11,12 @@ export const HOME_COLUMN =
 export const SITE_COLUMN = HOME_COLUMN;
 
 /**
+ * Split right pane: full pane width. Inset matches left via shared `--home-gutter`.
+ */
+export const HOME_RIGHT_COLUMN =
+  "home-right-column w-full min-w-0 max-w-none px-8" as const;
+
+/**
  * Embla viewport: full breakout track. Overflow visible so slides stay visible while dragging.
  * Breakout distance follows `--home-gutter` under `data-home-layout`.
  */
@@ -24,12 +30,16 @@ export const HOME_WAFFLINGS_EMBLA_VIEWPORT =
 /** Card captions: modest inset under each image (16px). */
 export const HOME_CARD_CAPTION_PAD = "pl-4" as const;
 
+/** Body copy measure — matches left-pane bio / hero inner spine (592px). */
+export const HOME_TEXT_MEASURE = "home-text-measure max-w-[592px]" as const;
+
 /**
  * Hero glass card: 32px bleed past the text column on each side (592 + 64 = 656).
  * Inner `p-8` keeps copy on the same spine as Bio / Toolkit (card starts 32px left of that line).
+ * Split left padding adds +32px so the bleed still leaves `--home-gutter` outside the card.
  */
 export const HOME_HERO_BLEED =
-  "relative w-full md:-mx-8 md:w-[calc(100%+4rem)] md:max-w-[656px]" as const;
+  "home-hero-bleed relative w-full md:-mx-8 md:w-[calc(100%+4rem)] md:max-w-[656px]" as const;
 
 /** Design size of desktop work gallery cards (stage pattern scales from this). */
 export const HOME_WORK_CARD_W = 696;
