@@ -1720,3 +1720,32 @@ html[data-home-layout] .home-project-embla {
   transform: scale(var(--home-work-card-scale));
   transform-origin: top left;
 }
+
+/* ── Xbox 360 achievement toast (surface tokens + icon flip) ── */
+:root {
+  --ach-pill-fill: #f7f7f7;
+  --ach-pill-text: #1a1a1a;
+  --ach-pill-outline: #ffffff;
+  --ach-pill-rim: #ffffff;
+  --ach-arc-green: #bcff46;
+  --ach-ring-muted: #8a8a8a;
+  --ach-ring-bg: #6a6a6a;
+  --ach-orb-size: 57px;
+  --ach-pill-height: 64px;
+  --ach-pill-bottom: 67px;
+}
+
+@keyframes ach-icon-in {
+  from {
+    transform: scaleX(0.08);
+    opacity: 0.85;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.ach-icon-in {
+  animation: ach-icon-in 100ms ease-out both;
+}

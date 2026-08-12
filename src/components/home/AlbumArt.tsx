@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useSpring, useMotionTemplate, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface AlbumProps {
   title: string;
@@ -147,6 +148,7 @@ function ParallaxAlbumCard({
 }
 
 export function AlbumArt({ title, frontSrc, backSrc, layoutIdBase }: AlbumProps) {
+  const { unlock } = useAchievements();
   const [isFocused, setIsFocused] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -160,6 +162,7 @@ export function AlbumArt({ title, frontSrc, backSrc, layoutIdBase }: AlbumProps)
     if (!isFocused) {
       setIsFocused(true);
       setIsFlipped(false);
+      unlock("album");
     } else {
       setIsFlipped(!isFlipped);
     }

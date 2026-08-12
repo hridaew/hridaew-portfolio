@@ -27,7 +27,7 @@ export function VirdioCaseStudyBody() {
                 </div>
 
                 {/* TL;DR Card */}
-                <section className={cn("relative z-20 -mt-16 md:-mt-20 case-study-subsection-gap", SITE_COLUMN)}>
+                <section className={cn("relative z-20 -mt-16 bg-paper md:-mt-20 case-study-subsection-gap", SITE_COLUMN)}>
                     <Reveal>
                         <TLDRCard />
                     </Reveal>

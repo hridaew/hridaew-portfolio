@@ -6,12 +6,14 @@ import { ObscuraPageLiquidCursor } from "@/components/obscura/ObscuraPageLiquidC
 import { StickySidebar } from "@/components/shared/StickySidebar";
 import { StickyNotes } from "@/components/StickyNotes";
 import { CaseStudyPill } from "@/components/shared/CaseStudyPill";
+import { CaseStudyAchievementMount } from "@/components/achievements/CaseStudyAchievementMount";
 import { OBSCURA_SECTIONS } from "@/lib/case-study-sections";
 import { cn } from "@/lib/utils";
 
 export default function ObscuraPage() {
     return (
         <>
+            <CaseStudyAchievementMount id="obscura" />
             <div
                 className={cn(
                     "site-editorial bg-paper relative min-h-screen w-full overflow-x-hidden font-sans antialiased selection:bg-amber-900/15 selection:text-amber-950",

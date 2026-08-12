@@ -20,6 +20,7 @@ import {
   isHomeSplitLayout,
   subscribeHomeLayoutMode,
 } from "@/lib/home-layout";
+import { useCaseStudyAchievement } from "@/hooks/useCaseStudyAchievement";
 
 interface SheetNavValue {
   /** Currently displayed sheet key (optimistic — set before the route resolves). */
@@ -53,6 +54,7 @@ export function SheetNavProvider({ children }: { children: React.ReactNode }) {
   const routeKey = sheetKeyFromSegments(segments);
 
   const [activeKey, setActiveKey] = useState<string | null>(null);
+  useCaseStudyAchievement(activeKey);
   // After a close we clear local state before the URL catches up — ignore the
   // stale intercept segment so the sheet doesn't bounce back open.
   const skipRouteSync = useRef(false);

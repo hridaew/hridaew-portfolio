@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment } from "react";
 import Image from "next/image";
 import { heroExpandedAssets } from "@/data/hero-expanded-assets";
@@ -6,6 +8,7 @@ import {
   playGame3HeroCover,
   playHalfLife2HeroGameCover,
 } from "@/lib/choomUiAudio";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 import { AlbumArt } from "./AlbumArt";
 
 const img = heroExpandedAssets;
@@ -296,6 +299,7 @@ function ExperienceEducationSection() {
 }
 
 function Top3Section() {
+  const { unlock } = useAchievements();
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col items-start justify-center gap-8">
       <div className="relative w-full shrink-0 font-[family-name:var(--font-geist)] text-base font-semibold leading-none text-ink-muted">
@@ -312,11 +316,15 @@ function Top3Section() {
             tabIndex={0}
             aria-label="Cyberpunk 2077 cover"
             className="relative h-[220px] w-[157px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
-            onClick={() => playBiochipMalfunctionHeroGame()}
+            onClick={() => {
+              playBiochipMalfunctionHeroGame();
+              unlock("game-cyberpunk");
+            }}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
               e.preventDefault();
               playBiochipMalfunctionHeroGame();
+              unlock("game-cyberpunk");
             }}
           >
             <Image
@@ -332,11 +340,15 @@ function Top3Section() {
             tabIndex={0}
             aria-label="Half-Life 2 cover"
             className="relative h-[220px] w-[159px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
-            onClick={() => playHalfLife2HeroGameCover()}
+            onClick={() => {
+              playHalfLife2HeroGameCover();
+              unlock("game-halflife2");
+            }}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
               e.preventDefault();
               playHalfLife2HeroGameCover();
+              unlock("game-halflife2");
             }}
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[5px]">
@@ -355,11 +367,15 @@ function Top3Section() {
             tabIndex={0}
             aria-label="Third game cover"
             className="relative h-[219.302px] w-[156px] shrink-0 cursor-pointer rounded-[5px] shadow-e3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.36]"
-            onClick={() => playGame3HeroCover()}
+            onClick={() => {
+              playGame3HeroCover();
+              unlock("game-dishonored");
+            }}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") return;
               e.preventDefault();
               playGame3HeroCover();
+              unlock("game-dishonored");
             }}
           >
             <Image

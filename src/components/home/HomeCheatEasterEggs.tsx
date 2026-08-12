@@ -16,10 +16,20 @@ import {
 } from "@/lib/homeCheats";
 import { playClick } from "@/lib/audio";
 import { playChoomThemeReady } from "@/lib/choomUiAudio";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
+import type { AchievementId } from "@/data/achievements";
 
 type ThemeIntroState = { theme: CheatThemeClass; variant: "2004" | "choom" };
 
+const CHEAT_ACHIEVEMENT: Record<string, AchievementId> = {
+  "2004": "cheat-2004",
+  choom: "cheat-choom",
+  destroy: "cheat-destroy",
+  "butter chicken": "cheat-butter-chicken",
+};
+
 export function HomeCheatEasterEggs() {
+  const { unlock } = useAchievements();
   const [activeCheat, setActiveCheat] = useState<string | null>(null);
   const [themeIntro, setThemeIntro] = useState<ThemeIntroState | null>(null);
   const themeIntroRef = useRef<ThemeIntroState | null>(null);
@@ -48,21 +58,26 @@ export function HomeCheatEasterEggs() {
 
   useThemeIntroEnterSkip(!!themeIntro, skipThemeIntro);
 
-  const handleCheatCode = useCallback((code: string) => {
-    const resolved = resolveHomeCheatCode(code);
-    if (!resolved) return;
-    playClick();
+  const handleCheatCode = useCallback(
+    (code: string) => {
+      const resolved = resolveHomeCheatCode(code);
+      if (!resolved) return;
+      playClick();
+      const ach = CHEAT_ACHIEVEMENT[code.trim().toLowerCase()];
+      if (ach) unlock(ach);
 
-    if (resolved.kind === "theme_intro") {
-      setThemeIntro({ theme: resolved.theme, variant: resolved.variant });
-      return;
-    }
-    if (resolved.id === "destroy") {
-      setActiveCheat("destroy");
-      return;
-    }
-    setActiveCheat("butter-chicken");
-  }, []);
+      if (resolved.kind === "theme_intro") {
+        setThemeIntro({ theme: resolved.theme, variant: resolved.variant });
+        return;
+      }
+      if (resolved.id === "destroy") {
+        setActiveCheat("destroy");
+        return;
+      }
+      setActiveCheat("butter-chicken");
+    },
+    [unlock],
+  );
 
   const dismissButterChicken = useCallback(() => {
     setActiveCheat(null);

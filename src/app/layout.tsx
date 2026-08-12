@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
 import { SheetNavProvider } from "@/components/sheet/SheetNav";
+import { AchievementProvider } from "@/components/achievements/AchievementProvider";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserEngineScript } from "@/components/BrowserEngineScript";
@@ -129,12 +130,14 @@ export default function RootLayout({
             </filter>
           </defs>
         </svg>
-        <SheetNavProvider>
-          <PageTransitionProvider>
-            {children}
-            {sheet}
-          </PageTransitionProvider>
-        </SheetNavProvider>
+        <AchievementProvider>
+          <SheetNavProvider>
+            <PageTransitionProvider>
+              {children}
+              {sheet}
+            </PageTransitionProvider>
+          </SheetNavProvider>
+        </AchievementProvider>
         <Toaster position="bottom-center" />
         <Analytics />
       </body>

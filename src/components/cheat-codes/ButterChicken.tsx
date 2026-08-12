@@ -1,13 +1,18 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 
 type ButterChickenProps = {
   onDismiss?: () => void;
 };
 
+/** Above HeroCard portal / sticky notes — same tier as DestroySequence. */
+const BUTTER_PORTAL_Z = 10000;
+
 /** Fullscreen cheat reward: tilt plate + vignette + grain; Esc calls `onDismiss` when provided. */
 export function ButterChicken({ onDismiss }: ButterChickenProps) {
+  const [portalReady, setPortalReady] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const lx = useRef(0);
@@ -21,6 +26,10 @@ export function ButterChicken({ onDismiss }: ButterChickenProps) {
   }, [onDismiss]);
 
   useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
     if (!onDismiss) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") dismiss();
@@ -30,6 +39,7 @@ export function ButterChicken({ onDismiss }: ButterChickenProps) {
   }, [dismiss, onDismiss]);
 
   useEffect(() => {
+    if (!portalReady) return;
     const wrap = wrapRef.current;
     const img = imgRef.current;
     if (!wrap || !img) return;
@@ -74,23 +84,27 @@ export function ButterChicken({ onDismiss }: ButterChickenProps) {
       wrap.removeEventListener("pointercancel", onLeave);
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, []);
+  }, [portalReady]);
 
-  return (
+  if (!portalReady) return null;
+
+  return createPortal(
     <div
       ref={wrapRef}
-      className="fixed inset-0 z-[200] cursor-grab touch-none"
-      style={{ touchAction: "none" }}
+      className="fixed inset-0 cursor-grab touch-none"
+      style={{ touchAction: "none", zIndex: BUTTER_PORTAL_Z }}
     >
       <img
         ref={imgRef}
         src="/assets/cheat-codes/butterchicken.png"
         alt=""
         className="h-full w-full object-cover will-change-transform"
-        style={{ transformOrigin: "50% 42%", transform: "perspective(1100px) rotateX(0deg) rotateY(0deg) scale(1.04)" }}
+        style={{
+          transformOrigin: "50% 42%",
+          transform: "perspective(1100px) rotateX(0deg) rotateY(0deg) scale(1.04)",
+        }}
         draggable={false}
       />
-      {/* Vignette */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -98,7 +112,6 @@ export function ButterChicken({ onDismiss }: ButterChickenProps) {
             "radial-gradient(ellipse 70% 60% at 50% 45%, transparent 30%, rgba(0,0,0,0.55) 100%)",
         }}
       />
-      {/* Film grain */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay"
         style={{
@@ -106,6 +119,7 @@ export function ButterChicken({ onDismiss }: ButterChickenProps) {
           backgroundSize: "180px 180px",
         }}
       />
-    </div>
+    </div>,
+    document.body,
   );
 }

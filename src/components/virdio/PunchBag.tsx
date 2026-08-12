@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface PunchBagProps {
   className?: string;
@@ -20,6 +21,7 @@ const celebrations = [
 ];
 
 export function PunchBag({ className }: PunchBagProps) {
+  const { unlock } = useAchievements();
   const [count, setCount] = useState(0);
   const [ppm, setPpm] = useState(0);
   const [celebration, setCelebration] = useState<string | null>(null);
@@ -80,6 +82,7 @@ export function PunchBag({ className }: PunchBagProps) {
     const newCount = countRef.current + 1;
     countRef.current = newCount;
     setCount(newCount);
+    if (newCount === 1) unlock("punch-bag");
 
     // Record timestamp for PPM
     punchTimestampsRef.current.push(Date.now());
@@ -139,7 +142,7 @@ export function PunchBag({ className }: PunchBagProps) {
         );
       }
     }
-  }, [updatePPM, playThud]);
+  }, [updatePPM, playThud, unlock]);
 
   // Decay PPM when not punching
   useEffect(() => {

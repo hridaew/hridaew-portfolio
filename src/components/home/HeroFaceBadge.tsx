@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import { animate, motion, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 const BADGE_SRC = "/assets/home/hero-face-badge.webp";
 const BADGE_WIDTH = 250;
@@ -138,6 +139,7 @@ export function HeroFaceBadge({
   replayTitle,
   className,
 }: HeroFaceBadgeProps) {
+  const { unlock } = useAchievements();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pinRef = useRef<HTMLSpanElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, has: false });
@@ -301,6 +303,7 @@ export function HeroFaceBadge({
 
   const playSpin = useCallback(async () => {
     if (spinningRef.current) return;
+    unlock("hero-face");
 
     if (reduceMotion) {
       return;
@@ -348,7 +351,7 @@ export function HeroFaceBadge({
     setSpinning(false);
     syncCenter();
     if (mouseRef.current.has) ensureRaf();
-  }, [ensureRaf, reduceMotion, spinScale, spinY, syncCenter]);
+  }, [ensureRaf, reduceMotion, spinScale, spinY, syncCenter, unlock]);
 
   const facePct = `${FACE_INSET * 100}%`;
   // Deepest first so later slices paint on top toward the face plate.

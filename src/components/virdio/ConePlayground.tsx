@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface ConePlaygroundProps {
   className?: string;
@@ -71,6 +72,9 @@ const FURNITURE = [
 /* ─── Component ─────────────────────────────────────────────────────── */
 
 export function ConePlayground({ className }: ConePlaygroundProps) {
+  const { unlock } = useAchievements();
+  const unlockRef = useRef(unlock);
+  unlockRef.current = unlock;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const conesRef = useRef<Cone[]>([]);
@@ -147,6 +151,9 @@ export function ConePlayground({ className }: ConePlaygroundProps) {
       };
       conesRef.current.push(cone);
       spawnParticles(x, y);
+      if (conesRef.current.length === MAX_CONES) {
+        unlockRef.current("virdio-space");
+      }
     },
     [spawnParticles]
   );

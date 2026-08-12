@@ -5,6 +5,7 @@ import { StickySidebar } from "@/components/shared/StickySidebar";
 import { StickyNotes } from "@/components/StickyNotes";
 import { CaseStudyPill } from "@/components/shared/CaseStudyPill";
 import { VirdioCaseStudyBody } from "@/components/virdio/VirdioCaseStudyBody";
+import { CaseStudyAchievementMount } from "@/components/achievements/CaseStudyAchievementMount";
 import { VIRDIO_SECTIONS } from "@/lib/case-study-sections";
 
 export default function VirdioPage() {
@@ -31,6 +32,7 @@ export default function VirdioPage() {
 
     return (
         <>
+            <CaseStudyAchievementMount id="virdio" />
             <div
                 ref={pageRootRef}
                 className="site-editorial isolate relative min-h-screen w-full overflow-x-hidden bg-paper text-ink selection:bg-ink/[0.05] selection:text-ink font-sans antialiased [--csp-dot-x:50%] [--csp-dot-y:50%] [--csp-dot-heat:0]"

@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface StickyNote {
     id: string;
@@ -148,6 +149,7 @@ interface StickyNotesProps {
 }
 
 export function StickyNotes({ page = "home" }: StickyNotesProps) {
+    const { unlock } = useAchievements();
     const [notes, setNotes] = useState<StickyNote[]>([]);
     const [phase, setPhase] = useState<PanelPhase>("closed");
     const [revealContent, setRevealContent] = useState(false);
@@ -377,6 +379,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
             setNotes((prev) => [...prev, note]);
             setPlacingNote(null);
             setIsFollowing(false);
+            unlock("sticky-note");
 
             // Keep layoutId on the landed note briefly so the shared element settles, then clear.
             window.setTimeout(() => {
@@ -402,7 +405,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                 /* keep optimistic note */
             }
         },
-        [placingNote, honeypot, reduceMotion]
+        [placingNote, honeypot, reduceMotion, unlock]
     );
 
     const handleDelete = useCallback((noteId: string) => {

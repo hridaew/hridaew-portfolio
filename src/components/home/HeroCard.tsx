@@ -49,6 +49,7 @@ import {
 } from "@/lib/burstBezier";
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 const LI_HREF = "https://www.linkedin.com/in/hridae";
 const CV_HREF =
@@ -432,6 +433,7 @@ function useIsMobile() {
 
 export function HeroCard() {
   const choom = useChoomLingo();
+  const { unlock } = useAchievements();
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(false);
   const [closeVerticalBump, setCloseVerticalBump] =
@@ -469,11 +471,12 @@ export function HeroCard() {
         playChoomClickClosing();
       }
     }
+    if (!was && isExpanded) {
+      unlock("about");
+      setOpenVerticalBump("playing");
+    }
     if (was && !isExpanded) {
       setCloseVerticalBump("playing");
-    }
-    if (!was && isExpanded) {
-      setOpenVerticalBump("playing");
     }
     if (isExpanded) {
       setCloseVerticalBump("idle");
@@ -481,7 +484,7 @@ export function HeroCard() {
       setOpenVerticalBump("idle");
     }
     prevExpandedRef.current = isExpanded;
-  }, [isExpanded, choom]);
+  }, [isExpanded, choom, unlock]);
 
   useEffect(() => {
     if (closeVerticalBump !== "playing") return;
@@ -738,8 +741,9 @@ export function HeroCard() {
         cardTopBounce: !isExpanded,
       });
       playHeroSketchPop();
+      unlock("painting-orb");
     },
-    [isExpanded, reduceMotion],
+    [isExpanded, reduceMotion, unlock],
   );
 
   const onHeroShellPointerCancel = useCallback(() => {

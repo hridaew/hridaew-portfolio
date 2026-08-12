@@ -11,7 +11,7 @@ const TLDRCard = ({ className }: { className?: string }) => {
     ];
 
     return (
-        <div className={cn("w-full min-w-0", className)}>
+        <div className={cn("relative w-full min-w-0 bg-paper", className)}>
             <p className="site-label mb-4 text-ink-subtle text-left">
                 TL;DR
             </p>

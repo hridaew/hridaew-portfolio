@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { CONTACT_EMAIL } from "@/lib/contactEmail";
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 export { CONTACT_EMAIL };
 
@@ -17,6 +18,7 @@ type CopyEmailPillProps = {
 
 export function CopyEmailPill({ className }: CopyEmailPillProps) {
   const choom = useChoomLingo();
+  const { unlock } = useAchievements();
   const [showCopied, setShowCopied] = useState(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -33,10 +35,11 @@ export function CopyEmailPill({ className }: CopyEmailPillProps) {
       document.execCommand("copy");
       document.body.removeChild(textarea);
     }
+    unlock("copy-email");
     if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
     setShowCopied(true);
     copiedTimerRef.current = setTimeout(() => setShowCopied(false), COPY_TOAST_MS);
-  }, []);
+  }, [unlock]);
 
   useEffect(
     () => () => {

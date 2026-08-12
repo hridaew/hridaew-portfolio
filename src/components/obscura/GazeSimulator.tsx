@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface GazeRegion {
   id: string;
@@ -43,6 +44,10 @@ export function GazeSimulator({
   className,
   onDwellUpdate,
 }: GazeSimulatorProps) {
+  const { unlock } = useAchievements();
+  const unlockRef = useRef(unlock);
+  unlockRef.current = unlock;
+  const gazedUnlockedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const reticleRef = useRef<HTMLDivElement>(null);
   const pulseRef = useRef<HTMLDivElement>(null);
@@ -125,6 +130,10 @@ export function GazeSimulator({
         if (activeTimer > DWELL_THRESHOLD) {
           pulseRef.current.style.opacity = "1";
           pulseRef.current.style.transform = "translate(-50%, -50%) scale(1.5)";
+          if (!gazedUnlockedRef.current) {
+            gazedUnlockedRef.current = true;
+            unlockRef.current("gaze");
+          }
         } else {
           pulseRef.current.style.opacity = "0";
           pulseRef.current.style.transform = "translate(-50%, -50%) scale(1)";

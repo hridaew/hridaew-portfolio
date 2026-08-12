@@ -3,12 +3,14 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 
 interface CatPettingInteractiveProps {
   className?: string;
 }
 
 export function CatPettingInteractive({ className }: CatPettingInteractiveProps) {
+  const { unlock } = useAchievements();
   const containerRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<SVGGElement>(null);
   const speakerRef = useRef<SVGGElement>(null);
@@ -97,8 +99,9 @@ export function CatPettingInteractive({ className }: CatPettingInteractiveProps)
     if (moveCountRef.current >= 3 && !isPetting) {
       setIsPetting(true);
       activateSystem();
+      unlock("pet-cat");
     }
-  }, [isPetting, activateSystem]);
+  }, [isPetting, activateSystem, unlock]);
 
   const handleMouseLeave = useCallback(() => {
     moveCountRef.current = 0;
