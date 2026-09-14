@@ -17,13 +17,15 @@ import { ObscuraLiquidGlassFilterSvg } from "./ObscuraLiquidGlassFilterSvg";
 import { HOME_COLUMN, HOME_HERO_BLEED, HOME_RIGHT_COLUMN } from "./homeGrid";
 import {
   ENABLE_HOME_CHEAT_CODES,
+  ENABLE_HOME_MOVING_PAINTING,
   ENABLE_WAFFLINGS_SECTION,
 } from "@/lib/site-toggles";
+import { WorkPaintingPanel } from "./WorkPaintingPanel";
 import { RevealOnLoad } from "./RevealOnLoad";
 import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
 import type { HomeLayoutMode } from "@/lib/home-layout";
 
-const SITE_VERSION = "v3.8.0";
+const SITE_VERSION = "v3.9.0";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
@@ -162,10 +164,12 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
       ref={homeRootRef}
       data-home-cheat-skin
       data-home-split-panes
+      {...(ENABLE_HOME_MOVING_PAINTING ? { "data-home-painting-pane": "" } : {})}
       className="relative isolate h-dvh min-h-0 w-full min-w-0 overflow-hidden bg-paper text-ink [--home-dot-x:50%] [--home-dot-y:50%] [--home-dot-heat:0]"
       onPointerMove={onHomePointerMove}
       onPointerLeave={onHomePointerLeave}
     >
+      {!ENABLE_HOME_MOVING_PAINTING ? (
       <div
         className="home-split-right-mesh pointer-events-none absolute inset-y-0 right-0 -z-10 overflow-hidden"
         aria-hidden
@@ -173,6 +177,7 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
         <div className="home-page-dot-mesh absolute inset-0" />
         <div className="home-page-dot-mesh-pop absolute inset-0" />
       </div>
+      ) : null}
 
       <ObscuraLiquidGlassFilterSvg />
 
@@ -208,22 +213,40 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
         </div>
 
         <div data-home-pane="right" className={PANE_SCROLL}>
-          <div
-            className={`${HOME_RIGHT_COLUMN} flex flex-col gap-[120px]`}
-            style={{ paddingTop: rightPadTop, paddingBottom: rightPadTop }}
-          >
-            <HomeReveal delay={0.2} enableMotion={revealMotion}>
-              <WorkSection />
-            </HomeReveal>
-
-            {ENABLE_WAFFLINGS_SECTION && (
-              <HomeReveal delay={0.35} enableMotion={revealMotion}>
-                <div className="min-w-0">
-                  <WafflingsSection />
+          {ENABLE_HOME_MOVING_PAINTING ? (
+            <>
+              <WorkPaintingPanel variant="split" />
+              {ENABLE_WAFFLINGS_SECTION && (
+                <div
+                  className={`${HOME_RIGHT_COLUMN} bg-paper`}
+                  style={{ paddingTop: 80, paddingBottom: rightPadTop }}
+                >
+                  <HomeReveal delay={0.35} enableMotion={revealMotion}>
+                    <div className="min-w-0">
+                      <WafflingsSection />
+                    </div>
+                  </HomeReveal>
                 </div>
+              )}
+            </>
+          ) : (
+            <div
+              className={`${HOME_RIGHT_COLUMN} flex flex-col gap-[120px]`}
+              style={{ paddingTop: rightPadTop, paddingBottom: rightPadTop }}
+            >
+              <HomeReveal delay={0.2} enableMotion={revealMotion}>
+                <WorkSection />
               </HomeReveal>
-            )}
-          </div>
+
+              {ENABLE_WAFFLINGS_SECTION && (
+                <HomeReveal delay={0.35} enableMotion={revealMotion}>
+                  <div className="min-w-0">
+                    <WafflingsSection />
+                  </div>
+                </HomeReveal>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -287,9 +310,19 @@ function StackHome({ revealMotion }: { revealMotion: boolean }) {
               </div>
             </HomeReveal>
 
-            <HomeReveal delay={0.35} enableMotion={revealMotion}>
-              <WorkSection />
-            </HomeReveal>
+            {ENABLE_HOME_MOVING_PAINTING ? (
+              <WorkPaintingPanel variant="stack" />
+            ) : (
+              <HomeReveal delay={0.35} enableMotion={revealMotion}>
+                <WorkSection />
+              </HomeReveal>
+            )}
+
+            {ENABLE_HOME_MOVING_PAINTING ? (
+              <HomeReveal delay={0.42} enableMotion={revealMotion}>
+                <WorkSection />
+              </HomeReveal>
+            ) : null}
 
             <HomeReveal delay={0.5} enableMotion={revealMotion}>
               <ToolkitSection />
