@@ -21,10 +21,13 @@ const MAX_MESSAGE = 2000;
 const RATE_LIMIT = 10;
 const RATE_WINDOW = 3600;
 
+const MAX_NAME = 100;
+
 type ThoughtData = {
   id: string;
   message: string;
   kind: Kind;
+  name?: string;
   email?: string;
   userId: string;
   createdAt: string;
@@ -46,7 +49,8 @@ async function sendNotificationEmail(t: ThoughtData) {
       <p><strong>Kind:</strong> ${t.kind}</p>
       <p><strong>Message:</strong></p>
       <p style="white-space:pre-wrap">${t.message.replace(/</g, "&lt;")}</p>
-      ${t.email ? `<p><strong>From:</strong> ${t.email}</p>` : "<p><em>No email provided</em></p>"}
+      ${t.name ? `<p><strong>Name:</strong> ${String(t.name).replace(/</g, "&lt;")}</p>` : ""}
+      ${t.email ? `<p><strong>From:</strong> ${String(t.email).replace(/</g, "&lt;")}</p>` : "<p><em>No email provided</em></p>"}
       <p><strong>Time:</strong> ${new Date(t.createdAt).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}</p>
     `,
   });
@@ -87,7 +91,7 @@ export async function POST(request: NextRequest) {
     // Honeypot: bots fill hidden fields. Return success so they do not retry.
     if (body.website) return NextResponse.json({ id: "ok" });
 
-    const { message, kind, email, userId } = body;
+    const { message, kind, name, email, userId } = body;
 
     if (typeof message !== "string" || !message.trim() || message.length > MAX_MESSAGE) {
       return NextResponse.json({ error: "Invalid message" }, { status: 400 });
@@ -100,6 +104,9 @@ export async function POST(request: NextRequest) {
     }
     if (email && (typeof email !== "string" || email.length > 200)) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+    if (name && (typeof name !== "string" || name.length > MAX_NAME)) {
+      return NextResponse.json({ error: "Invalid name" }, { status: 400 });
     }
 
     const rateKey = `rate:thoughts:${userId}`;
@@ -114,6 +121,7 @@ export async function POST(request: NextRequest) {
       id,
       message: message.trim(),
       kind,
+      ...(name?.trim() ? { name: name.trim() } : {}),
       ...(email?.trim() ? { email: email.trim() } : {}),
       userId,
       createdAt: new Date().toISOString(),
