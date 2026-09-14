@@ -10,7 +10,9 @@ import {
   type SequenceParams,
 } from "./PaintingSequenceCanvas";
 import {
-  progressToMix,
+  holdsForSequence,
+  playheadToFrameIndex,
+  progressToPlayhead,
   usePaintingSequenceDials,
 } from "./usePaintingSequenceDials";
 
@@ -30,10 +32,10 @@ export function HomePaintingStudio() {
   const d = usePaintingSequenceDials();
   const reduceMotion = useReducedMotion() === true;
   const sectionRef = useRef<HTMLElement>(null);
-  const mixTarget = useRef(0);
-  const mixCurrent = useRef(0);
+  const playheadTarget = useRef(0);
+  const playheadCurrent = useRef(0);
   const paramsRef = useRef<SequenceParams>({
-    mix: 0,
+    playhead: 0,
     dissolve: d.scroll.dissolve,
   });
   const [label, setLabel] = useState<string>(PAINTING_SEQUENCE[0].label);
@@ -43,12 +45,11 @@ export function HomePaintingStudio() {
     if (!section) return;
     const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
     const progress = readProgress(section, pane);
-    mixTarget.current = progressToMix(
+    playheadTarget.current = progressToPlayhead(
       progress,
-      d.scroll.holdDomis,
-      d.scroll.holdObscura,
+      holdsForSequence(d.scroll),
     );
-  }, [d.scroll.holdDomis, d.scroll.holdObscura]);
+  }, [d.scroll]);
 
   useEffect(() => {
     paramsRef.current.dissolve = d.scroll.dissolve;
@@ -73,12 +74,14 @@ export function HomePaintingStudio() {
       raf = requestAnimationFrame(tick);
       const scrub = reduceMotion ? 1 : d.scroll.scrub;
       const k = scrub <= 0.001 ? 1 : 1 - Math.exp(-0.08 / Math.max(0.001, scrub));
-      mixCurrent.current += (mixTarget.current - mixCurrent.current) * k;
-      paramsRef.current.mix = mixCurrent.current;
-      const next =
-        mixCurrent.current < 0.5
-          ? PAINTING_SEQUENCE[0].label
-          : PAINTING_SEQUENCE[1].label;
+      playheadCurrent.current +=
+        (playheadTarget.current - playheadCurrent.current) * k;
+      paramsRef.current.playhead = playheadCurrent.current;
+      const idx = playheadToFrameIndex(
+        playheadCurrent.current,
+        PAINTING_SEQUENCE.length,
+      );
+      const next = PAINTING_SEQUENCE[idx].label;
       setLabel((prev) => (prev === next ? prev : next));
     };
     raf = requestAnimationFrame(tick);
@@ -89,7 +92,7 @@ export function HomePaintingStudio() {
     <>
       <section
         ref={sectionRef}
-        aria-label="Painting sequence, Domis to Obscura"
+        aria-label="Painting sequence, Domis then Obscura"
         className="relative"
       >
         <div className="sticky top-0 z-[1] bg-paper pb-3 pt-0">

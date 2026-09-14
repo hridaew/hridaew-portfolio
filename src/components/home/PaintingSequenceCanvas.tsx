@@ -3,9 +3,11 @@
 import { useEffect, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import {
-  PAINTING_BRUSH_MAP,
+  PAINTING_BRUSH_MAPS,
+  PAINTING_GRAIN_MAP,
   PAINTING_SEQUENCE,
 } from "@/data/home-painting-sequence";
+import { playheadToFrameIndex, playheadToPair } from "./usePaintingSequenceDials";
 
 const VERT = /* glsl */ `
 varying vec2 vUv;
@@ -19,6 +21,7 @@ const FRAG = /* glsl */ `
 uniform sampler2D tFrom;
 uniform sampler2D tTo;
 uniform sampler2D tBrush;
+uniform sampler2D tGrain;
 uniform float uMix;
 uniform float uDissolve;
 varying vec2 vUv;
@@ -26,8 +29,11 @@ varying vec2 vUv;
 void main() {
   vec3 a = texture2D(tFrom, vUv).rgb;
   vec3 b = texture2D(tTo, vUv).rgb;
-  float n = texture2D(tBrush, vUv).r;
-  float w = uDissolve;
+  float fig = texture2D(tBrush, vUv).r;
+  float fig2 = texture2D(tBrush, vUv.yx * 1.65 + vec2(0.12, 0.07)).r;
+  float grain = texture2D(tGrain, vUv * 2.15 + vec2(0.08, 0.19)).r;
+  float n = mix(mix(fig, fig2, 0.28), grain, 0.34);
+  float w = max(0.02, uDissolve);
   float p = mix(-w, 1.0 + w, uMix);
   float m = smoothstep(n - w, n + w, p);
   gl_FragColor = vec4(mix(a, b, m), 1.0);
@@ -38,6 +44,7 @@ function loadTex(
   loader: THREE.TextureLoader,
   url: string,
   colorSpace: THREE.ColorSpace,
+  wrap: THREE.Wrapping = THREE.ClampToEdgeWrapping,
 ) {
   return new Promise<THREE.Texture>((resolve, reject) => {
     loader.load(
@@ -46,6 +53,8 @@ function loadTex(
         tex.colorSpace = colorSpace;
         tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;
+        tex.wrapS = wrap;
+        tex.wrapT = wrap;
         tex.needsUpdate = true;
         resolve(tex);
       },
@@ -69,7 +78,7 @@ function coverScale(
 }
 
 export type SequenceParams = {
-  mix: number;
+  playhead: number;
   dissolve: number;
 };
 
@@ -90,15 +99,15 @@ export function PaintingSequenceCanvas({
     const img = imgRef.current;
     if (!wrap || !canvas) return;
 
+    const syncImg = (playhead: number) => {
+      if (!img) return;
+      const idx = playheadToFrameIndex(playhead, PAINTING_SEQUENCE.length);
+      const src = PAINTING_SEQUENCE[idx].src;
+      if (!img.getAttribute("src")?.endsWith(src)) img.src = src;
+    };
+
     if (reduceMotion) {
-      const tick = () => {
-        if (!img) return;
-        const src =
-          paramsRef.current.mix < 0.5
-            ? PAINTING_SEQUENCE[0].src
-            : PAINTING_SEQUENCE[1].src;
-        if (!img.src.endsWith(src)) img.src = src;
-      };
+      const tick = () => syncImg(paramsRef.current.playhead);
       const id = window.setInterval(tick, 120);
       tick();
       return () => window.clearInterval(id);
@@ -130,25 +139,39 @@ export function PaintingSequenceCanvas({
       camera.position.z = 6.1;
 
       const loader = new THREE.TextureLoader();
-      const [from, to, brush] = await Promise.all([
-        loadTex(loader, PAINTING_SEQUENCE[0].src, THREE.SRGBColorSpace),
-        loadTex(loader, PAINTING_SEQUENCE[1].src, THREE.SRGBColorSpace),
-        loadTex(loader, PAINTING_BRUSH_MAP, THREE.NoColorSpace),
+      const [frames, brushes, grain] = await Promise.all([
+        Promise.all(
+          PAINTING_SEQUENCE.map((frame) =>
+            loadTex(loader, frame.src, THREE.SRGBColorSpace),
+          ),
+        ),
+        Promise.all(
+          PAINTING_BRUSH_MAPS.map((url) =>
+            loadTex(loader, url, THREE.NoColorSpace, THREE.RepeatWrapping),
+          ),
+        ),
+        loadTex(
+          loader,
+          PAINTING_GRAIN_MAP,
+          THREE.NoColorSpace,
+          THREE.RepeatWrapping,
+        ),
       ]);
       if (disposed) {
-        from.dispose();
-        to.dispose();
-        brush.dispose();
+        frames.forEach((t) => t.dispose());
+        brushes.forEach((t) => t.dispose());
+        grain.dispose();
         renderer.dispose();
         return;
       }
 
       const uniforms = {
-        tFrom: { value: from },
-        tTo: { value: to },
-        tBrush: { value: brush },
+        tFrom: { value: frames[0] },
+        tTo: { value: frames[Math.min(1, frames.length - 1)] },
+        tBrush: { value: brushes[0] },
+        tGrain: { value: grain },
         uMix: { value: 0 },
-        uDissolve: { value: 0.18 },
+        uDissolve: { value: 0.16 },
       };
       const mat = new THREE.ShaderMaterial({
         uniforms,
@@ -171,22 +194,30 @@ export function PaintingSequenceCanvas({
       ro.observe(wrap);
       resize();
 
+      if (img) img.style.opacity = "0";
+
       const tick = () => {
         if (disposed) return;
         raf = requestAnimationFrame(tick);
         const p = paramsRef.current;
-        uniforms.uMix.value = p.mix;
+        const { fromIndex, mix } = playheadToPair(
+          p.playhead,
+          PAINTING_SEQUENCE.length,
+        );
+        uniforms.tFrom.value = frames[fromIndex];
+        uniforms.tTo.value = frames[fromIndex + 1];
+        uniforms.tBrush.value = brushes[Math.min(fromIndex, brushes.length - 1)];
+        uniforms.uMix.value = mix;
         uniforms.uDissolve.value = p.dissolve;
         renderer!.render(scene, camera);
-        if (img && uniforms.uMix.value > 0.02) img.style.opacity = "0";
       };
       raf = requestAnimationFrame(tick);
 
       (wrap as HTMLDivElement & { __cleanup?: () => void }).__cleanup = () => {
         ro.disconnect();
-        from.dispose();
-        to.dispose();
-        brush.dispose();
+        frames.forEach((t) => t.dispose());
+        brushes.forEach((t) => t.dispose());
+        grain.dispose();
         mat.dispose();
         mesh.geometry.dispose();
       };

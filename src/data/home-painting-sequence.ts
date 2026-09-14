@@ -1,8 +1,10 @@
 /**
  * Sequence we are building one transition at a time.
  *
- * Now: ① Domis (hand + phone) → ③ Obscura (headset, facing camera).
- * Later: Virdio, MCES. All figures clothed, unsexual, storyboard-true.
+ * ① Domis is the painting you meet first (hand + phone).
+ * Then one scroll cut: Domis → Obscura (headset, facing camera, clothed).
+ *
+ * Later, only the next beat — Virdio, then MCES. Not the whole film.
  */
 export const PAINTING_SEQUENCE = [
   {
@@ -19,4 +21,10 @@ export const PAINTING_SEQUENCE = [
   },
 ] as const;
 
-export const PAINTING_BRUSH_MAP = "/assets/home/painting/brush-map.webp";
+/** One brush map per transition. Index 0 = Domis → Obscura. */
+export const PAINTING_BRUSH_MAPS = [
+  "/assets/home/painting/brush-map-domis.webp",
+] as const;
+
+/** Canvas-weave grain from the original Mighty Hand, mixed into every cut. */
+export const PAINTING_GRAIN_MAP = "/assets/home/painting/brush-map.webp";
