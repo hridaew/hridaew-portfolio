@@ -2,12 +2,14 @@
  * Sequence we are building one increment at a time.
  *
  * Now: Domis only — camera PULLS BACK from the hand+phone to reveal the
- * forearm. Not a crossfade. Obscura is not in this pass.
+ * forearm. Phone glass is the real Domis home-tab screenshot
+ * (`/assets/domis/home-tab-screen.png`), not painted cards.
+ * Not a crossfade. Obscura is not in this pass.
  */
 export const DOMIS_PULLBACK = {
   src: "/assets/home/painting/domis-pullback.webp",
   label: "Domis",
-  alt: "Acrylic painting of a hand holding a phone; camera pulls back along the arm",
+  alt: "Acrylic painting of a hand holding a phone showing the Domis home tab",
   /**
    * Start crop as fractions of the plate (3:4). Camera interpolates this
    * rectangle to the full painting.
