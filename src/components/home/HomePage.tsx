@@ -17,6 +17,7 @@ import { ObscuraLiquidGlassFilterSvg } from "./ObscuraLiquidGlassFilterSvg";
 import { HOME_COLUMN, HOME_HERO_BLEED, HOME_RIGHT_COLUMN } from "./homeGrid";
 import {
   ENABLE_HOME_CHEAT_CODES,
+  ENABLE_HOME_LIVING_PAINTING,
   ENABLE_WAFFLINGS_SECTION,
 } from "@/lib/site-toggles";
 import { RevealOnLoad } from "./RevealOnLoad";
@@ -33,6 +34,11 @@ const WafflingsSection = dynamic(
 const HomeCheatEasterEggs = dynamic(
   () =>
     import("./HomeCheatEasterEggs").then((m) => m.HomeCheatEasterEggs),
+  { ssr: false },
+);
+
+const HomePaintingStudio = dynamic(
+  () => import("./HomePaintingStudio").then((m) => m.HomePaintingStudio),
   { ssr: false },
 );
 
@@ -210,6 +216,12 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
             className={`${HOME_RIGHT_COLUMN} flex flex-col gap-[120px]`}
             style={{ paddingTop: rightPadTop, paddingBottom: rightPadTop }}
           >
+            {ENABLE_HOME_LIVING_PAINTING ? (
+              <div className="min-w-0">
+                <HomePaintingStudio />
+              </div>
+            ) : null}
+
             <HomeReveal delay={0.2} enableMotion={revealMotion}>
               <WorkSection />
             </HomeReveal>
@@ -290,6 +302,10 @@ function StackHome({
                 <BioSection />
               </div>
             </HomeReveal>
+
+            {ENABLE_HOME_LIVING_PAINTING ? (
+              <HomePaintingStudio />
+            ) : null}
 
             <HomeReveal delay={0.35} enableMotion={revealMotion}>
               <WorkSection />
