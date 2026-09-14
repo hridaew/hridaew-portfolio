@@ -1,10 +1,10 @@
 /**
  * Sequence we are building one increment at a time.
  *
- * Now: Domis only — camera PULLS BACK from the hand+phone to reveal the
- * forearm. Phone glass is the real Domis home-tab screenshot
- * (`/assets/domis/home-tab-screen.png`), not painted cards.
- * Not a crossfade. Obscura is not in this pass.
+ * Now: Domis pull-back continues — tight on the hand+phone, camera dollies
+ * back until we see the clothed torso still holding the phone.
+ * Glass is the real Domis home-tab screenshot.
+ * Not a crossfade. Headset / Obscura is the next increment.
  */
 export const DOMIS_PULLBACK = {
   src: "/assets/home/painting/domis-pullback.webp",
@@ -15,8 +15,8 @@ export const DOMIS_PULLBACK = {
    * rectangle to the full painting.
    */
   startCrop: {
-    x: 0.11,
-    y: 0.07,
-    size: 0.58,
+    x: 0.16,
+    y: 0.055,
+    size: 0.5,
   },
 } as const;

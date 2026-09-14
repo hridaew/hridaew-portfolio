@@ -11,19 +11,19 @@ export function usePaintingSequenceDials() {
         radius: [4, 0, 28, 1],
       },
       camera: {
-        startSize: [0.58, 0.4, 0.8, 0.01],
-        startX: [0.11, 0, 0.35, 0.01],
-        startY: [0.07, 0, 0.3, 0.01],
+        startSize: [0.5, 0.32, 0.75, 0.01],
+        startX: [0.16, 0, 0.4, 0.01],
+        startY: [0.055, 0, 0.25, 0.01],
       },
       scroll: {
-        trackVh: [180, 100, 360, 10],
+        trackVh: [220, 120, 400, 10],
         holdStart: [0.18, 0.02, 0.45, 0.01],
         holdEnd: [0.16, 0.02, 0.45, 0.01],
         scrub: [0.12, 0, 0.45, 0.01],
       },
     },
     {
-      id: "home-painting-domis-pullback",
+      id: "home-painting-domis-pullback-v2",
       persist: true,
     },
   );
@@ -33,7 +33,7 @@ function clamp01(n: number) {
   return Math.min(1, Math.max(0, n));
 }
 
-/** Track progress → camera 0..1 (0 = tight on the hand, 1 = full arm). */
+/** Track progress → camera 0..1 (0 = tight on the hand, 1 = clothed torso). */
 export function progressToPull(
   progress: number,
   holdStart: number,

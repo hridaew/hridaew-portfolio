@@ -1,9 +1,10 @@
 /**
  * Pose bible. Building one increment at a time.
  *
- * Now: ① Domis pull-back only. Tight on the hand + phone, camera dollies
- * back to reveal the forearm. Same painting, objects receding. Not a
- * crossfade. Obscura is the next increment, not this one.
+ * Now: ① Domis pull-back continues. Tight on the hand + phone (real
+ * screenshot), camera dollies back to the clothed torso still holding
+ * the phone. Same painting, objects receding. Not a crossfade.
+ * Headset / Obscura is the next increment.
  *
  * Later:
  * ③ Obscura — headset, facing camera, clothed, hands on the visor.
