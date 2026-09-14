@@ -73,7 +73,7 @@ export default function ObscuraThoughtsPage() {
         <h1 className="font-[family-name:var(--font-display)] font-bold text-3xl mb-3">
           Thank you
         </h1>
-        <p className="font-[family-name:var(--font-dm-sans)] text-base opacity-70 max-w-sm">
+        <p className="font-[family-name:var(--font-geist)] text-base opacity-70 max-w-sm">
           Your thoughts have been recorded. They mean a great deal.
         </p>
       </main>
@@ -85,7 +85,7 @@ export default function ObscuraThoughtsPage() {
       <h1 className="font-[family-name:var(--font-display)] font-bold text-3xl leading-tight">
         Obscura
       </h1>
-      <p className="font-[family-name:var(--font-dm-sans)] text-base opacity-70 mt-2 mb-7">
+      <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-2 mb-7">
         You just looked through Wayne Wong&apos;s 1946 photographs. I&apos;d love to
         hear what stayed with you.
       </p>
@@ -99,9 +99,9 @@ export default function ObscuraThoughtsPage() {
               onClick={() => setKind(k.id)}
               aria-pressed={kind === k.id}
               className={[
-                "font-[family-name:var(--font-dm-sans)] text-sm rounded-full px-4 py-2 border transition-colors",
+                "font-[family-name:var(--font-geist)] text-sm rounded-full px-4 py-2 border transition-colors",
                 kind === k.id
-                  ? "bg-[var(--text)] text-[var(--bg)] border-transparent"
+                  ? "bg-[var(--ink)] text-[var(--paper)] border-transparent"
                   : "border-[var(--border,rgba(128,128,128,0.4))] opacity-70",
               ].join(" ")}
             >
@@ -120,7 +120,7 @@ export default function ObscuraThoughtsPage() {
             required
             autoFocus
             placeholder="What did you notice? What did you find yourself looking at?"
-            className="font-[family-name:var(--font-dm-sans)] text-base rounded-2xl p-4 bg-transparent border border-[var(--border,rgba(128,128,128,0.4))] resize-y focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="font-[family-name:var(--font-geist)] text-base rounded-2xl p-4 bg-transparent border border-[var(--border,rgba(128,128,128,0.4))] resize-y focus-visible:outline-2 focus-visible:outline-offset-2"
           />
           <span className="text-xs opacity-50 self-end tabular-nums">
             {message.length} / 2000
@@ -128,14 +128,14 @@ export default function ObscuraThoughtsPage() {
         </label>
 
         <label className="flex flex-col gap-2">
-          <span className="font-[family-name:var(--font-dm-sans)] text-sm opacity-70">
+          <span className="font-[family-name:var(--font-geist)] text-sm opacity-70">
             Email — only if you&apos;d like a reply
           </span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="font-[family-name:var(--font-dm-sans)] text-base rounded-xl p-3 bg-transparent border border-[var(--border,rgba(128,128,128,0.4))] focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="font-[family-name:var(--font-geist)] text-base rounded-xl p-3 bg-transparent border border-[var(--border,rgba(128,128,128,0.4))] focus-visible:outline-2 focus-visible:outline-offset-2"
           />
         </label>
 
@@ -151,7 +151,7 @@ export default function ObscuraThoughtsPage() {
         />
 
         {error && (
-          <p role="alert" className="font-[family-name:var(--font-dm-sans)] text-sm text-red-400">
+          <p role="alert" className="font-[family-name:var(--font-geist)] text-sm text-[var(--destructive)]">
             {error}
           </p>
         )}
@@ -159,7 +159,7 @@ export default function ObscuraThoughtsPage() {
         <button
           type="submit"
           disabled={!message.trim() || status === "sending"}
-          className="font-[family-name:var(--font-dm-sans)] text-base rounded-full px-6 py-3.5 bg-[var(--text)] text-[var(--bg)] disabled:opacity-40 transition-opacity"
+          className="font-[family-name:var(--font-geist)] text-base rounded-full px-6 py-3.5 bg-[var(--ink)] text-[var(--paper)] disabled:opacity-40 transition-opacity"
         >
           {status === "sending" ? "Sending…" : "Send"}
         </button>
