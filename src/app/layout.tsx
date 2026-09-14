@@ -7,6 +7,9 @@ import { AchievementProvider } from "@/components/achievements/AchievementProvid
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserEngineScript } from "@/components/BrowserEngineScript";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { rootGraphJsonLd } from "@/lib/seo";
+import { PERSON, SITE_ORIGIN } from "@/lib/site-identity";
 
 const displayFont = Bricolage_Grotesque({
   variable: "--font-display",
@@ -31,30 +34,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hridae Walia - Product Designer",
-  description:
-    "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale. Expert in designing and prototyping high-craft experiences across mobile, web, tangible, and AR/VR platforms.",
-  metadataBase: new URL("https://hridaew.com"),
+  title: `${PERSON.name} - ${PERSON.jobTitle}`,
+  description: PERSON.description,
+  metadataBase: new URL(SITE_ORIGIN),
+  authors: [{ name: PERSON.name, url: SITE_ORIGIN }],
+  creator: PERSON.name,
+  alternates: { canonical: SITE_ORIGIN },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: "Hridae Walia - Product Designer",
-    description:
-      "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale.",
-    url: "https://hridaew.com",
-    siteName: "Hridae Walia Portfolio",
+    title: `${PERSON.name} - ${PERSON.jobTitle}`,
+    description: PERSON.shortDescription,
+    url: SITE_ORIGIN,
+    siteName: `${PERSON.name} Portfolio`,
     locale: "en_US",
     type: "website",
     images: [
       {
         url: "/social-open-graph.png",
-        alt: "Hridae Walia — Product Designer",
+        alt: `${PERSON.name} — ${PERSON.jobTitle}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hridae Walia - Product Designer",
-    description:
-      "Product Designer with 6 years of experience delivering end-to-end, research-led products at scale.",
+    title: `${PERSON.name} - ${PERSON.jobTitle}`,
+    description: PERSON.shortDescription,
     images: ["/social-open-graph.png"],
   },
 };
@@ -70,6 +77,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <BrowserEngineScript />
+        <noscript>
+          <style
+            dangerouslySetInnerHTML={{
+              __html:
+                "[data-ssr-home-stack]{visibility:visible!important;pointer-events:auto!important}",
+            }}
+          />
+        </noscript>
       </head>
       <body
         className={`${displayFont.variable} ${geistSans.variable} ${geistMono.variable} type-body antialiased`}
@@ -130,6 +145,7 @@ export default function RootLayout({
             </filter>
           </defs>
         </svg>
+        <JsonLd data={rootGraphJsonLd()} />
         <AchievementProvider>
           <SheetNavProvider>
             <PageTransitionProvider>

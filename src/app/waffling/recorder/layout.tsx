@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import { Pixelify_Sans } from "next/font/google";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd, webPageJsonLd } from "@/lib/seo";
+import { OTHER_PAGES } from "@/lib/site-identity";
+
+const recorderPage = OTHER_PAGES.find((p) => p.path === "/waffling/recorder")!;
 
 /**
  * Pixelify Sans is only used inside the recorder prototype, so we scope the
@@ -20,5 +25,11 @@ export const metadata: Metadata = {
 };
 
 export default function RecorderLayout({ children }: { children: React.ReactNode }) {
-    return <div className={pixelifySans.className}>{children}</div>;
+    return (
+        <div className={pixelifySans.className}>
+            <JsonLd data={webPageJsonLd(recorderPage)} />
+            <JsonLd data={articleJsonLd(recorderPage)} />
+            {children}
+        </div>
+    );
 }

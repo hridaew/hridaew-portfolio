@@ -19,6 +19,8 @@ export function BrowserEngineScript() {
           }
         }
         document.documentElement.setAttribute("data-browser-engine", isChromium ? "chromium" : "other");
+        var split = window.matchMedia("(min-width: 1024px)");
+        document.documentElement.setAttribute("data-home-layout", split.matches ? "split" : "stack");
       } catch (e) {}
     })();
   `;
