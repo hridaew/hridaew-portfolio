@@ -1,64 +1,123 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DialRoot } from "dialkit";
 import "dialkit/styles.css";
 import { useReducedMotion } from "framer-motion";
-import { LivingPaintingCanvas, type LivingPaintingParams } from "./LivingPaintingCanvas";
-import { useLivingPaintingDials } from "./useLivingPaintingDials";
-import { MIGHTY_HAND_ALT } from "@/data/home-painting-storyboard";
+import { PAINTING_SEQUENCE } from "@/data/home-painting-sequence";
+import {
+  PaintingSequenceCanvas,
+  type SequenceParams,
+} from "./PaintingSequenceCanvas";
+import {
+  progressToMix,
+  usePaintingSequenceDials,
+} from "./usePaintingSequenceDials";
+
+function clamp01(n: number) {
+  return Math.min(1, Math.max(0, n));
+}
+
+function readProgress(section: HTMLElement, pane: HTMLElement | null) {
+  const viewTop = pane ? pane.getBoundingClientRect().top : 0;
+  const viewH = pane ? pane.clientHeight : window.innerHeight;
+  const rect = section.getBoundingClientRect();
+  const range = Math.max(1, rect.height - viewH);
+  return clamp01((viewTop - rect.top) / range);
+}
 
 export function HomePaintingStudio() {
-  const p = useLivingPaintingDials();
+  const d = usePaintingSequenceDials();
   const reduceMotion = useReducedMotion() === true;
-  const paramsRef = useRef<LivingPaintingParams>({
-    displace: p.paint.displace,
-    zoom: p.paint.zoom,
-    vignette: p.paint.vignette,
-    light: p.paint.light,
-    tilt: p.motion.tilt,
-    follow: p.motion.follow,
-    idle: p.motion.idle,
-    idleAmount: p.motion.idleAmount,
-    idleSpeed: p.motion.idleSpeed,
+  const sectionRef = useRef<HTMLElement>(null);
+  const mixTarget = useRef(0);
+  const mixCurrent = useRef(0);
+  const paramsRef = useRef<SequenceParams>({
+    mix: 0,
+    dissolve: d.scroll.dissolve,
   });
+  const [label, setLabel] = useState<string>(PAINTING_SEQUENCE[0].label);
+
+  const sync = useCallback(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
+    const progress = readProgress(section, pane);
+    mixTarget.current = progressToMix(
+      progress,
+      d.scroll.holdDomis,
+      d.scroll.holdObscura,
+    );
+  }, [d.scroll.holdDomis, d.scroll.holdObscura]);
 
   useEffect(() => {
-    paramsRef.current = {
-      displace: p.paint.displace,
-      zoom: p.paint.zoom,
-      vignette: p.paint.vignette,
-      light: p.paint.light,
-      tilt: p.motion.tilt,
-      follow: p.motion.follow,
-      idle: p.motion.idle && !reduceMotion,
-      idleAmount: p.motion.idleAmount,
-      idleSpeed: p.motion.idleSpeed,
+    paramsRef.current.dissolve = d.scroll.dissolve;
+  }, [d.scroll.dissolve]);
+
+  useEffect(() => {
+    const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
+    const target: HTMLElement | Window = pane ?? window;
+    const onScroll = () => sync();
+    target.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    sync();
+    return () => {
+      target.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
-  }, [p, reduceMotion]);
+  }, [sync]);
+
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const scrub = reduceMotion ? 1 : d.scroll.scrub;
+      const k = scrub <= 0.001 ? 1 : 1 - Math.exp(-0.08 / Math.max(0.001, scrub));
+      mixCurrent.current += (mixTarget.current - mixCurrent.current) * k;
+      paramsRef.current.mix = mixCurrent.current;
+      const next =
+        mixCurrent.current < 0.5
+          ? PAINTING_SEQUENCE[0].label
+          : PAINTING_SEQUENCE[1].label;
+      setLabel((prev) => (prev === next ? prev : next));
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [d.scroll.scrub, reduceMotion]);
 
   return (
     <>
-      <figure className="flex w-full flex-col gap-3">
-        <div
-          className="relative mx-auto overflow-hidden bg-[#120a1c]"
-          style={{
-            width: `min(100%, calc(${p.canvas.maxHeightVh}vh * 3 / 4))`,
-            aspectRatio: "3 / 4",
-            borderRadius: p.canvas.radius,
-            boxShadow: `0 ${24 + p.canvas.lift * 80}px ${48 + p.canvas.lift * 120}px rgba(18, 10, 28, ${0.18 + p.canvas.lift})`,
-          }}
-        >
-          <LivingPaintingCanvas
-            paramsRef={paramsRef}
-            reduceMotion={reduceMotion}
-          />
+      <section
+        ref={sectionRef}
+        aria-label="Painting sequence, Domis to Obscura"
+        className="relative"
+      >
+        <div className="sticky top-0 z-[1] bg-paper pb-3 pt-0">
+          <figure className="flex w-full flex-col gap-3">
+            <div
+              className="relative mx-auto overflow-hidden bg-[#120a1c]"
+              style={{
+                width: `min(100%, calc(${d.canvas.maxHeightVh}vh * 3 / 4))`,
+                aspectRatio: "3 / 4",
+                borderRadius: d.canvas.radius,
+              }}
+            >
+              <PaintingSequenceCanvas
+                paramsRef={paramsRef}
+                reduceMotion={reduceMotion}
+              />
+            </div>
+            <figcaption className="type-caption-medium font-mono uppercase text-ink-muted">
+              {label}
+            </figcaption>
+          </figure>
         </div>
-        <figcaption className="type-caption-medium font-mono uppercase text-ink-muted">
-          Mighty Hand · acrylic
-        </figcaption>
-        <span className="sr-only">{MIGHTY_HAND_ALT}</span>
-      </figure>
+        <div
+          className="pointer-events-none"
+          style={{ height: `${d.scroll.trackVh}vh` }}
+          aria-hidden
+        />
+      </section>
       <DialRoot productionEnabled position="bottom-left" theme="dark" />
     </>
   );
