@@ -67,5 +67,9 @@ test.describe("LLM / crawler readiness", () => {
     const titled = await request.get("/Projects/Virdio");
     expect(titled.ok()).toBeTruthy();
     expect(new URL(titled.url()).pathname).toBe("/virdio");
+
+    const firstHop = await request.get("/Projects/Virdio", { maxRedirects: 0 });
+    expect(firstHop.status()).toBe(308);
+    expect(firstHop.headers()["location"]).toMatch(/\/virdio$/);
   });
 });

@@ -12,6 +12,14 @@ export default function Home() {
   return (
     <>
       <JsonLd data={profilePageJsonLd()} />
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "[data-ssr-home-stack]{visibility:visible!important;pointer-events:auto!important}",
+          }}
+        />
+      </noscript>
       <HomeLlmIndex />
       <HomeRoute />
     </>

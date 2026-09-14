@@ -77,14 +77,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <BrowserEngineScript />
-        <noscript>
-          <style
-            dangerouslySetInnerHTML={{
-              __html:
-                "[data-ssr-home-stack]{visibility:visible!important;pointer-events:auto!important}",
-            }}
-          />
-        </noscript>
       </head>
       <body
         className={`${displayFont.variable} ${geistSans.variable} ${geistMono.variable} type-body antialiased`}

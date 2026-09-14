@@ -14,7 +14,7 @@ import {
  */
 export function HomeLlmIndex() {
   return (
-    <article className="home-llm-index" aria-hidden="true">
+    <article className="home-llm-index" aria-hidden="true" inert>
       <h1>
         {PERSON.name} — {PERSON.jobTitle}
       </h1>

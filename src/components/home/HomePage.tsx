@@ -186,11 +186,9 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
             <div
               className={`${HOME_COLUMN} flex flex-1 flex-col justify-center gap-12 py-12`}
             >
-              <HomeReveal delay={0.05} enableMotion={revealMotion}>
-                <div ref={heroAnchorRef} className={HOME_HERO_BLEED}>
-                  <HeroCard />
-                </div>
-              </HomeReveal>
+              <div ref={heroAnchorRef} className={HOME_HERO_BLEED}>
+                <HeroCard />
+              </div>
 
               <HomeReveal delay={0.2} enableMotion={revealMotion}>
                 <div className="relative z-0">
@@ -283,11 +281,9 @@ function StackHome({
         <ObscuraLiquidGlassFilterSvg />
         <div className={HOME_COLUMN}>
           <div className="flex flex-col gap-[72px] pt-[80px]">
-            <HomeReveal delay={0.05} enableMotion={revealMotion}>
-              <div className={HOME_HERO_BLEED}>
-                <HeroCard />
-              </div>
-            </HomeReveal>
+            <div className={HOME_HERO_BLEED}>
+              <HeroCard />
+            </div>
 
             <HomeReveal delay={0.2} enableMotion={revealMotion}>
               <div className="relative z-0">
