@@ -23,7 +23,7 @@ import { RevealOnLoad } from "./RevealOnLoad";
 import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
 import type { HomeLayoutMode } from "@/lib/home-layout";
 
-const SITE_VERSION = "v3.8.0";
+const SITE_VERSION = "v3.9.0";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
@@ -186,11 +186,9 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
             <div
               className={`${HOME_COLUMN} flex flex-1 flex-col justify-center gap-12 py-12`}
             >
-              <HomeReveal delay={0.05} enableMotion={revealMotion}>
-                <div ref={heroAnchorRef} className={HOME_HERO_BLEED}>
-                  <HeroCard />
-                </div>
-              </HomeReveal>
+              <div ref={heroAnchorRef} className={HOME_HERO_BLEED}>
+                <HeroCard />
+              </div>
 
               <HomeReveal delay={0.2} enableMotion={revealMotion}>
                 <div className="relative z-0">
@@ -230,7 +228,14 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
   );
 }
 
-function StackHome({ revealMotion }: { revealMotion: boolean }) {
+function StackHome({
+  revealMotion,
+  ssrStackGuard = false,
+}: {
+  revealMotion: boolean;
+  /** Hide this tree on desktop until hydrate, so split layout does not flash. */
+  ssrStackGuard?: boolean;
+}) {
   const homeRootRef = useRef<HTMLDivElement>(null);
 
   const onHomePointerMove = useCallback(
@@ -259,6 +264,7 @@ function StackHome({ revealMotion }: { revealMotion: boolean }) {
     <div
       ref={homeRootRef}
       data-home-cheat-skin
+      data-ssr-home-stack={ssrStackGuard ? "" : undefined}
       className="relative isolate min-h-screen min-w-0 bg-paper text-ink [--home-dot-x:50%] [--home-dot-y:50%] [--home-dot-heat:0]"
       onPointerMove={onHomePointerMove}
       onPointerLeave={onHomePointerLeave}
@@ -275,11 +281,9 @@ function StackHome({ revealMotion }: { revealMotion: boolean }) {
         <ObscuraLiquidGlassFilterSvg />
         <div className={HOME_COLUMN}>
           <div className="flex flex-col gap-[72px] pt-[80px]">
-            <HomeReveal delay={0.05} enableMotion={revealMotion}>
-              <div className={HOME_HERO_BLEED}>
-                <HeroCard />
-              </div>
-            </HomeReveal>
+            <div className={HOME_HERO_BLEED}>
+              <HeroCard />
+            </div>
 
             <HomeReveal delay={0.2} enableMotion={revealMotion}>
               <div className="relative z-0">
@@ -314,32 +318,34 @@ function StackHome({ revealMotion }: { revealMotion: boolean }) {
 function HomeShell({
   layoutMode,
   revealMotion,
+  ssrStackGuard,
 }: {
   layoutMode: HomeLayoutMode;
   revealMotion: boolean;
+  ssrStackGuard: boolean;
 }) {
   return layoutMode === "split" ? (
     <SplitHome revealMotion={revealMotion} />
   ) : (
-    <StackHome revealMotion={revealMotion} />
+    <StackHome revealMotion={revealMotion} ssrStackGuard={ssrStackGuard} />
   );
 }
 
 export function HomePage() {
   const layoutMode = useHomeLayoutMode();
   const reduceMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const [hasSwitchedLayout, setHasSwitchedLayout] = useState(false);
   const prevModeRef = useRef<HomeLayoutMode | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!hydrated) return;
     if (prevModeRef.current === null) {
-      // Lock the real client mode — do not treat SSR→client as a switch.
+      // Lock the real client mode — do not treat SSR stack → client split as a switch.
       prevModeRef.current = layoutMode;
       return;
     }
@@ -347,19 +353,21 @@ export function HomePage() {
       prevModeRef.current = layoutMode;
       setHasSwitchedLayout(true);
     }
-  }, [layoutMode, mounted]);
-
-  // Avoid SSR stack → client split flash that kills RevealOnLoad.
-  if (!mounted) {
-    return <div className="min-h-dvh w-full bg-paper" aria-hidden />;
-  }
+  }, [layoutMode, hydrated]);
 
   const revealMotion = !hasSwitchedLayout;
   const fadeDuration = reduceMotion ? 0 : 0.2;
+  const ssrStackGuard = !hydrated;
 
   // First paint: RevealOnLoad only — no shell opacity crossfade.
   if (!hasSwitchedLayout) {
-    return <HomeShell layoutMode={layoutMode} revealMotion={revealMotion} />;
+    return (
+      <HomeShell
+        layoutMode={layoutMode}
+        revealMotion={revealMotion}
+        ssrStackGuard={ssrStackGuard}
+      />
+    );
   }
 
   return (
@@ -383,7 +391,11 @@ export function HomePage() {
         }}
         className="min-w-0 w-full"
       >
-        <HomeShell layoutMode={layoutMode} revealMotion={revealMotion} />
+        <HomeShell
+          layoutMode={layoutMode}
+          revealMotion={revealMotion}
+          ssrStackGuard={false}
+        />
       </motion.div>
     </AnimatePresence>
   );

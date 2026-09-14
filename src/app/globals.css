@@ -1749,3 +1749,28 @@ html[data-home-layout] .home-project-embla {
 .ach-icon-in {
   animation: ach-icon-in 100ms ease-out both;
 }
+
+/* Crawlable homepage index — clipped, not display:none, so HTTP fetchers still see it. */
+.home-llm-index {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/*
+ * SSR stack is always in the HTML for LLM/no-JS fetchers. On desktop the
+ * inline layout script stamps data-home-layout=split before paint; hide the
+ * stack shell so it does not flash before the split tree hydrates.
+ */
+@media (min-width: 1024px) {
+  html[data-home-layout="split"] [data-ssr-home-stack] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

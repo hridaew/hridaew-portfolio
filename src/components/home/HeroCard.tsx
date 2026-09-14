@@ -25,6 +25,7 @@ import {
   tweenPageShellBlur,
 } from "@/lib/tweenPageShellBlur";
 import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
+import { CV_HREF, LINKEDIN_HREF } from "@/lib/site-identity";
 import {
   playChoomClickClosing,
   playChoomHeroExpand,
@@ -50,10 +51,6 @@ import {
 import { CHOOM } from "@/lib/homeChoomCopy";
 import { useChoomLingo } from "@/components/home/HomeChoomLingoContext";
 import { useAchievements } from "@/components/achievements/AchievementProvider";
-
-const LI_HREF = "https://www.linkedin.com/in/hridae";
-const CV_HREF =
-  "https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing";
 
 const MOTION_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const MOTION_DURATION = 0.4;
@@ -860,7 +857,7 @@ export function HeroCard() {
                   </a>
 
                   <a
-                    href={LI_HREF}
+                    href={LINKEDIN_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"
@@ -1114,7 +1111,7 @@ export function HeroCard() {
               </a>
 
               <a
-                href={LI_HREF}
+                href={LINKEDIN_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]"

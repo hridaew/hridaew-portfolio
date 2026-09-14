@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { OrcaWafflingBody } from "@/components/orca/OrcaWafflingBody";
 import { WafflingEntrance } from "@/components/shared/WafflingEntrance";
 import { PostPill } from "@/components/shared/PostPill";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd, webPageJsonLd } from "@/lib/seo";
+import { OTHER_PAGES } from "@/lib/site-identity";
 import { ORCA_OPENING, ORCA_TITLE } from "@/data/waffling-article-copy";
+
+const orcaPage = OTHER_PAGES.find((p) => p.path === "/waffling/orca")!;
 
 /** Meta stays on the first paragraph, not the full overflow card preview. */
 const orcaDescription = ORCA_OPENING;
@@ -35,6 +40,8 @@ export const metadata: Metadata = {
 export default function OrcaWafflingPage() {
   return (
     <main className="relative min-h-[100dvh] w-full overflow-x-hidden bg-paper text-ink">
+      <JsonLd data={webPageJsonLd(orcaPage)} />
+      <JsonLd data={articleJsonLd(orcaPage)} />
       <WafflingEntrance>
         <OrcaWafflingBody />
       </WafflingEntrance>
