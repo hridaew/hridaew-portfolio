@@ -1,14 +1,16 @@
 /**
- * Pose bible. Building one transition at a time.
+ * Pose bible. Building one increment at a time.
  *
- * Now: ① Domis (hand + phone) is the first painting, then one cut into
- * ③ Obscura (headset, facing camera, clothed, hands on the visor).
+ * Now: ① Domis pull-back only. Tight on the hand + phone, camera dollies
+ * back to reveal the forearm. Same painting, objects receding. Not a
+ * crossfade. Obscura is the next increment, not this one.
  *
  * Later:
+ * ③ Obscura — headset, facing camera, clothed, hands on the visor.
  * ② Virdio — FACING THE CAMERA, clothed workout, cones. Not a rear view.
  * ④ MCES — back of HEAD/shoulders, seated, looking at a TV. Clothed.
  *
- * Mighty Hand is the style lock, not a scene in this pass.
+ * Mighty Hand is the style lock.
  *
  * PROMPT LOCK (every keyframe):
  * - The figure is the Mighty Hand sculpture: viridian / orange impasto slabs,

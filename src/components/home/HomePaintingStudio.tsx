@@ -1,18 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { DialRoot } from "dialkit";
 import "dialkit/styles.css";
 import { useReducedMotion } from "framer-motion";
-import { PAINTING_SEQUENCE } from "@/data/home-painting-sequence";
+import { DOMIS_PULLBACK } from "@/data/home-painting-sequence";
 import {
-  PaintingSequenceCanvas,
-  type SequenceParams,
-} from "./PaintingSequenceCanvas";
+  PaintingPullback,
+  type PullbackParams,
+} from "./PaintingPullback";
 import {
-  holdsForSequence,
-  playheadToFrameIndex,
-  progressToPlayhead,
+  progressToPull,
   usePaintingSequenceDials,
 } from "./usePaintingSequenceDials";
 
@@ -32,28 +30,32 @@ export function HomePaintingStudio() {
   const d = usePaintingSequenceDials();
   const reduceMotion = useReducedMotion() === true;
   const sectionRef = useRef<HTMLElement>(null);
-  const playheadTarget = useRef(0);
-  const playheadCurrent = useRef(0);
-  const paramsRef = useRef<SequenceParams>({
-    playhead: 0,
-    dissolve: d.scroll.dissolve,
+  const pullTarget = useRef(0);
+  const pullCurrent = useRef(0);
+  const paramsRef = useRef<PullbackParams>({
+    pull: 0,
+    startSize: d.camera.startSize,
+    startX: d.camera.startX,
+    startY: d.camera.startY,
   });
-  const [label, setLabel] = useState<string>(PAINTING_SEQUENCE[0].label);
 
   const sync = useCallback(() => {
     const section = sectionRef.current;
     if (!section) return;
     const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
     const progress = readProgress(section, pane);
-    playheadTarget.current = progressToPlayhead(
+    pullTarget.current = progressToPull(
       progress,
-      holdsForSequence(d.scroll),
+      d.scroll.holdStart,
+      d.scroll.holdEnd,
     );
-  }, [d.scroll]);
+  }, [d.scroll.holdStart, d.scroll.holdEnd]);
 
   useEffect(() => {
-    paramsRef.current.dissolve = d.scroll.dissolve;
-  }, [d.scroll.dissolve]);
+    paramsRef.current.startSize = d.camera.startSize;
+    paramsRef.current.startX = d.camera.startX;
+    paramsRef.current.startY = d.camera.startY;
+  }, [d.camera.startSize, d.camera.startX, d.camera.startY]);
 
   useEffect(() => {
     const pane = document.querySelector<HTMLElement>('[data-home-pane="right"]');
@@ -74,15 +76,8 @@ export function HomePaintingStudio() {
       raf = requestAnimationFrame(tick);
       const scrub = reduceMotion ? 1 : d.scroll.scrub;
       const k = scrub <= 0.001 ? 1 : 1 - Math.exp(-0.08 / Math.max(0.001, scrub));
-      playheadCurrent.current +=
-        (playheadTarget.current - playheadCurrent.current) * k;
-      paramsRef.current.playhead = playheadCurrent.current;
-      const idx = playheadToFrameIndex(
-        playheadCurrent.current,
-        PAINTING_SEQUENCE.length,
-      );
-      const next = PAINTING_SEQUENCE[idx].label;
-      setLabel((prev) => (prev === next ? prev : next));
+      pullCurrent.current += (pullTarget.current - pullCurrent.current) * k;
+      paramsRef.current.pull = pullCurrent.current;
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
@@ -92,7 +87,7 @@ export function HomePaintingStudio() {
     <>
       <section
         ref={sectionRef}
-        aria-label="Painting sequence, Domis then Obscura"
+        aria-label="Domis painting, camera pulls back"
         className="relative"
       >
         <div className="sticky top-0 z-[1] bg-paper pb-3 pt-0">
@@ -105,13 +100,13 @@ export function HomePaintingStudio() {
                 borderRadius: d.canvas.radius,
               }}
             >
-              <PaintingSequenceCanvas
+              <PaintingPullback
                 paramsRef={paramsRef}
                 reduceMotion={reduceMotion}
               />
             </div>
             <figcaption className="type-caption-medium font-mono uppercase text-ink-muted">
-              {label}
+              {DOMIS_PULLBACK.label}
             </figcaption>
           </figure>
         </div>

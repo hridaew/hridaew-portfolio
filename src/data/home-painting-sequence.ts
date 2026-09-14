@@ -1,30 +1,20 @@
 /**
- * Sequence we are building one transition at a time.
+ * Sequence we are building one increment at a time.
  *
- * ① Domis is the painting you meet first (hand + phone).
- * Then one scroll cut: Domis → Obscura (headset, facing camera, clothed).
- *
- * Later, only the next beat — Virdio, then MCES. Not the whole film.
+ * Now: Domis only — camera PULLS BACK from the hand+phone to reveal the
+ * forearm. Not a crossfade. Obscura is not in this pass.
  */
-export const PAINTING_SEQUENCE = [
-  {
-    id: "domis",
-    src: "/assets/home/painting/01-domis.webp",
-    label: "Domis",
-    alt: "Acrylic painting of a hand holding a phone with a home-maintenance app",
+export const DOMIS_PULLBACK = {
+  src: "/assets/home/painting/domis-pullback.webp",
+  label: "Domis",
+  alt: "Acrylic painting of a hand holding a phone; camera pulls back along the arm",
+  /**
+   * Start crop as fractions of the plate (3:4). Camera interpolates this
+   * rectangle to the full painting.
+   */
+  startCrop: {
+    x: 0.11,
+    y: 0.07,
+    size: 0.58,
   },
-  {
-    id: "obscura",
-    src: "/assets/home/painting/03-obscura.webp",
-    label: "Obscura",
-    alt: "Acrylic painting of a face wearing a VR headset, hands on either side",
-  },
-] as const;
-
-/** One brush map per transition. Index 0 = Domis → Obscura. */
-export const PAINTING_BRUSH_MAPS = [
-  "/assets/home/painting/brush-map-domis.webp",
-] as const;
-
-/** Canvas-weave grain from the original Mighty Hand, mixed into every cut. */
-export const PAINTING_GRAIN_MAP = "/assets/home/painting/brush-map.webp";
+} as const;
