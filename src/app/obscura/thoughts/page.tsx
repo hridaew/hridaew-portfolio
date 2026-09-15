@@ -34,11 +34,21 @@ function getUserId(): string {
   }
 }
 
+/** Inverts pixels in place. The whole trick, in four lines. */
+function invert(data: ImageData) {
+  const px = data.data;
+  for (let i = 0; i < px.length; i += 4) {
+    px[i] = 255 - px[i];
+    px[i + 1] = 255 - px[i + 1];
+    px[i + 2] = 255 - px[i + 2];
+  }
+}
+
 export default function ObscuraThoughtsPage() {
   const [cam, setCam] = useState<CamState>("off");
-  const [frozen, setFrozen] = useState(false);
-  const [developed, setDeveloped] = useState<string | null>(null);
+  const [shot, setShot] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
@@ -48,6 +58,7 @@ export default function ObscuraThoughtsPage() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const blobRef = useRef<Blob | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
 
@@ -61,15 +72,21 @@ export default function ObscuraThoughtsPage() {
     return () => { streamRef.current?.getTracks().forEach((t) => t.stop()); };
   }, []);
 
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
   const startCamera = useCallback(async () => {
     setCam("starting");
+    setShot(null);
+    setSaved(false);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: "environment" } },
         audio: false,
       });
       streamRef.current = stream;
-      setDeveloped(null);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
@@ -80,14 +97,33 @@ export default function ObscuraThoughtsPage() {
     }
   }, []);
 
-  function toggleFreeze() {
+  /** Freezes the current frame, inverted, as a keepable image. */
+  function capture() {
     const v = videoRef.current;
-    if (!v) return;
-    if (frozen) { void v.play(); setFrozen(false); }
-    else { v.pause(); setFrozen(true); }
+    if (!v || !v.videoWidth) return;
+
+    const scale = Math.min(1, MAX_EDGE / Math.max(v.videoWidth, v.videoHeight));
+    const cw = Math.round(v.videoWidth * scale);
+    const ch = Math.round(v.videoHeight * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = cw; canvas.height = ch;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.drawImage(v, 0, 0, cw, ch);
+    const data = ctx.getImageData(0, 0, cw, ch);
+    invert(data);
+    ctx.putImageData(data, 0, 0);
+
+    canvas.toBlob((b) => { blobRef.current = b; }, "image/jpeg", 0.92);
+    setShot(canvas.toDataURL("image/jpeg", 0.92));
+    setSaved(false);
+    stopCamera();
+    setCam("off");
   }
 
-  /** Inverts a chosen photo on-device and shows it as a saveable image. */
+  /** Same result, from a photo they already took. */
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -125,17 +161,13 @@ export default function ObscuraThoughtsPage() {
       ctx.drawImage(source, 0, 0, cw, ch);
 
       const data = ctx.getImageData(0, 0, cw, ch);
-      const px = data.data;
-      for (let i = 0; i < px.length; i += 4) {
-        px[i] = 255 - px[i];
-        px[i + 1] = 255 - px[i + 1];
-        px[i + 2] = 255 - px[i + 2];
-      }
+      invert(data);
       ctx.putImageData(data, 0, 0);
 
-      // Rendered as a plain <img>, so a long press offers Save to Photos on iOS.
-      setDeveloped(canvas.toDataURL("image/jpeg", 0.92));
-      streamRef.current?.getTracks().forEach((t) => t.stop());
+      canvas.toBlob((b) => { blobRef.current = b; }, "image/jpeg", 0.92);
+      setShot(canvas.toDataURL("image/jpeg", 0.92));
+      setSaved(false);
+      stopCamera();
       setCam("off");
     } catch {
       setError("Couldn't read that image. Try another one.");
@@ -143,6 +175,31 @@ export default function ObscuraThoughtsPage() {
       setWorking(false);
       if (fileRef.current) fileRef.current.value = "";
     }
+  }
+
+  /** Share sheet where it exists — that is where iOS puts "Save Image". */
+  async function save() {
+    const blob = blobRef.current;
+    if (!blob) return;
+
+    const file = new File([blob], "obscura.jpg", { type: "image/jpeg" });
+    const nav = navigator as Navigator & {
+      canShare?: (d: ShareData) => boolean;
+      share?: (d: ShareData) => Promise<void>;
+    };
+
+    if (nav.canShare?.({ files: [file] }) && nav.share) {
+      try { await nav.share({ files: [file] }); setSaved(true); return; }
+      catch { /* dismissed — fall through to download */ }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "obscura.jpg";
+    a.click();
+    URL.revokeObjectURL(url);
+    setSaved(true);
   }
 
   async function submit(e: React.FormEvent) {
@@ -177,6 +234,8 @@ export default function ObscuraThoughtsPage() {
 
   const field =
     "font-[family-name:var(--font-geist)] text-base rounded-xl px-3.5 py-3 bg-transparent border border-[var(--border,rgba(43,42,39,0.25))] focus-visible:outline-2 focus-visible:outline-offset-2";
+  const pill =
+    "font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 disabled:opacity-40 transition-opacity";
 
   return (
     <main className="min-h-dvh bg-[var(--paper)] text-[var(--ink)]">
@@ -200,13 +259,13 @@ export default function ObscuraThoughtsPage() {
         {/* ---- the developer ---- */}
         <section>
           <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-[var(--ink)]">
-            {developed ? (
+            {shot ? (
               // Deliberately a plain <img>: a client-side data URL that
               // next/image cannot optimise, and a real <img> is what lets iOS
-              // offer "Save to Photos" on a long press.
+              // offer "Save to Photos" on a long press as well.
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={developed}
+                src={shot}
                 alt="Your photographs, developed"
                 className="absolute inset-0 w-full h-full object-contain"
               />
@@ -216,17 +275,17 @@ export default function ObscuraThoughtsPage() {
                 playsInline
                 muted
                 className="absolute inset-0 w-full h-full object-cover"
-                // The whole trick: invert the feed, so a paper negative reads positive.
+                // Invert the feed, so a paper negative reads as a positive.
                 style={{ filter: "invert(1)", display: cam === "live" ? "block" : "none" }}
               />
             )}
 
-            {!developed && cam !== "live" && (
+            {!shot && cam !== "live" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 gap-4 text-[var(--paper)]">
                 <button
                   onClick={startCamera}
                   disabled={cam === "starting" || cam === "unsupported"}
-                  className="font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 bg-[var(--paper)] text-[var(--ink)] disabled:opacity-40"
+                  className={pill + " bg-[var(--paper)] text-[var(--ink)]"}
                 >
                   {cam === "starting" ? "Opening…" : cam === "denied" ? "Try camera again" : "Start camera"}
                 </button>
@@ -238,14 +297,12 @@ export default function ObscuraThoughtsPage() {
               </div>
             )}
 
-            {!developed && cam === "live" && (
+            {!shot && cam === "live" && (
               <button
-                onClick={toggleFreeze}
-                aria-pressed={frozen}
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 font-[family-name:var(--font-geist)] text-sm rounded-full px-5 py-2.5 bg-[var(--paper)]/90 text-[var(--ink)] backdrop-blur"
-              >
-                {frozen ? "Resume" : "Hold still"}
-              </button>
+                onClick={capture}
+                aria-label="Capture this image"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 h-16 w-16 rounded-full bg-[var(--paper)] ring-4 ring-[var(--paper)]/40 active:scale-95 transition-transform"
+              />
             )}
           </div>
 
@@ -253,28 +310,29 @@ export default function ObscuraThoughtsPage() {
             ↑ Develop your photos
           </p>
 
-          <div className="flex items-center justify-center gap-4 mt-2">
-            <button
-              onClick={() => fileRef.current?.click()}
-              disabled={working}
-              className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60 disabled:opacity-40"
-            >
-              {working ? "Developing…" : developed ? "Try another photo" : "or upload a photo instead"}
-            </button>
-            {developed && (
-              <button
-                onClick={() => { setDeveloped(null); void startCamera(); }}
-                className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60"
-              >
-                back to camera
+          {/* capture → save / retake */}
+          {shot ? (
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <button onClick={save} className={pill + " bg-[var(--ink)] text-[var(--paper)]"}>
+                {saved ? "Saved" : "Save"}
               </button>
-            )}
-          </div>
-
-          {developed && (
-            <p className="font-[family-name:var(--font-geist)] text-xs opacity-50 text-center mt-2">
-              Press and hold the image to save it.
-            </p>
+              <button
+                onClick={startCamera}
+                className={pill + " border border-[var(--ink)]/25"}
+              >
+                Retake
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center mt-3">
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={working}
+                className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60 disabled:opacity-40"
+              >
+                {working ? "Developing…" : "or upload a photo instead"}
+              </button>
+            </div>
           )}
 
           <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />

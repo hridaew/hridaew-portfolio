@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import dynamic from "next/dynamic";
 import {
@@ -23,7 +23,7 @@ import { RevealOnLoad } from "./RevealOnLoad";
 import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
 import type { HomeLayoutMode } from "@/lib/home-layout";
 
-const SITE_VERSION = "v3.9.0";
+const SITE_VERSION = "v3.9.1";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
@@ -52,7 +52,7 @@ function HomeFooter() {
   );
 }
 
-/** Skip entrance stagger when swapping split↔stack after first paint. */
+/** Skip entrance stagger when swapping splitâ†”stack after first paint. */
 function HomeReveal({
   delay,
   enableMotion,
@@ -345,7 +345,7 @@ export function HomePage() {
   useEffect(() => {
     if (!hydrated) return;
     if (prevModeRef.current === null) {
-      // Lock the real client mode — do not treat SSR stack → client split as a switch.
+      // Lock the real client mode â€” do not treat SSR stack â†’ client split as a switch.
       prevModeRef.current = layoutMode;
       return;
     }
@@ -359,7 +359,7 @@ export function HomePage() {
   const fadeDuration = reduceMotion ? 0 : 0.2;
   const ssrStackGuard = !hydrated;
 
-  // First paint: RevealOnLoad only — no shell opacity crossfade.
+  // First paint: RevealOnLoad only â€” no shell opacity crossfade.
   if (!hasSwitchedLayout) {
     return (
       <HomeShell
