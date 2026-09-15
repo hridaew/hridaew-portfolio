@@ -1,11 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type CamState = "off" | "starting" | "live" | "denied" | "unsupported";
 
 const MAX_EDGE = 1600; // plenty to look at, and keeps big phone photos fast
+
+// Confirm these before the exhibition — this is the one part of the page
+// that is about other people.
+const CREDITS: Array<[string, string]> = [
+  ["Hridae Walia", "Lead interaction design, development"],
+  ["Asa Symons", "Design, music"],
+  ["Caiya Wiltshire", "Design, research"],
+  ["Nick Hallin", "Design, writing"],
+  ["Bibi", "Voice of the narrator"],
+  ["The Wong family", "With thanks"],
+];
 
 function getUserId(): string {
   // Per-browser id so rate limiting has something stable to key on. Not an
@@ -25,7 +37,7 @@ function getUserId(): string {
 export default function ObscuraThoughtsPage() {
   const [cam, setCam] = useState<CamState>("off");
   const [frozen, setFrozen] = useState(false);
-  const [uploaded, setUploaded] = useState<string | null>(null);
+  const [developed, setDeveloped] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
 
   const [message, setMessage] = useState("");
@@ -57,7 +69,7 @@ export default function ObscuraThoughtsPage() {
         audio: false,
       });
       streamRef.current = stream;
-      setUploaded(null);
+      setDeveloped(null);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
@@ -93,7 +105,7 @@ export default function ObscuraThoughtsPage() {
       } else {
         const url = URL.createObjectURL(file);
         const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-          const i = new Image();
+          const i = new window.Image();
           i.onload = () => resolve(i);
           i.onerror = reject;
           i.src = url;
@@ -121,8 +133,8 @@ export default function ObscuraThoughtsPage() {
       }
       ctx.putImageData(data, 0, 0);
 
-      // Rendered as an <img>, so a long press offers Save to Photos on iOS.
-      setUploaded(canvas.toDataURL("image/jpeg", 0.92));
+      // Rendered as a plain <img>, so a long press offers Save to Photos on iOS.
+      setDeveloped(canvas.toDataURL("image/jpeg", 0.92));
       streamRef.current?.getTracks().forEach((t) => t.stop());
       setCam("off");
     } catch {
@@ -163,193 +175,221 @@ export default function ObscuraThoughtsPage() {
     }
   }
 
-  const inputClass =
-    "font-[family-name:var(--font-geist)] text-base rounded-xl p-3 bg-transparent border border-[var(--border,rgba(43,42,39,0.25))] focus-visible:outline-2 focus-visible:outline-offset-2";
+  const field =
+    "font-[family-name:var(--font-geist)] text-base rounded-xl px-3.5 py-3 bg-transparent border border-[var(--border,rgba(43,42,39,0.25))] focus-visible:outline-2 focus-visible:outline-offset-2";
 
   return (
     <main className="min-h-dvh bg-[var(--paper)] text-[var(--ink)]">
-      <section className="px-6 pt-10 pb-6 max-w-lg mx-auto">
-        <h1 className="font-[family-name:var(--font-display)] font-bold text-3xl leading-tight">
-          Develop your strip
-        </h1>
-        <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-2">
-          Your photographs printed as negatives, the way Wayne&apos;s film sat
-          undeveloped for decades. Hold your phone over the paper to see them.
-        </p>
-      </section>
+      <div className="max-w-lg mx-auto px-6">
 
-      {/* ---- the viewer ---- */}
-      <section className="px-6 max-w-lg mx-auto">
-        <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-[var(--ink)]">
-          {uploaded ? (
-            // Deliberately a plain <img>: this is a client-side data URL that
-            // next/image cannot optimise, and a real <img> is what lets iOS
-            // offer "Save to Photos" on a long press.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={uploaded}
-              alt="Your strip, developed"
-              className="absolute inset-0 w-full h-full object-contain"
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              playsInline
-              muted
-              className="absolute inset-0 w-full h-full object-cover"
-              // The whole trick: invert the feed, so a paper negative reads positive.
-              style={{ filter: "invert(1)", display: cam === "live" ? "block" : "none" }}
-            />
-          )}
-
-          {!uploaded && cam !== "live" && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 gap-4 text-[var(--paper)]">
-              <button
-                onClick={startCamera}
-                disabled={cam === "starting" || cam === "unsupported"}
-                className="font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 bg-[var(--paper)] text-[var(--ink)] disabled:opacity-40"
-              >
-                {cam === "starting" ? "Opening…" : cam === "denied" ? "Try camera again" : "Start camera"}
-              </button>
-              {(cam === "denied" || cam === "unsupported") && (
-                <p className="font-[family-name:var(--font-geist)] text-sm opacity-70 max-w-[24ch]">
-                  No camera here — upload a photo of your strip instead.
-                </p>
-              )}
-            </div>
-          )}
-
-          {!uploaded && cam === "live" && (
-            <button
-              onClick={toggleFreeze}
-              aria-pressed={frozen}
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 font-[family-name:var(--font-geist)] text-sm rounded-full px-5 py-2.5 bg-[var(--paper)]/90 text-[var(--ink)] backdrop-blur"
-            >
-              {frozen ? "Resume" : "Hold still"}
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={working}
-            className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-70 disabled:opacity-40"
-          >
-            {working ? "Developing…" : uploaded ? "Try another photo" : "or upload a photo of your strip"}
-          </button>
-          {uploaded && (
-            <button
-              onClick={() => { setUploaded(null); void startCamera(); }}
-              className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-70"
-            >
-              back to camera
-            </button>
-          )}
-        </div>
-
-        {uploaded && (
-          <p className="font-[family-name:var(--font-geist)] text-xs opacity-50 text-center mt-2">
-            Press and hold the image to save it.
+        {/* ---- identity ---- */}
+        <header className="pt-12 pb-8 text-center">
+          <Image
+            src="/assets/obscura/wordmark.png"
+            alt="Obscura"
+            width={1000}
+            height={195}
+            priority
+            className="w-56 h-auto mx-auto"
+          />
+          <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-4">
+            Thank you for experiencing the obscura.
           </p>
-        )}
+        </header>
 
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFile}
-          className="hidden"
-        />
-      </section>
-
-      {/* ---- the ask ---- */}
-      <section className="px-6 pt-12 pb-10 max-w-lg mx-auto">
-        {status === "sent" ? (
-          <div className="text-center py-8">
-            <h2 className="font-[family-name:var(--font-display)] font-bold text-2xl mb-2">
-              Thank you
-            </h2>
-            <p className="font-[family-name:var(--font-geist)] text-base opacity-70">
-              That means a great deal.
-            </p>
-          </div>
-        ) : (
-          <>
-            <h2 className="font-[family-name:var(--font-display)] font-bold text-2xl leading-tight">
-              What did you see?
-            </h2>
-            <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-2 mb-6">
-              One line is plenty. I read every one.
-            </p>
-
-            <form onSubmit={submit} className="flex flex-col gap-4">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                maxLength={2000}
-                rows={5}
-                required
-                placeholder="What stayed with you?"
-                className={inputClass + " resize-y"}
+        {/* ---- the developer ---- */}
+        <section>
+          <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-[var(--ink)]">
+            {developed ? (
+              // Deliberately a plain <img>: a client-side data URL that
+              // next/image cannot optimise, and a real <img> is what lets iOS
+              // offer "Save to Photos" on a long press.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={developed}
+                alt="Your photographs, developed"
+                className="absolute inset-0 w-full h-full object-contain"
               />
+            ) : (
+              <video
+                ref={videoRef}
+                playsInline
+                muted
+                className="absolute inset-0 w-full h-full object-cover"
+                // The whole trick: invert the feed, so a paper negative reads positive.
+                style={{ filter: "invert(1)", display: cam === "live" ? "block" : "none" }}
+              />
+            )}
+
+            {!developed && cam !== "live" && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 gap-4 text-[var(--paper)]">
+                <button
+                  onClick={startCamera}
+                  disabled={cam === "starting" || cam === "unsupported"}
+                  className="font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 bg-[var(--paper)] text-[var(--ink)] disabled:opacity-40"
+                >
+                  {cam === "starting" ? "Opening…" : cam === "denied" ? "Try camera again" : "Start camera"}
+                </button>
+                {(cam === "denied" || cam === "unsupported") && (
+                  <p className="font-[family-name:var(--font-geist)] text-sm opacity-70 max-w-[24ch]">
+                    No camera here — upload a photo of your strip instead.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {!developed && cam === "live" && (
+              <button
+                onClick={toggleFreeze}
+                aria-pressed={frozen}
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 font-[family-name:var(--font-geist)] text-sm rounded-full px-5 py-2.5 bg-[var(--paper)]/90 text-[var(--ink)] backdrop-blur"
+              >
+                {frozen ? "Resume" : "Hold still"}
+              </button>
+            )}
+          </div>
+
+          <p className="font-[family-name:var(--font-geist)] text-sm text-center mt-3 opacity-70">
+            ↑ Develop your photos
+          </p>
+
+          <div className="flex items-center justify-center gap-4 mt-2">
+            <button
+              onClick={() => fileRef.current?.click()}
+              disabled={working}
+              className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60 disabled:opacity-40"
+            >
+              {working ? "Developing…" : developed ? "Try another photo" : "or upload a photo instead"}
+            </button>
+            {developed && (
+              <button
+                onClick={() => { setDeveloped(null); void startCamera(); }}
+                className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60"
+              >
+                back to camera
+              </button>
+            )}
+          </div>
+
+          {developed && (
+            <p className="font-[family-name:var(--font-geist)] text-xs opacity-50 text-center mt-2">
+              Press and hold the image to save it.
+            </p>
+          )}
+
+          <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
+        </section>
+
+        {/* ---- the ask ---- */}
+        <section className="pt-12">
+          {status === "sent" ? (
+            <div className="text-center py-6">
+              <h2 className="font-[family-name:var(--font-display)] font-bold text-2xl mb-2">
+                Thank you
+              </h2>
+              <p className="font-[family-name:var(--font-geist)] text-base opacity-70">
+                That means a great deal.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="flex flex-col gap-3">
+              <label
+                htmlFor="obscura-thoughts"
+                className="font-[family-name:var(--font-geist)] text-base"
+              >
+                I would love to hear your thoughts:
+              </label>
+
+              <div className="relative">
+                <textarea
+                  id="obscura-thoughts"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  maxLength={2000}
+                  rows={5}
+                  required
+                  className={field + " w-full resize-y pb-14"}
+                />
+                <button
+                  type="submit"
+                  aria-label="Send your thoughts"
+                  disabled={!message.trim() || status === "sending"}
+                  className="absolute right-3 bottom-3 h-11 w-16 rounded-full bg-[var(--ink)] text-[var(--paper)] disabled:opacity-30 transition-opacity grid place-items-center"
+                >
+                  {status === "sending" ? (
+                    <span className="text-xs font-[family-name:var(--font-geist)]">…</span>
+                  ) : (
+                    <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true">
+                      <path d="M1 7h19M15 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8"
+                            strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </button>
+              </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  maxLength={100}
-                  placeholder="Name (optional)"
-                  autoComplete="name"
-                  className={inputClass}
+                  type="text" value={name} onChange={(e) => setName(e.target.value)}
+                  maxLength={100} placeholder="Name (optional)" autoComplete="name"
+                  aria-label="Your name, optional" className={field}
                 />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  maxLength={200}
-                  placeholder="Email (optional)"
-                  autoComplete="email"
-                  className={inputClass}
+                  type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                  maxLength={200} placeholder="Email (optional)" autoComplete="email"
+                  aria-label="Your email, optional" className={field}
                 />
               </div>
 
               {/* Honeypot: hidden from people, irresistible to bots. */}
-              <input
-                ref={honeypot}
-                type="text"
-                name="website"
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-                className="absolute left-[-9999px] w-px h-px opacity-0"
-              />
+              <input ref={honeypot} type="text" name="website" tabIndex={-1}
+                     autoComplete="off" aria-hidden="true"
+                     className="absolute left-[-9999px] w-px h-px opacity-0" />
 
               {error && (
                 <p role="alert" className="font-[family-name:var(--font-geist)] text-sm text-[var(--destructive,#b00020)]">
                   {error}
                 </p>
               )}
-
-              <button
-                type="submit"
-                disabled={!message.trim() || status === "sending"}
-                className="font-[family-name:var(--font-geist)] text-base rounded-full px-6 py-3.5 bg-[var(--ink)] text-[var(--paper)] disabled:opacity-40 transition-opacity"
-              >
-                {status === "sending" ? "Sending…" : "Send"}
-              </button>
             </form>
-          </>
-        )}
-      </section>
+          )}
+        </section>
 
-      <footer className="px-6 pb-12 max-w-lg mx-auto">
-        <p className="font-[family-name:var(--font-geist)] text-xs opacity-40 leading-relaxed">
-          Photographs are inverted on your device. Nothing from the camera or
-          from an uploaded image is recorded, uploaded or stored.
-        </p>
-      </footer>
+        {/* ---- credits ---- */}
+        <section className="pt-14">
+          <h2 className="font-[family-name:var(--font-geist)] text-xs tracking-[0.18em] uppercase opacity-50">
+            Credits
+          </h2>
+          <dl className="mt-4 flex flex-col gap-2.5">
+            {CREDITS.map(([who, what]) => (
+              <div key={who} className="flex gap-3 items-baseline">
+                <dt className="font-[family-name:var(--font-geist)] text-sm font-medium min-w-[9.5rem] shrink-0">
+                  {who}
+                </dt>
+                <dd className="font-[family-name:var(--font-geist)] text-sm opacity-60">
+                  {what}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {/* ---- the door out ---- */}
+        <section className="pt-10">
+          <a
+            href="/obscura"
+            className="font-[family-name:var(--font-geist)] text-base underline underline-offset-4 decoration-[var(--ink)]/30 hover:decoration-[var(--ink)]"
+          >
+            Learn about the project →
+          </a>
+        </section>
+
+        <footer className="pt-10 pb-14">
+          <p className="font-[family-name:var(--font-geist)] text-xs opacity-40 leading-relaxed">
+            Photographs are developed on your device. Nothing from the camera or
+            from an image you choose is recorded, uploaded or stored.
+          </p>
+        </footer>
+      </div>
     </main>
   );
 }
