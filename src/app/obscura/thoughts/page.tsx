@@ -11,11 +11,11 @@ const MAX_EDGE = 1600; // plenty to look at, and keeps big phone photos fast
 // Confirm these before the exhibition — this is the one part of the page
 // that is about other people.
 const CREDITS: Array<[string, string]> = [
-  ["Hridae Walia", "Lead interaction design, development"],
+  ["Hridae Walia", "Lead design and development"],
   ["Asa Symons", "Design, music"],
   ["Caiya Wiltshire", "Design, research"],
   ["Nick Hallin", "Design, writing"],
-  ["Bibi", "Voice of the narrator"],
+  ["Bibiana Bauer", "Narrator"],
   ["The Wong family", "With thanks"],
 ];
 
@@ -232,13 +232,18 @@ export default function ObscuraThoughtsPage() {
     }
   }
 
+  // The page runs inverted — ink as ground, paper as type — to match the
+  // negative strip the visitor is holding.
   const field =
-    "font-[family-name:var(--font-geist)] text-base rounded-xl px-3.5 py-3 bg-transparent border border-[var(--border,rgba(43,42,39,0.25))] focus-visible:outline-2 focus-visible:outline-offset-2";
+    "font-[family-name:var(--font-geist)] text-base rounded-xl px-3.5 py-3 bg-transparent " +
+    "border border-[rgba(244,244,243,0.28)] text-[var(--paper)] " +
+    "placeholder:text-[rgba(244,244,243,0.4)] focus-visible:outline-2 focus-visible:outline-offset-2 " +
+    "focus-visible:outline-[var(--paper)]";
   const pill =
     "font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 disabled:opacity-40 transition-opacity";
 
   return (
-    <main className="min-h-dvh bg-[var(--paper)] text-[var(--ink)]">
+    <main className="min-h-dvh bg-[var(--ink)] text-[var(--paper)]">
       <div className="max-w-lg mx-auto px-6">
 
         {/* ---- identity ---- */}
@@ -252,13 +257,13 @@ export default function ObscuraThoughtsPage() {
             className="w-56 h-auto mx-auto"
           />
           <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-4">
-            Thank you for experiencing the obscura.
+            Thank you for experiencing the Obscura.
           </p>
         </header>
 
         {/* ---- the developer ---- */}
         <section>
-          <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-[var(--ink)]">
+          <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-black border border-[rgba(244,244,243,0.14)]">
             {shot ? (
               // Deliberately a plain <img>: a client-side data URL that
               // next/image cannot optimise, and a real <img> is what lets iOS
@@ -313,12 +318,12 @@ export default function ObscuraThoughtsPage() {
           {/* capture → save / retake */}
           {shot ? (
             <div className="flex items-center justify-center gap-3 mt-4">
-              <button onClick={save} className={pill + " bg-[var(--ink)] text-[var(--paper)]"}>
+              <button onClick={save} className={pill + " bg-[var(--paper)] text-[var(--ink)]"}>
                 {saved ? "Saved" : "Save"}
               </button>
               <button
                 onClick={startCamera}
-                className={pill + " border border-[var(--ink)]/25"}
+                className={pill + " border border-[rgba(244,244,243,0.3)] text-[var(--paper)]"}
               >
                 Retake
               </button>
@@ -353,9 +358,10 @@ export default function ObscuraThoughtsPage() {
             <form onSubmit={submit} className="flex flex-col gap-3">
               <label
                 htmlFor="obscura-thoughts"
-                className="font-[family-name:var(--font-geist)] text-base"
+                className="font-[family-name:var(--font-geist)] text-base leading-relaxed"
               >
-                I would love to hear your thoughts:
+                What did you think of the experience? What did it make you
+                think about? Anything at all!
               </label>
 
               <div className="relative">
@@ -372,7 +378,7 @@ export default function ObscuraThoughtsPage() {
                   type="submit"
                   aria-label="Send your thoughts"
                   disabled={!message.trim() || status === "sending"}
-                  className="absolute right-3 bottom-3 h-11 w-16 rounded-full bg-[var(--ink)] text-[var(--paper)] disabled:opacity-30 transition-opacity grid place-items-center"
+                  className="absolute right-3 bottom-3 h-11 w-16 rounded-full bg-[var(--paper)] text-[var(--ink)] disabled:opacity-30 transition-opacity grid place-items-center"
                 >
                   {status === "sending" ? (
                     <span className="text-xs font-[family-name:var(--font-geist)]">…</span>
@@ -435,7 +441,7 @@ export default function ObscuraThoughtsPage() {
         <section className="pt-10">
           <a
             href="/obscura"
-            className="font-[family-name:var(--font-geist)] text-base underline underline-offset-4 decoration-[var(--ink)]/30 hover:decoration-[var(--ink)]"
+            className="font-[family-name:var(--font-geist)] text-base underline underline-offset-4 decoration-[rgba(244,244,243,0.35)] hover:decoration-[var(--paper)]"
           >
             Learn about the project →
           </a>
