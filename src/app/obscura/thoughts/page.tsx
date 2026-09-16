@@ -66,6 +66,36 @@ export default function ObscuraThoughtsPage() {
     if (!navigator.mediaDevices?.getUserMedia) setCam("unsupported");
   }, []);
 
+  // The site paints html and body its paper colour, and keeps a fixed
+  // paper-coloured backdrop behind the content. On a black page that shows as
+  // grey behind, and as white bands wherever the page overscrolls. Take the
+  // ground to black for this route only, and put it back on the way out.
+  useEffect(() => {
+    const root = document.documentElement;
+    const prevRootBg = root.style.backgroundColor;
+    const prevBodyBg = document.body.style.backgroundColor;
+    const prevOverscroll = root.style.getPropertyValue("overscroll-behavior");
+
+    root.style.backgroundColor = "#000";
+    document.body.style.backgroundColor = "#000";
+    root.style.setProperty("overscroll-behavior", "none");
+
+    // The site's own fixed paper backdrop sits at z-0 behind the content. It is
+    // covered here, but any gap would show paper, so black it out and restore it.
+    const backdrops = Array.from(
+      document.querySelectorAll<HTMLElement>(".fixed.inset-0.bg-paper")
+    );
+    const prevBackdrops = backdrops.map((el) => el.style.backgroundColor);
+    backdrops.forEach((el) => { el.style.backgroundColor = "#000"; });
+
+    return () => {
+      root.style.backgroundColor = prevRootBg;
+      document.body.style.backgroundColor = prevBodyBg;
+      root.style.setProperty("overscroll-behavior", prevOverscroll);
+      backdrops.forEach((el, i) => { el.style.backgroundColor = prevBackdrops[i]; });
+    };
+  }, []);
+
   // Release the camera when the page goes away. Leaving it held keeps the
   // indicator light on, which is alarming, and drains the visitor's battery.
   useEffect(() => {
