@@ -243,7 +243,7 @@ export default function ObscuraThoughtsPage() {
     "font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 disabled:opacity-40 transition-opacity";
 
   return (
-    <main className="min-h-dvh bg-[var(--ink)] text-[var(--paper)]">
+    <main className="min-h-dvh bg-black text-[var(--paper)]">
       <div className="max-w-lg mx-auto px-6">
 
         {/* ---- identity ---- */}
@@ -263,7 +263,7 @@ export default function ObscuraThoughtsPage() {
 
         {/* ---- the developer ---- */}
         <section>
-          <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-black border border-[rgba(244,244,243,0.14)]">
+          <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-black border border-[rgba(244,244,243,0.18)]">
             {shot ? (
               // Deliberately a plain <img>: a client-side data URL that
               // next/image cannot optimise, and a real <img> is what lets iOS
