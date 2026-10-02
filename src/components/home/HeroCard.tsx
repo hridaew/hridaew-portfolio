@@ -281,7 +281,11 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
 /** Signature replay GIF — hidden for now; set true to bring it back. */
 const SHOW_HERO_SIGNATURE_GIF = false;
 
+/** What sits in the card's top-left: the face badge (home) or the animated signature (lab pages). */
+export type HeroMark = "face" | "signature";
+
 function HeroSignatureMark({
+  mark = "face",
   avatarReplayTick,
   avatarBurst,
   onReplay,
@@ -289,6 +293,7 @@ function HeroSignatureMark({
   replayLabel,
   replayTitle,
 }: {
+  mark?: HeroMark;
   avatarReplayTick: number;
   avatarBurst: BurstParticleSpec[] | null;
   onReplay: () => void;
@@ -298,12 +303,14 @@ function HeroSignatureMark({
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <HeroFaceBadge
-        reduceMotion={reduceMotion}
-        replayLabel={replayLabel}
-        replayTitle={replayTitle}
-      />
-      {SHOW_HERO_SIGNATURE_GIF ? (
+      {mark === "face" ? (
+        <HeroFaceBadge
+          reduceMotion={reduceMotion}
+          replayLabel={replayLabel}
+          replayTitle={replayTitle}
+        />
+      ) : null}
+      {SHOW_HERO_SIGNATURE_GIF || mark === "signature" ? (
         <div className="relative h-8 w-[73px] overflow-visible opacity-80">
           <button
             type="button"
@@ -428,7 +435,7 @@ function useIsMobile() {
   return mobile;
 }
 
-export function HeroCard() {
+export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
   const choom = useChoomLingo();
   const { unlock } = useAchievements();
   const isMobile = useIsMobile();
@@ -802,6 +809,7 @@ export function HeroCard() {
             <div className="flex shrink-0 flex-col gap-6">
               <div className="flex items-center">
                 <HeroSignatureMark
+                  mark={mark}
                   avatarReplayTick={avatarReplayTick}
                   avatarBurst={avatarBurst}
                   onReplay={replayHeroAvatarAnimation}
@@ -989,6 +997,7 @@ export function HeroCard() {
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex items-start justify-between">
             <HeroSignatureMark
+              mark={mark}
               avatarReplayTick={avatarReplayTick}
               avatarBurst={avatarBurst}
               onReplay={replayHeroAvatarAnimation}

@@ -25,30 +25,31 @@
 .side::-webkit-scrollbar { display: none; }
 
 .hero { position: relative; z-index: 3; width: 100%; max-width: 656px; }
+.side > nav { margin: auto 0; }
 
 /* ── work index ── */
 .index { list-style: none; margin: 0; padding: 0 32px; max-width: 656px; }
 .index li { border-top: 1px solid rgb(var(--ink-rgb) / 0.08); }
 .index li:last-child { border-bottom: 1px solid rgb(var(--ink-rgb) / 0.08); }
-.index button {
+.row {
   display: flex; width: 100%; align-items: baseline; padding: 12px 0;
-  background: none; border: 0; text-align: left; color: inherit; cursor: pointer;
+  text-align: left; color: inherit; text-decoration: none; cursor: pointer;
 }
 .title {
   font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 700; font-size: 1.5rem; line-height: 1.1; letter-spacing: -0.015em;
   color: rgb(var(--ink-rgb) / 0.34);
-  transition: color 240ms ease-out, transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: color 240ms ease-out;
 }
-.index button:hover .title { color: var(--ink); }
-.on .title { color: var(--ink); transform: translateX(6px); }
+.row:hover .title { color: var(--ink); }
+.on .title { color: var(--ink); }
 
 .detail {
   display: grid; grid-template-rows: 0fr; overflow: hidden;
   transition: grid-template-rows 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .on .detail { grid-template-rows: 1fr; }
-.detail > div { min-height: 0; padding: 0 0 4px 6px; }
+.detail > div { min-height: 0; padding: 0 0 4px; }
 .meta {
   margin: 0 0 6px;
   font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.75rem; line-height: 1.5;
@@ -72,7 +73,8 @@
 /* ── stage ── */
 .stage { position: relative; min-width: 0; min-height: 0; }
 .canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-.canvas[data-dragging] { cursor: grabbing; }
+.stage[data-linked] .canvas { cursor: pointer; }
+.canvas[data-dragging], .stage[data-linked] .canvas[data-dragging] { cursor: grabbing; }
 .fallback {
   position: absolute; inset: 0; display: none; place-items: center; margin: 0; padding: 24px;
   font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; color: var(--ink-muted);
@@ -97,6 +99,8 @@
   transform: translate(-50%, -50%) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x));
   transition: opacity 420ms ease-out 380ms, transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1) 380ms;
 }
+.screenOn { pointer-events: auto; }
+.screenLink { display: block; width: 100%; height: 100%; cursor: pointer; }
 .screen video, .screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .phone { height: min(60%, 560px); aspect-ratio: 480 / 1038; border-radius: 30px; }
 .wide { width: min(40%, 580px); aspect-ratio: 16 / 9; border-radius: 14px; }

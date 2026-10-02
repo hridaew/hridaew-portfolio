@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HeroCard } from "@/components/home/HeroCard";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
 import { SplatEngine, type SplatKey } from "./splatEngine";
@@ -10,7 +11,8 @@ import styles from "./OneSplat.module.css";
 const MEDIA = "/variants/one-splat/media";
 
 type Media = { kind: "video" | "image"; src: string; poster?: string; shape: "phone" | "wide" | "photo"; alt: string };
-type Chapter = { k: Exclude<SplatKey, "about">; t: string; meta: string; p: string; links: [string, string][]; media?: Media };
+/** href: where the title, the splat and the screen all lead. links: extra links shown under the copy (side builds only). */
+type Chapter = { k: Exclude<SplatKey, "about">; t: string; meta: string; p: string; href: string; links?: [string, string][]; media?: Media };
 
 const CHAPTERS: Chapter[] = [
   {
@@ -18,7 +20,7 @@ const CHAPTERS: Chapter[] = [
     t: "Domis",
     meta: "Founding Product Designer · 2024–now",
     p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.",
-    links: [["Case study", "/domis"]],
+    href: "/domis",
     media: { kind: "video", src: `${MEDIA}/domis.mp4`, poster: `${MEDIA}/domis-poster.webp`, shape: "phone", alt: "Domis task detail screen" },
   },
   {
@@ -26,7 +28,7 @@ const CHAPTERS: Chapter[] = [
     t: "Virdio",
     meta: "Product Designer · 2021–2022",
     p: "Hardware-free AR fitness: an ordinary camera reads your body and counts every rep. I designed calibration around virtual cones you walk to, across six platforms.",
-    links: [["Case study", "/virdio"]],
+    href: "/virdio",
     media: { kind: "video", src: `${MEDIA}/virdio.mp4`, poster: `${MEDIA}/virdio-poster.webp`, shape: "wide", alt: "A Virdio AR workout" },
   },
   {
@@ -34,7 +36,7 @@ const CHAPTERS: Chapter[] = [
     t: "OBSCURA",
     meta: "Interaction design, Unity · MOHAI, 2025",
     p: "300+ never-seen photographs from 1946 Japan, curated by one visitor's gaze in VR while an audience outside watches through their eyes. It sold out.",
-    links: [["Case study", "/obscura"]],
+    href: "/obscura",
     media: { kind: "video", src: `${MEDIA}/obscura.mp4`, poster: `${MEDIA}/obscura-poster.webp`, shape: "wide", alt: "OBSCURA: the headset view beside the audience view" },
   },
   {
@@ -42,7 +44,7 @@ const CHAPTERS: Chapter[] = [
     t: "Memory Care",
     meta: "Interaction Designer · 2020–2023",
     p: "For people living with dementia, I wired plush cats with pressure sensors and haptic motors: pet one and it purrs. 98% positive across 200+ sessions; a Fast Company World Changing Ideas finalist.",
-    links: [["Case study", "/memory-care"]],
+    href: "/memory-care",
     media: { kind: "image", src: `${MEDIA}/mc.webp`, shape: "photo", alt: "A resident at the Memory Care experience station" },
   },
   {
@@ -50,6 +52,7 @@ const CHAPTERS: Chapter[] = [
     t: "Side builds",
     meta: "Things I make to learn",
     p: "Savor turns a phone video into a 3D Gaussian splat; this hand is one of its captures. Also: an arcade game played by throwing plush orcas, a voice recorder you scrub like a turntable, and a serious butter chicken.",
+    href: "/waffling/savor",
     links: [
       ["Savor", "/waffling/savor"],
       ["Saving Baby J", "/waffling/orca"],
@@ -67,6 +70,11 @@ export function OneSplatPage() {
   const stageRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<SplatEngine | null>(null);
+  const router = useRouter();
+  const routerRef = useRef(router);
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
   const [current, setCurrent] = useState<SplatKey>("about");
   const currentRef = useRef<SplatKey>("about");
 
@@ -80,9 +88,9 @@ export function OneSplatPage() {
     const W = stage.clientWidth, H = stage.clientHeight;
     const narrow = window.innerWidth <= NARROW;
     const hasScreen = !!CHAPTERS.find((c) => c.k === currentRef.current)?.media;
-    if (narrow) engine.setFrame(W / 2, H * 0.5, Math.min(W * 0.8, H * 0.72), instant);
-    else if (hasScreen) engine.setFrame(W * 0.3, H * 0.5, Math.min(W * 0.4, H * 0.6), instant);
-    else engine.setFrame(W * 0.5, H * 0.5, Math.min(W * 0.8, H * 0.74), instant);
+    const size = Math.min(W * 0.8, H * (narrow ? 0.72 : 0.74));
+    if (narrow) engine.setFrame(W / 2, H * 0.5, size, instant);
+    else engine.setFrame(W * (hasScreen ? 0.42 : 0.5), H * 0.5, size, instant);
   }, []);
 
   useEffect(() => {
@@ -96,6 +104,12 @@ export function OneSplatPage() {
     const engine = new SplatEngine(canvas, {
       baseUrl: MEDIA,
       reducedMotion: reduced,
+      onTap: () => {
+        const c = CHAPTERS.find((x) => x.k === currentRef.current);
+        if (!c) return false;
+        routerRef.current.push(c.href);
+        return true;
+      },
       onTurn: (yaw, pitch) => {
         // the screen sits in the same space: it turns a little with the object
         const s = screenRef.current;
@@ -120,6 +134,7 @@ export function OneSplatPage() {
 
   const go = useCallback(
     (k: SplatKey) => {
+      if (k === currentRef.current) return;
       setCurrent(k);
       currentRef.current = k;
       void engineRef.current?.select(k);
@@ -127,6 +142,15 @@ export function OneSplatPage() {
     },
     [frame],
   );
+  const hoverTimer = useRef<number | undefined>(undefined);
+  const hoverSelect = useCallback(
+    (k: SplatKey) => {
+      window.clearTimeout(hoverTimer.current);
+      hoverTimer.current = window.setTimeout(() => go(k), 140);
+    },
+    [go],
+  );
+  const cancelHover = useCallback(() => window.clearTimeout(hoverTimer.current), []);
 
   // One chapter per scroll gesture on desktop (the canvas and index own the wheel; the hero card scrolls itself).
   useEffect(() => {
@@ -165,7 +189,7 @@ export function OneSplatPage() {
       <main className={styles.page}>
         <div className={styles.side}>
           <div className={styles.hero}>
-            <HeroCard />
+            <HeroCard mark="signature" />
           </div>
           <nav aria-label="Work">
             <ol className={styles.index}>
@@ -173,21 +197,36 @@ export function OneSplatPage() {
                 const on = c.k === current;
                 return (
                   <li key={c.k} className={on ? styles.on : undefined}>
-                    <button type="button" aria-expanded={on} aria-controls={`ch-${c.k}`} onClick={() => go(on ? "about" : c.k)}>
+                    <Link
+                      href={c.href}
+                      className={styles.row}
+                      aria-describedby={`ch-${c.k}`}
+                      onMouseEnter={() => hoverSelect(c.k)}
+                      onMouseLeave={cancelHover}
+                      onFocus={() => go(c.k)}
+                      onClick={(e) => {
+                        // touch: the first tap shows the project here, the second opens it
+                        if (!on && window.matchMedia("(hover: none)").matches) {
+                          e.preventDefault();
+                          go(c.k);
+                        }
+                      }}
+                    >
                       <span className={styles.title}>{c.t}</span>
-                    </button>
+                    </Link>
                     <div className={styles.detail} id={`ch-${c.k}`}>
                       <div>
                         <p className={styles.meta}>{c.meta}</p>
                         <p className={styles.copy}>{c.p}</p>
-                        <p className={styles.links}>
-                          {c.links.map(([label, href]) => (
-                            <Link key={href} href={href}>
-                              {label}
-                              <span aria-hidden> ↗</span>
-                            </Link>
-                          ))}
-                        </p>
+                        {c.links ? (
+                          <p className={styles.links}>
+                            {c.links.map(([label, href]) => (
+                              <Link key={href} href={href}>
+                                {label}
+                              </Link>
+                            ))}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                   </li>
@@ -197,17 +236,17 @@ export function OneSplatPage() {
           </nav>
         </div>
 
-        <div className={styles.stage} ref={stageRef}>
+        <div className={styles.stage} ref={stageRef} data-linked={chapter ? "" : undefined}>
           <canvas
             ref={canvasRef}
             className={styles.canvas}
             role="img"
-            aria-label={`A 3D gaussian splat of ${chapter ? chapter.t : "Hridae"}. Drag to turn it; tap to make it jiggle.`}
+            aria-label={`A 3D gaussian splat of ${chapter ? chapter.t : "Hridae"}. Drag to turn it${chapter ? "; click to open the project" : "; tap to make it jiggle"}.`}
           />
           <p className={styles.fallback}>This page draws with WebGL2, which this browser doesn&apos;t support.</p>
           <div className={styles.screenSpace} aria-live="polite">
             {CHAPTERS.filter((c) => c.media).map((c) => (
-              <Screen key={c.k} media={c.media!} active={c.k === current} refFn={c.k === current ? screenRef : undefined} />
+              <Screen key={c.k} href={c.href} title={c.t} media={c.media!} active={c.k === current} refFn={c.k === current ? screenRef : undefined} />
             ))}
           </div>
         </div>
@@ -216,7 +255,7 @@ export function OneSplatPage() {
   );
 }
 
-function Screen({ media, active, refFn }: { media: Media; active: boolean; refFn?: React.RefObject<HTMLDivElement | null> }) {
+function Screen({ href, title, media, active, refFn }: { href: string; title: string; media: Media; active: boolean; refFn?: React.RefObject<HTMLDivElement | null> }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // load the video the first time its chapter opens, then keep it
   const [armed, setArmed] = useState(false);
@@ -229,12 +268,14 @@ function Screen({ media, active, refFn }: { media: Media; active: boolean; refFn
   }, [active, armed]);
   return (
     <div ref={refFn} className={`${styles.screen} ${styles[media.shape]} ${active ? styles.screenOn : ""}`} aria-hidden={!active}>
+      <Link href={href} className={styles.screenLink} tabIndex={active ? 0 : -1} aria-label={`Open ${title}`}>
       {media.kind === "video" ? (
         <video ref={videoRef} src={armed ? media.src : undefined} poster={media.poster} muted loop playsInline preload="none" aria-label={media.alt} />
       ) : (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={media.src} alt={media.alt} loading="lazy" />
       )}
+      </Link>
     </div>
   );
 }

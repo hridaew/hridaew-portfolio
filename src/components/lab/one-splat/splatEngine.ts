@@ -92,6 +92,8 @@ export type SplatEngineOptions = {
   reducedMotion: boolean;
   /** Called every frame with how far the object is turned from its front (radians). */
   onTurn?: (yawFromFront: number, pitchFromFront: number) => void;
+  /** A click/tap on the canvas that wasn't a drag. Return true if it was handled (then no poke). */
+  onTap?: () => boolean;
 };
 
 export class SplatEngine {
@@ -513,7 +515,7 @@ export class SplatEngine {
     });
     const up = () => {
       if (!this.down) return;
-      if (this.moved < 6) this.poke(this.mouse.x, this.mouse.y);
+      if (this.moved < 6 && !this.opts.onTap?.()) this.poke(this.mouse.x, this.mouse.y);
       this.down = null;
       this.rot.dragging = false;
       delete cv.dataset.dragging;
