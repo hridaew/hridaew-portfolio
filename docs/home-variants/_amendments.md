@@ -1,0 +1,11 @@
+# Lead's amendments (apply to every spec; these override the spec where they conflict)
+
+1. **No CDN libraries.** cdnjs is unreachable from this build container and none of the specs need one. Write vanilla JS/CSS/GLSL only. Google Fonts load fine.
+2. **Canvas readback is safe from files.** Files in your `media/` folder are same-origin both on the site and in the claude.ai Artifact, so `drawImage` + `getImageData` on them works. Prefer files for anything over ~40KB. Inline data URIs only for tiny assets (masks, seeds). Keep `index.html` under ~700KB and the `media/` folder under ~6MB.
+3. **No downloads.** The Artifact sandbox blocks `<a download>`, blob downloads and script-driven saves. Never show a Save/Download button. (Converge's print strip: show the composed image in an overlay with the hint "Right-click or press and hold the image to save it.")
+4. **Vibration is garnish.** Call `navigator.vibrate` only behind feature detection inside try/catch; nothing may depend on it.
+5. **Truthful readouts.** Any on-screen claim about what the page is doing (e.g. "refining on-device", "staged demo") must be literally true of the code.
+6. **Ship complete over ambitious.** If a spec feature can't be made excellent, cut it cleanly instead of shipping it half-working, and record the cut in `knownIssues`. The first frame, the core interaction, the signature moment, the plain path, and phone support are non-negotiable.
+7. **Facts.** First person. Only facts from the brief or the repo copy (`src/data/waffling-article-copy.ts`, `src/lib/site-identity.ts`, `src/data/homepage-projects.ts`). Fact-checked by the lead: the 15-button Arduino Leonardo hit board, foam-core panels, the 5×3 grid, hit/near-miss/miss feedback, the boat-health bar, the outro lesson, and "I wanted to make something cool from a mundane task" are all real.
+8. **Artifact mode is a first-class target.** After building, run `to-fragment.mjs <slug>` and make sure `http://localhost:4174/<slug>/preview.html` looks and works identically (the host reset: body margin 0, 14px system font, #fafafa ground, `img{max-width:100%}`, `[hidden]{display:none!important}`, `:root` padded by safe-area insets).
+9. **No `alert/confirm/prompt`, no `window.open`, no `mailto:` reliance**, links absolute to https://hridaew.com/... with `target="_blank" rel="noopener"`.

@@ -70,8 +70,10 @@ ul{list-style:none}
   font:400 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stage.tight .views .lab{display:none}
 .app.touring .hint{visibility:hidden}
-.chip{position:absolute;left:var(--cx);top:calc(40px + var(--sat));transform:translateX(-50%);white-space:nowrap;font:400 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;
+.chip{position:absolute;right:calc(var(--g) + var(--sar));top:calc(84px + var(--sat));white-space:nowrap;font:400 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;
   background:#111210;color:#FFFFFF;padding:8px 10px;pointer-events:none}
+.chip:not([hidden]){animation:chipin .24s var(--out) both}
+@keyframes chipin{from{opacity:0;transform:translateY(-4px)}}
 
 /* ---------- header ---------- */
 .hd{position:absolute;left:calc(var(--g) + var(--sal));top:calc(36px + var(--sat));z-index:3;max-width:calc(100% - 2*var(--g) - 260px)}
@@ -189,7 +191,9 @@ dialog[open]{animation:dlg .26s var(--out)}
 /* ---------- stacked layout: phones, tablets, short windows ---------- */
 @media (max-width:1099px),(max-height:619px){
   :root{--g:16px;--band-h:52px;--vfo:8px}
-  .app{display:grid;grid-template-rows:auto minmax(150px,1fr) var(--band-h) auto auto;grid-template-columns:100%}
+  /* one screen when it fits; if the content is taller than the screen (landscape phones), the page scrolls instead of clipping */
+  body{overflow-x:hidden;overflow-y:auto}
+  .app{position:relative;inset:auto;min-height:100%;overflow:hidden;display:grid;grid-template-rows:auto minmax(170px,1fr) var(--band-h) auto auto;grid-template-columns:100%}
   .hd{position:relative;left:auto;top:auto;max-width:none;padding:calc(12px + var(--sat)) calc(16px + var(--sar)) 6px calc(16px + var(--sal));grid-row:1}
   .name{font-size:34px;font-stretch:130%;font-weight:300}
   @keyframes fitname{from{font-stretch:58%}to{font-stretch:130%}}
@@ -225,7 +229,7 @@ dialog[open]{animation:dlg .26s var(--out)}
   .panel{position:relative;left:auto;bottom:auto;width:auto;grid-row:5;max-height:none;padding:14px calc(16px + var(--sar)) calc(12px + var(--sab)) calc(16px + var(--sal));overflow:visible;display:block}
   .pc{overflow:visible;margin:0;padding:0}
   .panel h2{font-size:24px}
-  .panel .prole,.panel .pcopy,.panel .fig,.panel .pmore,.panel .ptools{display:none}
+  .panel .prole,.panel .pcopy,.panel .fig,.panel .pmore,.panel .ptools,.panel .builds{display:none}
   .panel .pline{display:block;font:400 14px/1.4 var(--disp);margin-top:6px}
   .plinks{margin-top:8px}
   .mail{margin-top:10px;padding-top:10px}
@@ -237,23 +241,41 @@ dialog[open]{animation:dlg .26s var(--out)}
   .panel.open .prole,.panel.open .pcopy,.panel.open .pmore{display:block}
   .panel.open .fig{display:flex}
   .panel.open .ptools{display:flex}
+  .panel.open .builds{display:block}
   .panel.open .pline{display:none}
   .panel.open .mail{position:sticky;bottom:calc(-12px - var(--sab));background:var(--ink);padding-bottom:calc(12px + var(--sab));margin-bottom:calc(-12px - var(--sab))}
   .ptools{gap:18px;margin-top:14px;flex-wrap:wrap}
   .ix{grid-template-columns:1fr}
   .dh{padding:18px 16px 0}.ix{padding:4px 16px 20px}.stripbox{padding:12px 16px 20px}
 }
+@media (max-height:560px) and (max-width:1099px),(max-height:560px) and (min-width:1100px){ .app{grid-template-rows:auto minmax(250px,1fr) var(--band-h) auto auto} }
 @media (max-width:1099px) and (min-width:700px){
   .patches{justify-content:flex-start;gap:12px}
   .panel .pline{max-width:60ch}
 }
 @media (min-width:1100px) and (min-height:620px) and (max-height:820px){
   .thesis{font-size:16px;margin-top:14px}
-  .panel .pcopy{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .panel.open .pcopy{display:block}
-  .fig .ref,.fig .ref img,.fig .ref video{height:84px}
+  .name{font-size:clamp(36px,min(5vw,8.4vh),96px)}
 }
-@media (min-width:1100px) and (max-height:700px){ .legend .ln{display:none} }
+/* panel fitting: the panel is fitted to the space it has, dropping detail in order (k1..k6) so the
+   title, the copy, the case-study link and the email row are always on screen. "More" restores everything. */
+.panel.k1 .refc{display:none}
+.panel.k2 .fig .ref,.panel.k2 .fig .ref img,.panel.k2 .fig .ref video{height:80px}
+.panel.k2 .fig .big{font-size:30px}
+.panel.k3 .pcopy{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.panel.k4 .fig .rc,.panel.k4 .prole{display:none}
+.panel.k5 .fig{display:none}
+.panel.k4 .builds .bd{display:none}
+.panel.k4 .builds li{padding:3px 0}
+.panel.k5 .builds canvas{display:none}
+.panel.k6 .builds{display:none}
+.panel.k7 .pcopy{display:none}
+.panel.k6 .pcopy{-webkit-line-clamp:2}
+.pc.fb{-webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent)}
+.pc.ft{-webkit-mask-image:linear-gradient(180deg,transparent,#000 28px);mask-image:linear-gradient(180deg,transparent,#000 28px)}
+.pc.ft.fb{-webkit-mask-image:linear-gradient(180deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(180deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
+@media (min-width:1100px) and (max-height:700px){ .legend .ln{display:none} .how{display:none} }
+@media (max-width:1099px) and (max-height:700px),(max-height:619px){ .panel:not(.open) .pline{display:none} .plinks{margin-top:6px} }
 @media (min-width:1900px) and (min-height:1000px){ :root{--g:64px} .thesis{font-size:19px} }
 @media (hover:none) and (pointer:coarse){ .views .k,.tb .k{display:none} }
 @media (prefers-reduced-motion:reduce){
@@ -261,6 +283,7 @@ dialog[open]{animation:dlg .26s var(--out)}
   .app.sheet::after{animation:none}
   .vf,.below,.shadow{transition:none}
   dialog[open]{animation:none}
+  .chip:not([hidden]){animation:none}
   .panel.swap .pc{animation:none}
 }
 </style>
@@ -633,7 +656,7 @@ var FIT = (function () {
   var PHONE = COARSE && Math.min(screen.width, screen.height) < 820;
   var SEEDN = 1536, BUDGET = PHONE ? 5000 : 16000, CAPMAX = BUDGET, FL = 14, MF = 29, FIT_T = PHONE ? 7000 : 8000;
   var LIVE = { K: PHONE ? 3 : 5, scales: [0.75, 1, 1.5] };
-  var LMIN = Math.log(6e-7), LMAX = Math.log(0.6);
+  var LMIN = Math.log(4e-6), LMAX = Math.log(0.5);
   function now() { return performance.now(); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
@@ -648,7 +671,7 @@ var FIT = (function () {
       line: "AI home maintenance for iOS and web that learns a house from the smallest action a person will actually take.",
       copy: "Domis learns a house from the smallest action a person will actually take: an address, a photo of an appliance nameplate, an inspection report. Under the hood, three independent searches and a review agent agree on what's true.",
       big: "+60%", ftx: "new-user engagement from my 3D home-avatar prototypes.",
-      ref: { v: "media/ref-domis.mp4", p: "media/ref-domis.webp", c: "Reference · Domis iOS app" },
+      ref: { v: "media/ref-domis.mp4", p: "media/ref-domis.webp", w: 200, h: 432, c: "Reference · Domis iOS app" },
       links: [["https://hridaew.com/domis", "Read the Domis case study ↗"]],
       more: ["An address: Domis researches the house. Three independent home-fact searches, then a review agent cross-references them and returns a consensus of agreed fields and blanks.",
         "A photo of an appliance nameplate: an agentic, multimodal scanner returns an auto-researched guide with manuals, common repairs, the serial number and warranty tracking.",
@@ -659,7 +682,7 @@ var FIT = (function () {
       line: "Hardware-free AR fitness: machine vision reads your body through an ordinary camera.",
       copy: "Hardware-free AR fitness: machine vision reads your body through an ordinary camera, when home fitness meant a $1,500 bike or mirror. Shipped across iOS, Android, web, desktop, Apple Watch and smart TV with no prior design system.",
       big: "50%", ftx: "less asset and handoff time from my design tokens, across four platforms.",
-      ref: { v: "media/ref-virdio.mp4", p: "media/ref-virdio.webp", c: "Reference · AR workout" },
+      ref: { v: "media/ref-virdio.mp4", p: "media/ref-virdio.webp", w: 400, h: 226, c: "Reference · AR workout" },
       links: [["https://hridaew.com/virdio", "Read the Virdio case study ↗"]],
       more: ["Calibration: you center yourself with tilt indicators, then walk to virtual cones at the corners of your space, ending in a green check.",
         "No-blame recovery UI: “Did you step out of frame?”",
@@ -671,7 +694,7 @@ var FIT = (function () {
       copy: "MOHAI handed us a box of film: 300+ never-seen photographs by Wayne Wong, a Signal Corps soldier in 1946 Japan. In a VR booth, gaze tracking records what a visitor dwells on while an audience outside watches through their eyes.",
       big: "", ftx: "“Why are they focused on the clothing instead of the temple?”",
       credit: "Photograph: Wayne Wong, 1946.",
-      ref: { v: "media/ref-obscura.mp4", p: "media/ref-obscura.webp", c: "Reference · headset view + audience view" },
+      ref: { v: "media/ref-obscura.mp4", p: "media/ref-obscura.webp", w: 400, h: 226, c: "Reference · headset view + audience view" },
       links: [["https://hridaew.com/obscura", "Read the OBSCURA case study ↗"]],
       more: ["The brief was three words: “create something boundary-pushing”.",
         "A photo-strip souvenir visualizes which parts of each image a participant looked at most. This page's “Where it looked” view is my version of it.",
@@ -684,7 +707,7 @@ var FIT = (function () {
       big: "98%", ftx: "positive across 200+ sessions.",
       rc: "Fast Company World Changing Ideas 2022 finalist · CABHI 2× award recipient · SCAN Foundation Innovation Award",
       credit: "Rub the cat.",
-      ref: { i: "media/ref-memory.webp", c: "Reference · residents petting the cat" },
+      ref: { i: "media/ref-memory.webp", w: 480, h: 273, c: "Reference · residents petting the cat" },
       links: [["https://hridaew.com/memory-care", "Read the Memory Care case study ↗"]],
       more: ["Residents instinctively picked the cats up and held them.",
         "I moved the haptics from a floor panel to a footrest, so 100% of residents could use it without leaving their wheelchairs.",
@@ -695,7 +718,7 @@ var FIT = (function () {
       line: "Phone video in, orbitable 3D Gaussian splat out. Trained on-device, no cloud.",
       copy: "The idea behind this page. Savor turns an ordinary phone video into a 3D Gaussian splat you can orbit, trained on-device in Metal. I built it to capture Rodin's Mighty Hand properly.",
       builds: true,
-      ref: { i: "media/ref-savor.webp", c: "Reference · a Savor splat of the Mighty Hand" },
+      ref: { i: "media/ref-savor.webp", w: 200, h: 351, c: "Reference · a Savor splat of the Mighty Hand" },
       links: [["https://hridaew.com/waffling/savor", "Read about Savor ↗"]],
       more: ["Frames come out through AVFoundation, the splat trains in Metal, cleanup uses Vision, and RealityKit handles the viewer. Neither version talks to a cloud.",
         "I love cyberpunk braindances: stepping into a moment and looking around it.",
@@ -707,7 +730,7 @@ var FIT = (function () {
       copy: "I'm a Product Designer obsessed with making, and I have 6 years of experience designing for interaction models that barely exist yet. I focus on the user and learn by making, whether on the canvas, in code, or the physical world.",
       big: "", ftx: "I also have a cat.",
       rc: "M.HCI+D, University of Washington, 2024 · BFA Interaction Design, California College of the Arts, 2020",
-      ref: { i: "media/ref-me.webp", c: "" },
+      ref: { i: "media/ref-me.webp", w: 400, h: 300, c: "" },
       links: [["https://www.linkedin.com/in/hridae", "LinkedIn ↗"], ["https://github.com/hridaew", "GitHub ↗"], ["https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing", "CV ↗"]],
       more: ["Toolkit: Pencil, Paper, Figma, Cursor, Claude Code, Xcode, Origami, ProtoPie.",
         "Also Unity, ARKit, RealityKit, visionOS, Android XR and shaders; Framer, Rive, Spline, After Effects; React, Next.js, TypeScript, SwiftUI, GSAP; multimodal LLM APIs, Stable Diffusion.",
@@ -802,12 +825,13 @@ var FIT = (function () {
     "layout(location=0) in vec2 aQ;layout(location=1) in vec3 aP;layout(location=2) in vec3 aS;layout(location=3) in vec4 aC;layout(location=4) in vec4 aK;" +
     "layout(location=5) in vec3 bP;layout(location=6) in vec3 bS;layout(location=7) in vec4 bC;layout(location=8) in vec4 bK;layout(location=9) in float aD;" +
     "uniform mat3 uR;uniform vec2 uCen;uniform float uBox;uniform vec2 uRes;uniform float uMig;uniform float uSwell;uniform float uDim;uniform int uMode;" +
-    "uniform float uLP;uniform float uS;uniform float uJit;uniform float uTime;uniform float uRad;" +
-    "out vec2 vP;out vec4 vC;flat out float vSeed;" +
+    "uniform float uLP;uniform float uS;uniform float uJit;uniform float uTime;uniform float uRad;uniform float uPx;" +
+    "out vec2 vP;out vec4 vC;flat out float vSeed;flat out float vW;" +
     "float h(float n){return fract(sin(n*12.9898+4.1414)*43758.5453);}" +
     "void main(){vec3 P=aP,S=aS;vec4 K=aK,C=aC;" +
+    // migration: swell, lift (z) and drain toward grey in flight; coefficients tween so the sum lands exactly on the next seed
     "if(uMig>=0.){float t=clamp((uMig-aD)/900.,0.,1.);float e=1.-pow(1.-t,3.);float l=sin(3.14159265*e);" +
-    "float sw=1.+.5*l;P=mix(aP,bP,e);P.z+=.15*l;S=mix(aS,bS,e)*sw*sw;C=mix(aC,bC,e)/(sw*sw);K=mix(aK,bK,e);" +
+    "float sw=1.+.3*l;P=mix(aP,bP,e);P.z+=.15*l;S=mix(aS,bS,e)*sw*sw;C=mix(aC,bC,e)/(sw*sw);K=mix(aK,bK,e);" +
     "vec3 Y=vec3(.299,.587,.114);C.rgb=mix(C.rgb,vec3(dot(C.rgb,Y)),.9*l);K.rgb=mix(K.rgb,vec3(dot(K.rgb,Y)),.9*l);}" +
     "S*=uSwell*uSwell;C*=uDim;" +
     "float tr=.5*(S.x+S.z),dd=sqrt(max(.25*(S.x-S.z)*(S.x-S.z)+S.y*S.y,0.)),lm=max(tr-dd,1e-10);" +
@@ -818,13 +842,13 @@ var FIT = (function () {
     "vec3 Q=uR*P;vec2 cc=uCen+Q.xy*uBox;" +
     "if(uJit>0.){float f=floor(uTime*25.);float id=float(gl_InstanceID);cc+=uJit*(vec2(h(id+f*7.13),h(id*1.7+f*3.1))-.5)*2.;}" +
     "vec2 off=aQ.x*uRad*sqrt(l1)*e1+aQ.y*uRad*sqrt(l2)*e2;" +
-    "gl_Position=vec4((cc+off)/uRes*2.-1.,0.,1.);vP=aQ*uRad;vSeed=h(float(gl_InstanceID)*.37);" +
+    "gl_Position=vec4((cc+off)/uRes*2.-1.,0.,1.);vP=aQ*uRad;vSeed=h(float(gl_InstanceID)*.37);vW=.28+.72*smoothstep(1.2,4.5,2.*sqrt(l2)/uPx);" +
     "if(uMode==1){float dt=max((S.x*S.z-S.y*S.y),1e-14)*uS*uS*uS*uS;vC=vec4(1./(6.2831853*sqrt(dt)));}" +
     "else if(uMode==2){vC=K;}else{vC=C*comp;}}";
-  var FS = "#version 300 es\nprecision highp float;precision highp int;\nin vec2 vP;in vec4 vC;flat in float vSeed;uniform int uMode;uniform float uRingA;out vec4 o;" +
+  var FS = "#version 300 es\nprecision highp float;precision highp int;\nin vec2 vP;in vec4 vC;flat in float vSeed;flat in float vW;uniform int uMode;uniform float uRingA;out vec4 o;" +
     "void main(){float q=dot(vP,vP);" +
     "if(uMode==2){float ang=atan(vP.y,vP.x);float m=sqrt(q)*(1.+.035*sin(3.*ang+vSeed*6.2831)+.02*sin(5.*ang+vSeed*12.566));" +
-    "float w=max(fwidth(m),1e-4);float al=(1.-smoothstep(0.,1.5,abs(m-2.)/w))*uRingA*vC.a;if(al<.003)discard;o=vec4(vC.rgb*al,al);return;}" +
+    "float w=max(fwidth(m),1e-4);float al=(1.-smoothstep(0.,1.5,abs(m-2.)/w))*uRingA*vC.a*vW;if(al<.003)discard;o=vec4(vC.rgb*al,al);return;}" +
     "if(q>9.)discard;o=vC*exp(-.5*q);}";
   var RVS = "#version 300 es\nprecision highp float;precision highp int;\nout vec2 vU;void main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));vU=p;gl_Position=vec4(p*2.-1.,0.,1.);}";
   var RFS = "#version 300 es\nprecision highp float;precision highp int;\nin vec2 vU;uniform sampler2D uA;uniform float uFill;uniform int uMode;uniform float uK;out vec4 o;" +
@@ -844,7 +868,7 @@ var FIT = (function () {
       if (!gl) return false;
       if (!gl.getExtension("EXT_color_buffer_float") && !gl.getExtension("EXT_color_buffer_half_float")) return false;
       P.s = compile(VS, FS); P.r = compile(RVS, RFS);
-      ["uR", "uCen", "uBox", "uRes", "uMig", "uSwell", "uDim", "uMode", "uLP", "uS", "uJit", "uTime", "uRad", "uRingA"].forEach(function (n) { U[n] = gl.getUniformLocation(P.s, n); });
+      ["uR", "uCen", "uBox", "uRes", "uMig", "uSwell", "uDim", "uMode", "uLP", "uS", "uJit", "uTime", "uRad", "uRingA", "uPx"].forEach(function (n) { U[n] = gl.getUniformLocation(P.s, n); });
       U.rA = gl.getUniformLocation(P.r, "uA"); U.rFill = gl.getUniformLocation(P.r, "uFill"); U.rMode = gl.getUniformLocation(P.r, "uMode"); U.rK = gl.getUniformLocation(P.r, "uK");
       qbuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qbuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       ibuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, ibuf); gl.bufferData(gl.ARRAY_BUFFER, CAPMAX * FL * 4, gl.DYNAMIC_DRAW);
@@ -882,8 +906,9 @@ var FIT = (function () {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, ftex, 0);
   }
   var R9 = new Float32Array(9);
+  var migOff = { y: 0, p: 0 };
   function rotMat() {
-    var y = orb.yaw * Math.PI / 180, p = -orb.pitch * Math.PI / 180, cy = Math.cos(y), sy = Math.sin(y), cp = Math.cos(p), sp = Math.sin(p);
+    var y = (orb.yaw + migOff.y) * Math.PI / 180, p = -(orb.pitch + migOff.p) * Math.PI / 180, cy = Math.cos(y), sy = Math.sin(y), cp = Math.cos(p), sp = Math.sin(p);
     // R = Rx(p) * Ry(y), column-major
     R9[0] = cy; R9[1] = sp * sy; R9[2] = -cp * sy;
     R9[3] = 0; R9[4] = cp; R9[5] = sp;
@@ -901,7 +926,7 @@ var FIT = (function () {
     gl.uniform1f(U.uSwell, gfx.swell); gl.uniform1f(U.uDim, gfx.dim);
     gl.uniform1i(U.uMode, mode); gl.uniform1f(U.uLP, 0.3); gl.uniform1f(U.uS, CAPS[mig ? mig.to : cur].S);
     gl.uniform1f(U.uJit, gfx.jit * s); gl.uniform1f(U.uTime, now() / 1000); gl.uniform1f(U.uRad, 3);
-    gl.uniform1f(U.uRingA, gfx.ringA);
+    gl.uniform1f(U.uRingA, gfx.ringA); gl.uniform1f(U.uPx, s);
     if (mig && mig.phase === "move") gl.bindVertexArray(vaoMig);
     else { setupVAO(vaoMain, ibuf, false, base); gl.bindVertexArray(vaoMain); }
     gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count);
@@ -968,7 +993,7 @@ var FIT = (function () {
     var stacked = STACK.matches, box, cx, cy;
     var hr = nameEl.getBoundingClientRect();
     if (!stacked) {
-      var pr = panel.getBoundingClientRect(), qr = patchesEl.getBoundingClientRect(), tr = howEl.getBoundingClientRect(), topr = $("top").getBoundingClientRect();
+      var pr = panel.getBoundingClientRect(), qr = patchesEl.getBoundingClientRect(), tr = { bottom: $("hd").getBoundingClientRect().bottom, right: Math.max(thesisEl.getBoundingClientRect().right, howEl.getBoundingClientRect().right) }, topr = $("top").getBoundingClientRect();
       var L = pr.left + pr.width + 40, R = qr.left - 40, T = topr.bottom + 24;
       T = Math.max(T, hr.bottom + 46);
       if (tr.right > L) T = Math.max(T, tr.bottom + 34);
@@ -985,7 +1010,18 @@ var FIT = (function () {
     setCapVars(CAPS[mig ? mig.to : cur]);
     stage.style.setProperty("--bx", box + "px");
     stage.style.setProperty("--vy", Math.round(cy + box / 2 + 18) + "px");
+    fitPanel(); fitHint();
     sizeCanvas(); needFull = true; plotDirty = true; sizePlot(); kick();
+  }
+  // the orbit hint shares a row with the view buttons: full text, a compact form, or nothing, whichever fits
+  var hintMode = 2;
+  function fitHint() {
+    if (STACK.matches) { hintMode = 1; hintTxt = null; lastRead = 0; return; }
+    var vb = $("views"), last = vb.lastElementChild, used = last.getBoundingClientRect().right - vb.getBoundingClientRect().left;
+    var prev = hintEl.textContent; hintEl.textContent = "0000000000"; var cw = hintEl.getBoundingClientRect().width / 10 || 7; hintEl.textContent = prev;
+    var room = lay.box - used - 24;
+    hintMode = room >= 24 * cw ? 2 : room >= 15 * cw ? 1 : 0;
+    hintTxt = null; lastRead = 0;
   }
   function setCapVars(cap) {
     stage.style.setProperty("--cx", lay.cx + "px"); stage.style.setProperty("--cy", lay.cy + "px");
@@ -1008,6 +1044,7 @@ var FIT = (function () {
     var r = scrubEl.getBoundingClientRect(); ldpr = Math.min(devicePixelRatio || 1, 2);
     lw = Math.max(1, r.width); lh = Math.max(1, r.height); GUT = lh < 40 ? 0 : 34;
     lc.width = Math.round(lw * ldpr); lc.height = Math.round(lh * ldpr); plotDirty = true;
+    measureReadout();
   }
   var GUT = 0;
   function kx(k) { return GUT + Math.log(Math.max(1, k)) / Math.log(BUDGET) * (lw - GUT - 1) + 0.5; }
@@ -1029,14 +1066,24 @@ var FIT = (function () {
     return p[1] + u * (q[1] - p[1]);
   }
   function drawCurve(g, hist, pts, alpha, prog) {
-    lctx.globalAlpha = alpha; lctx.strokeStyle = "#FFFFFF";
-    // shipped seed history: dashed
-    lctx.setLineDash([3, 3]); lctx.lineWidth = 1.25; lctx.beginPath();
-    var last = Math.max(1, Math.ceil((hist.length - 1) * prog)), first = true;
-    for (var i = 1; i <= last && i < hist.length; i++) { var x = kx(hist[i][0]), y = ly(hist[i][1], g); if (first) { lctx.moveTo(x, y); first = false; } else lctx.lineTo(x, y); }
+    lctx.strokeStyle = "#FFFFFF"; lctx.fillStyle = "#FFFFFF";
+    // shipped seed history: dashed, with a faint wash beneath so the descent reads as mass
+    var last = Math.max(1, Math.ceil((hist.length - 1) * prog)), xy = [];
+    for (var i = 1; i <= last && i < hist.length; i++) xy.push(kx(hist[i][0]), ly(hist[i][1], g));
+    if (xy.length >= 4) {
+      lctx.globalAlpha = alpha * 0.07; lctx.beginPath(); lctx.moveTo(xy[0], g.bot);
+      for (var a = 0; a < xy.length; a += 2) lctx.lineTo(xy[a], xy[a + 1]);
+      lctx.lineTo(xy[xy.length - 2], g.bot); lctx.closePath(); lctx.fill();
+    }
+    lctx.globalAlpha = alpha; lctx.setLineDash([3, 3]); lctx.lineWidth = 1.25; lctx.beginPath();
+    for (var b = 0; b < xy.length; b += 2) { if (b) lctx.lineTo(xy[b], xy[b + 1]); else lctx.moveTo(xy[b], xy[b + 1]); }
     lctx.stroke(); lctx.setLineDash([]);
     if (pts && pts.length > 1 && prog >= 1) {
-      lctx.lineWidth = 1.6; lctx.beginPath();
+      var p0 = kx(pts[0][0]), pl = kx(pts[pts.length - 1][0]);
+      lctx.globalAlpha = alpha * 0.16; lctx.beginPath(); lctx.moveTo(p0, g.bot);
+      for (var q = 0; q < pts.length; q++) lctx.lineTo(kx(pts[q][0]), ly(pts[q][1], g));
+      lctx.lineTo(pl, g.bot); lctx.closePath(); lctx.fill();
+      lctx.globalAlpha = alpha; lctx.lineWidth = 1.75; lctx.beginPath();
       for (var j = 0; j < pts.length; j++) { var xx = kx(pts[j][0]), yy = ly(pts[j][1], g); if (j) lctx.lineTo(xx, yy); else lctx.moveTo(xx, yy); }
       lctx.stroke();
     }
@@ -1056,7 +1103,12 @@ var FIT = (function () {
     lctx.strokeStyle = "rgba(255,255,255,.5)"; lctx.setLineDash([1, 3]); lctx.beginPath(); lctx.moveTo(xs, g.top); lctx.lineTo(xs, g.bot); lctx.stroke(); lctx.setLineDash([]);
     if (!g.small) {
       lctx.fillStyle = "#FFFFFF"; lctx.font = "400 10px 'Fragment Mono', ui-monospace, monospace"; lctx.textBaseline = "alphabetic";
-      [[1, "1"], [10, "10"], [100, "100"], [1000, "1K"], [10000, "10K"]].forEach(function (t) { if (t[0] > BUDGET) return; var x = kx(t[0]); lctx.textAlign = t[0] === 1 ? "left" : "center"; lctx.fillText(t[1], x, lh - 3); });
+      var seedL = xs - 6 - lctx.measureText("SEED").width, liveR = xs + 6 + lctx.measureText("LIVE").width;
+      [[1, "1"], [10, "10"], [100, "100"], [1000, "1K"], [10000, "10K"]].forEach(function (t) {
+        if (t[0] > BUDGET) return; var x = kx(t[0]), hw = lctx.measureText(t[1]).width / 2;
+        if (t[0] > 1 && x + hw > seedL - 8 && x - hw < liveR + 8) return; // never collide with the SEED | LIVE marker
+        lctx.textAlign = t[0] === 1 ? "left" : "center"; lctx.fillText(t[1], x, lh - 3);
+      });
       lctx.textAlign = "right"; lctx.fillText("SEED", xs - 6, lh - 3); lctx.textAlign = "left"; lctx.fillText("LIVE", xs + 6, lh - 3);
       lctx.textAlign = "left"; lctx.globalAlpha = .9;
       lctx.textBaseline = "middle";
@@ -1089,25 +1141,35 @@ var FIT = (function () {
     if (!st) return small ? "Splats 1,536 shipped seed · loss " + fmtL(loss) : "Loading target " + cap.slug + " · splats 1,536 · loss " + fmtL(loss) + " · seed 1,536 shipped";
     var done = fitDone || st.n >= BUDGET;
     if (small) return "Splats " + fmt(st.n) + " · loss " + fmtL(loss) + " · on-device";
-    return (done ? "Fitted " : "Fitting ") + cap.slug + " · splats " + fmt(st.n) + " · loss " + fmtL(loss) + " · seed 1,536 shipped · " +
-      (done ? fmt(st.n - SEEDN) + " fitted on-device, no cloud" : "refining on-device, no cloud");
+    var tail = done ? fmt(st.n - SEEDN) + " fitted on-device, no cloud" : "refining on-device, no cloud";
+    var full = (done ? "Fitted " : "Fitting ") + cap.slug + " · splats " + fmt(st.n) + " · loss " + fmtL(loss) + " · seed 1,536 shipped · " + tail;
+    if (full.length <= rdChars) return full;
+    return (done ? "Fitted " : "Fitting ") + cap.slug + " · splats " + fmt(st.n) + " · loss " + fmtL(loss) + " · " + (done ? "on-device, no cloud" : tail);
+  }
+  // how many readout characters fit on one line (the readout never wraps; it picks a shorter sentence instead)
+  var rdChars = 999;
+  function measureReadout() {
+    var prev = readoutEl.textContent, sp = d.createElement("span"); sp.textContent = "0000000000"; readoutEl.textContent = ""; readoutEl.appendChild(sp);
+    var cw = sp.getBoundingClientRect().width / 10; readoutEl.textContent = prev;
+    rdChars = cw > 0 ? Math.floor(readoutEl.clientWidth / cw) - 1 : 999; readTxt = ""; lastRead = 0;
   }
 
   /* ------------------------------------------------------------------ panel */
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
   function figHTML(c) {
     var r = c.ref, m;
-    if (r.v && !reduced) m = '<video src="' + r.v + '" poster="' + r.p + '" muted playsinline loop autoplay preload="auto" aria-hidden="true"></video>';
-    else m = '<img src="' + (r.v ? r.p : r.i) + '" alt="' + esc(r.c ? r.c.replace("Reference · ", "Reference: ") : "Me holding my cat") + '" decoding="async">';
+    var wh = ' width="' + r.w + '" height="' + r.h + '"';
+    if (r.v && !reduced) m = '<video src="' + r.v + '" poster="' + r.p + '"' + wh + ' muted playsinline loop autoplay preload="auto" aria-hidden="true"></video>';
+    else m = '<img src="' + (r.v ? r.p : r.i) + '"' + wh + ' alt="' + esc(r.c ? r.c.replace("Reference · ", "Reference: ") : "Me holding my cat") + '" decoding="async">';
     return '<div class="fig"><figure class="ref">' + m + '</figure><div class="ft">' + (c.big ? '<span class="big">' + c.big + "</span>" : "") +
-      '<p class="ftx">' + esc(c.ftx) + "</p>" + (c.rc ? '<p class="rc">' + esc(c.rc) + "</p>" : "") + (r.c ? '<p class="rc">' + esc(r.c) + "</p>" : "") + "</div></div>";
+      '<p class="ftx">' + esc(c.ftx) + "</p>" + (c.rc ? '<p class="rc">' + esc(c.rc) + "</p>" : "") + (r.c ? '<p class="rc refc">' + esc(r.c) + "</p>" : "") + "</div></div>";
   }
   function renderPanel(c, announce) {
     panel.setAttribute("aria-live", announce ? "polite" : "off");
     var h = '<h2 id="ptitle">' + esc(c.title) + '</h2><p class="prole">' + esc(c.role) + '</p><p class="pline">' + esc(c.line) + '</p><p class="pcopy">' + esc(c.copy) + "</p>";
     if (c.builds) {
       h += '<ul class="builds" aria-label="Smaller builds">' + BUILDS.map(function (b) {
-        return '<li><canvas width="32" height="32" data-src="' + b[0] + '" aria-hidden="true"></canvas><a href="' + b[1] + '" target="_blank" rel="noopener"><b>' + esc(b[2]) + "</b>: " + esc(b[3]) + " ↗</a></li>";
+        return '<li><canvas width="32" height="32" data-src="' + b[0] + '" aria-hidden="true"></canvas><a href="' + b[1] + '" target="_blank" rel="noopener"><b>' + esc(b[2]) + "</b><span class=\"bd\">: " + esc(b[3]) + "</span> ↗</a></li>";
       }).join("") + "</ul>";
     } else h += figHTML(c);
     h += '<div class="plinks">' + c.links.map(function (l) { return '<a class="lk" href="' + l[0] + '" target="_blank" rel="noopener">' + esc(l[1]) + "</a>"; }).join("") + "</div>";
@@ -1121,7 +1183,20 @@ var FIT = (function () {
     titleEl = $("ptitle"); lastStretch = -1;
     creditEl.textContent = viewMode === "den" ? DENCAP : (c.credit || "");
     glc.setAttribute("aria-label", c.aria); vfl.textContent = c.slug + " · " + c.W + "×" + c.H + " grid";
+    fitPanel();
   }
+  // fit the panel to its space: drop detail level by level until nothing important is clipped
+  function fitPanel() {
+    for (var i = 1; i <= 7; i++) panel.classList.remove("k" + i);
+    if (!STACK.matches && !moreOpen) for (var lv = 1; lv <= 7 && pc.scrollHeight > pc.clientHeight + 1; lv++) panel.classList.add("k" + lv);
+    fades();
+  }
+  function fades() {
+    var over = pc.scrollHeight > pc.clientHeight + 1 && !STACK.matches;
+    pc.classList.toggle("ft", over && pc.scrollTop > 2);
+    pc.classList.toggle("fb", over && pc.scrollTop < pc.scrollHeight - pc.clientHeight - 2);
+  }
+  pc.addEventListener("scroll", fades, { passive: true });
   var titleEl = null, lastStretch = -1, DENCAP = "Where the fitter looked: every splat it placed. OBSCURA printed this for people.";
   // live micro-fit thumbnails (Savor panel): 32px targets, 90 splats, CPU-rendered
   function microFit(cv) {
@@ -1191,6 +1266,7 @@ var FIT = (function () {
   }
   function finishMigration() {
     if (!mig) return;
+    migOff.y = 0; migOff.p = 0; orb.dirty = true;
     var to = CAPS[mig.to]; mig = null;
     var si = seedInst(to); inst.set(si.subarray(0, SEEDN * FL)); nInst = SEEDN; uploaded = 0;
     setCapVars(to); needFull = true; plotDirty = true; histProg = 1;
@@ -1216,7 +1292,7 @@ var FIT = (function () {
       var mb = buildMigration(fromArr, fromN, toArr, SEEDN);
       gl.bindBuffer(gl.ARRAY_BUFFER, mbuf); gl.bufferData(gl.ARRAY_BUFFER, mb.buf, gl.STREAM_DRAW);
       setupVAO(vaoMig, mbuf, true, 0);
-      mig = { to: i, phase: "antic", t0: now(), M: mb.M };
+      mig = { to: i, phase: "antic", t0: now(), M: mb.M, dir: i > from.i ? 1 : -1 };
     }
     setCapVars(to);
     loadTarget(to);
@@ -1390,14 +1466,15 @@ var FIT = (function () {
     try { if (panel.matches(":hover") || panel.contains(d.activeElement)) return true; var sl = getSelection(); return !!(sl && !sl.isCollapsed && panel.contains(sl.anchorNode)); } catch (e) { return false; }
   }
   function anyInput(stop) { lastInput = now(); if (stop && tour.on) setTour(false); }
-  function setTour(on) {
+  // an idle start announces itself first (the chip), then moves 2.5 s later; a requested tour moves at once
+  function setTour(on, auto) {
     tour.on = on; chip.hidden = !on; app.classList.toggle("touring", on); $("bTour").setAttribute("aria-pressed", on ? "true" : "false");
-    if (on) { tour.next = now(); kick(); }
+    if (on) { tour.next = now() + (auto ? 2500 : 0); kick(); }
   }
   ["pointerdown", "touchstart", "wheel"].forEach(function (ev) { d.addEventListener(ev, function (e) { if (e.target && e.target.closest && e.target.closest("#bTour,[data-act=tour]")) return; anyInput(true); }, { passive: true, capture: true }); });
   d.addEventListener("pointermove", function () { lastInput = now(); }, { passive: true });
   setInterval(function () {
-    if (!tour.on && !reduced && !hidden && !offscreen && !dialogOpen() && !sheetOpen && !drag && !scrub && !reading() && now() - lastInput > 12000) setTour(true);
+    if (!tour.on && !reduced && !hidden && !offscreen && !dialogOpen() && !sheetOpen && !drag && !scrub && !reading() && now() - lastInput > 12000) setTour(true, true);
   }, 1000);
 
   /* ------------------------------------------------------------------ frame loop */
@@ -1427,10 +1504,15 @@ var FIT = (function () {
         if (e >= 100 && !mig.swapped) { mig.swapped = true; var to = CAPS[mig.to], si = seedInst(to); inst.set(si.subarray(0, SEEDN * FL)); nInst = SEEDN; uploaded = 0; histProg = 1; }
         if (e >= 200) finishMigration();
       } else if (mig.phase === "antic") {
+        // anticipation: swell, dim, and a slight counter-turn before the release
         var a = easeOut3(Math.min(1, e / 120)); gfx.swell = 1 + 0.06 * a; gfx.dim = 1 - 0.06 * a;
+        migOff.y = -1.6 * mig.dir * a; migOff.p = -0.6 * a;
         if (e >= 120) { mig.phase = "move"; mig.t0 = t; }
       } else {
         var r = Math.max(0, 1 - e / 300); gfx.swell = 1 + 0.06 * r * r; gfx.dim = 1 - 0.06 * r * r; gfx.migT = e;
+        // the camera follows the lift: a turn out and back, so the splats' depth shows as parallax in flight
+        var mp = Math.min(1, e / 1160), bell = Math.sin(Math.PI * Math.min(1, mp * 1.08)), k0 = drag ? 0 : 1 - Math.min(1, Math.abs(orb.yaw) / LY);
+        migOff.y = mig.dir * (-1.6 * (1 - Math.min(1, mp * 6)) + 11 * bell * k0); migOff.p = 4.5 * bell * k0 - 0.6 * (1 - Math.min(1, mp * 6));
         histProg = Math.min(1, e / 1000); plotDirty = true;
         if (e >= 900 + 260) finishMigration();
       }
@@ -1480,12 +1562,15 @@ var FIT = (function () {
     if (t - lastRead > (reduced ? 500 : 90)) {
       lastRead = t; var txt = readoutText(); if (txt !== readTxt) { readTxt = txt; readoutEl.textContent = txt; }
       updatePlayhead();
-      var ht = Math.abs(orb.yaw) > 0.05 || Math.abs(orb.pitch) > 0.05 ? "Yaw " + (orb.yaw >= 0 ? "+" : "−") + Math.abs(orb.yaw).toFixed(1) + "° pitch " + (orb.pitch >= 0 ? "+" : "−") + Math.abs(orb.pitch).toFixed(1) + "°" : stageKbd ? "Arrows orbit · 0 resets" : HINT;
+      var ht = "", sy = (orb.yaw >= 0 ? "+" : "−") + Math.abs(orb.yaw).toFixed(1) + "°", sp = (orb.pitch >= 0 ? "+" : "−") + Math.abs(orb.pitch).toFixed(1) + "°";
+      if (Math.abs(orb.yaw) > 0.05 || Math.abs(orb.pitch) > 0.05) ht = hintMode === 2 ? "Yaw " + sy + " pitch " + sp : hintMode === 1 ? sy + " / " + sp : "";
+      else if (stageKbd) ht = hintMode === 2 ? "Arrows orbit · 0 resets" : hintMode === 1 ? "Arrows orbit" : "";
+      else ht = hintMode ? HINT : "";
       if (ht !== hintTxt) { hintTxt = ht; hintEl.textContent = ht; }
     }
     if (plotDirty && (t - lastPlot > (reduced ? 500 : 33) || !busy)) { lastPlot = t; drawPlot(); }
     if (titleEl) { var ws = Math.round((110 - 40 * Math.min(1, Math.abs(orb.yaw) / LY)) * 2) / 2; if (ws !== lastStretch) { lastStretch = ws; titleEl.style.fontStretch = ws + "%"; } }
-    shadowEl.style.setProperty("--shx", (-orb.yaw * 1.4).toFixed(1) + "px"); shadowEl.style.setProperty("--shs", (1 - Math.abs(orb.yaw) / 260).toFixed(3));
+    var vyaw = orb.yaw + migOff.y; shadowEl.style.setProperty("--shx", (-vyaw * 1.4).toFixed(1) + "px"); shadowEl.style.setProperty("--shs", (1 - Math.abs(vyaw) / 260).toFixed(3));
     // tour
     if (tour.on && t >= tour.next && !mig) { if (reading()) tour.next = t + 3000; else { tour.next = t + 9000; switchTo((cur + 1) % CAPS.length, false); } busy = true; }
     if (tour.on) busy = true;
@@ -1504,6 +1589,7 @@ var FIT = (function () {
     var pm = $("pmore"); if (pm) pm.hidden = !moreOpen;
     moreBtn.setAttribute("aria-expanded", moreOpen ? "true" : "false"); moreBtn.textContent = moreOpen ? "Less" : "More";
     sheetOpen = moreOpen && STACK.matches; panel.classList.toggle("open", sheetOpen); app.classList.toggle("sheet", sheetOpen);
+    fitPanel();
     if (sheetOpen) panel.scrollTop = 0;
     if (!STACK.matches && moreOpen) { var p = $("pmore"); if (p) { var y = Math.max(0, p.offsetTop - pc.offsetTop - 12); try { pc.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" }); } catch (e) { pc.scrollTop = y; } } }
     if (!moreOpen) pc.scrollTop = 0;
