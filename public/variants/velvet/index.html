@@ -469,17 +469,22 @@ void main(){
     vec2 a=A.xy,d=A.zw-A.xy;float L2=dot(d,d);
     float t=L2>1e-4?clamp(dot(p-a,d)/L2,0.,1.):0.;
     vec2 q=p-(a+d*t);
-    float w=S.y*exp(-dot(q,q)/(S.x*S.x*.5));
-    if(w<.003)continue;
+    float ds=length(q);
+    float w=S.y*exp(-ds*ds/(S.x*S.x*.2));
+    if(ds>S.x*1.05)continue;
     if(L2>1e-4){
       vec2 sd=vec2(d.x,-d.y)/sqrt(L2);
-      float wi=dot(sd,bt),lk=min(sqrt(L2)/S.x,1.);
-      c.rg=mix(c.rg,sd,min(w,1.));
-      c.b+=w*(S.z+.3*max(-wi,0.)*lk);
-      c.b=mix(c.b,-.6,w*.3*max(wi,0.)*lk);
-      float tu=dot(p-a,d)/L2,ds=length(q),rg=S.y*exp(-pow((ds-S.x*.9)/(S.x*.3),2.))*lk*step(0.,tu)*step(tu,1.);
-      c.b+=rg*.8;
-      if(ds>.5)c.rg=mix(c.rg,vec2(q.x,-q.y)/ds,min(rg*.55,1.));
+      // dose: how much of the fingertip passed over this texel during this segment (rate-independent)
+      float wi=dot(sd,bt),lk=min(sqrt(L2)/S.x,1.),dose=min(w*lk*3.,1.);
+      c.rg=mix(c.rg,sd,min(w*1.15,1.));
+      // S.z is the pressure target: slow strokes press (-), fast strokes lift (+);
+      // against the grain raises the pile, with the grain smooths it
+      float tB=mix(S.z+.5*max(-wi,0.),-.66,.45*max(wi,0.));
+      c.b=mix(c.b,tB,dose);
+      // the ridge: fibres shoved aside stand up along both banks of the trail
+      float tu=dot(p-a,d)/L2,rg=S.y*exp(-pow((ds-S.x*.6)/(S.x*.16),2.))*lk*3.*step(0.,tu)*step(tu,1.);
+      c.b=mix(c.b,.8,min(rg,1.)*.8);
+      if(ds>.5)c.rg=mix(c.rg,vec2(q.x,-q.y)/ds,min(rg*.6,.6));
     }
     c.a=max(c.a,w*S.w);
   }
@@ -504,7 +509,10 @@ void main(){
   float m=length(d);
   vec2 dir=m>1e-3?d/m:vec2(.7071,-.7071);
   float ord=smoothstep(.05,.75,m);
-  float lean=clamp(uK.x+.6*B+(1.-ord)*.5,.05,1.45);
+  float lift=clamp(B,0.,1.),press=clamp(-B,0.,1.);
+  // fibre elevation: 0 = lying flat, 1 = standing upright
+  float el=clamp(uK.x+.42*B+(1.-ord)*.3,.04,1.);
+  float lean=.08+el*1.32;
   float cl=cos(lean);
   vec3 T=vec3(dir*cl,sin(lean));
   vec2 q=css/uCss.y;
@@ -530,16 +538,21 @@ void main(){
   }
   float sh=hs,va=hv+(1.-acc)*.5;
   vec3 L=normalize(uL),H=normalize(L+vec3(0.,0.,1.));
-  float TL=dot(T,L),TH=dot(T,H);
-  float diff=sqrt(max(0.,1.-TL*TL));
+  float TH=dot(T,H);
   float spec=pow(sqrt(max(0.,1.-TH*TH)),uK.z);
   float matte=clamp(dent,0.,1.);
-  float ao=mix(.52,1.,sh);
-  float k=(.33+.78*diff)*ao*(.9+.2*va)*(1.-.24*clamp(B,0.,1.));
-  vec3 c=mix(ROOT,PILE,clamp(k*1.1,0.,1.));
-  c=mix(c,SHEEN,smoothstep(.82,1.35,k)*.45);
-  float press=clamp(-B,0.,1.);
-  c=mix(c,SHEEN,press*.3*(.4+.6*diff)*(1.-matte));
+  float ao=mix(.5,1.,sh);
+  // velvet: lying fibres that point away from the light show their length and shine;
+  // pointing into it you see cut ends and shadow. Standing pile reads deep.
+  vec2 Lh=normalize(L.xy+1e-5);
+  float away=.5-.5*dot(dir,Lh);
+  float lay=(1.-el)*ord;
+  float tone=mix(.5,.24+1.06*away,lay);
+  tone+=.5*press*(.3+.7*away)*(1.-matte);
+  tone*=(1.-.3*lift)*(1.+.3*dot(N,Lh));
+  float k=tone*ao*(.9+.2*va);
+  vec3 c=mix(ROOT,PILE,smoothstep(.08,.86,k));
+  c=mix(c,SHEEN,smoothstep(.84,1.5,k)*.62);
   c+=SHEEN*spec*uK.w*sh*(1.+press)*(1.-matte);
   float tw=h12(floor(css/uPitch)+floor(uT*14.));
   c+=GLINT*shim*sh*sh*(.16+.9*step(.86,tw))*.42;
@@ -670,11 +683,11 @@ function stroke(p,x,y,ts,pr){
   const dx=x-p.x,dy=y-p.y,len=Math.hypot(dx,dy);if(len<.6)return;
   const dtm=Math.max(1,ts-p.t),inst=len/dtm;p.v=p.v?p.v+(inst-p.v)*.35:Math.min(inst,1);
   p.moved+=len;
-  if(Math.hypot(x-p.ax,y-p.ay)>4){p.ax=x;p.ay=y;p.at=ts;if(p.hold)endHold(p);}
+  if(Math.hypot(x-p.ax,y-p.ay)>4){p.ax=x;p.ay=y;p.still=0;if(p.hold)endHold(p);}
   const pen=p.type==='pen',pres=pen&&pr>0?pr:clamp(1-p.v/1.4,.2,1);
   const r=p.type==='touch'?40:pen?20+10*pres:28;
-  const lift=(.75*(1-pres)-.6*pres)*Math.min(1,len/r)*.9;
-  pushSeg(p.x,p.y,x,y,r,.9,lift,.25+.45*(1-pres));
+  const tb=.55*(1-pres)-.72*pres; // pressure target for the pile: slow presses, fast lifts
+  pushSeg(p.x,p.y,x,y,r,.9,tb,.25+.45*(1-pres));
   const mx=(p.x+x)/2,my=(p.y+y)/2;
   pet(mx,my,len,p.v,false);
   if(p.v>1.6&&ts-lastRipple>1000){const td=targetDirAt(mx,my),sx=dx/len,sy=-dy/len;if(sx*td[0]+sy*td[1]<-.6)ripple(mx,my,ts);}
@@ -690,7 +703,7 @@ function ripple(x,y,ts){lastRipple=ts;if(RM)return;rip={x,y,t0:performance.now()
 surf.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'&&e.button!==0)return;
   const t=e.timeStamp;
-  const p={id:e.pointerId,type:e.pointerType,x:e.clientX,y:e.clientY,t,x0:e.clientX,y0:e.clientY,t0:t,ax:e.clientX,ay:e.clientY,at:t,v:0,moved:0,hold:false,dent:null};
+  const p={id:e.pointerId,type:e.pointerType,x:e.clientX,y:e.clientY,t,x0:e.clientX,y0:e.clientY,t0:t,tn:performance.now(),ax:e.clientX,ay:e.clientY,still:0,v:0,moved:0,hold:false,dent:null};
   ptrs.set(e.pointerId,p);hov=null;
   if(e.pointerType!=='touch'){try{surf.setPointerCapture(e.pointerId)}catch(_){}}
   if(ptrs.size>=2)showTag('hands',2000);
@@ -707,13 +720,13 @@ function hover(evs){
   for(const ev of evs){const x=ev.clientX,y=ev.clientY,t=ev.timeStamp;
     if(!hov||t-hov.t>400){hov={x,y,t};continue;}
     const len=Math.hypot(x-hov.x,y-hov.y);if(len<.8)continue;
-    pushSeg(hov.x,hov.y,x,y,18,.25,0,.08);pet((x+hov.x)/2,(y+hov.y)/2,len,0,true);
+    pushSeg(hov.x,hov.y,x,y,18,.25,-.25,.08);pet((x+hov.x)/2,(y+hov.y)/2,len,0,true);
     hov.x=x;hov.y=y;hov.t=t;}
 }
 function up(e){
   const p=ptrs.get(e.pointerId);if(!p)return;ptrs.delete(e.pointerId);
   if(p.hold)endHold(p);
-  if(e.type==='pointerup'&&p.moved<6&&e.timeStamp-p.t0<350){const w=wordAt(p.x0,p.y0);if(w)openPatch(w.id,'tap');}
+  if(e.type==='pointerup'&&p.moved<6&&performance.now()-p.tn<320){const w=wordAt(p.x0,p.y0);if(w)openPatch(w.id,'tap');}
   if(!ptrs.size)buzz(false);
 }
 surf.addEventListener('pointerup',up);surf.addEventListener('pointercancel',up);surf.addEventListener('lostpointercapture',e=>{if(ptrs.has(e.pointerId)&&e.pointerType!=='touch')up({pointerId:e.pointerId,type:'lost',timeStamp:e.timeStamp});});
@@ -748,7 +761,7 @@ function keyTick(now){
   if(!ringOn)return;
   let dx=(keys.has('ArrowRight')?1:0)-(keys.has('ArrowLeft')?1:0),dy=(keys.has('ArrowDown')?1:0)-(keys.has('ArrowUp')?1:0);
   if(dx||dy){const k=6/Math.hypot(dx,dy),nx=clamp(ringX+dx*k,8,vw-8),ny=clamp(ringY+dy*k,8,vh-8);
-    pushSeg(ringX,ringY,nx,ny,28,.85,.05,.3);pet((nx+ringX)/2,(ny+ringY)/2,Math.hypot(nx-ringX,ny-ringY),.36,false);ringX=nx;ringY=ny;
+    pushSeg(ringX,ringY,nx,ny,28,.85,-.4,.3);pet((nx+ringX)/2,(ny+ringY)/2,Math.hypot(nx-ringX,ny-ringY),.36,false);ringX=nx;ringY=ny;
     if(shiftHold&&shiftHold.hold){endHold(shiftHold);shiftHold.t0=now;}}
   if(shiftHold){shiftHold.x=ringX;shiftHold.y=ringY;if(!shiftHold.hold&&now-shiftHold.t0>=350)startHold(shiftHold);}
   ring.style.transform=`translate(${ringX}px,${ringY}px)`;
@@ -912,7 +925,8 @@ function frame(now){
   // holds
   let holding=false;
   for(const p of ptrs.values()){
-    if(!p.hold&&now-p.at>=350&&Math.hypot(p.x-p.ax,p.y-p.ay)<4&&p.at>=p.t0)startHold(p);
+    // hold clock: capped frame time, so a stalled frame never fakes a 350 ms rest
+    p.still+=dt;if(!p.hold&&p.still>=.35&&Math.hypot(p.x-p.ax,p.y-p.ay)<4)startHold(p);
     if(p.hold){holding=true;if(p.dent){p.dent.x=p.x;p.dent.y=p.y;}const w=wordAt(p.x,p.y);for(const o of open)if(strip||(w&&w.id===o.id)||inHem(o,p.x,p.y))o.energy=Math.max(o.energy,.6);
       if(p.type==='touch'&&now-buzzT>200)buzz(true);}
   }
