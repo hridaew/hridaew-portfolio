@@ -264,7 +264,7 @@ canvas.drag { cursor: grabbing; }
   const f16 = (h) => { const s = h & 0x8000 ? -1 : 1, e = (h >> 10) & 31, m = h & 1023; return e === 0 ? s * m * 5.960464477539063e-8 : e === 31 ? 0 : s * (1 + m / 1024) * 2 ** (e - 15); };
   const SETS = {};
   async function loadSet(k) {
-    const buf = await (await fetch(`media/${k}.bin`)).arrayBuffer();
+    const b64 = (await (await fetch(`media/${k}.json`)).json()).splats, buf = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
     const n = new DataView(buf).getUint32(0, true);
     const h16 = new Uint16Array(buf, 4, n * 9), rgba = new Uint8Array(buf, 4 + n * 18, n * 4);
     const pos = new Float32Array(TN * 4), ca = new Float32Array(TN * 4), cb = new Float32Array(TN * 4), col = new Float32Array(TN * 4);
@@ -299,7 +299,7 @@ canvas.drag { cursor: grabbing; }
     gl.uniform2f(U("uViewport"), W, H); gl.uniform2f(U("uFocal"), focal, focal); gl.uniform2f(U("uOffset"), offset[0], offset[1]);
   }
   // each object's best-looking angle (yaw, pitch)
-  const FRONTS = { about: [-0.3, 0.06], domis: [-0.42, 0.14], virdio: [-0.35, 0.16], obscura: [-0.28, 0.04], mc: [-0.3, 0.1], side: [0, 0.05] };
+  const FRONTS = { about: [-0.3, 0.06], domis: [-0.42, 0.14], virdio: [-0.35, 0.16], obscura: [-0.28, 0.04], mc: [-0.3, 0.1], side: [-1.9, 0.05] };
   const qf = /[?&]front=(-?[\d.]+)/.exec(location.search); if (qf) FRONTS.side[0] = +qf[1];
   const front = () => FRONTS[cur] || FRONTS.about;
   const FRONT = -0.3, rot = { yaw: FRONT, pitch: 0.1, vy: 0, vp: 0, dragging: false, last: 0, wob: 0, wv: 0, home: false };
@@ -478,6 +478,7 @@ canvas.drag { cursor: grabbing; }
     st.ca[o] = st.ca[o + 3] = 1e-5; st.cb[o + 1] = 1e-5;
   }
   cur_k = "cloud";
+  if (/[?&]debug\b/.test(location.search)) window.__splat = { rot, FRONTS, select };
   select("about");
   requestAnimationFrame(frame);
   // warm the other sets in the background so switching is instant
