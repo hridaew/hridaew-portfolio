@@ -286,6 +286,19 @@ dialog[open]{animation:dlg .26s var(--out)}
   .chip:not([hidden]){animation:none}
   .panel.swap .pc{animation:none}
 }
+
+/* ---------- quiet pass: less chrome, the work first ---------- */
+#bTour,#bPrint,.vf .tl,.vf .tr,.views .lab,.views .k,.hint,.legend,.readout,.how,.fig .ref,.fig .rc,.chip,.ph .flag{display:none!important}
+.views{opacity:.7;transition:opacity .2s}.views:hover,.views:focus-within{opacity:1}
+.views button{height:26px;font-size:11px}
+.band{grid-template-columns:1fr!important;background:transparent!important}
+.plot{padding:0 var(--g)}
+.thesis{font-size:15px;opacity:.85;max-width:34ch}
+.panel h2{font-size:24px}
+.panel .pcopy{font-size:14px}
+.fig .big{font-size:30px}
+.patch .pl{font-size:9px}
+.vf i{opacity:.45}
 </style>
 </head>
 <body>
@@ -294,7 +307,7 @@ dialog[open]{animation:dlg .26s var(--out)}
   <header class="hd" id="hd">
     <h1 class="name" id="name">Hridae Walia</h1>
     <p class="role-line">Product designer obsessed with making. Founding Product Designer at Domis, San&nbsp;Francisco.</p>
-    <p class="thesis" id="thesis">I'm a product designer obsessed with making, and I have 6 years of experience designing for interaction models that barely exist yet. Founding Product Designer at Domis, San&nbsp;Francisco.</p>
+    <p class="thesis" id="thesis">I design for interaction models that barely exist yet. Each project here is being fitted, live in your browser, out of thousands of soft gaussians.</p>
     <p class="how" id="how"><span class="lg">Everything on this stage is being fitted in your browser out of soft gaussians, the way Savor fits a phone video. No&nbsp;cloud.</span><span class="sm">My work, fitted live in your browser from soft gaussians.</span></p>
   </header>
   <div class="top" id="top">

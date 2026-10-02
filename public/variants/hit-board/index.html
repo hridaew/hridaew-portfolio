@@ -6,204 +6,127 @@
 <title>Hit Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@800&family=Courier+Prime:wght@400;700&family=Jersey+10&family=Permanent+Marker&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Martian+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
 <style>
-/* Layout: a kraft-cardboard arcade cabinet. Flip-dot board top-left, throw floor beneath it, typed index cards taped down the right. */
+/* Layout: a dark room. One big flip-dot board, a floor with the orca, a single quiet bar. A panel slides in with the work on a hit. */
 :root {
-  color-scheme: light;
-  --kraft: #B68A5C; --kraft-lt: #C89C6C; --flute: #8E6640;
-  --panel: #0C0D0F; --disc-off: #141518; --disc-on: #EEF0EC;
-  --tape: #2F8FDB; --marker: #1A1A1A; --card: #F5F7F6; --rule: #A9C9EA; --type: #1B1C1E;
-  --f-stencil: "Big Shoulders Stencil Display", Impact, sans-serif;
-  --f-marker: "Permanent Marker", "Comic Sans MS", cursive;
-  --f-type: "Courier Prime", "Courier New", monospace;
+  color-scheme: dark;
+  --room: #0B0B0B; --wall: #121212; --disc: #F2EDE4; --dim: #8C877F; --line: rgb(242 237 228 / .14);
+  --f-mono: "Martian Mono", ui-monospace, Menlo, monospace;
+  --f-sans: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
-body {
-  background-color: var(--kraft);
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9 .05' numOctaves='3' seed='4'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .22  0 0 0 0 .1  0 0 0 .22 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>"),
-    radial-gradient(ellipse at 30% 20%, var(--kraft-lt), transparent 60%);
-  color: var(--marker); font: 400 15px/1.5 var(--f-type);
-}
+body { background: radial-gradient(ellipse 80% 60% at 50% 30%, #181818, var(--room) 70%); color: var(--disc); font: 400 14px/1.55 var(--f-sans); -webkit-font-smoothing: antialiased; }
 img, video { max-width: none; display: block; }
 a { color: inherit; }
-:focus-visible { outline: 3px solid var(--tape); outline-offset: 3px; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--disc); outline-offset: 4px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.skip { position: absolute; left: 12px; top: -60px; z-index: 20; background: var(--card); padding: 8px 12px; }
-.skip:focus { top: 12px; }
 
-.cab { max-width: 1520px; margin: 0 auto; padding: 18px 16px 72px; }
-.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.stencil { margin: 0; font: 800 clamp(44px, 7vw, 96px)/.8 var(--f-stencil); letter-spacing: .02em; color: var(--marker); opacity: .9; }
-.box-print { font: 800 13px/1.2 var(--f-stencil); letter-spacing: .14em; text-align: right; opacity: .75; }
+.room { min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(18px, 4vh, 40px) clamp(16px, 4vw, 56px) 0; max-width: 1400px; margin: 0 auto; }
+.board-frame { position: relative; padding: 10px; border-radius: 6px; background: #050505; box-shadow: 0 0 0 1px #1d1d1d, 0 40px 80px -30px rgb(0 0 0 / .9), 0 0 120px -40px rgb(242 237 228 / .12); }
+canvas#board { display: block; width: 100%; border-radius: 2px; }
+.reticle { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 1.5px solid var(--disc); border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 120ms; z-index: 3; }
+.reticle::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: var(--disc); }
+.reticle.on { opacity: .9; }
 
-.grid { display: grid; gap: 28px; }
-@media (min-width: 1040px) { .grid { grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: start; } }
-
-.tape {
-  display: inline-block; background: linear-gradient(180deg, rgb(255 255 255 / .18), transparent 40%), var(--tape);
-  color: var(--marker); font: 400 15px/1 var(--f-marker); padding: 7px 14px 6px;
-  clip-path: polygon(0 8%, 3% 0, 97% 4%, 100% 0, 99% 92%, 96% 100%, 4% 96%, 0 100%);
-  opacity: .95;
-}
-
-/* Board */
-.board-frame { position: relative; padding: 12px; background: #1b1c1f; box-shadow: inset 0 0 0 3px #2b2c30, 0 10px 0 var(--flute), 0 24px 30px rgb(40 22 5 / .35); transform: rotate(-.6deg); }
-.board-frame::before, .board-frame::after { content: ""; position: absolute; width: 110px; height: 28px; background: var(--tape); opacity: .9; z-index: 2; }
-.board-frame::before { left: -26px; top: 10px; transform: rotate(-38deg); }
-.board-frame::after { right: -24px; bottom: 6px; transform: rotate(-32deg); }
-canvas#board { display: block; width: 100%; background: var(--panel); touch-action: manipulation; }
-.reticle { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 3px dashed var(--tape); border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 120ms; z-index: 3; }
-.reticle.on { opacity: 1; }
-
-.targets { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; }
-.targets button { cursor: pointer; border: 2px solid var(--marker); background: var(--card); font: 700 13px/1 var(--f-type); letter-spacing: .06em; padding: 9px 12px; box-shadow: 3px 3px 0 var(--marker); color: var(--marker); }
-.targets button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--marker); }
-.targets button[data-done] { background: var(--tape); }
-.targets .lab { font: 400 15px/1 var(--f-marker); align-self: center; margin-right: 4px; }
-
-.floor { position: relative; height: 190px; margin-top: 18px; border-top: 2px solid rgb(26 26 26 / .25); }
-.throwline { position: absolute; left: 0; right: 0; top: 96px; height: 14px; background: var(--tape); opacity: .9; transform: rotate(-.4deg); clip-path: polygon(0 20%, 100% 0, 100% 80%, 0 100%); }
-.orca { position: absolute; left: 50%; top: 22px; width: 132px; height: 82px; margin-left: -66px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; border: 0; padding: 0; background: none; z-index: 4; }
+.floor { position: relative; height: clamp(150px, 22vh, 210px); }
+.floor::before { content: ""; position: absolute; left: 0; right: 0; top: 58%; height: 1px; background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent); }
+.orca { position: absolute; left: 50%; top: 22%; width: 120px; height: 74px; margin-left: -60px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; z-index: 4; }
 .orca:active { cursor: grabbing; }
-.orca svg { width: 100%; height: 100%; filter: drop-shadow(0 8px 6px rgb(40 22 5 / .35)); }
-.band { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 3; }
-.hint { position: absolute; left: 0; top: 128px; font: 400 18px/1.2 var(--f-marker); transform: rotate(-1.5deg); }
-.counter { position: absolute; right: 0; top: 130px; }
-.counter .tape { font-size: 14px; }
-.sound { cursor: pointer; border: 0; background: none; font: inherit; color: inherit; text-decoration: underline; padding: 0; }
-.pile { position: absolute; right: 18%; top: 54px; display: flex; gap: 2px; }
-.pile svg { width: 46px; height: 30px; }
+.orca svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 10px rgb(0 0 0 / .6)); }
+.orca::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -14px; height: 10px; border-radius: 50%; background: rgb(0 0 0 / .6); filter: blur(6px); z-index: -1; }
+.band { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 3; }
+.hint { position: absolute; left: 50%; top: 72%; transform: translateX(-50%); font: 400 11px/1.4 var(--f-mono); color: var(--dim); white-space: nowrap; }
 
-.flyer { position: fixed; left: 0; top: 0; width: 132px; height: 82px; pointer-events: none; z-index: 30; display: none; will-change: transform; }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; padding: 18px 0 calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); font: 400 12px/1.5 var(--f-mono); color: var(--dim); }
+.bar .picks { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+.bar .picks button { color: var(--disc); border-bottom: 1px solid transparent; }
+.bar .picks button:hover { border-bottom-color: var(--disc); }
+.bar .picks button[data-done]::before { content: "● "; font-size: 8px; vertical-align: 2px; }
+.bar .me { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; }
+.bar .email { color: var(--disc); user-select: all; }
+.bar a, .bar .me button { color: var(--disc); text-decoration: none; border-bottom: 1px solid var(--line); }
+
+.flyer { position: fixed; left: 0; top: 0; width: 120px; height: 74px; pointer-events: none; z-index: 30; display: none; will-change: transform; }
 .flyer svg { width: 100%; height: 100%; }
-.shadow { position: fixed; left: 0; top: 0; width: 120px; height: 26px; margin: -13px 0 0 -60px; border-radius: 50%; background: rgb(20 10 0 / .5); pointer-events: none; z-index: 29; display: none; }
+.shadow { position: fixed; left: 0; top: 0; width: 110px; height: 22px; margin: -11px 0 0 -55px; border-radius: 50%; background: rgb(0 0 0 / .7); pointer-events: none; z-index: 29; display: none; }
 
-/* Cards */
-.cards { display: grid; gap: 30px; }
-.card { position: relative; background: var(--card); color: var(--type); padding: 26px 22px 20px;
-  background-image: linear-gradient(transparent 39px, #e7738a 39px, #e7738a 40px, transparent 40px), repeating-linear-gradient(transparent 0 23px, var(--rule) 23px 24px);
-  background-position: 0 0, 0 16px; box-shadow: 0 2px 0 rgb(0 0 0 / .1), 0 14px 22px rgb(40 22 5 / .25); }
-.card:nth-child(odd) { transform: rotate(1deg); } .card:nth-child(even) { transform: rotate(-1.2deg); }
-.card .pin { position: absolute; top: -12px; left: 50%; width: 90px; height: 24px; margin-left: -45px; background: var(--tape); opacity: .85; transform: rotate(-3deg); }
-.card h2 { margin: 0 0 10px; font: 700 13px/1 var(--f-type); letter-spacing: .14em; text-transform: uppercase; }
-.card p { margin: 0 0 10px; line-height: 24px; }
-.card ul { list-style: none; margin: 0; padding: 0; }
-.card li { line-height: 24px; }
-.card a { font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-.kid { float: right; width: 90px; margin: -6px -6px 6px 10px; transform: rotate(4deg); box-shadow: 0 4px 8px rgb(0 0 0 / .25); }
-.email { font-weight: 700; user-select: all; }
-.copy { font: 700 12px/1 var(--f-type); border: 2px solid var(--type); background: none; padding: 4px 8px; cursor: pointer; margin-left: 6px; color: var(--type); }
-.proj .media { position: relative; aspect-ratio: 16 / 10; background: #222; margin: 0 0 12px; overflow: hidden; }
-.proj .media img, .proj .media video { width: 100%; height: 100%; object-fit: cover; }
-.proj .media.portrait img, .proj .media.portrait video { object-fit: contain; background: #111; }
-.proj .stat { font-weight: 700; }
-.proj.empty .media { display: grid; place-items: center; color: #aaa; font: 400 18px/1.2 var(--f-marker); text-align: center; padding: 20px; background: #2a2b2e; }
-.scribble { position: absolute; inset: -14px -10px; pointer-events: none; overflow: visible; }
-.scribble path { fill: none; stroke: var(--tape); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2400; stroke-dashoffset: 2400; }
-.scribble.go path { transition: stroke-dashoffset 380ms ease-out; stroke-dashoffset: 0; }
-.side li { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: center; margin-bottom: 8px; }
-.side img { width: 54px; height: 54px; object-fit: cover; }
-.log { white-space: pre-wrap; font-weight: 700; color: #0f4f8a; margin-top: 10px; }
-
-@media (max-width: 1039px) {
-  .board-frame { transform: none; padding: 8px; }
-  .board-frame::before, .board-frame::after { display: none; }
-  .card { transform: none !important; }
+.panel { position: fixed; z-index: 40; top: 0; right: 0; bottom: 0; width: min(420px, 100vw); background: #151515; box-shadow: -30px 0 60px rgb(0 0 0 / .5); transform: translateX(105%); transition: transform .5s cubic-bezier(.2,.8,.2,1); overflow-y: auto; overscroll-behavior: contain; padding: 28px 28px calc(28px + env(safe-area-inset-bottom, 0px)); }
+.panel.open { transform: none; }
+.panel .close { position: absolute; right: 18px; top: 18px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); font: 400 16px/1 var(--f-mono); }
+.panel .kicker { font: 400 11px/1.4 var(--f-mono); color: var(--dim); margin: 6px 0 10px; }
+.panel h2 { margin: 0 0 6px; font: 500 40px/1 var(--f-sans); letter-spacing: -.02em; }
+.panel .meta { font: 400 12px/1.5 var(--f-mono); color: var(--dim); margin: 0 0 18px; }
+.panel .media { margin: 0 0 18px; border-radius: 4px; overflow: hidden; background: #000; aspect-ratio: 16 / 10; }
+.panel .media img, .panel .media video { width: 100%; height: 100%; object-fit: cover; }
+.panel .media.portrait img, .panel .media.portrait video { object-fit: contain; }
+.panel p { margin: 0 0 14px; font-size: 16px; line-height: 1.55; }
+.panel .links a { display: inline-block; margin: 4px 16px 4px 0; font: 500 13px/1 var(--f-mono); text-decoration: none; border-bottom: 1px solid var(--disc); padding-bottom: 3px; }
+.panel ul { list-style: none; padding: 0; margin: 8px 0 0; }
+.panel li { padding: 10px 0; border-top: 1px solid var(--line); }
+.panel li a { font-weight: 600; text-decoration: none; }
+.panel li span { display: block; color: var(--dim); font-size: 13px; }
+.panel .log { white-space: pre-wrap; font: 400 12px/1.7 var(--f-mono); color: var(--dim); }
+@media (max-width: 700px) {
+  .panel { top: auto; width: 100%; max-height: 78svh; border-radius: 14px 14px 0 0; transform: translateY(105%); box-shadow: 0 -30px 60px rgb(0 0 0 / .6); }
+  .panel h2 { font-size: 32px; }
+  .bar { flex-direction: column; align-items: flex-start; }
 }
-@media (prefers-reduced-motion: reduce) { .board-frame, .card { transform: none !important; } }
+@media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
 </style>
 </head>
 <body>
-<a class="skip" href="#index-card">Skip to case studies</a>
-<main class="cab">
-  <header class="top">
-    <h1 class="stencil" aria-label="Hit Board, the home page of Hridae Walia, product designer">HIT BOARD</h1>
-    <div class="box-print" aria-hidden="true">THIS SIDE UP ↑ · STAND BEHIND TAPE<br>BOX 3 OF 3 · ♻ RECYCLED KRAFT</div>
-  </header>
-  <div class="grid">
-    <section class="playfield" aria-label="Flip-dot hit board">
-      <div class="board-frame" id="frame">
-        <canvas id="board" role="img" aria-label="Flip-dot board showing HRIDAE WALIA and four targets"></canvas>
-        <div class="reticle" id="reticle"></div>
-      </div>
-      <div class="targets" role="group" aria-label="Throw straight at a project">
-        <span class="lab">or just tap:</span>
-        <button data-t="0">DOMIS</button><button data-t="1">VIRDIO</button><button data-t="2">OBSCURA</button><button data-t="3">MEMORY CARE</button><button data-t="4">HIT ME</button>
-      </div>
-      <div class="floor" id="floor">
-        <div class="throwline" aria-hidden="true"></div>
-        <svg class="band" id="band" aria-hidden="true"><line id="bandline" x1="0" y1="0" x2="0" y2="0" stroke="#1A1A1A" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"/></svg>
-        <button class="orca" id="orca" aria-label="Plush orca. Drag it back and let go to throw. Or use the target buttons.">
-          <svg viewBox="0 0 132 82" aria-hidden="true"><use href="#orca-art"/></svg>
-        </button>
-        <div class="pile" id="pile" aria-hidden="true"></div>
-        <div class="hint" aria-hidden="true">pull back + let go</div>
-        <div class="counter"><span class="tape" id="count">THROWS 00 · HITS 00</span> <button class="sound" id="sound" aria-pressed="false">sound: off</button></div>
-      </div>
-    </section>
-
-    <aside class="cards" aria-label="Index cards">
-      <article class="card">
-        <span class="pin" aria-hidden="true"></span>
-        <h2>Card 1 · Who</h2>
-        <img class="kid" src="media/kid.webp" alt="Me as a kid in sunglasses">
-        <p>I'm Hridae Walia (ri-they waliaa), a product designer. I have 6 years of experience designing for interaction models that barely exist yet, and I learn by making, on the canvas, in code, or in the physical world.</p>
-        <p>Founding Product Designer at Domis, San Francisco. M.HCI+D, University of Washington, 2024. BFA Interaction Design, California College of the Arts, 2020.</p>
-      </article>
-      <article class="card" id="index-card">
-        <span class="pin" aria-hidden="true"></span>
-        <h2>Card 2 · Case studies</h2>
-        <ul>
-          <li><a href="https://hridaew.com/domis" target="_blank" rel="noopener">Domis ↗</a> AI home maintenance</li>
-          <li><a href="https://hridaew.com/virdio" target="_blank" rel="noopener">Virdio ↗</a> AR fitness, no hardware</li>
-          <li><a href="https://hridaew.com/obscura" target="_blank" rel="noopener">OBSCURA ↗</a> a VR exhibit at MOHAI</li>
-          <li><a href="https://hridaew.com/memory-care" target="_blank" rel="noopener">Memory Care ↗</a> haptic plush cats</li>
-        </ul>
-        <p style="margin-top:12px"><span class="email" id="email">hridaew@gmail.com</span><button class="copy" id="copy">COPY</button></p>
-        <p><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/hridaew" target="_blank" rel="noopener">GitHub</a> · <a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></p>
-        <div class="log" id="log" aria-live="polite"></div>
-      </article>
-      <article class="card proj empty" id="proj" aria-live="polite">
-        <span class="pin" aria-hidden="true"></span>
-        <svg class="scribble" id="scribble" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true"><path d="M30 40 C 120 0, 330 10, 380 60 S 400 420, 330 470 S 40 500, 20 400 S 10 90, 60 30"/></svg>
-        <h2 id="proj-h">Card 3 · The file</h2>
-        <div class="media" id="proj-media">Hit a target. Its file lands here.</div>
-        <p id="proj-body">Every hit on the board pulls one of my projects onto this card.</p>
-      </article>
-      <article class="card side">
-        <span class="pin" aria-hidden="true"></span>
-        <h2>Card 4 · Side projects</h2>
-        <ul>
-          <li><img src="media/orca.webp" alt=""><span><a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener">Saving Baby J ↗</a> this board, basically</span></li>
-          <li><img src="media/savor.webp" alt=""><span><a href="https://hridaew.com/waffling/savor" target="_blank" rel="noopener">Savor ↗</a> phone video → 3D Gaussian splat, no cloud</span></li>
-          <li><img src="media/recorder.webp" alt=""><span><a href="https://hridaew.com/waffling/recorder" target="_blank" rel="noopener">Recorder-Proto ↗</a> scrub a voice memo like a turntable</span></li>
-          <li><img src="media/butter.webp" alt=""><span><a href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener">Butter Chicken ↗</a> taste scales linearly with butter</span></li>
-        </ul>
-      </article>
-    </aside>
+<h1 class="sr">Hridae Walia, interaction and product designer</h1>
+<main class="room">
+  <div class="board-frame" id="frame">
+    <canvas id="board" role="img" aria-label="Flip-dot board showing HRIDAE WALIA and four targets"></canvas>
+    <div class="reticle" id="reticle"></div>
   </div>
+  <div class="floor" id="floor">
+    <svg class="band" id="band" aria-hidden="true"><line id="bandline" x1="0" y1="0" x2="0" y2="0" stroke="#F2EDE4" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="4 5" stroke-linecap="round"/></svg>
+    <button class="orca" id="orca" aria-label="Plush orca. Drag it back and let go to throw it at the board. Or pick a project below.">
+      <svg viewBox="0 0 132 82" aria-hidden="true"><use href="#orca-art"/></svg>
+    </button>
+    <p class="hint" aria-hidden="true">pull the orca back and let go · <span id="count">0 throws</span></p>
+  </div>
+  <footer class="bar">
+    <div class="picks" role="group" aria-label="Or go straight to a project">
+      <span>or pick:</span>
+      <button data-t="0">Domis</button><button data-t="1">Virdio</button><button data-t="2">OBSCURA</button><button data-t="3">Memory Care</button><button data-t="4">About</button>
+    </div>
+    <div class="me">
+      <span class="email" id="email">hridaew@gmail.com</span><button id="copy">copy</button>
+      <a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a>
+      <button id="sound" aria-pressed="false">sound off</button>
+    </div>
+  </footer>
 </main>
+<aside class="panel" id="panel" aria-labelledby="p-title" aria-live="polite">
+  <button class="close" id="p-close" aria-label="Close">×</button>
+  <p class="kicker" id="p-kicker"></p>
+  <h2 id="p-title"></h2>
+  <p class="meta" id="p-meta"></p>
+  <div class="media" id="p-media"></div>
+  <div id="p-body"></div>
+</aside>
 <div class="shadow" id="shadow"></div>
 <div class="flyer" id="flyer" aria-hidden="true"><svg viewBox="0 0 132 82"><use href="#orca-art"/></svg></div>
 <p class="sr" id="live" aria-live="polite"></p>
-
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <g id="orca-art">
-      <path d="M10 48 C 14 22, 52 12, 84 18 C 104 22, 118 30, 124 38 C 128 44, 120 50, 108 50 L 100 58 C 96 64, 88 62, 88 56 L 60 60 C 40 64, 22 62, 10 48 Z" fill="#141518"/>
-      <path d="M58 18 C 62 4, 70 0, 74 2 C 70 8, 70 14, 72 20 Z" fill="#141518"/>
-      <path d="M20 52 C 34 60, 60 60, 86 54 C 80 62, 46 66, 24 58 Z" fill="#EEF0EC"/>
-      <ellipse cx="96" cy="32" rx="9" ry="4.5" fill="#EEF0EC" transform="rotate(-10 96 32)"/>
-      <circle cx="110" cy="38" r="2.4" fill="#EEF0EC"/>
-      <path d="M8 46 C 0 40, 0 30, 4 26 C 8 34, 12 38, 16 42 Z M8 50 C 0 56, 0 64, 4 68 C 8 60, 12 56, 16 52 Z" fill="#141518"/>
-      <path d="M30 30 q4 3 0 6 M44 24 q4 3 0 6 M86 46 q4 3 0 6" stroke="#3a3b3f" stroke-width="1.5" fill="none" stroke-dasharray="2 2"/>
+      <path d="M10 48 C 14 22, 52 12, 84 18 C 104 22, 118 30, 124 38 C 128 44, 120 50, 108 50 L 100 58 C 96 64, 88 62, 88 56 L 60 60 C 40 64, 22 62, 10 48 Z" fill="#161616"/>
+      <path d="M58 18 C 62 4, 70 0, 74 2 C 70 8, 70 14, 72 20 Z" fill="#161616"/>
+      <path d="M20 52 C 34 60, 60 60, 86 54 C 80 62, 46 66, 24 58 Z" fill="#F2EDE4"/>
+      <ellipse cx="96" cy="32" rx="9" ry="4.5" fill="#F2EDE4" transform="rotate(-10 96 32)"/>
+      <path d="M8 46 C 0 40, 0 30, 4 26 C 8 34, 12 38, 16 42 Z M8 50 C 0 56, 0 64, 4 68 C 8 60, 12 56, 16 52 Z" fill="#161616"/>
+      <path d="M10 48 C 14 22, 52 12, 84 18 C 104 22, 118 30, 124 38" stroke="#2a2a2a" stroke-width="1" fill="none"/>
     </g>
   </defs>
 </svg>
-
 <script>
 (() => {
   const $ = (s) => document.querySelector(s);
@@ -261,12 +184,12 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
   function cell(i) { return [(i % C) * pitch, Math.floor(i / C) * pitch]; }
   function disc(i, faceUp, squash, glint) {
     const [x, y] = cell(i);
-    ctx.fillStyle = "#0C0D0F"; ctx.fillRect(x, y, pitch, pitch);
+    ctx.fillStyle = "#070707"; ctx.fillRect(x, y, pitch, pitch);
     const r = pitch * 0.43, cx = x + pitch / 2, cy = y + pitch / 2;
-    ctx.fillStyle = faceUp ? "#EEF0EC" : "#141518";
+    ctx.fillStyle = faceUp ? "#F2EDE4" : "#181818";
     ctx.beginPath(); ctx.ellipse(cx, cy, r, Math.max(0.4, r * squash), 0, 0, Math.PI * 2); ctx.fill();
     if (glint) { ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(cx - r, cy - 0.5, r * 2, 1); }
-    else if (!faceUp && pitch > 6) { ctx.fillStyle = "#1f2024"; ctx.fillRect(cx - r, cy - 0.3, r * 2, 0.6); }
+    else if (!faceUp && pitch > 6) { ctx.fillStyle = "#222"; ctx.fillRect(cx - r, cy - 0.3, r * 2, 0.6); }
   }
   function drawAll() { for (let i = 0; i < C * R; i++) disc(i, cur[i], 1); }
 
@@ -356,18 +279,16 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     begin();
     if (wide) {
       fitText("HRIDAE WALIA", 3, 2, C - face.w - 10, 26);
-      p.save(); p.beginPath(); p.rect(0, 29, C - face.w - 14, 15); p.clip();
-      p.font = `14px "Jersey 10", monospace`; const mw = p.measureText(MARQ).width;
-      const off = -(marquee % mw); text(MARQ, 3 + off, 30, 14); text(MARQ, 3 + off + mw, 30, 14); p.restore();
+      fitText("INTERACTION + PRODUCT DESIGNER", 3, 30, C - face.w - 14, 13);
     } else {
       fitText("HRIDAE", 2, 2, C - face.w - 6, 22); fitText("WALIA", 2, 22, C - face.w - 6, 22);
       fitText("PRODUCT DESIGNER", 2, 44, C - 4, 13);
     }
     // net (diamond lattice) between the targets, unless freed
     if (!freed) {
-      const top = targets[0].y - targets[0].r - 4, bot = (wide ? targets[0].y : targets[2].y) + targets[0].r;
+      const top = targets[0].y - targets[0].r - 1, bot = (wide ? targets[0].y : targets[2].y) + targets[0].r;
       p.lineWidth = 1; p.globalAlpha = 1;
-      for (let k = -R; k < C + R; k += 8) {
+      for (let k = -R; k < C + R; k += 12) {
         p.beginPath(); p.moveTo(k, top); p.lineTo(k + (bot - top), bot); p.stroke();
         p.beginPath(); p.moveTo(k, bot); p.lineTo(k + (bot - top), top); p.stroke();
       }
@@ -387,7 +308,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
       p.fillStyle = "#000"; p.fillRect(Math.round(t.x - lw / 2) - 2, t.y + t.r + 2 + li * 11, lw + 4, 12); p.fillStyle = "#fff";
       fitText(label, Math.round(t.x - lw / 2), t.y + t.r + 3 + li * 11, C / (wide ? 4.3 : 2.3), 12); });
     });
-    if (wide) { text("GO ON,", face.x - 2, face.y + face.h + 2, 12); text("HIT ME", face.x - 2, face.y + face.h + 13, 12); }
+    if (wide) { fitText("HIT ME", face.x - 1, face.y + face.h + 3, face.w + 2, 12); }
     return end((bits) => {
       const f = dithered.face; if (f) blit(f, face.x, face.y, bits);
     });
@@ -400,8 +321,8 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     const lh = Math.min(wide ? 20 : 15, Math.floor((R - ty - 38) / P.lines.length));
     P.lines.forEach((l) => { fitText(l, tx, y, C - tx - 2, lh + 2); y += lh; });
     y += 4; const words = P.stat.split(" "); let line = "";
-    words.forEach((w) => { const tryL = line ? line + " " + w : w; p.font = `14px "Jersey 10", monospace`; if (p.measureText(tryL).width > C - tx - 2) { text(line, tx, y, 14); y += 13; line = w; } else line = tryL; });
-    if (line) text(line, tx, y, 14);
+    words.forEach((w) => { const tryL = line ? line + " " + w : w; p.font = `14px "Jersey 10", monospace`; if (p.measureText(tryL).width > C - tx - 2 && line) { fitText(line, tx, y, C - tx - 2, 14); y += 13; line = w; } else line = tryL; });
+    if (line) fitText(line, tx, y, C - tx - 2, 14);
     return end((bits) => { const dd = dithered[P.key]; if (dd) blit(dd, wide ? 2 : Math.round((C - size) / 2), 2, bits); });
   }
   function messageBits(lines) {
@@ -419,7 +340,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
   const wipe = (x) => x * 6;
   function goHome() { clearTimeout(holdT); screen = "home"; show(homeBits(), (x) => wipe(x)); }
   function hold(ms) { clearTimeout(holdT); holdT = setTimeout(goHome, ms); }
-  setInterval(() => { if (screen === "home" && wide && !reduce && !document.hidden) { marquee += 1; show(homeBits()); } }, 140);
+  
 
   /* ── throwing ── */
   const orca = $("#orca"), floor = $("#floor"), reticle = $("#reticle"), bandline = $("#bandline");
@@ -472,11 +393,12 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     if (i === 4) fly(b.left + (face.x + face.w / 2) * pitch, b.top + (face.y + face.h / 2) * pitch, 4);
     else { const t = targets[i]; fly(b.left + (t.x + 0.5) * pitch, b.top + (t.y + 0.5) * pitch, i); }
   }
-  document.querySelectorAll(".targets button").forEach((b) => b.addEventListener("click", () => throwAt(+b.dataset.t)));
+  document.querySelectorAll("[data-t]").forEach((b) => b.addEventListener("click", () => throwAt(+b.dataset.t)));
 
-  let flying = false;
+  let flying = false, pending = null;
   function fly(tx, ty, forced) {
-    if (flying) return; flying = true; throws++;
+    if (flying) { pending = [tx, ty, forced]; return; }
+    flying = true; throws++;
     if (screen !== "home") { clearTimeout(holdT); screen = "home"; show(homeBits()); }
     const o = orca.getBoundingClientRect(), sx = o.left + o.width / 2, sy = o.top + o.height / 2;
     orca.style.visibility = "hidden";
@@ -507,8 +429,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     s.style.transform = `rotate(${(Math.random() * 40 - 20).toFixed(0)}deg)`; pile.appendChild(s);
   }
   function land(tx, ty, forced) {
-    setTimeout(() => { orca.style.visibility = ""; flying = false; }, reduce ? 50 : 260);
-    pileUp();
+    setTimeout(() => { orca.style.visibility = ""; flying = false; if (pending && pending[2] != null) { const p = pending; pending = null; throwAt(p[2]); } else pending = null; }, reduce ? 50 : 260);
     const bp = boardPoint(tx, ty);
     let result = "miss", which = -1;
     if (forced === 4) { result = "face"; }
@@ -525,7 +446,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     if (bp.inside || forced != null) shockwave(cx, cy, which === 3 ? 9 : 18);
     count();
     if (result === "hit") onHit(which, cx, cy);
-    else if (result === "face") { screen = "kid"; say("Hit me. A photo of me as a kid, and my education."); setTimeout(() => { show(kidBits(), (x) => wipe(x)); hold(6000); }, 260); }
+    else if (result === "face") { screen = "kid"; openPanel(ABOUT); say("Hit me. A photo of me as a kid, and my education."); setTimeout(() => { show(kidBits(), (x) => wipe(x)); hold(6000); }, 260); }
     else if (result === "near") { near++; screen = "msg"; say("Near miss. One more."); setTimeout(() => { show(messageBits(["NEAR MISS.", "ONE MORE."])); hold(1000); }, 200); }
     else { screen = "msg"; say("Miss. Did you step out of frame?"); show(messageBits(wide ? ["DID YOU STEP", "OUT OF FRAME?"] : ["DID YOU", "STEP OUT", "OF FRAME?"])); hold(1400); }
   }
@@ -533,7 +454,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     const first = !hits.has(k);
     hits.add(k); hitCount++; count();
     holes.push([cx, cy]);
-    document.querySelector(`.targets button[data-t="${k}"]`).setAttribute("data-done", "");
+    document.querySelector(`[data-t="${k}"]`).setAttribute("data-done", "");
     card(k);
     screen = "proj"; say(`Hit ${PROJECTS[k].label}. ${PROJECTS[k].lines.join(" ")} ${PROJECTS[k].stat}.`);
     setTimeout(() => { show(projectBits(k), (x) => wipe(x)); hold(6000); }, reduce ? 0 : 260);
@@ -554,31 +475,45 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
     };
     setTimeout(swim, reduce ? 0 : 2500);
     const acc = throws ? Math.round((hitCount / throws) * 100) : 0;
-    typeLog(`PLAYTEST LOG · your browser\nThrows ${throws} · Hits ${hitCount} · Near misses ${near}\nAccuracy ${acc}% · Tutorials needed 0\nSame as the real booth: the throw won.\n→ Saving Baby J: hridaew.com/waffling/orca`);
+    typeLog(`PLAYTEST LOG · your browser\nThrows ${throws} · Hits ${hitCount} · Near misses ${near}\nAccuracy ${acc}% · Tutorials needed 0\nSame as the real booth: the throw won.`);
   }
-  function typeLog(s) { const el = $("#log"); if (reduce) { el.textContent = s; return; } let n = 0; const t = () => { el.textContent = s.slice(0, ++n); if (n < s.length) setTimeout(t, 28); }; t(); }
-  function count() { $("#count").textContent = `THROWS ${String(throws).padStart(2, "0")} · HITS ${String(hitCount).padStart(2, "0")}`; }
+  function typeLog(s) { openPanel({ kicker: "Finale", title: "Baby J is free", meta: "Every project hit", media: null, html: `<p class="log" id="log"></p><div class="links"><a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener">The real Saving Baby J ↗</a></div>` }); const el = $("#log"); if (reduce) { el.textContent = s; return; } let n = 0; const t = () => { el.textContent = s.slice(0, ++n); if (n < s.length) setTimeout(t, 28); }; t(); }
+  function count() { $("#count").textContent = `${throws} throw${throws === 1 ? "" : "s"} · ${hitCount} hit${hitCount === 1 ? "" : "s"}`; }
   function say(s) { $("#live").textContent = s; canvas.setAttribute("aria-label", "Flip-dot board: " + s); }
 
-  function card(k) {
-    const P = PROJECTS[k], el = $("#proj"), m = $("#proj-media");
-    el.classList.remove("empty");
-    $("#proj-h").textContent = `Card 3 · ${P.label}`;
-    m.className = "media" + (P.media.portrait ? " portrait" : ""); m.innerHTML = "";
-    if (P.media.video) { const v = document.createElement("video"); v.src = P.media.video; v.poster = P.media.poster; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = !reduce; v.setAttribute("aria-label", P.label + " app video"); m.appendChild(v); if (!reduce) v.play().catch(() => {}); }
-    else { const im = document.createElement("img"); im.src = P.media.img; im.alt = P.label; m.appendChild(im); }
-    $("#proj-body").innerHTML = "";
-    const pb = $("#proj-body"); pb.textContent = P.body + " ";
-    const a = document.createElement("a"); a.href = P.href; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Read the case study ↗"; pb.appendChild(a);
-    const sc = $("#scribble"); sc.classList.remove("go"); void sc.offsetWidth; sc.classList.add("go");
+  const ABOUT = {
+    kicker: "About", title: "Hridae Walia", meta: "Interaction & product designer · San Francisco",
+    media: { img: "media/kid.webp", portrait: true },
+    html: `<p>I design for interaction models that barely exist yet, and I learn by making: on the canvas, in code, and in the physical world. Founding Product Designer at Domis.</p>
+      <p style="color:var(--dim);font-size:14px">M.HCI+D, University of Washington, 2024 · BFA Interaction Design, California College of the Arts, 2020. That's me as a kid, on the board.</p>
+      <p class="kicker" style="margin-top:22px">Side builds</p><ul>
+      <li><a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener">Saving Baby J ↗</a><span>The real version of this board: throw plush orcas to free a calf.</span></li>
+      <li><a href="https://hridaew.com/waffling/savor" target="_blank" rel="noopener">Savor ↗</a><span>Phone video to 3D Gaussian splat, on-device.</span></li>
+      <li><a href="https://hridaew.com/waffling/recorder" target="_blank" rel="noopener">Recorder-Proto ↗</a><span>Scrub a voice memo like a turntable.</span></li>
+      <li><a href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener">Butter Chicken ↗</a><span>Taste scales linearly with butter.</span></li></ul>`,
+  };
+  const META = ["Founding Product Designer · 2024–now", "Product Designer · 2021–2022", "Interaction design, Unity · MOHAI, 2025", "Interaction Designer · 2020–2023"];
+  const TITLES = ["Domis", "Virdio", "OBSCURA", "Memory Care"];
+  function openPanel(d) {
+    $("#p-kicker").textContent = d.kicker; $("#p-title").textContent = d.title; $("#p-meta").textContent = d.meta;
+    const m = $("#p-media"); m.className = "media" + (d.media && d.media.portrait ? " portrait" : ""); m.innerHTML = ""; m.hidden = !d.media;
+    if (d.media && d.media.video) { const v = document.createElement("video"); v.src = d.media.video; v.poster = d.media.poster; v.muted = true; v.loop = true; v.playsInline = true; m.appendChild(v); if (!reduce) v.play().catch(() => {}); }
+    else if (d.media) { const im = document.createElement("img"); im.src = d.media.img; im.alt = d.title; m.appendChild(im); }
+    $("#p-body").innerHTML = d.html;
+    $("#panel").classList.add("open");
   }
-
+  $("#p-close").addEventListener("click", () => $("#panel").classList.remove("open"));
+  function card(k) {
+    const P = PROJECTS[k];
+    openPanel({ kicker: `Hit ${hits.size} of 4`, title: TITLES[k], meta: META[k], media: P.media,
+      html: `<p>${P.body.replace(/^[^.]*\.\s*/, "")}</p><div class="links"><a href="${P.href}" target="_blank" rel="noopener">Read the case study ↗</a></div>` });
+  }
   addEventListener("keydown", (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target.matches && e.target.matches("input, textarea")) return;
     const k = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 }[e.key];
     if (k !== undefined) { throwAt(k); return; }
-    if (e.key === "Escape") goHome();
+    if (e.key === "Escape") { $("#panel").classList.remove("open"); goHome(); }
     if (e.key.toLowerCase() === "s" && document.activeElement === document.body) toggleSound();
   });
 
@@ -587,7 +522,7 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
   function toggleSound() {
     soundOn = !soundOn;
     if (soundOn && !actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { soundOn = false; } }
-    const b = $("#sound"); b.textContent = "sound: " + (soundOn ? "on" : "off"); b.setAttribute("aria-pressed", soundOn);
+    const b = $("#sound"); b.textContent = "sound " + (soundOn ? "on" : "off"); b.setAttribute("aria-pressed", soundOn);
   }
   $("#sound").addEventListener("click", toggleSound);
   function noise(t, gain) {
@@ -608,9 +543,9 @@ canvas#board { display: block; width: 100%; background: var(--panel); touch-acti
 
   $("#copy").addEventListener("click", async (e) => {
     const b = e.currentTarget;
-    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "COPIED"; }
-    catch (err) { const r = document.createRange(); r.selectNodeContents($("#email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "SELECTED"; }
-    setTimeout(() => (b.textContent = "COPY"), 1600);
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents($("#email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1600);
   });
 
   /* ── boot ── */
