@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Powers of Ten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Azeret+Mono:wght@400;500&display=swap">
+<style>
+/* One continuous zoom: San Francisco, a neighbourhood, a house, a desk, a sketch, a pencil line. Each power of ten holds a project. */
+:root {
+  color-scheme: light;
+  --water: #A9C1CF; --land: #E4E6E0; --ink: #0F1A22; --muted: #4C5A63; --rule: rgb(15 26 34 / .16); --pane: rgb(244 246 243 / .86);
+  --f-sans: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Azeret Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--water); color: var(--ink); font: 400 15px/1.5 var(--f-sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: zoom-in; }
+
+.who { position: fixed; z-index: 3; left: clamp(20px, 3vw, 44px); top: calc(clamp(18px, 3.6vh, 36px) + env(safe-area-inset-top, 0px)); padding: 10px 14px 11px; margin: -10px -14px; background: var(--pane); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-radius: 3px; }
+.who b { display: block; font: 700 17px/1.15 var(--f-sans); letter-spacing: -.01em; }
+.who span { font: 400 11px/1.5 var(--f-mono); color: var(--muted); }
+.back { position: fixed; z-index: 3; right: clamp(20px, 3vw, 44px); top: calc(clamp(18px, 3.6vh, 36px) + env(safe-area-inset-top, 0px)); font: 400 11px/1 var(--f-mono); color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; background: var(--pane); padding: 6px 8px; border-radius: 3px; }
+
+.ladder { position: fixed; z-index: 3; right: clamp(20px, 3vw, 44px); top: 50%; transform: translateY(-50%); margin: 0; padding: 14px 16px; list-style: none; display: grid; gap: 2px; background: var(--pane); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-radius: 3px; }
+.ladder button { display: grid; grid-template-columns: 52px auto; align-items: baseline; text-align: left; padding: 3px 0; color: var(--muted); transition: color .2s; }
+.ladder .e { font: 500 13px/1 var(--f-mono); }
+.ladder .e sup { font-size: 9px; }
+.ladder .n { font: 400 12px/1 var(--f-sans); }
+.ladder button:hover { color: var(--ink); }
+.ladder button[aria-current="true"] { color: var(--ink); }
+.ladder button[aria-current="true"] .n { font-weight: 700; }
+.ladder button[aria-current="true"] .e::before { content: "▸"; margin-left: -12px; width: 12px; display: inline-block; font-size: 10px; }
+.scale { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); display: grid; gap: 6px; }
+.scale .big { font: 500 22px/1 var(--f-mono); letter-spacing: -.02em; }
+.scale .big sup { font-size: 12px; }
+.scale .bar { height: 6px; border: 1.5px solid var(--ink); border-top: 0; width: 60px; transition: width .08s linear; }
+.scale .len { font: 400 10.5px/1 var(--f-mono); color: var(--muted); }
+
+.cap { position: fixed; z-index: 3; left: clamp(20px, 3vw, 44px); bottom: calc(clamp(22px, 5vh, 48px) + env(safe-area-inset-bottom, 0px)); width: min(440px, 34vw); padding: 18px 20px 18px; background: var(--pane); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 3px; }
+.cap .swap { transition: opacity .2s ease-in, transform .3s cubic-bezier(.2,.8,.2,1); }
+.cap .swap.out { opacity: 0; transform: translateY(6px); }
+.cap .meta { font: 400 11px/1.5 var(--f-mono); color: var(--muted); }
+.cap h1, .cap h2 { margin: 6px 0 8px; font: 700 clamp(30px, 3vw, 42px)/1 var(--f-sans); letter-spacing: -.025em; }
+.cap p { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
+.cap .links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.cap .links a { font: 500 12px/1.4 var(--f-mono); text-decoration: none; border-bottom: 1px solid var(--ink); }
+.contact { position: fixed; z-index: 3; right: clamp(20px, 3vw, 44px); bottom: calc(clamp(22px, 5vh, 48px) + env(safe-area-inset-bottom, 0px)); font: 400 11.5px/1.6 var(--f-mono); display: flex; gap: 12px; align-items: baseline; background: var(--pane); padding: 8px 12px; border-radius: 3px; }
+.contact .email { user-select: all; }
+.contact button, .contact a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+.hint { position: fixed; z-index: 3; left: 50%; transform: translateX(-50%); top: calc(clamp(22px, 4vh, 40px) + env(safe-area-inset-top, 0px)); font: 400 11px/1 var(--f-mono); color: var(--ink); background: var(--pane); padding: 6px 10px; border-radius: 3px; transition: opacity .5s; pointer-events: none; }
+.hint.gone { opacity: 0; }
+
+@media (max-width: 820px) {
+  .who b { font-size: 16px; }
+  .ladder { top: auto; transform: none; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px) + var(--capH, 210px)); grid-template-columns: repeat(3, 1fr); gap: 0 8px; padding: 10px 12px; }
+  .ladder button { grid-template-columns: auto; gap: 2px; padding: 4px 0; }
+  .ladder button[aria-current="true"] .e::before { display: none; }
+  .ladder .n { font-size: 11px; white-space: nowrap; }
+  .scale { display: none; }
+  .cap { left: 16px; right: 16px; width: auto; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 14px 16px; }
+  .cap h1, .cap h2 { font-size: 28px; }
+  .cap p { font-size: 14px; margin-bottom: 10px; }
+  .contact { left: auto; right: 16px; top: calc(78px + env(safe-area-inset-top, 0px)); bottom: auto; padding: 6px 8px; font-size: 11px; }
+  .back { right: 16px; }
+  .who { left: 16px; }
+  .hint { display: none; }
+  .mscale { display: block !important; }
+}
+.mscale { display: none; position: fixed; z-index: 3; left: 16px; top: calc(78px + env(safe-area-inset-top, 0px)); font: 500 18px/1 var(--f-mono); background: var(--pane); padding: 6px 9px; border-radius: 3px; }
+.mscale sup { font-size: 11px; }
+@media (prefers-reduced-motion: reduce) { .cap .swap { transition: none; } }
+</style>
+</head>
+<body>
+<canvas id="c" role="img" aria-label="A continuous zoom from a map of San Francisco down to a single pencil line"></canvas>
+<header class="who"><b>Hridae Walia</b><span>Product designer · San Francisco</span></header>
+<a class="back" href="../index.html">all sketches</a>
+<p class="hint" id="hint" aria-hidden="true">scroll, drag or pinch to zoom</p>
+<div class="mscale" id="mscale" aria-hidden="true"></div>
+<nav aria-label="Scales and projects">
+  <ol class="ladder" id="ladder"></ol>
+</nav>
+<section class="cap" id="capBox" aria-live="polite"><div class="swap" id="cap"></div></section>
+<footer class="contact"><span class="email" id="email">hridaew@gmail.com</span><button id="copy">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a></footer>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  const IM = {};
+  ["house", "virdio", "sketch", "station", "cat"].forEach((k) => { const i = new Image(); i.onload = () => wake(); i.src = `media/${k}.webp`; IM[k] = i; });
+  const ok = (i) => i.complete && i.naturalWidth > 0;
+
+  /* ---------- the world, in metres ---------- */
+  const C = { x: 7200, y: 8400 };                       // SF Campus for Jewish Living (Excelsior), on our map
+  const PX = 128, PY = 268;                             // block pitch: 110 x 250 m blocks, 18 m streets
+  const HOUSE_LOT = { i: 3, j: -1, k: 15 };
+  const H = { x: C.x + HOUSE_LOT.i * PX - 55 + 9, y: C.y + HOUSE_LOT.j * PY - 125 + HOUSE_LOT.k * 8 + 4 };
+  const HS = 12;                                        // the house avatar spans 12 m
+  const WIN = { x: H.x + (444 / 800 - 0.5) * HS, y: H.y + (294 / 800 - 0.5) * HS, w: 74 / 800 * HS, h: 82 / 800 * HS };
+  const SD = WIN.w / 1.665;                             // desk units -> metres
+  const SK = { x: 0.86, y: 1.03, w: 0.73, h: 0.73 / 1.1337 }; // sketch, in desk units
+  const G = { x: WIN.x + (SK.x + 0.33 * SK.w) * SD, y: WIN.y + (SK.y + 0.36 * SK.h) * SD }; // a point on a pencil stroke
+
+  const LINK = (l, h) => `<a href="${h}" target="_blank" rel="noopener">${l} ↗</a>`;
+  const STOPS = [
+    { n: "San Francisco", e: 4, c: { x: 5800, y: 5400 }, S: 13000, h1: true, t: "Hridae Walia", meta: "10⁴ m · San Francisco",
+      p: "I'm a product designer obsessed with making. For six years I've designed for interaction models that barely exist yet, and I learn by making: on the canvas, in code, and in the physical world.",
+      links: LINK("CV", "https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing") + LINK("LinkedIn", "https://www.linkedin.com/in/hridae") },
+    { n: "Memory Care", e: 3, c: C, S: 1500, t: "Memory Care", meta: "10³ m · SF Campus for Jewish Living · 2020–2023",
+      p: "For residents living with dementia, I wired plush cats with pressure sensors and haptic motors: pet one and it purrs. 98% positive across 200+ sessions.",
+      links: LINK("Case study", "https://hridaew.com/memory-care") },
+    { n: "Domis", e: 1, c: H, S: 17, t: "Domis", meta: "10¹ m · A house · Founding Product Designer, 2024–now",
+      p: "Domis learns a house from the smallest thing its owner will give: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.",
+      links: LINK("Case study", "https://hridaew.com/domis") },
+    { n: "Virdio", e: 0, c: { x: WIN.x + WIN.w / 2, y: WIN.y + WIN.h / 2 }, S: 1.5, t: "Virdio", meta: "10⁰ m · A desk · Product Designer, 2021–2022",
+      p: "Hardware-free AR fitness: an ordinary camera reads your body and counts every rep. Testing showed the phone was the worst place to work out, so I pushed for desktop first.",
+      links: LINK("Case study", "https://hridaew.com/virdio") },
+    { n: "OBSCURA", e: -1, c: { x: WIN.x + (SK.x + SK.w / 2) * SD, y: WIN.y + (SK.y + SK.h / 2) * SD }, S: 0.6, t: "OBSCURA", meta: "10⁻¹ m · A sketch · MOHAI, Seattle, 2025",
+      p: "An early sketch: one visitor immersed in never-seen photographs from 1946 Japan, an audience outside watching through their eyes. Gaze-tracked VR in Unity. It sold out.",
+      links: LINK("Case study", "https://hridaew.com/obscura") },
+    { n: "Savor", e: -3, c: G, S: 0.0028, t: "Side builds", meta: "10⁻³ m · A pencil line, splatted",
+      p: "Up close, everything is splats. Savor is a Mac tool I built that turns a phone video into a 3D Gaussian splat. More things I make to learn:",
+      links: LINK("Savor", "https://hridaew.com/waffling/savor") + LINK("Saving Baby J", "https://hridaew.com/waffling/orca") + LINK("Recorder", "https://hridaew.com/waffling/recorder") + LINK("Butter chicken", "https://hridaew.com/butter-chicken") },
+  ];
+  const LZ = STOPS.map((s) => Math.log10(s.S));
+  const ZMAX = Math.log10(26000), ZMIN = Math.log10(0.0016);
+
+  // camera centre for a view size S: zooming about a point that stays fixed on screen between stops
+  function camAt(S) {
+    if (S >= STOPS[0].S) return STOPS[0].c;
+    for (let i = 0; i < STOPS.length - 1; i++) {
+      const a = STOPS[i], b = STOPS[i + 1];
+      if (S <= a.S && S >= b.S) { const f = (S - b.S) / (a.S - b.S); return { x: b.c.x + (a.c.x - b.c.x) * f, y: b.c.y + (a.c.y - b.c.y) * f }; }
+    }
+    return STOPS[STOPS.length - 1].c;
+  }
+
+  /* ---------- city outline (km) ---------- */
+  const SF = [[0,1.6],[0.5,1.0],[1.2,0.55],[2.0,0.35],[3.0,0.15],[4.2,0.05],[5.0,0.35],[5.8,0.2],[6.6,0.15],[7.4,0.25],[8.2,0.35],[8.9,0.75],[9.35,1.5],[9.55,2.3],[9.7,3.2],[9.9,4.1],[10.2,4.8],[10.9,5.4],[11.6,6.0],[11.5,6.8],[10.8,7.3],[10.6,8.0],[11.1,8.6],[10.7,9.4],[10.2,10.1],[9.6,10.55],[0.25,10.55],[0.15,8.0],[0.1,5.0],[0.05,3.0]];
+  const sfPath = new Path2D(); SF.forEach(([x, y], i) => (i ? sfPath.lineTo(x, y) : sfPath.moveTo(x, y))); sfPath.closePath();
+
+  /* ---------- graphite splats (mm, around G) ---------- */
+  let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const gauss = () => { let u = 0; for (let i = 0; i < 4; i++) u += rnd(); return (u - 2) / 0.58; };
+  const SPL = [];
+  for (let s = 0; s < 9; s++) { // hatching strokes, slightly diagonal
+    const off = (s - 4) * 0.62 + gauss() * 0.12, ang = 1.36 + gauss() * 0.04, dark = 0.5 + rnd() * 0.5;
+    for (let n = 0; n < 260; n++) {
+      const t = (rnd() - 0.5) * 11, w = gauss() * 0.13;
+      SPL.push({ x: off + Math.cos(ang) * t + Math.cos(ang + 1.57) * w, y: Math.sin(ang) * t + Math.sin(ang + 1.57) * w, r: 0.03 + rnd() * rnd() * 0.2, a: (0.25 + rnd() * 0.6) * dark, hue: rnd() });
+    }
+  }
+  for (let n = 0; n < 220; n++) SPL.push({ x: (rnd() - 0.5) * 11, y: (rnd() - 0.5) * 11, r: 0.03 + rnd() * 0.08, a: 0.12 + rnd() * 0.2, hue: rnd() });
+  const sprite = document.createElement("canvas"); sprite.width = sprite.height = 64;
+  { const g = sprite.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.3, "rgba(255,255,255,.85)"); r.addColorStop(0.55, "rgba(255,255,255,.25)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 64, 64); }
+  const tinted = ["#2B2F36", "#3A3E47", "#24282E", "#4A4F5A", "#33373F"].map((col) => {
+    const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+    g.drawImage(sprite, 0, 0); g.globalCompositeOperation = "source-in"; g.fillStyle = col; g.fillRect(0, 0, 64, 64); return c;
+  });
+
+  /* ---------- view ---------- */
+  let W = 0, Hh = 0, dpr = 1, V = 600, fx = 0, fy = 0, mobile = false;
+  let z = LZ[0], zv = 0, flight = null, lastInput = 0, dirty = true;
+  function layout() {
+    mobile = innerWidth <= 820; W = innerWidth; Hh = innerHeight; dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr);
+    if (mobile) {
+      const capH = document.getElementById("capBox").offsetHeight;
+      document.documentElement.style.setProperty("--capH", capH + 12 + "px");
+      fx = W / 2; fy = Math.max(170, (Hh - capH - 110) * 0.55); V = Math.min(W - 24, Hh - capH - 140);
+    } else { fx = W * 0.47; fy = Hh / 2; V = Math.min(W * 0.62, Hh * 0.92); }
+    dirty = true;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const ramp = (v, a, b) => clamp((v - a) / (b - a), 0, 1); // 0 at a, 1 at b
+  const sm = (t) => t * t * (3 - 2 * t);
+
+  function draw() {
+    const S = Math.pow(10, z), k = V / S, cam = camAt(S);
+    const sx = (x) => (x - cam.x) * k + fx, sy = (y) => (y - cam.y) * k + fy;
+    const plate = (ox, oy, sc) => ctx.setTransform(k * sc * dpr, 0, 0, k * sc * dpr, sx(ox) * dpr, sy(oy) * dpr);
+    const screen = () => ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    screen(); ctx.globalAlpha = 1;
+    // what covers the screen? skip everything underneath it
+    const deskCovers = S < 1.0, grainCovers = S < 0.0042;
+    if (!deskCovers) {
+      ctx.fillStyle = S > 150 ? "#A9C1CF" : "#E4E6E0"; ctx.fillRect(0, 0, W, Hh);
+      /* city */
+      if (S > 150) {
+        plate(0, 0, 1000); const px = 1 / (k * 1000);
+        ctx.fillStyle = "#E4E6E0"; ctx.fill(sfPath);
+        ctx.save(); ctx.clip(sfPath);
+        ctx.fillStyle = "#CBDABF";
+        ctx.fillRect(0.2, 4.35, 4.4, 0.62); ctx.fillRect(1.2, 0.3, 3.1, 1.3); ctx.fillRect(7.7, 8.6, 1.3, 0.8);
+        ctx.beginPath(); ctx.arc(5.0, 6.3, 0.42, 0, 7); ctx.fill();
+        ctx.fillStyle = "#A9C1CF"; ctx.beginPath(); ctx.ellipse(1.45, 9.7, 0.38, 0.7, 0, 0, 7); ctx.fill();
+        // streets: majors always, minors as you approach
+        ctx.strokeStyle = "#FBFBF9";
+        const minor = ramp(S, 9000, 3500);
+        const step = 0.2;
+        ctx.lineWidth = Math.max(px * 0.8, 0.018);
+        if (minor > 0) { ctx.globalAlpha = minor; ctx.beginPath(); for (let x = 0; x < 12; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, 11); } for (let y = 0; y < 11; y += step) { ctx.moveTo(0, y); ctx.lineTo(12, y); } ctx.stroke(); }
+        ctx.globalAlpha = 1; ctx.lineWidth = Math.max(px * 1.6, 0.02); ctx.beginPath();
+        for (let x = 0.8; x < 12; x += 0.8) { ctx.moveTo(x, 0); ctx.lineTo(x, 11); } for (let y = 0.8; y < 11; y += 0.8) { ctx.moveTo(0, y); ctx.lineTo(12, y); } ctx.stroke();
+        ctx.lineWidth = Math.max(px * 3, 0.03); ctx.beginPath(); ctx.moveTo(9.3, 1.6); ctx.lineTo(5.0, 6.2); ctx.moveTo(4.6, 5.0); ctx.lineTo(5.2, 10.6); ctx.stroke();
+        ctx.restore();
+        ctx.strokeStyle = "rgba(15,26,34,.28)"; ctx.lineWidth = px * 1.2; ctx.stroke(sfPath);
+      }
+      /* neighbourhood streets around the campus */
+      if (S < 6000) {
+        const a = sm(ramp(S, 6000, 2600));
+        plate(C.x, C.y, 1); const px = 1 / k;
+        ctx.strokeStyle = S < 160 ? "#D3D4CE" : "#FBFBF9"; ctx.lineWidth = 18; ctx.lineCap = "butt";
+        const R = 1700, x0 = Math.floor((cam.x - C.x - (fx / k)) / PX) - 1, x1 = Math.ceil((cam.x - C.x + (W - fx) / k) / PX) + 1;
+        const y0 = Math.floor((cam.y - C.y - fy / k) / PY) - 1, y1 = Math.ceil((cam.y - C.y + (Hh - fy) / k) / PY) + 1;
+        for (let i = Math.max(-14, x0); i <= Math.min(14, x1); i++) {
+          const gx = i * PX + 64, d = Math.abs(gx); ctx.globalAlpha = a * clamp(1 - (d - 900) / 800, 0, 1);
+          if (ctx.globalAlpha > 0.01) { ctx.beginPath(); ctx.moveTo(gx, -R); ctx.lineTo(gx, R); ctx.stroke(); }
+        }
+        for (let j = Math.max(-7, y0); j <= Math.min(7, y1); j++) {
+          const gy = j * PY + 134, d = Math.abs(gy); ctx.globalAlpha = a * clamp(1 - (d - 900) / 800, 0, 1);
+          if (ctx.globalAlpha > 0.01) { ctx.beginPath(); ctx.moveTo(-R, gy); ctx.lineTo(R, gy); ctx.stroke(); }
+        }
+        // the campus block
+        ctx.globalAlpha = a; ctx.fillStyle = "#CFDEC4"; ctx.fillRect(-55, -125, 110, 250);
+        // lots and roofs, close up
+        if (S < 520) {
+          const la = sm(ramp(S, 520, 220)) * sm(ramp(S, 32, 75)), roofs = ["#C9BBAE", "#BAB5AC", "#D3C6B4", "#ABA59C", "#C6BCB1", "#B3A89B"];
+          for (let i = Math.max(-14, x0); i <= Math.min(14, x1); i++) for (let j = Math.max(-7, y0); j <= Math.min(7, y1); j++) {
+            if (i === 0 && j === 0) continue;
+            const bx = i * PX, by = j * PY;
+            for (let side = 0; side < 2; side++) for (let q = 0; q < 31; q++) {
+              const ly = by - 125 + q * 8 + 0.6, lx = side ? bx + 55 - 17 : bx - 55 + 2;
+              if (i === HOUSE_LOT.i && j === HOUSE_LOT.j && side === 0 && q === HOUSE_LOT.k) continue;
+              const hsh = (i * 73856093 ^ j * 19349663 ^ q * 83492791 ^ side) >>> 0;
+              ctx.globalAlpha = la; ctx.fillStyle = roofs[hsh % roofs.length];
+              ctx.fillRect(lx, ly, 15, 6.8);
+              ctx.fillStyle = "rgba(15,26,34,.07)"; ctx.fillRect(lx + 7.5, ly, 7.5, 6.8);
+            }
+            ctx.globalAlpha = la * 0.5; ctx.fillStyle = "#D5DECD"; ctx.fillRect(bx - 36, by - 124, 72, 248); // back gardens
+          }
+        }
+        // the pinned photo of the station
+        const pa = sm(ramp(S, 3400, 2000)) * (1 - sm(ramp(S, 700, 260)));
+        if (pa > 0.01 && ok(IM.station)) {
+          ctx.globalAlpha = pa; ctx.save(); ctx.translate(-560, -460); ctx.rotate(-0.06);
+          ctx.shadowColor = "rgba(15,26,34,.25)"; ctx.shadowBlur = 16 * dpr; ctx.shadowOffsetY = 6 * dpr;
+          ctx.fillStyle = "#fff"; ctx.fillRect(-14, -14, 368, 300); ctx.shadowColor = "transparent";
+          ctx.drawImage(IM.station, 0, 0, 340, 255); ctx.restore();
+        }
+        ctx.globalAlpha = 1;
+      }
+      /* the house: Domis' 3D avatar rises out of its lot */
+      if (S < 420 && S > 0.9) {
+        const ha = sm(ramp(S, 420, 160));
+        plate(H.x, H.y, 1);
+        if (ok(IM.house)) {
+          ctx.globalAlpha = ha; ctx.save(); ctx.shadowColor = "rgba(15,26,34,.28)"; ctx.shadowBlur = 24 * dpr; ctx.shadowOffsetY = 8 * dpr;
+          ctx.drawImage(IM.house, -HS / 2, -HS / 2, HS, HS); ctx.restore();
+        }
+        // through the window: the desk
+        const da = sm(ramp(S, 9, 3.6));
+        if (da > 0.01) {
+          ctx.save(); ctx.globalAlpha = da;
+          ctx.beginPath(); ctx.rect(WIN.x - H.x, WIN.y - H.y, WIN.w, WIN.h); ctx.clip();
+          plate(WIN.x, WIN.y, SD); drawDesk(false);
+          ctx.restore();
+          const ma = da * (1 - sm(ramp(S, 2.7, 1.9)));
+          if (ma > 0.01) { // mullions
+            plate(H.x, H.y, 1); ctx.globalAlpha = ma; ctx.fillStyle = "#F1E6D2";
+            ctx.fillRect(WIN.x - H.x + WIN.w / 2 - 0.035, WIN.y - H.y, 0.07, WIN.h); ctx.fillRect(WIN.x - H.x, WIN.y - H.y + WIN.h / 2 - 0.035, WIN.w, 0.07);
+          }
+          ctx.globalAlpha = 1;
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+    /* the desk itself, past the window frame */
+    if (S < 1.35 && !grainCovers) {
+      const a = sm(ramp(S, 1.35, 0.95));
+      ctx.globalAlpha = a; plate(WIN.x, WIN.y, SD); drawDesk(true); ctx.globalAlpha = 1;
+    }
+    /* graphite resolves into splats */
+    if (S < 0.03) {
+      const a = sm(ramp(S, 0.03, 0.009));
+      plate(G.x, G.y, 0.001); // local units: millimetres
+      ctx.globalAlpha = a * 0.9;
+      const r = ctx.createRadialGradient(0, 0, 0, 0, 0, 7.5); r.addColorStop(0, "#F2F0EA"); r.addColorStop(0.7, "#F2F0EA"); r.addColorStop(1, "rgba(242,240,234,0)");
+      ctx.fillStyle = r; ctx.fillRect(-8, -8, 16, 16);
+      for (const s of SPL) {
+        const d = Math.hypot(s.x, s.y); if (d > 6.5) continue;
+        ctx.globalAlpha = a * s.a * clamp((6.5 - d) / 1.5, 0, 1);
+        ctx.drawImage(tinted[Math.floor(s.hue * tinted.length)], s.x - s.r * 2, s.y - s.r * 2, s.r * 4, s.r * 4);
+      }
+      ctx.globalAlpha = 1;
+    }
+    /* pins and labels, in screen space */
+    screen();
+    if (S > 300) {
+      const la = sm(ramp(S, 2600, 5200));
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      if (la > 0.01) {
+        ctx.globalAlpha = la; ctx.fillStyle = "rgba(15,26,34,.82)";
+        ctx.font = `700 ${mobile ? 15 : 19}px "Schibsted Grotesk", Arial, sans-serif`; if ("letterSpacing" in ctx) ctx.letterSpacing = "0.32em";
+        ctx.fillText("SAN FRANCISCO", sx(6000), sy(3000));
+        ctx.font = `500 ${mobile ? 9 : 10.5}px "Azeret Mono", monospace`; if ("letterSpacing" in ctx) ctx.letterSpacing = "0.2em"; ctx.fillStyle = "rgba(15,26,34,.55)";
+        if (!mobile) { ctx.fillText("PACIFIC OCEAN", sx(-1800), sy(6200)); ctx.fillText("SAN FRANCISCO BAY", sx(12600), sy(2600)); } ctx.fillText("GOLDEN GATE PARK", sx(2400), sy(4660));
+        if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+      }
+      // campus pin
+      const pa = 1 - sm(ramp(S, 700, 300));
+      ctx.globalAlpha = pa; const X = sx(C.x), Y = sy(C.y);
+      ctx.fillStyle = "#0F1A22"; ctx.beginPath(); ctx.arc(X, Y, 5, 0, 7); ctx.fill();
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(X, Y, 11, 0, 7); ctx.strokeStyle = "rgba(15,26,34,.45)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.font = `500 ${mobile ? 10 : 11}px "Azeret Mono", monospace`; ctx.fillStyle = "#0F1A22";
+      const lbl = "SF Campus for Jewish Living", tw = ctx.measureText(lbl).width, flip = X + 17 + tw > W - 12;
+      ctx.textAlign = flip ? "right" : "left"; ctx.fillText(lbl, flip ? X - 17 : X + 17, Y + 1);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function drawDesk(full) {
+    // desk units: the window frames 1.665 x 1.845; beyond it the desk carries on
+    ctx.fillStyle = "#D8C3A5"; ctx.fillRect(full ? -3 : -0.1, full ? -3 : -0.1, full ? 8 : 1.9, full ? 8 : 2.1);
+    ctx.strokeStyle = "rgba(120,84,48,.13)"; ctx.lineWidth = 0.006;
+    ctx.beginPath(); for (let i = -40; i < 60; i++) { const y = i * 0.07; ctx.moveTo(-3, y); ctx.bezierCurveTo(-1, y + 0.03, 1.5, y - 0.03, 5, y + 0.02); } ctx.stroke();
+    // laptop, folded flat
+    ctx.save(); ctx.shadowColor = "rgba(40,24,8,.28)"; ctx.shadowBlur = 0.04 * Math.pow(10, -z) * V * dpr; ctx.shadowOffsetY = 0.012 * Math.pow(10, -z) * V * dpr;
+    ctx.fillStyle = "#1B1C20"; roundRect(0.06, 0.115, 0.72, 0.425, 0.02); ctx.fill();
+    ctx.fillStyle = "#C9CCD1"; roundRect(0.06, 0.55, 0.72, 0.4, 0.02); ctx.fill(); ctx.restore();
+    if (ok(IM.virdio)) ctx.drawImage(IM.virdio, 0.085, 0.14, 0.67, 0.67 / 1.783);
+    ctx.fillStyle = "#B4B8BE";
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 13; c++) ctx.fillRect(0.1 + c * 0.0495, 0.585 + r * 0.045, 0.041, 0.036);
+    roundRect(0.3, 0.82, 0.24, 0.11, 0.01); ctx.fill();
+    // mug
+    ctx.fillStyle = "#F4F1EA"; ctx.beginPath(); ctx.arc(1.3, 0.42, 0.15, 0, 7); ctx.fill();
+    ctx.fillStyle = "#5A3B25"; ctx.beginPath(); ctx.arc(1.3, 0.42, 0.115, 0, 7); ctx.fill();
+    ctx.fillStyle = "#F4F1EA"; roundRect(1.43, 0.39, 0.1, 0.06, 0.02); ctx.fill();
+    // the plush cat
+    if (ok(IM.cat)) ctx.drawImage(IM.cat, 0.08, 1.12, 0.62, 0.62 * 481 / 519);
+    // the sketch
+    ctx.save(); ctx.shadowColor = "rgba(40,24,8,.22)"; ctx.shadowBlur = 0.03 * Math.pow(10, -z) * V * dpr; ctx.shadowOffsetY = 0.008 * Math.pow(10, -z) * V * dpr;
+    ctx.fillStyle = "#F7F5EF"; ctx.fillRect(SK.x - 0.02, SK.y - 0.02, SK.w + 0.04, SK.h + 0.04); ctx.restore();
+    if (ok(IM.sketch)) {
+      const pxScreen = (SK.w / 1730) * SD * (V / Math.pow(10, z));
+      ctx.imageSmoothingEnabled = pxScreen < 3;
+      ctx.drawImage(IM.sketch, SK.x, SK.y, SK.w, SK.h);
+      ctx.imageSmoothingEnabled = true;
+    }
+    // pencil
+    ctx.save(); ctx.translate(0.78, 1.32); ctx.rotate(1.2);
+    ctx.fillStyle = "#E3B23C"; ctx.fillRect(0, -0.012, 0.32, 0.024); ctx.fillStyle = "#E8CFA5"; ctx.beginPath(); ctx.moveTo(0.32, -0.012); ctx.lineTo(0.37, 0); ctx.lineTo(0.32, 0.012); ctx.fill();
+    ctx.fillStyle = "#333"; ctx.beginPath(); ctx.moveTo(0.355, -0.004); ctx.lineTo(0.37, 0); ctx.lineTo(0.355, 0.004); ctx.fill(); ctx.restore();
+  }
+  function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  /* ---------- chrome ---------- */
+  const ladder = document.getElementById("ladder"), cap = document.getElementById("cap"), ms = document.getElementById("mscale");
+  const sup = (e) => `10<sup>${e < 0 ? "−" + -e : e}</sup>`;
+  STOPS.forEach((s, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button aria-current="false"><span class="e">${sup(s.e)}</span><span class="n">${s.n}</span></button>`;
+    li.firstChild.addEventListener("click", () => fly(i));
+    ladder.appendChild(li);
+  });
+  ladder.insertAdjacentHTML("beforeend", `<li class="scale" aria-hidden="true"><span class="big" id="big"></span><span class="bar" id="bar"></span><span class="len" id="len"></span></li>`);
+  const big = document.getElementById("big"), bar = document.getElementById("bar"), len = document.getElementById("len");
+  let shown = -1, lastE = null;
+  function chrome() {
+    const S = Math.pow(10, z);
+    let n = 0, d = 1e9; LZ.forEach((l, i) => { const e = Math.abs(l - z); if (e < d) { d = e; n = i; } });
+    if (n !== shown) setCap(n);
+    const e = Math.floor(z + 1e-6);
+    if (e !== lastE) { lastE = e; big.innerHTML = sup(e) + " m"; ms.innerHTML = sup(e) + " m"; }
+    // scale bar: a round length that fits ~40–100 px
+    const mPerPx = S / V; let L = Math.pow(10, Math.floor(Math.log10(mPerPx * 100)));
+    for (const m of [5, 2, 1]) if (L * m / mPerPx <= 110) { L *= m; break; }
+    bar.style.width = (L / mPerPx).toFixed(1) + "px";
+    len.textContent = L >= 1000 ? L / 1000 + " km" : L >= 1 ? L + " m" : L >= 0.01 ? Math.round(L * 100) + " cm" : L >= 0.001 ? Math.round(L * 1000) + " mm" : Math.round(L * 1e6) + " µm";
+  }
+  function setCap(i) {
+    const prev = shown; shown = i; const s = STOPS[i];
+    [...ladder.querySelectorAll("button")].forEach((b, j) => b.setAttribute("aria-current", j === i));
+    const html = `<div class="meta">${s.meta}</div><${s.h1 ? "h1" : "h2"}>${s.t}</${s.h1 ? "h1" : "h2"}><p>${s.p}</p><div class="links">${s.links}</div>`;
+    if (prev === -1 || reduce) { cap.innerHTML = html; if (mobile) layout(); return; }
+    cap.classList.add("out"); clearTimeout(setCap.t);
+    setCap.t = setTimeout(() => { cap.innerHTML = html; cap.classList.remove("out"); if (mobile) { const before = fy; layout(); } }, 150);
+  }
+
+  /* ---------- motion ---------- */
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function fly(i) {
+    const to = LZ[i]; zv = 0;
+    if (reduce) { z = to; flight = null; wake(); return; }
+    const dist = Math.abs(to - z);
+    flight = { from: z, to, t0: performance.now(), dur: clamp(420 + dist * 260, 450, 1900) };
+    wake();
+  }
+  function nextStop(dir) { // dir +1 = deeper
+    if (dir > 0) { for (let i = 0; i < LZ.length; i++) if (LZ[i] < z - 0.05) return fly(i); }
+    else { for (let i = LZ.length - 1; i >= 0; i--) if (LZ[i] > z + 0.05) return fly(i); }
+  }
+  let raf = 0, last = performance.now();
+  function wake() { if (!raf && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+  function tick(now) {
+    raf = 0; const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    let busy = false;
+    if (flight) {
+      const t = clamp((now - flight.t0) / flight.dur, 0, 1); z = flight.from + (flight.to - flight.from) * ease(t);
+      if (t >= 1) flight = null; busy = true;
+    } else if (!pointers.size) {
+      if (Math.abs(zv) > 0.02) { z += zv * dt; zv *= Math.pow(0.03, dt); busy = true; }
+      else if (now - lastInput > 220) { // settle onto a nearby stop
+        zv = 0; let n = -1, d = 0.3; LZ.forEach((l, i) => { const e = Math.abs(l - z); if (e < d) { d = e; n = i; } });
+        if (n >= 0 && d > 0.002) { z += (LZ[n] - z) * Math.min(1, dt * 7); busy = true; }
+      } else busy = true;
+    } else busy = true;
+    z = clamp(z, ZMIN, ZMAX);
+    draw(); chrome();
+    if (z < LZ[0] - 0.2) hint.classList.add("gone");
+    if (busy) raf = requestAnimationFrame(tick);
+  }
+  const hint = document.getElementById("hint");
+
+  /* ---------- input ---------- */
+  addEventListener("wheel", (e) => {
+    if (e.target.closest && e.target.closest(".cap, .ladder")) return;
+    e.preventDefault(); flight = null; lastInput = performance.now();
+    const d = e.deltaMode === 1 ? e.deltaY * 30 : e.deltaY;
+    z -= clamp(d, -120, 120) * 0.0032; zv = 0; wake();
+  }, { passive: false });
+  const pointers = new Map(); let gest = null;
+  cv.addEventListener("pointerdown", (e) => {
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); flight = null; zv = 0;
+    gest = { z0: z, moved: false, hist: [[performance.now(), z]], d0: pinchDist(), y0: e.clientY, x0: e.clientX };
+    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    wake();
+  });
+  function pinchDist() { const p = [...pointers.values()]; return p.length > 1 ? Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) : 0; }
+  cv.addEventListener("pointermove", (e) => {
+    if (!pointers.has(e.pointerId) || !gest) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); lastInput = performance.now();
+    if (pointers.size > 1) {
+      if (!gest.d0) { gest.d0 = pinchDist(); gest.z0 = z; }
+      z = gest.z0 - Math.log10(pinchDist() / gest.d0) * 1.6; gest.moved = true;
+    } else {
+      const dy = e.clientY - gest.y0;
+      if (Math.abs(dy) > 5 || Math.abs(e.clientX - gest.x0) > 5) gest.moved = true;
+      z = gest.z0 + (dy / Math.max(300, Hh)) * 3.2; // drag up to dive in
+    }
+    gest.hist.push([performance.now(), z]); if (gest.hist.length > 6) gest.hist.shift();
+    wake();
+  });
+  const end = (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (pointers.size) { gest.d0 = pinchDist(); gest.z0 = z; gest.y0 = [...pointers.values()][0].y; return; }
+    if (gest && !gest.moved) nextStop(+1);
+    else if (gest && !reduce) { const [t0, z0] = gest.hist[0], [t1, z1] = gest.hist[gest.hist.length - 1]; zv = t1 > t0 ? clamp((z1 - z0) / ((t1 - t0) / 1000), -6, 6) : 0; }
+    gest = null; lastInput = performance.now(); wake();
+  };
+  cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+  addEventListener("keydown", (e) => {
+    if (["ArrowDown", "ArrowRight", "+", "=", "PageDown"].includes(e.key)) { e.preventDefault(); nextStop(+1); }
+    if (["ArrowUp", "ArrowLeft", "-", "_", "PageUp"].includes(e.key)) { e.preventDefault(); nextStop(-1); }
+  });
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
+  addEventListener("resize", () => { layout(); wake(); });
+  if (document.fonts) document.fonts.ready.then(() => { layout(); wake(); });
+
+  setCap(0); layout();
+  if (!reduce) { z = LZ[0] + 0.22; flight = { from: z, to: LZ[0], t0: performance.now() + 200, dur: 1400 }; }
+  wake();
+})();
+</script>
+</body>
+</html>

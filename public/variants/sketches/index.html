@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home Sketches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Geologica:wght@400;500&display=swap">
+<style>
+/* A contact sheet of fifteen home-page ideas for Hridae Walia. Each tile opens the sketch. */
+:root {
+  color-scheme: light;
+  --paper: #F3F1EC; --ink: #16161A; --muted: #6A6862; --rule: rgb(22 22 26 / .12); --tile: #E4E1DA;
+  --f-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --f-sans: "Geologica", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 400 14px/1.5 var(--f-sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+[hidden] { display: none !important; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: clamp(28px, 6vw, 72px) clamp(16px, 4vw, 56px) 56px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 40px; margin-bottom: clamp(28px, 5vw, 56px); }
+h1 { margin: 0; font: 400 clamp(34px, 5vw, 60px)/1 var(--f-serif); letter-spacing: -.02em; }
+header p { margin: 0; color: var(--muted); max-width: 46ch; }
+.grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 40px 24px; }
+.grid a { display: block; }
+.thumb { aspect-ratio: 16 / 10; background: var(--tile); border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 1px var(--rule); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.grid a:hover img { transform: scale(1.025); }
+.cap { display: flex; gap: 10px; align-items: baseline; margin-top: 12px; }
+.cap .n { font-size: 11px; color: var(--muted); width: 18px; flex: none; }
+.cap h2 { margin: 0; font: 500 20px/1.15 var(--f-serif); }
+.cap p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .thumb img { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Fifteen front doors</h1>
+    <p>Quick sketches of home-page ideas for Hridae Walia, interaction &amp; product designer. Each is one idea with one or two interactions. Tap a tile to open it.</p>
+  </header>
+  <ol class="grid" id="grid"></ol>
+  <footer>Sketches, not finished pages. Every fact comes from Hridae's real work.</footer>
+</div>
+<script>
+const S = [
+  ["floor-plan", "Floor plan", "A blueprint of a house where every room is a project."],
+  ["timeline", "Timeline", "An editing timeline from 2019 to now. Scrub the playhead through the work."],
+  ["tuner", "Tuner", "A cabinet radio. Tune the dial through static to each project."],
+  ["exploded-view", "Exploded view", "How I work, as an isometric stack you can assemble and explode."],
+  ["contact-sheet", "Contact sheet", "A 35mm contact sheet. Tap a frame to circle it in grease pencil."],
+  ["recipe", "Recipe", "A method for designing interaction, typeset as a recipe card."],
+  ["calibration", "Calibration", "Virdio's calibration cones as navigation. Walk to a cone."],
+  ["museum-wall", "Museum wall", "The work hung on a gallery wall with tombstone labels."],
+  ["powers-of-ten", "Powers of ten", "A continuous zoom from San Francisco down into the work."],
+  ["annotated-cv", "Annotated CV", "The CV, marked up by hand in red pencil."],
+  ["gaze-map", "Gaze map", "Where you look leaves heat. The page tells you what held your eye."],
+  ["letterforms", "Letterforms", "The name, set huge, with each letter a window onto the work."],
+  ["lenticular", "Lenticular", "Ridged postcards that flip from process to result as you move."],
+  ["field-guide", "Field guide", "A naturalist's plate of engraved specimens. Tap one to tint it."],
+  ["turntable", "Turntable", "Spin the record; the tonearm walks across the tracks."],
+];
+document.getElementById("grid").innerHTML = S.map(([s, t, p], i) =>
+  `<li><a href="${s}/index.html"><div class="thumb"><img src="thumbs/${s}.webp" alt="" loading="lazy" width="800" height="500"></div>
+   <div class="cap"><span class="n">${String(i + 1).padStart(2, "0")}</span><div><h2>${t}</h2><p>${p}</p></div></div></a></li>`).join("");
+</script>
+</body>
+</html>
