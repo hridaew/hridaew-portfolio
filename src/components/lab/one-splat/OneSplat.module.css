@@ -1,0 +1,123 @@
+/* One Splat lab: the site's hero card + a work index on the left, a 3D gaussian splat on the right,
+   and, for the four case studies, a screen beside the object showing the real work. */
+
+.page {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(480px, 44vw) minmax(0, 1fr);
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.side {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(28px, 6vh, 64px) clamp(20px, 3vw, 48px) 40px clamp(20px, 4vw, 64px);
+  scrollbar-width: none;
+}
+.side::-webkit-scrollbar { display: none; }
+
+.hero { position: relative; z-index: 3; width: 100%; max-width: 656px; }
+
+/* ── work index ── */
+.index { list-style: none; margin: 0; padding: 0 32px; max-width: 656px; }
+.index li { border-top: 1px solid rgb(var(--ink-rgb) / 0.08); }
+.index li:last-child { border-bottom: 1px solid rgb(var(--ink-rgb) / 0.08); }
+.index button {
+  display: flex; width: 100%; align-items: baseline; padding: 12px 0;
+  background: none; border: 0; text-align: left; color: inherit; cursor: pointer;
+}
+.title {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700; font-size: 1.5rem; line-height: 1.1; letter-spacing: -0.015em;
+  color: rgb(var(--ink-rgb) / 0.34);
+  transition: color 240ms ease-out, transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.index button:hover .title { color: var(--ink); }
+.on .title { color: var(--ink); transform: translateX(6px); }
+
+.detail {
+  display: grid; grid-template-rows: 0fr; overflow: hidden;
+  transition: grid-template-rows 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.on .detail { grid-template-rows: 1fr; }
+.detail > div { min-height: 0; padding: 0 0 4px 6px; }
+.meta {
+  margin: 0 0 6px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.75rem; line-height: 1.5;
+  color: var(--ink-muted);
+}
+.copy {
+  margin: 0 0 10px; max-width: 40ch;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.94rem; line-height: 1.55;
+  color: var(--ink-secondary);
+}
+.links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 14px; }
+.links a {
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500;
+  color: var(--ink); text-decoration: none;
+  background-image: linear-gradient(rgb(var(--ink-rgb) / 0.22), rgb(var(--ink-rgb) / 0.22));
+  background-size: 100% 1px; background-repeat: no-repeat; background-position: 0 100%;
+  padding-bottom: 2px; transition: background-image 160ms ease-out;
+}
+.links a:hover { background-image: linear-gradient(var(--ink), var(--ink)); }
+
+/* ── stage ── */
+.stage { position: relative; min-width: 0; min-height: 0; }
+.canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+.canvas[data-dragging] { cursor: grabbing; }
+.fallback {
+  position: absolute; inset: 0; display: none; place-items: center; margin: 0; padding: 24px;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; color: var(--ink-muted);
+}
+.stage[data-unsupported] .fallback { display: grid; }
+.stage[data-unsupported] .canvas { display: none; }
+
+/* the project screen floats beside the object and turns a little with it */
+.screenSpace { position: absolute; inset: 0; pointer-events: none; perspective: 1600px; }
+.screen {
+  --turn-y: 0deg; --turn-x: 0deg;
+  position: absolute; left: 77%; top: 50%;
+  overflow: hidden; background: #0d0d0c;
+  box-shadow: var(--shadow-3), 0 0 0 1px rgb(var(--ink-rgb) / 0.08);
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(14px) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x)) scale(0.97);
+  transition: opacity 180ms ease-in, transform 180ms ease-in;
+  will-change: transform, opacity;
+}
+.screenOn {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x));
+  transition: opacity 420ms ease-out 380ms, transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1) 380ms;
+}
+.screen video, .screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.phone { height: min(60%, 560px); aspect-ratio: 480 / 1038; border-radius: 30px; }
+.wide { width: min(40%, 580px); aspect-ratio: 16 / 9; border-radius: 14px; }
+.photo { width: min(32%, 480px); aspect-ratio: 4 / 3; border-radius: 14px; }
+
+@media (max-width: 820px) {
+  .page { display: flex; flex-direction: column; height: auto; overflow: visible; }
+  .side { display: contents; }
+  .hero { order: 1; padding: 20px 16px 0; }
+  .stage { order: 2; height: 62svh; flex: none; }
+  .side nav { order: 3; padding: 8px 16px 48px; }
+  .canvas { touch-action: pan-y; }
+  .screen { left: auto; right: 16px; top: auto; bottom: 12px; transform-origin: 100% 100%; }
+  .screen, .screenOn { translate: 0 0; }
+  .screen { transform: translateY(10px) scale(0.97); }
+  .screenOn { transform: none; }
+  .phone { height: 38%; border-radius: 18px; }
+  .wide { width: 46%; border-radius: 10px; }
+  .photo { width: 40%; border-radius: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title, .detail, .screen, .screenOn { transition: none; }
+}
