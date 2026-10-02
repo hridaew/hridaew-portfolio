@@ -316,7 +316,7 @@ function HeroSignatureMark({
         <div
           className={cn(
             "relative h-8 w-[73px] overflow-visible",
-            mark === "signature" ? "opacity-80 brightness-0" : "opacity-80",
+            mark === "signature" ? "opacity-60 brightness-0" : "opacity-80",
           )}
         >
           <button

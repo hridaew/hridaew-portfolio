@@ -1,5 +1,5 @@
 /* One Splat lab: the site's hero card + a work index on the left, a 3D gaussian splat on the right,
-   and, for the four case studies, a screen beside the object showing the real work. */
+   and, for the four case studies, the home page's three project cards on a slight arc beside the object. */
 
 .page {
   position: relative;
@@ -49,11 +49,11 @@
   transition: color 240ms ease-out;
 }
 .sub {
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.9375rem; line-height: 1.3;
-  color: rgb(var(--ink-rgb) / 0.34); transition: color 240ms ease-out;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.3;
+  color: rgb(var(--ink-rgb) / 0.24); transition: color 240ms ease-out;
 }
 .row:hover .title { color: var(--ink); }
-.row:hover .sub, .on .sub { color: var(--ink-muted); }
+.row:hover .sub, .on .sub { color: rgb(var(--ink-rgb) / 0.44); }
 .on .title { color: var(--ink); }
 
 .detail {
@@ -95,32 +95,10 @@
 .stage[data-unsupported] .fallback { display: grid; }
 .stage[data-unsupported] .canvas { display: none; }
 
-/* the project screen floats beside the object and turns a little with it */
 .screenSpace {
-  --turn-y: 0deg; --turn-x: 0deg;
   position: absolute; top: 0; right: 0; bottom: 0; left: var(--side-w, 44vw);
   pointer-events: none; perspective: 1600px;
 }
-.screen {
-  position: absolute; left: 77%; top: 50%;
-  overflow: hidden; background: #0d0d0c;
-  box-shadow: var(--shadow-3), 0 0 0 1px rgb(var(--ink-rgb) / 0.08);
-  opacity: 0;
-  transform: translate(-50%, -50%) translateY(14px) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x)) scale(0.97);
-  transition: opacity 180ms ease-in, transform 180ms ease-in;
-  will-change: transform, opacity;
-}
-.screenOn {
-  opacity: 1;
-  transform: translate(-50%, -50%) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x));
-  transition: opacity 420ms ease-out 380ms, transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1) 380ms;
-}
-.screenOn { pointer-events: auto; }
-.screenLink { display: block; width: 100%; height: 100%; cursor: pointer; }
-.screen video, .screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.phone { height: min(60%, 560px); aspect-ratio: 480 / 1038; border-radius: 30px; }
-.wide { width: min(40%, 580px); aspect-ratio: 16 / 9; border-radius: 14px; }
-.photo { width: min(32%, 480px); aspect-ratio: 4 / 3; border-radius: 14px; }
 
 /* three home cards on the right, on a slight arc that wraps toward the object */
 .fan {
@@ -131,7 +109,8 @@
 }
 .arcCard {
   pointer-events: auto;
-  transform: perspective(1600px) translateX(var(--ax)) rotateY(calc(var(--turn-y) - 10deg)) rotateX(var(--turn-x)) rotateZ(var(--az));
+  /* angled slightly toward the middle of the screen; they don't follow the object */
+  transform: perspective(1600px) translateX(var(--ax)) rotateY(-10deg) rotateZ(var(--az));
   animation: arcIn 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .arcCard :global(.home-work-card-frame) { box-shadow: var(--shadow-3); }
@@ -155,16 +134,9 @@
   .footer { order: 4; padding: 0 16px 32px; }
   .fan { --home-work-card-max: 38vw; right: 12px; gap: 8px; top: auto; bottom: 12px; transform: none; }
   .arc0, .arc2 { --ax: -10px; }
-  .screen { left: auto; right: 16px; top: auto; bottom: 12px; transform-origin: 100% 100%; }
-  .screen, .screenOn { translate: 0 0; }
-  .screen { transform: translateY(10px) scale(0.97); }
-  .screenOn { transform: none; }
-  .phone { height: 38%; border-radius: 18px; }
-  .wide { width: 46%; border-radius: 10px; }
-  .photo { width: 40%; border-radius: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title, .detail, .screen, .screenOn { transition: none; }
+  .title, .sub, .detail { transition: none; }
   .arcCard { animation: none; }
 }
