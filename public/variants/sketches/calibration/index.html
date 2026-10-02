@@ -358,7 +358,8 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
   /* ---------- input ---------- */
   let hov = -1, down = null;
   function hitCone(X, Y) {
-    for (let i = P.length - 1; i >= 0; i--) { const b = cones[i].box; if (b && X > b[0] - 8 && X < b[0] + b[2] + 8 && Y > b[1] - 8 && Y < b[1] + b[3] + 14) return i; }
+    const m = mobile ? 20 : 8;
+    for (let i = P.length - 1; i >= 0; i--) { const b = cones[i].box; if (b && X > b[0] - m && X < b[0] + b[2] + m && Y > b[1] - m && Y < b[1] + b[3] + m + 6) return i; }
     return -1;
   }
   const hitFig = (X, Y) => fig.box && X > fig.box[0] - 10 && X < fig.box[0] + fig.box[2] + 10 && Y > fig.box[1] && Y < fig.box[1] + fig.box[3];
@@ -416,6 +417,11 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
     try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
     catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
     setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+  addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault(); const cur = fig.goal >= 0 ? fig.goal : active;
+    goTo(cur < 0 ? 0 : (cur + (e.key === "ArrowRight" ? 1 : P.length - 1)) % P.length);
   });
   document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
   addEventListener("resize", () => { layout(); wake(); });
