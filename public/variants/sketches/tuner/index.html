@@ -25,8 +25,8 @@ body {
   background-image:
     radial-gradient(ellipse 90% 70% at 45% 35%, rgb(255 190 120 / .10), transparent 70%),
     linear-gradient(180deg, rgb(0 0 0 / .0) 60%, rgb(0 0 0 / .35)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0035 0.09' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.06  0 0 0 0 0.02  0 0 0 1.1 -0.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 100% 100%, 100% 100%, 1200px 600px;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600' preserveAspectRatio='none'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0035 0.09' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.06  0 0 0 0 0.02  0 0 0 1.1 -0.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 100% 100%;
 }
 a { color: inherit; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -55,7 +55,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .freq { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
 .freq b { font: 400 54px/1 var(--f-mono); color: var(--glow); letter-spacing: -.02em; text-shadow: 0 0 18px rgb(255 190 90 / .35); font-variant-numeric: tabular-nums; }
 .freq span { font: 400 12px/1 var(--f-mono); color: var(--dim); letter-spacing: .1em; }
-.sig { display: inline-flex; gap: 3px; margin-left: auto; align-self: center; }
+.sig { display: inline-flex; gap: 3px; margin-left: 8px; align-self: center; }
 .sig i { width: 4px; height: 14px; border-radius: 1px; background: var(--faint); transition: background .12s; }
 .sig i.on { background: var(--glow); box-shadow: 0 0 6px rgb(255 190 90 / .5); }
 .st { transition: opacity .2s; }
@@ -66,7 +66,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .st .links a { display: inline-block; margin-right: 16px; font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; padding-bottom: 4px; border-bottom: 1px solid var(--brass); }
 .st .links a:hover { color: var(--glow); }
 
-.dial { grid-column: 1 / -1; grid-row: 3; position: relative; margin-top: clamp(22px, 3.6vh, 40px); height: clamp(104px, 15vh, 140px); border-radius: 14px; padding: 9px;
+.dial { user-select: none; -webkit-user-select: none; grid-column: 1 / -1; grid-row: 3; position: relative; margin-top: clamp(22px, 3.6vh, 40px); height: clamp(104px, 15vh, 140px); border-radius: 14px; padding: 9px;
   background: linear-gradient(180deg, #DDBD84, var(--brass) 35%, var(--brass-2)); box-shadow: 0 1px 0 rgb(255 240 210 / .5) inset, 0 18px 36px -16px rgb(0 0 0 / .7); }
 .face { position: relative; height: 100%; border-radius: 7px; overflow: hidden; touch-action: none; cursor: ew-resize;
   background: radial-gradient(ellipse 60% 140% at var(--gx, 30%) 50%, #FFF3D6, var(--face) 55%, #D9C59A); box-shadow: 0 3px 10px rgb(0 0 0 / .45) inset; }
@@ -120,7 +120,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .dial { order: 3; margin-top: 18px; height: 118px; padding: 7px; }
   .deck { display: contents; }
   .keys { order: 4; width: 100%; margin-top: 18px; }
-  .keys button { min-width: 0; flex: 1 1 0; padding: 12px 4px 11px; font-size: 10px; letter-spacing: .08em; }
+  .keys button { min-width: 0; flex: 1 1 0; padding: 12px 2px 11px; font-size: 9.5px; letter-spacing: .04em; white-space: nowrap; }
   .knob-wrap { display: none; }
   .sound { order: 6; align-self: flex-start; margin-top: 4px; }
   .card { order: 5; margin-top: 22px; min-height: 260px; }
@@ -234,7 +234,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     const r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
     W = Math.max(1, Math.round(r.width * dpr)); H = Math.max(1, Math.round(r.height * dpr));
     cv.width = W; cv.height = H;
-    const nw = Math.ceil(W / 3), nh = Math.ceil(H / 3);
+    const nw = Math.ceil(W / 2), nh = Math.ceil(H / 2);
     noise = [];
     for (let k = 0; k < 5; k++) {
       const c = document.createElement("canvas"); c.width = nw; c.height = nh;
@@ -271,7 +271,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     if (na > 0.01) {
       ctx.imageSmoothingEnabled = false; ctx.globalAlpha = na * (sig > 0.02 ? .85 : 1);
       const n = noise[(Math.random() * noise.length) | 0], ox = (Math.random() * 3) | 0, oy = (Math.random() * 3) | 0;
-      ctx.drawImage(n, -ox * 3, -oy * 3, W + 9, H + 9);
+      ctx.drawImage(n, -ox * 2, -oy * 2, W + 6, H + 6);
       ctx.imageSmoothingEnabled = true;
       // rolling band
       const by = ((performance.now() * 0.25) % (H * 1.4)) - H * 0.2;
