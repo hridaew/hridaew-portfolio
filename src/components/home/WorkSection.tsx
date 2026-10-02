@@ -211,6 +211,7 @@ function GalleryCard({
   mcesFog = false,
   fluid = false,
   captionOverride,
+  hideCaption = false,
 }: {
   card: ProjectCardData;
   bgColor: string;
@@ -235,6 +236,8 @@ function GalleryCard({
   mcesFog?: boolean;
   /** Mobile single-card layout: fluid width + fixed aspect ratio */
   fluid?: boolean;
+  /** Card only, without the caption line underneath (e.g. when cards float beside other content). */
+  hideCaption?: boolean;
 }) {
   const { transitionTo } = usePageTransition();
   const { prefetchSheet } = useSheetNav();
@@ -706,15 +709,60 @@ function GalleryCard({
       </div>
 
       {/* Caption — 16px inset; select-text so drag on carousel does not block copying caption */}
-      <div
+      {hideCaption ? null : <div
         className={`${fluid ? "pl-0" : HOME_CARD_CAPTION_PAD} select-text`}
         data-carousel-allow-select
       >
         <p className="font-[family-name:var(--font-geist-mono)] text-xs leading-6 uppercase text-ink-muted">
           {captionOverride ?? card.caption}
         </p>
-      </div>
+      </div>}
     </motion.div>
+  );
+}
+
+/**
+ * One of a project's three home cards, with the same per-project extras and decoration
+ * the home carousel uses. Exported so other pages (e.g. /lab) show the exact same cards.
+ */
+export function HomeProjectCard({
+  project,
+  index,
+  projectTitle,
+  captionOverride,
+  hideCaption,
+}: {
+  project: HomepageProject;
+  index: 0 | 1 | 2;
+  projectTitle?: string;
+  captionOverride?: string;
+  hideCaption?: boolean;
+}) {
+  let extraImages: { src: string; alt: string; className: string }[] | undefined;
+  if (project.slug === "virdio" && index === 1) {
+    extraImages = [virdioCard2ExtraImage];
+  } else if (project.slug === "virdio" && index === 2) {
+    extraImages = virdioCard3ExtraImages;
+  } else if (project.slug === "obscura" && index === 1) {
+    extraImages = obscuraCard2ExtraImages;
+  }
+  return (
+    <GalleryCard
+      card={project.cards[index]}
+      bgColor={project.bgColor}
+      orbColor1={project.orbColor1}
+      orbColor2={project.orbColor2}
+      orbDriftDelay={index * 0.55 + project.slug.length * 0.08}
+      extraImages={extraImages}
+      projectHref={projectPath(project.slug)}
+      projectTitle={projectTitle ?? project.title}
+      captionOverride={captionOverride}
+      hideCaption={hideCaption}
+      virdioIridescent={project.slug === "virdio"}
+      domisDotMatrix={project.slug === "domis"}
+      obscuraLiquidLens={project.slug === "obscura"}
+      mcesFog={project.slug === "memory-care"}
+    />
   );
 }
 
@@ -819,45 +867,20 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
 
       <div className="hidden md:block">
         <ProjectCarousel className={HOME_PROJECT_EMBLA_VIEWPORT}>
-          {project.cards.map((card, i) => {
-            let extraImages: { src: string; alt: string; className: string }[] | undefined;
-
-            if (project.slug === "virdio" && i === 1) {
-              extraImages = [virdioCard2ExtraImage];
-            } else if (project.slug === "virdio" && i === 2) {
-              extraImages = virdioCard3ExtraImages;
-            } else if (project.slug === "obscura" && i === 1) {
-              extraImages = obscuraCard2ExtraImages;
-            }
-
-            return (
-              <div key={i} className="flex-[0_0_auto]">
-                <GalleryCard
-                  card={card}
-                  bgColor={project.bgColor}
-                  orbColor1={project.orbColor1}
-                  orbColor2={project.orbColor2}
-                  orbDriftDelay={i * 0.55 + project.slug.length * 0.08}
-                  extraImages={extraImages}
-                  projectHref={projectPath(project.slug)}
-                  projectTitle={displayTitle}
-                  captionOverride={
-                    choom
-                      ? choomCardCaption(
-                          project.slug,
-                          i as 0 | 1 | 2,
-                          card.caption,
-                        )
-                      : undefined
-                  }
-                  virdioIridescent={project.slug === "virdio"}
-                  domisDotMatrix={project.slug === "domis"}
-                  obscuraLiquidLens={project.slug === "obscura"}
-                  mcesFog={project.slug === "memory-care"}
-                />
-              </div>
-            );
-          })}
+          {project.cards.map((card, i) => (
+            <div key={i} className="flex-[0_0_auto]">
+              <HomeProjectCard
+                project={project}
+                index={i as 0 | 1 | 2}
+                projectTitle={displayTitle}
+                captionOverride={
+                  choom
+                    ? choomCardCaption(project.slug, i as 0 | 1 | 2, card.caption)
+                    : undefined
+                }
+              />
+            </div>
+          ))}
         </ProjectCarousel>
       </div>
     </section>

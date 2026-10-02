@@ -56,6 +56,8 @@ const MOTION_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const MOTION_DURATION = 0.4;
 /** Collapsed hero shell height — keeps p-8 bottom margin with the larger avatar. */
 const COLLAPSED_CARD_HEIGHT = 208;
+/** The 32px signature is shorter than the face badge; this keeps top and bottom padding equal (32px). */
+const COLLAPSED_CARD_HEIGHT_SIGNATURE = 188;
 /** Expanded shell may grow down to the viewport bottom, minus this margin. */
 const EXPANDED_BOTTOM_MARGIN_PX = 32;
 
@@ -314,7 +316,7 @@ function HeroSignatureMark({
         <div
           className={cn(
             "relative h-8 w-[73px] overflow-visible",
-            mark === "signature" ? "brightness-0" : "opacity-80",
+            mark === "signature" ? "opacity-80 brightness-0" : "opacity-80",
           )}
         >
           <button
@@ -440,7 +442,15 @@ function useIsMobile() {
   return mobile;
 }
 
-export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
+export function HeroCard({
+  mark = "face",
+  orbs = true,
+}: {
+  mark?: HeroMark;
+  /** The soft colour orbs drifting inside the card. */
+  orbs?: boolean;
+} = {}) {
+  const collapsedHeight = mark === "signature" ? COLLAPSED_CARD_HEIGHT_SIGNATURE : COLLAPSED_CARD_HEIGHT;
   const choom = useChoomLingo();
   const { unlock } = useAchievements();
   const isMobile = useIsMobile();
@@ -791,13 +801,16 @@ export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
     return (
       <div className="relative isolate w-full min-w-0 rounded-[32px] shadow-e1">
         {/* Shadow above overflow-hidden so elevation isn’t clipped */}
-        <div className="flex min-h-[208px] w-full min-w-0 flex-col overflow-hidden rounded-[32px] border border-ink/[0.07] bg-paper-raised/70 backdrop-blur-[54.45px]">
+        <div
+          className="flex w-full min-w-0 flex-col overflow-hidden rounded-[32px] border border-ink/[0.07] bg-paper-raised/70 backdrop-blur-[54.45px]"
+          style={{ minHeight: collapsedHeight }}
+        >
           <div
             className="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden [clip-path:inset(0_round_32px)]"
             aria-hidden
           >
             <div ref={orbGRef} className="absolute inset-0 h-0 w-0">
-              {ORB_DEFS.map((def, i) => (
+              {orbs && ORB_DEFS.map((def, i) => (
                 <div
                   key={i}
                   className="absolute left-0 top-0 size-[70px] rounded-full blur-[48px] will-change-transform"
@@ -928,14 +941,14 @@ export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
       >
       <motion.div
         ref={cardShellRef}
-        className="flex min-h-[208px] w-full min-w-0 flex-col rounded-[32px] shadow-e1"
-        style={{ transformOrigin: "50% 9%" }}
+        className="flex w-full min-w-0 flex-col rounded-[32px] shadow-e1"
+        style={{ minHeight: collapsedHeight, transformOrigin: "50% 9%" }}
         initial={false}
         onPointerDown={onHeroShellPointerDown}
         onPointerUp={onHeroShellPointerUp}
         onPointerCancel={onHeroShellPointerCancel}
         animate={{
-          height: isExpanded ? "auto" : COLLAPSED_CARD_HEIGHT,
+          height: isExpanded ? "auto" : collapsedHeight,
           scale:
             reduceMotion || isExpanded ? 1 : blankShellPressed ? 0.97 : 1,
           y:
@@ -980,7 +993,7 @@ export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
         aria-hidden
       >
         <div ref={orbGRef} className="absolute inset-0 h-0 w-0">
-          {ORB_DEFS.map((def, i) => (
+          {orbs && ORB_DEFS.map((def, i) => (
             <div
               key={i}
               className="absolute left-0 top-0 size-[70px] rounded-full blur-[48px] will-change-transform"
@@ -1217,7 +1230,8 @@ export function HeroCard({ mark = "face" }: { mark?: HeroMark } = {}) {
   return (
     <div
       ref={anchorRef}
-      className="relative isolate z-[25] min-h-[208px] w-full min-w-0 max-w-[656px]"
+      className="relative isolate z-[25] w-full min-w-0 max-w-[656px]"
+      style={{ minHeight: collapsedHeight }}
     >
       {mounted && createPortal(glassCard, document.body)}
       {mounted && !isMobile

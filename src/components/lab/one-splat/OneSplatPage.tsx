@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { homepageProjects } from "@/data/homepage-projects";
+import { HomeProjectCard } from "@/components/home/WorkSection";
 import { SITE_VERSION } from "@/components/home/HomePage";
 import { HeroCard } from "@/components/home/HeroCard";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
@@ -15,12 +16,13 @@ const MEDIA = "/variants/one-splat/media";
 
 type Media = { kind: "video" | "image"; src: string; poster?: string; shape: "phone" | "wide" | "photo"; alt: string };
 /** href: where the title, the splat and the screen all lead. links: extra links shown under the copy (side builds only). */
-type Chapter = { k: Exclude<SplatKey, "about">; t: string; meta: string; p: string; href: string; links?: [string, string][]; media?: Media };
+type Chapter = { k: Exclude<SplatKey, "about">; t: string; sub?: string; meta: string; p: string; href: string; links?: [string, string][]; media?: Media };
 
 const CHAPTERS: Chapter[] = [
   {
     k: "domis",
     t: "Domis",
+    sub: "Home maintenance made easy",
     meta: "Founding Product Designer · 2024–now",
     p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.",
     href: "/domis",
@@ -29,6 +31,7 @@ const CHAPTERS: Chapter[] = [
   {
     k: "virdio",
     t: "Virdio",
+    sub: "AR home fitness app",
     meta: "Product Designer · 2021–2022",
     p: "Hardware-free AR fitness: an ordinary camera reads your body and counts every rep. I designed calibration around virtual cones you walk to, across six platforms.",
     href: "/virdio",
@@ -37,6 +40,7 @@ const CHAPTERS: Chapter[] = [
   {
     k: "obscura",
     t: "OBSCURA",
+    sub: "A social, immersive experience",
     meta: "Interaction design, Unity · MOHAI, 2025",
     p: "300+ never-seen photographs from 1946 Japan, curated by one visitor's gaze in VR while an audience outside watches through their eyes. It sold out.",
     href: "/obscura",
@@ -44,7 +48,8 @@ const CHAPTERS: Chapter[] = [
   },
   {
     k: "mc",
-    t: "Memory Care",
+    t: "Memory Care Experience Station",
+    sub: "Multisensory memory care",
     meta: "Interaction Designer · 2020–2023",
     p: "For people living with dementia, I wired plush cats with pressure sensors and haptic motors: pet one and it purrs. 98% positive across 200+ sessions; a Fast Company World Changing Ideas finalist.",
     href: "/memory-care",
@@ -69,19 +74,6 @@ const HomeCheatEasterEggs = dynamic(
   () => import("@/components/home/HomeCheatEasterEggs").then((m) => m.HomeCheatEasterEggs),
   { ssr: false },
 );
-
-/** The home page's three carousel cards for a project, as stand-alone media. */
-type CardMedia = { src: string; poster?: string; video: boolean; alt: string; bg: string };
-function homeCards(href: string): CardMedia[] {
-  const slug = href.replace(/^\//, "");
-  const p = homepageProjects.find((x) => x.slug === slug);
-  if (!p) return [];
-  return p.cards.map((c) =>
-    c.videoSrc
-      ? { src: c.videoSrc, poster: c.imageSrc, video: true, alt: c.imageAlt, bg: p.bgColor }
-      : { src: c.imageSrc, video: false, alt: c.imageAlt, bg: p.bgColor },
-  );
-}
 
 const ORDER: SplatKey[] = ["about", ...CHAPTERS.map((c) => c.k)];
 const NARROW = 820;
@@ -186,8 +178,9 @@ export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } 
   // One chapter per scroll gesture on desktop (the canvas and index own the wheel; the hero card scrolls itself).
   useEffect(() => {
     let lock = 0;
+    const onLabPage = () => window.location.pathname.startsWith("/lab/");
     const onWheel = (e: WheelEvent) => {
-      if (window.innerWidth <= NARROW) return;
+      if (window.innerWidth <= NARROW || !onLabPage()) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("[data-testid='hero-card-expanded-scroll']")) return;
       // the bio is open: let it scroll
@@ -202,6 +195,7 @@ export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } 
       if (next !== currentRef.current) go(next);
     };
     const onKey = (e: KeyboardEvent) => {
+      if (!onLabPage()) return;
       if ((e.target as HTMLElement | null)?.closest("input, textarea")) return;
       const i = ORDER.indexOf(currentRef.current);
       if (e.key === "ArrowDown" || e.key === "ArrowRight") go(ORDER[Math.min(ORDER.length - 1, i + 1)]);
@@ -220,7 +214,7 @@ export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } 
       <main className={styles.page} ref={pageRef}>
         <div className={styles.side} ref={sideRef}>
           <div className={styles.hero}>
-            <HeroCard mark="signature" />
+            <HeroCard mark="signature" orbs={false} />
           </div>
           <nav aria-label="Work">
             <ol className={styles.index}>
@@ -244,6 +238,7 @@ export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } 
                       }}
                     >
                       <span className={styles.title}>{c.t}</span>
+                      {c.sub ? <span className={styles.sub}>{c.sub}</span> : null}
                     </Link>
                     <div className={styles.detail} id={`ch-${c.k}`}>
                       <div>
@@ -286,9 +281,9 @@ export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } 
               ? CHAPTERS.filter((c) => c.media).map((c) => (
                   <Screen key={c.k} href={c.href} title={c.t} media={c.media!} active={c.k === current} />
                 ))
-              : CHAPTERS.filter((c) => c.media).map((c) => (
-                  <CardFan key={c.k} href={c.href} title={c.t} cards={homeCards(c.href)} active={c.k === current} />
-                ))}
+              : chapter?.media
+                ? <CardFan key={chapter.k} slug={chapter.href.replace(/^\//, "")} />
+                : null}
           </div>
         </div>
       </main>
@@ -322,62 +317,19 @@ function Screen({ href, title, media, active }: { href: string; title: string; m
 }
 
 /**
- * Three cards fanned beside the object, each at a slightly different angle and depth.
- * Each card takes its media's own shape (portrait phone screens, wide stills), measured on load.
+ * The project's three home cards (the exact components from the home carousel), stacked on the
+ * right in a slight arc that wraps toward the object. Mounted only while the project is open.
  */
-function CardFan({ href, title, cards, active }: { href: string; title: string; cards: CardMedia[]; active: boolean }) {
-  const [armed, setArmed] = useState(false);
-  if (active && !armed) setArmed(true);
+function CardFan({ slug }: { slug: string }) {
+  const project = homepageProjects.find((p) => p.slug === slug);
+  if (!project) return null;
   return (
-    <div className={`${styles.fan} ${active ? styles.fanOn : ""}`} aria-hidden={!active}>
-      {cards.map((c, i) => (
-        <FanCard key={c.src} card={c} index={i} href={href} title={title} active={active} armed={armed} />
+    <div className={styles.fan}>
+      {([0, 1, 2] as const).map((i) => (
+        <div key={i} className={`${styles.arcCard} ${styles[`arc${i}`]}`}>
+          <HomeProjectCard project={project} index={i} hideCaption />
+        </div>
       ))}
-    </div>
-  );
-}
-
-function FanCard({ card, index, href, title, active, armed }: { card: CardMedia; index: number; href: string; title: string; active: boolean; armed: boolean }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  // each card takes its media's own proportions, on the project's card colour (as on the home carousel)
-  const [ratio, setRatio] = useState(4 / 3);
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (active) void v.play().catch(() => {});
-    else v.pause();
-  }, [active, armed]);
-  const measure = (w: number, h: number) => setRatio(Math.min(1.9, Math.max(0.46, w / h)));
-  // videos load lazily, so read their shape from the poster frame
-  useEffect(() => {
-    if (!card.video || !card.poster) return;
-    const im = new Image();
-    im.onload = () => measure(im.naturalWidth, im.naturalHeight);
-    im.src = card.poster;
-  }, [card.video, card.poster]);
-  return (
-    <div
-      className={`${styles.card} ${styles[`card${index}`]} ${ratio < 0.95 ? styles.tall : styles.wide} ${card.video ? styles.cardVideo : ""}`}
-      style={{ aspectRatio: String(ratio), backgroundColor: card.bg }}
-    >
-      <Link href={href} className={styles.screenLink} tabIndex={active ? 0 : -1} aria-label={`Open ${title}`}>
-        {card.video ? (
-          <video
-            ref={videoRef}
-            src={armed ? card.src : undefined}
-            poster={card.poster}
-            muted
-            loop
-            playsInline
-            preload="none"
-            aria-label={card.alt}
-            onLoadedMetadata={(e) => measure(e.currentTarget.videoWidth, e.currentTarget.videoHeight)}
-          />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={card.src} alt={card.alt} loading="lazy" onLoad={(e) => measure(e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} />
-        )}
-      </Link>
     </div>
   );
 }
