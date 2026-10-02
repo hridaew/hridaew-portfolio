@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calibration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..700&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+/* Virdio's calibration flow as navigation: a camera's view of a floor, four AR cones, a pose-tracked figure. */
+:root {
+  color-scheme: light;
+  --wall: #DCD9E6; --floor: #EEECF3; --ink: #17142A; --muted: #5D5873; --grid: rgb(23 20 42 / .10);
+  --cone: #8A3CF0; --ok: #1FA65A; --card: #FBFAFD; --rule: rgb(23 20 42 / .14);
+  --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Martian Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body { background: linear-gradient(180deg, var(--wall) 0 34%, var(--floor) 60%); color: var(--ink); font: 400 15px/1.5 var(--f-sans); font-stretch: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
+img { max-width: none; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--cone); outline-offset: 3px; border-radius: 2px; }
+
+.scene { position: fixed; inset: 0; }
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+.who { position: fixed; left: clamp(20px, 3.4vw, 52px); top: clamp(20px, 4vh, 40px); z-index: 3; }
+.who h1 { margin: 0; font: 650 22px/1.05 var(--f-sans); font-stretch: 118%; letter-spacing: -.01em; }
+.who p { margin: 6px 0 0; font: 400 11px/1.5 var(--f-mono); color: var(--muted); }
+
+.level { position: fixed; left: var(--lx, 50%); top: clamp(20px, 4vh, 40px); transform: translateX(-50%); z-index: 3; display: grid; justify-items: center; gap: 7px; pointer-events: none; }
+.level svg { display: block; overflow: visible; }
+.level .read { font: 500 10px/1 var(--f-mono); letter-spacing: .08em; color: var(--muted); transition: color .25s; }
+.level.ok .read { color: var(--ok); }
+
+.index { position: fixed; left: clamp(20px, 3.4vw, 52px); bottom: clamp(24px, 5vh, 48px); z-index: 3; margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.index button { display: flex; align-items: center; gap: 10px; font: 600 15px/1.9 var(--f-sans); font-stretch: 112%; color: var(--muted); transition: color .2s; }
+.index button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; transition: background .2s, border-color .2s; }
+.index button:hover, .index button[aria-current="true"] { color: var(--ink); }
+.index button[aria-current="true"]::before { background: var(--ok); border-color: var(--ok); }
+.index .more { margin-top: 10px; font: 400 11px/1.7 var(--f-mono); color: var(--muted); max-width: 30ch; }
+.index .more a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+
+.card { position: fixed; right: clamp(20px, 3.4vw, 52px); top: 50%; width: min(360px, 27vw); transform: translateY(-50%); z-index: 3; }
+.card .in { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 rgb(255 255 255 / .8) inset, 0 24px 50px -24px rgb(40 20 90 / .35), 0 2px 8px rgb(40 20 90 / .08); transform-origin: 50% 60%; }
+.card .in.pop { animation: pop .42s cubic-bezier(.2,1.5,.4,1); }
+@keyframes pop { 0% { transform: scale(.94) translateY(6px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.card .ph { aspect-ratio: 16 / 10; background: #E6E2F0; position: relative; }
+.card .ph img { width: 100%; height: 100%; object-fit: cover; }
+.card .ph img.cut { object-fit: contain; padding: 14px; }
+.card .body { padding: 16px 18px 18px; }
+.card .meta { font: 400 10.5px/1.5 var(--f-mono); color: var(--muted); letter-spacing: .02em; }
+.card h2 { margin: 4px 0 8px; font: 650 28px/1 var(--f-sans); font-stretch: 116%; letter-spacing: -.015em; }
+.card p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.5; }
+.card .go { font: 500 11.5px/1 var(--f-mono); text-decoration: none; color: var(--cone); border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.card .step { display: flex; gap: 8px; align-items: center; font: 500 10.5px/1 var(--f-mono); color: var(--ok); margin-bottom: 8px; letter-spacing: .04em; }
+.card .intro { padding: 20px 20px 18px; }
+.card .intro p { font-size: 15px; }
+.card .intro .hint { font: 400 11px/1.5 var(--f-mono); color: var(--muted); margin: 0; }
+
+.contact { position: fixed; right: clamp(20px, 3.4vw, 52px); bottom: clamp(24px, 5vh, 48px); z-index: 3; font: 400 11.5px/1.6 var(--f-mono); display: flex; gap: 6px 14px; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; }
+.contact .email { user-select: all; }
+.contact button, .contact a { text-decoration: none; border-bottom: 1px solid var(--rule); color: var(--ink); }
+.back { position: fixed; right: clamp(20px, 3.4vw, 52px); top: clamp(20px, 4vh, 40px); z-index: 3; font: 400 11px/1 var(--f-mono); color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+
+@media (max-width: 820px) {
+  body { overflow-x: hidden; overflow-y: auto; background: var(--floor); }
+  .scene { position: relative; height: 56svh; background: linear-gradient(180deg, var(--wall) 0 34%, var(--floor) 70%); }
+  .who { position: absolute; left: 18px; top: calc(16px + env(safe-area-inset-top, 0px)); }
+  .who h1 { font-size: 20px; }
+  .level { position: absolute; left: 50%; top: calc(76px + env(safe-area-inset-top, 0px)); }
+  .back { position: absolute; right: 18px; top: calc(18px + env(safe-area-inset-top, 0px)); }
+  .panel { padding: 0 18px calc(28px + env(safe-area-inset-bottom, 0px)); }
+  .card { position: relative; right: auto; top: auto; width: auto; transform: none; margin-top: -26px; }
+  .card .in { display: grid; grid-template-columns: 112px 1fr; }
+  .card .in.solo { display: block; }
+  .card .ph { aspect-ratio: auto; min-height: 100%; }
+  .card .body { padding: 14px 14px 14px; }
+  .card h2 { font-size: 23px; }
+  .card .meta { font-size: 9.5px; }
+  .card p { font-size: 14px; margin-bottom: 10px; }
+  .index { position: static; margin-top: 22px; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .index .more { grid-column: 1 / -1; }
+  .contact { position: static; justify-content: flex-start; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--rule); }
+}
+@media (max-height: 700px) and (min-width: 821px) { .card .ph { aspect-ratio: 2 / 1; } .index .more { display: none; } }
+@media (prefers-reduced-motion: reduce) { .card .in.pop { animation: none; } }
+</style>
+</head>
+<body>
+<div class="scene" id="scene">
+  <canvas id="c" role="img" aria-label="A camera's view of a floor with four purple cones at the corners and a tracked figure standing in a circle"></canvas>
+  <header class="who"><h1>Hridae Walia</h1><p>Product designer · San Francisco</p></header>
+  <div class="level" id="level" aria-hidden="true">
+    <svg width="132" height="16" viewBox="0 0 132 16">
+      <rect x=".75" y=".75" width="130.5" height="14.5" rx="7.25" fill="rgb(255 255 255 / .55)" stroke="rgb(23 20 42 / .18)" stroke-width="1.5"/>
+      <g stroke="rgb(23 20 42 / .22)" stroke-width="1.5"><line x1="30" y1="5" x2="30" y2="11"/><line x1="102" y1="5" x2="102" y2="11"/></g>
+      <line id="lvMid" x1="66" y1="3" x2="66" y2="13" stroke="rgb(23 20 42 / .35)" stroke-width="1.5"/>
+      <circle id="lvBub" cx="66" cy="8" r="4.5" fill="var(--ink)"/>
+    </svg>
+    <span class="read" id="lvRead">CENTERING</span>
+  </div>
+  <a class="back" href="../index.html">all sketches</a>
+</div>
+<div class="panel">
+  <section class="card" aria-live="polite"><div class="in" id="card"></div></section>
+  <nav aria-label="Work"><ul class="index" id="index"></ul></nav>
+  <footer class="contact"><span class="email" id="email">hridaew@gmail.com</span><button id="copy">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></footer>
+</div>
+<script>
+(() => {
+  const P = [
+    { k: "domis", t: "Domis", x: -1.9, z: 2.7, img: "media/domis.webp", cut: true, meta: "Founding Product Designer · 2024–now",
+      p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.",
+      href: "https://hridaew.com/domis" },
+    { k: "virdio", t: "Virdio", x: 1.9, z: 2.7, img: "media/virdio.webp", meta: "Product Designer · 2021–2022",
+      p: "Hardware-free AR fitness: an ordinary camera reads your body and counts every rep. I designed this calibration: center yourself, then walk to virtual cones at the corners of your space.",
+      href: "https://hridaew.com/virdio" },
+    { k: "obscura", t: "OBSCURA", x: -1.9, z: 6.1, img: "media/obscura.webp", meta: "Interaction design, Unity · MOHAI 2025",
+      p: "300+ never-seen photographs from 1946 Japan, viewed in VR while gaze tracking lets an audience outside watch through the visitor's eyes. It sold out.",
+      href: "https://hridaew.com/obscura" },
+    { k: "mc", t: "Memory Care", x: 1.9, z: 6.1, img: "media/mc.webp", pos: "62% 18%", meta: "Interaction Designer · 2020–2023",
+      p: "Plush cats wired with pressure sensors and haptic motors, for people living with dementia: pet one and it purrs. 98% positive across 200+ sessions.",
+      href: "https://hridaew.com/memory-care" },
+  ];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scene = document.getElementById("scene"), cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  const card = document.getElementById("card"), idx = document.getElementById("index");
+  const coneImg = new Image(); coneImg.src = "media/cone.webp"; coneImg.onload = () => (dirty = true);
+  P.forEach((p) => { const i = new Image(); i.src = p.img; });
+
+  /* ---------- camera ---------- */
+  let H = 1.45; // camera height (m)
+  let W = 0, Hh = 0, dpr = 1, F = 400, cx = 0, hy = 0, mobile = false, zoff = 0.9;
+  function layout() {
+    mobile = innerWidth <= 820;
+    const r = scene.getBoundingClientRect(); W = r.width; Hh = r.height;
+    dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr);
+    // the stage: on desktop, the space left of the card; on phones, the scene block
+    const sx = mobile ? 0 : W * 0.03, sw = mobile ? W : W * 0.64;
+    const top = mobile ? 122 : Math.max(120, Hh * 0.16), bot = mobile ? 34 : Math.max(70, Hh * 0.1);
+    const sh = Hh - top - bot;
+    zoff = mobile ? 1.3 : 0.75; H = mobile ? 2.5 : 1.75;
+    const nz = 2.7 + zoff, topU = (H - 1.8) / nz, botU = H / (2.05 + zoff);
+    F = Math.min((sw / 2 - (mobile ? 46 : 60)) / (2.2 / nz), sh / (botU - Math.min(topU, -0.02)));
+    cx = sx + sw / 2;
+    if (mobile) { // size the scene block to its content
+      const want = Math.round(top + (botU - Math.min(topU, -0.02)) * F + bot + 20);
+      if (Math.abs(want - Hh) > 2) { scene.style.height = want + "px"; Hh = want; cv.height = Math.round(Hh * dpr); }
+    } else scene.style.height = "";
+    hy = top - Math.min(topU, -0.02) * F + Math.max(0, (sh - (botU - Math.min(topU, -0.02)) * F) * 0.22);
+    document.documentElement.style.setProperty("--lx", mobile ? "50%" : cx + "px");
+    dirty = true;
+  }
+  const proj = (x, z, y = 0) => { const q = z + zoff; return [cx + (F * x) / q, hy + (F * (H - y)) / q, F / q]; };
+  function unproj(X, Y) { // screen -> floor (inverse of proj with y = 0), ignoring roll
+    const z = (F * H) / Math.max(1, Y - hy); return [((X - cx) * z) / F, z - zoff];
+  }
+
+  /* ---------- state ---------- */
+  const fig = { x: 0, z: 4.4, tx: 0, tz: 4.4, v: 0, phase: 0, walk: 0, cheer: 0, dragging: false, goal: -1 };
+  const cones = P.map(() => ({ ok: 0, okT: -1, hot: 0 }));
+  let active = -1, roll = reduce ? 0 : 3.2, rollV = 0, rollTarget = 0, dirty = true, last = performance.now(), t0 = last;
+
+  /* ---------- drawing ---------- */
+  function line(a, b) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+  function ellipse(x, z, rx, rz) {
+    const c = proj(x, z), e = proj(x, z + rz), f = proj(x, z - rz);
+    ctx.beginPath(); ctx.ellipse(c[0], (e[1] + f[1]) / 2, (F * rx) / z, Math.abs(f[1] - e[1]) / 2, 0, 0, Math.PI * 2);
+  }
+  function drawFloor() {
+    ctx.lineWidth = 1;
+    for (let x = -4; x <= 4.001; x += 0.5) {
+      const a = proj(x, 0.2), b = proj(x, 14);
+      const g = ctx.createLinearGradient(0, a[1], 0, b[1]);
+      g.addColorStop(0, "rgba(23,20,42,.13)"); g.addColorStop(.75, "rgba(23,20,42,.04)"); g.addColorStop(1, "rgba(23,20,42,0)");
+      ctx.strokeStyle = g; line(a, b);
+    }
+    for (let z = 0.5; z <= 14; z += 0.5) {
+      ctx.strokeStyle = `rgba(23,20,42,${(0.13 * Math.min(1, Math.max(0, 1 - (z - 2) / 7))).toFixed(3)})`;
+      line(proj(-6, z), proj(6, z));
+    }
+    // taped calibration square
+    ctx.strokeStyle = "rgba(23,20,42,.38)"; ctx.lineWidth = 2; ctx.setLineDash([10, 7]);
+    ctx.beginPath(); [[-1.9, 2.7], [1.9, 2.7], [1.9, 6.1], [-1.9, 6.1]].forEach(([x, z], i) => { const p = proj(x, z); i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+    // the start circle
+    const inC = Math.hypot(fig.x, fig.z - 4.4) < 0.4;
+    ellipse(0, 4.4, 0.5, 0.5); ctx.strokeStyle = inC ? "rgba(31,166,90,.75)" : "rgba(23,20,42,.4)"; ctx.lineWidth = 2; ctx.stroke();
+    // floor labels in perspective
+    P.forEach((p, i) => {
+      const lz = p.z - (p.z > 4 ? 0.6 : 0.42), c = proj(p.x, lz), s = c[2];
+      ctx.save(); ctx.translate(c[0], c[1]); ctx.scale(1, Math.max(0.55, (H / (lz + zoff)) * 1.3));
+      ctx.fillStyle = cones[i].ok > 0.5 ? "rgba(31,166,90,.95)" : i === hov ? "rgba(23,20,42,.85)" : "rgba(23,20,42,.6)";
+      ctx.font = `650 ${Math.max(10, Math.round(s * 0.125))}px Archivo, "Helvetica Neue", Arial, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0.06em";
+      ctx.fillText(p.t.toUpperCase(), 0, 0); ctx.restore();
+    });
+  }
+  function drawCone(i, now) {
+    const p = P[i], c = cones[i], b = proj(p.x, p.z), s = b[2];
+    const h = s * 0.62, w = h * (360 / 389);
+    // shadow + rings
+    ellipse(p.x + 0.04, p.z + 0.03, 0.28, 0.22); ctx.fillStyle = "rgba(60,20,120,.16)"; ctx.fill();
+    if (c.hot > 0.01 || c.ok > 0.01) {
+      ellipse(p.x, p.z, 0.36 + 0.08 * c.hot, 0.34 + 0.08 * c.hot);
+      ctx.strokeStyle = c.ok > 0.5 ? `rgba(31,166,90,${0.8 * c.ok})` : `rgba(138,60,240,${0.6 * c.hot})`; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+    const lift = c.hot * s * 0.03;
+    if (coneImg.complete && coneImg.naturalWidth) ctx.drawImage(coneImg, b[0] - w / 2, b[1] - h * 0.93 - lift, w, h);
+    c.box = [b[0] - w / 2, b[1] - h, w, h];
+    // check badge
+    if (c.okT >= 0) {
+      const t = Math.min(1, (now - c.okT) / 520);
+      const sp = reduce ? 1 : 1 + Math.sin(Math.min(1, t * 1.6) * Math.PI) * 0.22 * (1 - t) - (1 - Math.min(1, t * 2.4)) * 1;
+      const r = Math.max(14, s * 0.13) * Math.max(0, sp), q = proj(p.x, p.z, 0.95);
+      if (r > 0.5) {
+        ctx.save(); ctx.translate(q[0], q[1] - r * 0.3);
+        ctx.fillStyle = "#1FA65A"; ctx.shadowColor = "rgba(20,100,50,.35)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+        ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill(); ctx.shadowColor = "transparent";
+        const k = reduce ? 1 : Math.min(1, Math.max(0, (t - 0.15) / 0.5));
+        ctx.strokeStyle = "#fff"; ctx.lineWidth = r * 0.2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+        const pts = [[-0.42, 0.02], [-0.12, 0.32], [0.45, -0.3]], L1 = 0.42, L2 = 0.84, d = k * (L1 + L2);
+        ctx.beginPath(); ctx.moveTo(pts[0][0] * r, pts[0][1] * r);
+        if (d <= L1) { const u = d / L1; ctx.lineTo((pts[0][0] + (pts[1][0] - pts[0][0]) * u) * r, (pts[0][1] + (pts[1][1] - pts[0][1]) * u) * r); }
+        else { ctx.lineTo(pts[1][0] * r, pts[1][1] * r); const u = (d - L1) / L2; ctx.lineTo((pts[1][0] + (pts[2][0] - pts[1][0]) * u) * r, (pts[1][1] + (pts[2][1] - pts[1][1]) * u) * r); }
+        ctx.stroke(); ctx.restore();
+      }
+    }
+  }
+  function joints() {
+    const s = Math.sin(fig.phase), w = fig.walk, c = fig.cheer, bob = Math.abs(Math.cos(fig.phase)) * 0.035 * w;
+    const J = {
+      head: [0, 1.6, 0], neck: [0, 1.44, 0], lsh: [-0.19, 1.41, 0], rsh: [0.19, 1.41, 0],
+      lel: [-0.25 - 0.08 * c, 1.12 + 0.52 * c, -0.14 * s * w], rel: [0.25 + 0.08 * c, 1.12 + 0.52 * c, 0.14 * s * w],
+      lha: [-0.27 - 0.03 * c, 0.85 + 1.12 * c, -0.24 * s * w], rha: [0.27 + 0.03 * c, 0.85 + 1.12 * c, 0.24 * s * w],
+      lhi: [-0.12, 0.95, 0], rhi: [0.12, 0.95, 0],
+      lkn: [-0.13, 0.5 + Math.max(0, s) * 0.08 * w, 0.18 * s * w], rkn: [0.13, 0.5 + Math.max(0, -s) * 0.08 * w, -0.18 * s * w],
+      lan: [-0.13, 0.07 + Math.max(0, s) * 0.13 * w, 0.26 * s * w], ran: [0.13, 0.07 + Math.max(0, -s) * 0.13 * w, -0.26 * s * w],
+    };
+    for (const k in J) if (k !== "lan" && k !== "ran") J[k][1] += bob;
+    return J;
+  }
+  function drawFigure() {
+    ellipse(fig.x, fig.z, 0.3, 0.2); ctx.fillStyle = "rgba(23,20,42,.14)"; ctx.fill();
+    const J = joints(), S = {};
+    for (const k in J) S[k] = proj(fig.x + J[k][0], fig.z + J[k][2], J[k][1]);
+    const sc = S.neck[2];
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.strokeStyle = "#17142A"; ctx.lineWidth = Math.max(2, sc * 0.035);
+    [["neck", "lsh"], ["neck", "rsh"], ["lsh", "lel"], ["lel", "lha"], ["rsh", "rel"], ["rel", "rha"], ["lsh", "lhi"], ["rsh", "rhi"], ["lhi", "rhi"],
+     ["lhi", "lkn"], ["lkn", "lan"], ["rhi", "rkn"], ["rkn", "ran"]].forEach(([a, b]) => line(S[a], S[b]));
+    ctx.beginPath(); ctx.arc(S.head[0], S.head[1] - sc * 0.03, sc * 0.11, 0, Math.PI * 2); ctx.stroke();
+    // tracked keypoints
+    const r = Math.max(2.6, sc * 0.022);
+    for (const k of ["neck", "lsh", "rsh", "lel", "rel", "lha", "rha", "lhi", "rhi", "lkn", "rkn", "lan", "ran"]) {
+      ctx.beginPath(); ctx.arc(S[k][0], S[k][1], r, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill();
+      ctx.lineWidth = Math.max(1.5, r * 0.6); ctx.strokeStyle = fig.cheer > 0.3 ? "#1FA65A" : "#8A3CF0"; ctx.stroke();
+    }
+    ctx.lineWidth = Math.max(2, sc * 0.035); ctx.strokeStyle = "#17142A";
+    fig.box = [S.lha[0] - sc * 0.15, S.head[1] - sc * 0.2, S.rha[0] - S.lha[0] + sc * 0.3, S.lan[1] - S.head[1] + sc * 0.25];
+  }
+  function draw(now) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const bg = ctx.createLinearGradient(0, 0, 0, Hh);
+    const hf = Math.max(0.05, Math.min(0.9, hy / Hh));
+    bg.addColorStop(0, "#D6D3E2"); bg.addColorStop(hf * 0.98, "#E2DFEB"); bg.addColorStop(Math.min(1, hf + 0.02), "#E9E7F0"); bg.addColorStop(1, "#F1F0F5");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, Hh);
+    ctx.save();
+    const pivot = proj(0, 4.4, 0.8); ctx.translate(pivot[0], pivot[1]); ctx.rotate((roll * Math.PI) / 180); ctx.translate(-pivot[0], -pivot[1]);
+    drawFloor();
+    const items = P.map((p, i) => ({ z: p.z, f: () => drawCone(i, now) }));
+    items.push({ z: fig.z, f: drawFigure });
+    items.sort((a, b) => b.z - a.z).forEach((it) => it.f());
+    ctx.restore();
+  }
+
+  /* ---------- tilt indicator ---------- */
+  const lv = document.getElementById("level"), bub = document.getElementById("lvBub"), mid = document.getElementById("lvMid"), read = document.getElementById("lvRead");
+  let lvOk = null;
+  function updateLevel() {
+    bub.setAttribute("cx", (66 + Math.max(-56, Math.min(56, roll * 13))).toFixed(1));
+    const ok = Math.abs(roll) < 0.35;
+    if (ok !== lvOk) { lvOk = ok; lv.classList.toggle("ok", ok); bub.setAttribute("fill", ok ? "#1FA65A" : "#17142A"); mid.setAttribute("stroke", ok ? "#1FA65A" : "rgba(23,20,42,.35)"); read.textContent = ok ? "LEVEL" : "CENTERING"; }
+  }
+
+  /* ---------- card ---------- */
+  function intro() {
+    card.className = "in solo";
+    card.innerHTML = `<div class="intro"><div class="step">● STEP 1 · STAND IN THE CIRCLE</div><p>I design for interaction models that barely exist yet, and I learn by making: on the canvas, in code, and in the physical world. Four of those projects are at the corners of this room.</p><p class="hint">Tap a cone, or drag the figure to it.</p></div>`;
+  }
+  function show(i) {
+    const p = P[i];
+    card.className = "in";
+    card.innerHTML = `<div class="ph"><img src="${p.img}" alt="" ${p.cut ? 'class="cut"' : ""} ${p.pos ? `style="object-position:${p.pos}"` : ""}></div><div class="body"><div class="step">✓ ${p.t.toUpperCase()} CALIBRATED</div><div class="meta">${p.meta}</div><h2>${p.t}</h2><p>${p.p}</p><a class="go" href="${p.href}" target="_blank" rel="noopener">Open the case study ↗</a></div>`;
+    if (!reduce) { void card.offsetWidth; card.classList.add("pop"); }
+    [...idx.querySelectorAll("button")].forEach((b, j) => b.setAttribute("aria-current", j === i));
+  }
+
+  /* ---------- movement ---------- */
+  function goTo(i) {
+    fig.goal = i; fig.tx = P[i].x + (P[i].x < 0 ? 0.62 : -0.62); fig.tz = P[i].z + 0.3;
+    cones.forEach((c, j) => { if (j !== i) { c.ok = 0; c.okT = -1; } });
+    if (reduce) { fig.x = fig.tx; fig.z = fig.tz; arrive(); }
+    wake();
+  }
+  function walkTo(x, z) { fig.goal = -1; fig.tx = Math.max(-2.6, Math.min(2.6, x)); fig.tz = Math.max(2.4, Math.min(7, z)); if (reduce) { fig.x = fig.tx; fig.z = fig.tz; } wake(); }
+  function arrive() {
+    const i = fig.goal; if (i < 0) return;
+    cones[i].ok = 1; cones[i].okT = performance.now(); fig.cheerT = performance.now(); active = i; show(i);
+  }
+  function nearestCone(x, z) { let b = -1, d = 0.95; P.forEach((p, i) => { const e = Math.hypot(p.x - x, p.z - z); if (e < d) { d = e; b = i; } }); return b; }
+
+  let raf = 0, idleFrames = 0;
+  function wake() { idleFrames = 0; if (!raf && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+  function tick(now) {
+    raf = 0;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    let busy = false;
+    // walk
+    if (!fig.dragging) {
+      const dx = fig.tx - fig.x, dz = fig.tz - fig.z, d = Math.hypot(dx, dz);
+      if (d > 0.01) {
+        const vmax = 3.4, want = Math.min(vmax, d * 4.2);
+        fig.v += (want - fig.v) * Math.min(1, dt * 9);
+        const step = Math.min(d, fig.v * dt);
+        fig.x += (dx / d) * step; fig.z += (dz / d) * step; fig.phase += step * 5.2;
+        fig.walk += (1 - fig.walk) * Math.min(1, dt * 10); busy = true;
+        if (Math.hypot(fig.tx - fig.x, fig.tz - fig.z) <= 0.01 && fig.goal >= 0) { fig.x = fig.tx; fig.z = fig.tz; arrive(); }
+      } else { fig.v = 0; fig.walk += (0 - fig.walk) * Math.min(1, dt * 8); if (fig.walk > 0.01) busy = true; }
+    }
+    // cheer (arms up) after arrival
+    const ct = fig.cheerT ? (now - fig.cheerT) / 1000 : 9;
+    const cheerTarget = reduce ? 0 : ct < 0.9 ? 1 : 0;
+    fig.cheer += (cheerTarget - fig.cheer) * Math.min(1, dt * 11); if (Math.abs(cheerTarget - fig.cheer) > 0.005) busy = true;
+    cones.forEach((c, i) => {
+      const h = (i === hov || i === fig.goal) && !c.ok ? 1 : 0;
+      c.hot += (h - c.hot) * Math.min(1, dt * 14); if (Math.abs(h - c.hot) > 0.01) busy = true;
+      if (c.okT >= 0 && now - c.okT < 700) busy = true;
+    });
+    // roll spring
+    if (!reduce) {
+      const k = 120, damp = 14; rollV += ((rollTarget - roll) * k - rollV * damp) * dt; roll += rollV * dt;
+      if (Math.abs(rollTarget - roll) > 0.01 || Math.abs(rollV) > 0.01) busy = true;
+      rollTarget *= Math.pow(0.04, dt); // drifts back to level
+      if (Math.abs(rollTarget) > 0.02) busy = true;
+    }
+    updateLevel();
+    draw(now);
+    if (busy || ++idleFrames < 4) raf = requestAnimationFrame(tick);
+  }
+
+  /* ---------- input ---------- */
+  let hov = -1, down = null;
+  function hitCone(X, Y) {
+    for (let i = P.length - 1; i >= 0; i--) { const b = cones[i].box; if (b && X > b[0] - 8 && X < b[0] + b[2] + 8 && Y > b[1] - 8 && Y < b[1] + b[3] + 14) return i; }
+    return -1;
+  }
+  const hitFig = (X, Y) => fig.box && X > fig.box[0] - 10 && X < fig.box[0] + fig.box[2] + 10 && Y > fig.box[1] && Y < fig.box[1] + fig.box[3];
+  const local = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener("pointermove", (e) => {
+    const [X, Y] = local(e);
+    if (down && down.fig) {
+      if (Math.hypot(X - down.X, Y - down.Y) > 4) down.moved = true;
+      const [x, z] = unproj(X, Math.max(Y + down.oy, hy + 20));
+      fig.dragging = true; fig.x = fig.tx = Math.max(-2.6, Math.min(2.6, x)); fig.z = fig.tz = Math.max(2.4, Math.min(7, z));
+      fig.phase += 0.25; fig.walk = 0.6; fig.goal = -1;
+      const n = nearestCone(fig.x, fig.z); if (n !== hov) hov = n;
+      wake(); return;
+    }
+    if (e.pointerType === "mouse") {
+      const h = hitCone(X, Y); if (h !== hov) { hov = h; wake(); }
+      cv.style.cursor = h >= 0 ? "pointer" : hitFig(X, Y) ? "grab" : "default";
+      if (!reduce) { rollTarget = ((X - W / 2) / W) * -3.2; wake(); }
+    }
+  });
+  cv.addEventListener("pointerdown", (e) => {
+    const [X, Y] = local(e);
+    if (hitFig(X, Y)) { const f = proj(fig.x, fig.z); down = { fig: true, X, Y, oy: f[1] - Y }; cv.style.cursor = "grabbing"; return; }
+    down = { X, Y };
+  });
+  const up = (e) => {
+    if (!down) return;
+    const [X, Y] = local(e), d = down; down = null;
+    if (d.fig) {
+      fig.dragging = false; cv.style.cursor = "grab";
+      const n = nearestCone(fig.x, fig.z); hov = -1;
+      if (n >= 0) goTo(n); else wake();
+      return;
+    }
+    if (Math.hypot(X - d.X, Y - d.Y) > 8) return;
+    const h = hitCone(X, Y);
+    if (h >= 0) goTo(h);
+    else if (Y > hy + 30) { const [x, z] = unproj(X, Y); walkTo(x, z); }
+  };
+  cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", () => { down = null; fig.dragging = false; });
+  cv.addEventListener("pointerleave", () => { if (hov >= 0 && !down) { hov = -1; wake(); } });
+
+  P.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button aria-current="false">${p.t}</button>`;
+    li.firstChild.addEventListener("click", () => goTo(i));
+    li.firstChild.addEventListener("mouseenter", () => { hov = i; wake(); });
+    li.firstChild.addEventListener("mouseleave", () => { hov = -1; wake(); });
+    idx.appendChild(li);
+  });
+  idx.insertAdjacentHTML("beforeend", `<li class="more">Also: <a href="https://hridaew.com/waffling/savor" target="_blank" rel="noopener">Savor</a>, <a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener">Saving Baby J</a>, <a href="https://hridaew.com/waffling/recorder" target="_blank" rel="noopener">Recorder</a>, <a href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener">Butter chicken</a></li>`);
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
+  addEventListener("resize", () => { layout(); wake(); });
+  if (document.fonts) document.fonts.ready.then(() => wake());
+
+  intro(); layout(); updateLevel(); wake();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
+<style>
+/* A naturalist's plate: the work drawn as engraved specimens. Tap one and it is hand-tinted, and its entry appears. */
+:root {
+  color-scheme: light;
+  --paper: #E7E8DF; --paper-hi: #EEEFE8; --ink: #1F231E; --muted: #4E544C; --rule: rgb(31 35 30 / .55); --hair: rgb(31 35 30 / .22);
+  --f-fell: "IM Fell English", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --f-sc: "IM Fell English SC", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.45 var(--f-fell); overflow: hidden; -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(ellipse 90% 80% at 40% 40%, var(--paper-hi), var(--paper) 75%); }
+img { max-width: none; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 4px; }
+.sc { font-family: var(--f-sc); letter-spacing: .06em; }
+
+/* the plate: a double-ruled frame */
+.plate { position: absolute; inset: clamp(14px, 2.6vh, 28px) clamp(14px, 2.4vw, 36px); border: 1.5px solid var(--rule); padding: 5px; }
+.plate > .in { position: relative; height: 100%; border: .5px solid var(--rule); display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 27vw, 400px); grid-template-rows: auto minmax(0, 1fr); }
+
+.head { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: clamp(16px, 2.6vh, 26px) clamp(20px, 2.6vw, 40px) clamp(10px, 1.6vh, 16px); border-bottom: .5px solid var(--hair); }
+.head .kicker { margin: 0 0 2px; font-size: 13px; color: var(--muted); }
+.head h1 { margin: 0; font: 400 clamp(34px, 3.4vw, 50px)/1 var(--f-fell); letter-spacing: -.005em; }
+.head h1 i { font-style: italic; }
+.head .role { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.head .no { font-size: 15px; text-align: right; white-space: nowrap; }
+.head .no span { display: block; font: italic 13px/1.3 var(--f-fell); color: var(--muted); }
+
+/* specimens */
+.field { position: relative; margin: clamp(18px, 3.4vh, 36px) clamp(20px, 2.6vw, 44px) clamp(14px, 2.6vh, 28px); min-height: 0; }
+.sheet { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.spec { position: absolute; display: block; transition: transform .22s cubic-bezier(.2,.8,.2,1); -webkit-tap-highlight-color: transparent; }
+.spec .fig { position: relative; display: block; }
+.spec img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+.spec .col { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; opacity: 0; filter: saturate(.78) contrast(.95);
+  -webkit-mask-image: linear-gradient(100deg, #000 45%, transparent 55%); mask-image: linear-gradient(100deg, #000 45%, transparent 55%);
+  -webkit-mask-size: 320% 100%; mask-size: 320% 100%; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+.spec .eng { position: relative; }
+.spec.on .col { opacity: .92; animation: wash .55s cubic-bezier(.3,.7,.2,1) forwards; }
+@keyframes wash { from { -webkit-mask-position: 100% 0; mask-position: 100% 0; } to { -webkit-mask-position: 0% 0; mask-position: 0% 0; } }
+.spec .lab { display: block; margin-top: 4px; text-align: center; font: italic 13px/1.2 var(--f-fell); color: var(--muted); white-space: nowrap; }
+.spec .lab b { font: 400 13px/1 var(--f-sc); font-style: normal; color: var(--ink); margin-right: 4px; }
+.spec:hover { transform: translateY(-3px); }
+.spec.on .lab { color: var(--ink); }
+.spec.on .lab::after { content: ""; display: block; width: 28px; margin: 5px auto 0; border-top: 1px solid var(--ink); }
+
+/* specimen positions (percent of the field) */
+.s-house { left: 0%; top: 0%; width: 32%; }
+.s-cone { left: 41%; top: 4%; width: 17%; }
+.s-strip { left: 81%; top: 0%; width: 13.2%; }
+.s-cat { left: 4%; top: 57%; width: 27%; }
+.s-recorder { left: 49%; top: 48%; width: 15.5%; }
+
+/* the entry column */
+.entry { grid-row: 2; grid-column: 2; border-left: .5px solid var(--hair); padding: clamp(18px, 3vh, 30px) clamp(20px, 2.2vw, 34px) clamp(16px, 2.4vh, 24px); display: flex; flex-direction: column; min-height: 0; }
+.entry .body { flex: 1; min-height: 0; overflow: auto; transition: opacity .16s ease-in, transform .24s cubic-bezier(.2,.8,.2,1); }
+.entry .body.out { opacity: 0; transform: translateY(4px); }
+.entry .no { margin: 0; font-size: 13px; color: var(--muted); }
+.entry h2 { margin: 6px 0 2px; font: 400 32px/1.05 var(--f-fell); }
+.entry .lat { margin: 0 0 14px; font: italic 17px/1.3 var(--f-fell); color: var(--muted); }
+.entry dl { margin: 0; }
+.entry dt { font: 400 13px/1.2 var(--f-sc); letter-spacing: .06em; color: var(--muted); margin-top: 12px; }
+.entry dd { margin: 3px 0 0; font-size: 16px; line-height: 1.42; text-wrap: pretty; }
+.entry .go { display: inline-block; margin-top: 16px; font: italic 16px/1 var(--f-fell); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+.entry .pref { margin: 0; font-size: 17px; line-height: 1.45; text-wrap: pretty; }
+.entry .hint { margin: 12px 0 0; font: italic 14px/1.3 var(--f-fell); color: var(--muted); }
+.contact { border-top: .5px solid var(--hair); padding-top: 12px; margin-top: 12px; font-size: 14px; color: var(--muted); }
+.contact .email { color: var(--ink); user-select: all; }
+.contact button, .contact a { color: var(--ink); text-decoration: none; border-bottom: .5px solid var(--rule); margin-left: 8px; }
+.contact .row2 { display: flex; justify-content: space-between; margin-top: 4px; }
+.contact .row2 a:first-child { margin-left: 0; }
+.contact .all { color: var(--muted); }
+
+/* the legend: plate captions, which double as the plain index */
+.legend { margin: 12px 0 0; padding: 12px 0 0; list-style: none; border-top: .5px solid var(--hair); display: grid; gap: 3px; font-size: 15px; }
+.legend::before { content: "Index to the plate"; font: 400 13px/1.2 var(--f-sc); letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+.legend button { color: var(--muted); }
+.legend button b { font: 400 13px/1 var(--f-sc); color: var(--ink); margin-right: 3px; }
+.legend button i { color: var(--ink); }
+.legend button[aria-current="true"] i { border-bottom: 1px solid var(--ink); }
+
+@media (max-width: 900px) and (min-width: 701px) { .plate > .in { grid-template-columns: minmax(0, 1fr) 290px; } }
+@media (max-height: 780px) and (min-width: 701px) { .legend { display: none; } }
+@media (max-width: 700px) {
+  body { overflow: hidden; }
+  .plate { inset: calc(10px + env(safe-area-inset-top, 0px)) 10px calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; }
+  .plate > .in { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .head { padding: 14px 14px 10px; }
+  .head h1 { font-size: 34px; white-space: nowrap; }
+  .head .no span { display: none; }
+  .head .kicker { font-size: 11px; }
+  .head .role { font-size: 13px; margin-top: 4px; }
+  .head .no { font-size: 12px; }
+  .head .no span { font-size: 11px; }
+  .field { margin: 8px 10px 4px; }
+  .legend { display: none; }
+  .entry { grid-row: 3; grid-column: 1; border-left: 0; border-top: .5px solid var(--hair); padding: 12px 14px 10px; height: 352px; }
+  .entry h2 { font-size: 26px; margin-top: 2px; }
+  .entry .lat { font-size: 15px; margin-bottom: 6px; }
+  .entry dt { margin-top: 7px; font-size: 12px; }
+  .entry dd { font-size: 14.5px; line-height: 1.36; }
+  .entry .pref { font-size: 15px; line-height: 1.4; }
+  .entry .go { margin-top: 10px; font-size: 15px; }
+  .contact { font-size: 13px; padding-top: 8px; margin-top: 8px; }
+  .field { margin: 12px 12px 8px; }
+  .spec .lab { font-size: 12px; } .spec .lab b { font-size: 12px; margin: 0; } .spec .lab i { display: none; }
+  .s-house { left: 0%; top: 0%; width: 40%; }
+  .s-cone { left: 46%; top: 3%; width: 21%; }
+  .s-strip { left: 80%; top: 0%; width: 18.5%; }
+  .s-cat { left: 1%; top: 57%; width: 36%; }
+  .s-recorder { left: 47%; top: 50%; width: 21%; }
+}
+@media (max-height: 760px) and (min-width: 701px) { .entry dd { font-size: 15px; } .entry h2 { font-size: 28px; } }
+@media (prefers-reduced-motion: reduce) {
+  .spec, .entry .body { transition: none; }
+  .spec.on .col { animation: none; -webkit-mask-image: none; mask-image: none; }
+}
+</style>
+</head>
+<body>
+<main class="plate">
+  <div class="in">
+    <header class="head">
+      <div>
+        <p class="kicker sc">A field guide to the work of</p>
+        <h1>Hridae Walia</h1>
+        <p class="role">Product designer, San Francisco</p>
+      </div>
+      <p class="no sc">Plate I.<span>Specimens, 2020 – present</span></p>
+    </header>
+
+    <div class="field" id="field" aria-label="Specimens"></div>
+
+    <aside class="entry" aria-live="polite">
+      <div class="body" id="entry"></div>
+      <ol class="legend" id="legend" aria-label="Index to the plate"></ol>
+      <footer class="contact">
+        <span class="email" id="email">hridaew@gmail.com</span><button id="copy" type="button">copy</button>
+        <div class="row2"><span><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></span><a class="all" href="../index.html">all sketches</a></div>
+      </footer>
+    </aside>
+
+  </div>
+</main>
+<script>
+(() => {
+  const SPECS = [
+    { id: "house", cls: "s-house", n: 1, name: "Domis", lat: "Domus sapiens", common: "the 3D home avatar", href: "https://hridaew.com/domis",
+      hab: "iOS and web. San Francisco, 2024 – present. I am the founding product designer.",
+      obs: "Learns a house from the smallest thing its owner will actually give it: an address, a photo of an appliance nameplate, an inspection report. Prototypes of this avatar drove a 60% lift in new-user engagement." },
+    { id: "cone", cls: "s-cone", n: 2, name: "Virdio", lat: "Conus calibrans", common: "the calibration cone", href: "https://hridaew.com/virdio",
+      hab: "Living rooms, at the four corners of the user's space; visible only through the camera. 2021 – 2022.",
+      obs: "Hardware-free AR fitness. The user centers themself with a tilt indicator, then walks to each cone until a green check appears. Shipped on iOS, Android, web, desktop, Apple Watch and smart TV." },
+    { id: "cat", cls: "s-cat", n: 3, name: "Memory Care", lat: "Felis haptica", common: "the purring plush cat", href: "https://hridaew.com/memory-care",
+      hab: "SF Campus for Jewish Living, 2020 – 2023, among people living with mid-to-late stage dementia.",
+      obs: "Pressure sensors and a vibration motor wired to an Arduino: petting it triggers a purr and a video of that very cat. Residents picked them up and held them. 98% positive across 200+ sessions." },
+    { id: "recorder", cls: "s-recorder", n: 4, name: "Recorder", lat: "Phonographus portabilis", common: "the turntable voice recorder", href: "https://hridaew.com/waffling/recorder",
+      hab: "A phone. A side build.",
+      obs: "A skeuomorphic voice recorder: scrub a recording like a turntable, watch the center react to sound, and hear it eject like a cassette." },
+    { id: "strip", cls: "s-strip", n: 5, name: "OBSCURA", lat: "Fascia obscura", common: "the gaze photo strip", href: "https://hridaew.com/obscura",
+      hab: "MOHAI, Seattle. Exhibited 13 September 2025; sold out.",
+      obs: "Printed for each visitor to a gaze-driven VR documentary of 300+ unseen photographs by Wayne Wong, a Signal Corps soldier in 1946 Japan. It shows what in each image they looked at most." },
+  ];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const field = document.getElementById("field"), entry = document.getElementById("entry"), legend = document.getElementById("legend");
+  const sheet = document.createElement("div"); sheet.className = "sheet"; field.appendChild(sheet);
+  const phone = matchMedia("(max-width: 700px)");
+  function fit() {
+    const AR = phone.matches ? 1.08 : 1.55, W = field.clientWidth, H = field.clientHeight;
+    const w = Math.min(W, H * AR); sheet.style.width = w + "px"; sheet.style.height = w / AR + "px";
+  }
+  addEventListener("resize", fit); fit(); document.fonts && document.fonts.ready.then(fit);
+
+  const els = SPECS.map((s, i) => {
+    const b = document.createElement("button");
+    b.className = `spec ${s.cls}`; b.type = "button";
+    b.setAttribute("aria-label", `Fig. ${s.n}: ${s.name}, ${s.common}`);
+    b.innerHTML = `<span class="fig"><img class="eng" src="media/${s.id}-e.webp" alt="" draggable="false"><img class="col" src="media/${s.id}-c.webp" alt="" draggable="false" loading="lazy"></span>
+      <span class="lab"><b>Fig. ${s.n}.</b><i>${s.lat}</i></span>`;
+    b.addEventListener("click", () => select(active === i ? -1 : i));
+    sheet.appendChild(b);
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button"><b>${s.n}.</b> <i>${s.name}</i>, ${s.common}</button>`;
+    li.firstChild.addEventListener("click", () => select(i));
+    legend.appendChild(li);
+    return b;
+  });
+
+  const PREFACE = `<p class="pref">I'm a product designer obsessed with making, with six years of designing for interaction models that barely exist yet. I learn by making: on the canvas, in code, and in the physical world. Collected here are a few things I've made, drawn from life.</p>
+    <p class="hint">Tap a specimen for its entry.</p>`;
+  const PHONE_INDEX = () => `<p class="hint" style="margin-top:10px">${SPECS.map((s, i) => `<button type="button" data-i="${i}" style="border-bottom:.5px solid var(--rule);margin-right:10px;font-style:normal;color:var(--ink)">${s.name}</button>`).join(" ")}</p>`;
+
+  let active = -1;
+  function entryHTML(i) {
+    if (i < 0) return PREFACE + (matchMedia("(max-width: 700px)").matches ? PHONE_INDEX() : "");
+    const s = SPECS[i];
+    return `<p class="no sc">Fig. ${s.n} · ${s.name}</p><h2>${s.common[0].toUpperCase() + s.common.slice(1)}</h2><p class="lat">${s.lat}</p>
+      <dl><dt>Habitat</dt><dd>${s.hab}</dd><dt>Observations</dt><dd>${s.obs}</dd></dl>
+      <a class="go" href="${s.href}" target="_blank" rel="noopener">Read the full entry ↗</a>`;
+  }
+  function select(i) {
+    active = i;
+    els.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-pressed", j === i); });
+    [...legend.children].forEach((li, j) => li.firstChild.setAttribute("aria-current", j === i));
+    const html = entryHTML(i);
+    if (reduce) { entry.innerHTML = html; return; }
+    entry.classList.add("out");
+    clearTimeout(select.t); select.t = setTimeout(() => { entry.innerHTML = html; entry.scrollTop = 0; entry.classList.remove("out"); }, 140);
+  }
+  entry.addEventListener("click", (e) => { const b = e.target.closest("[data-i]"); if (b) select(+b.dataset.i); });
+  addEventListener("keydown", (e) => {
+    if (e.key === "Escape") select(-1);
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); const d = e.key === "ArrowRight" ? 1 : -1; select(((active < 0 ? (d > 0 ? -1 : 0) : active) + d + SPECS.length) % SPECS.length); els[active].focus(); }
+  });
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+
+  entry.innerHTML = entryHTML(-1);
+})();
+</script>
+</body>
+</html>

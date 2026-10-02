@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Floor Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&family=Martian+Mono:wdth,wght@75..112.5,300..500&display=swap">
+<style>
+/* A cyanotype drawing sheet: the house plan owns the left; schedule, room note and title block stack on the right. */
+:root {
+  color-scheme: dark;
+  --paper: #1B3B6F; --paper-2: #183563; --line: #E6EDF8; --dim: #A9BCDD; --faint: rgb(230 237 248 / .32);
+  --poche: #2C528F; --mark: #F3D77E; --grid: rgb(230 237 248 / .05); --grid-2: rgb(230 237 248 / .09);
+  --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Martian Mono", ui-monospace, Menlo, monospace;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid-2) 1px, transparent 1px), linear-gradient(90deg, var(--grid-2) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 70% at 40% 45%, #1F4380, var(--paper-2) 80%);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px, 100% 100%;
+  color: var(--line); font: 400 14px/1.5 var(--f-sans); -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.sheet { position: relative; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 348px; gap: 0; padding: 22px; }
+.sheet::before { content: ""; position: absolute; inset: 14px; border: 1px solid var(--faint); pointer-events: none; }
+.sheet::after { content: ""; position: absolute; inset: 19px; border: 1.5px solid rgb(230 237 248 / .5); pointer-events: none; }
+
+.plan { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; padding: 28px 24px 28px 40px; }
+#svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.hint { position: absolute; left: 44px; bottom: 30px; margin: 0; font: 400 10px/1 var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+
+/* svg drawing */
+.wo { stroke: var(--line); fill: none; stroke-linecap: square; }
+.wi { stroke: var(--poche); fill: none; stroke-linecap: square; }
+.thin { stroke: var(--line); stroke-width: 1.2; fill: none; }
+.fx { stroke: var(--dim); stroke-width: 1; fill: none; opacity: .85; }
+.fx.dash, .thin.dash { stroke-dasharray: 6 5; }
+.dim { stroke: var(--dim); stroke-width: .9; fill: none; }
+.dimt { fill: var(--dim); font-family: var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .02em; }
+.ph { opacity: 0; transition: opacity .24s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; transform: scale(1.04); }
+.room.on .ph { opacity: 1; transform: none; }
+.hit { fill: transparent; cursor: pointer; outline: none; }
+.sel { fill: none; stroke: var(--mark); stroke-width: 2.5; opacity: 0; transition: opacity .18s; pointer-events: none; }
+.room.on .sel { opacity: 1; }
+.room:focus-visible .sel, .hit:focus-visible + .sel { opacity: 1; }
+.tag { pointer-events: none; }
+.tag .plate { fill: var(--paper); opacity: 0; transition: opacity .2s; }
+.tag.on .plate { opacity: .9; }
+.tag .no { fill: var(--dim); font-family: var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .06em; }
+.tag .nm { fill: var(--line); font-family: var(--f-sans); font-variation-settings: "wdth" 125; font-weight: 500; }
+.tag .pj { fill: var(--line); font-family: var(--f-sans); font-variation-settings: "wdth" 85; font-weight: 600; letter-spacing: -.01em; }
+.tag.on .pj { fill: var(--mark); }
+.north text { fill: var(--line); font-family: var(--f-sans); font-weight: 600; font-variation-settings: "wdth" 110; }
+
+/* right column */
+.side { position: relative; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; border-left: 1.5px solid rgb(230 237 248 / .5); }
+.label { font: 400 9.5px/1 var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 0 0 12px; }
+.sched { padding: 26px 26px 18px; border-bottom: 1px solid var(--faint); }
+.sched ol { list-style: none; margin: 0; padding: 0; }
+.sched button { width: 100%; display: grid; grid-template-columns: 36px 116px 1fr; align-items: baseline; padding: 5px 0; text-align: left; border-bottom: 1px dotted rgb(230 237 248 / .18); transition: color .15s; }
+.sched li:last-child button { border-bottom: 0; }
+.sched .n { font: 400 10px/1 var(--f-mono); font-variation-settings: "wdth" 85; color: var(--dim); }
+.sched .r { font: 500 10.5px/1 var(--f-sans); font-variation-settings: "wdth" 125; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.sched .p { font: 600 14px/1.2 var(--f-sans); font-variation-settings: "wdth" 85; }
+.sched button[aria-current="true"] .p, .sched button:hover .p { color: var(--mark); }
+
+.note { padding: 22px 26px; overflow: hidden; }
+.note .swap { transition: opacity .18s, transform .3s cubic-bezier(.2,.8,.2,1); }
+.note .swap.out { opacity: 0; transform: translateY(6px); }
+.note h2 { margin: 0 0 6px; font: 600 34px/1 var(--f-sans); font-variation-settings: "wdth" 80; letter-spacing: -.015em; }
+.note .meta { margin: 0 0 12px; font: 400 10.5px/1.6 var(--f-mono); font-variation-settings: "wdth" 85; color: var(--dim); }
+.note p.d { margin: 0 0 14px; font: 400 15px/1.5 var(--f-sans); font-variation-settings: "wdth" 95; max-width: 34ch; }
+.note .links a { display: inline-block; margin: 0 16px 6px 0; font: 500 10.5px/1 var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--mark); padding-bottom: 4px; color: var(--line); }
+.note .links a:hover { color: var(--mark); }
+
+.tb { border-top: 1.5px solid rgb(230 237 248 / .5); display: grid; grid-template-columns: 1fr auto; }
+.tb > div { padding: 12px 26px; border-bottom: 1px solid var(--faint); }
+.tb .name { grid-column: 1 / -1; padding-top: 16px; padding-bottom: 14px; }
+.tb .name b { display: block; font: 700 25px/1 var(--f-sans); font-variation-settings: "wdth" 115; letter-spacing: .06em; text-transform: uppercase; }
+.tb .name span { display: block; margin-top: 8px; font: 400 13px/1.4 var(--f-sans); color: var(--dim); }
+.tb .contact { grid-column: 1 / -1; font: 400 11px/1.9 var(--f-mono); font-variation-settings: "wdth" 85; }
+.tb .contact .email { user-select: all; color: var(--line); }
+.tb .contact button, .tb .contact a { margin-left: 10px; text-decoration: none; color: var(--dim); border-bottom: 1px solid var(--faint); }
+.tb .contact button:hover, .tb .contact a:hover { color: var(--mark); }
+.tb .cell { font: 400 9.5px/1.5 var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); border-bottom: 0; }
+.tb .cell b { display: block; font: 500 12px/1.3 var(--f-mono); color: var(--line); letter-spacing: .04em; }
+.tb .cell + .cell { border-left: 1px solid var(--faint); }
+.back { position: absolute; right: 26px; top: 26px; font: 400 9.5px/1 var(--f-mono); font-variation-settings: "wdth" 85; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); text-decoration: none; }
+.back:hover { color: var(--mark); }
+.mhead { display: none; }
+
+@media (max-height: 760px) and (min-width: 901px) {
+  .sched button { padding: 3px 0; }
+  .note h2 { font-size: 28px; }
+  .note p.d { font-size: 14px; }
+}
+@media (max-width: 900px) {
+  body { overflow: auto; overflow-x: hidden; }
+  html, body { height: auto; }
+  .sheet { display: block; height: auto; padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .sheet::before { inset: 6px; } .sheet::after { display: none; }
+  .mhead { display: block; padding: 10px 2px 0; }
+  .mhead b { display: block; font: 700 22px/1 var(--f-sans); font-variation-settings: "wdth" 115; letter-spacing: .06em; text-transform: uppercase; }
+  .mhead span { display: block; margin-top: 6px; font: 400 13px/1.4 var(--f-sans); color: var(--dim); }
+  .plan { padding: 8px 0 0; height: auto; }
+  #svg { height: auto; }
+  .hint { position: static; margin: 4px 0 0; text-align: center; }
+  .side { border-left: 0; display: flex; flex-direction: column; }
+  .note { order: 1; padding: 20px 2px 18px; border-top: 1.5px solid rgb(230 237 248 / .5); margin-top: 12px; min-height: 196px; }
+  .note h2 { font-size: 30px; }
+  .sched { order: 2; padding: 16px 2px 14px; border-top: 1px solid var(--faint); border-bottom: 0; }
+  .tb { order: 3; }
+  .tb > div { padding: 12px 2px; }
+  .tb .name { display: none; }
+  .tb .cell + .cell { padding-left: 12px; }
+  .side { position: static; }
+  .back { top: 22px; right: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ph, .sel, .tag .plate, .note .swap { transition: none; }
+  .ph { transform: none; }
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="mhead"><b>Hridae Walia</b><span>Product designer · San Francisco</span></header>
+  <section class="plan" aria-label="Floor plan: each room is a project">
+    <svg id="svg" role="group" aria-label="Floor plan of a house; each room is a project"></svg>
+    <p class="hint" id="hint">Hover a room</p>
+  </section>
+  <aside class="side">
+    <section class="sched" aria-label="Room schedule">
+      <p class="label">Room schedule</p>
+      <ol id="sched"></ol>
+    </section>
+    <section class="note" aria-live="polite"><div class="swap" id="note"></div></section>
+    <footer class="tb">
+      <div class="name"><b>Hridae Walia</b><span>Product designer · San Francisco. Founding Product Designer at Domis.</span></div>
+      <div class="contact"><span class="email" id="email">hridaew@gmail.com</span><button id="copy" type="button">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></div>
+      <div class="cell">Drawing<b>Ground floor plan</b></div>
+      <div class="cell">Sheet<b>A-101</b></div>
+    </footer>
+    <a class="back" href="../index.html">all sketches</a>
+  </aside>
+</main>
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const CV = "https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing";
+  // house coordinates: 1000 × 620 units, 20 units = 1 ft
+  const ROOMS = [
+    { id: "office", no: "101", name: "Office", r: [540, 0, 1000, 250], img: "media/domis.webp", pj: "Domis",
+      meta: "Founding Product Designer · 2024–now", d: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report.",
+      links: [["Case study", "https://hridaew.com/domis"]] },
+    { id: "studio", no: "102", name: "Studio", r: [0, 250, 420, 620], img: "media/virdio.webp", pj: "Virdio",
+      meta: "Product Designer · 2021–2022", d: "AR fitness with no hardware. An ordinary camera reads your body, and virtual cones at the corners of the room calibrate the space.",
+      links: [["Case study", "https://hridaew.com/virdio"]] },
+    { id: "dark", no: "103", name: "Darkroom", r: [420, 250, 600, 440], img: "media/obscura.webp", pj: "OBSCURA",
+      meta: "Interaction design, Unity · MOHAI, Seattle · 2025", d: "A box of never-seen 1946 photographs, viewed in VR while an audience outside watches through the visitor's eyes.",
+      links: [["Case study", "https://hridaew.com/obscura"]] },
+    { id: "sun", no: "104", name: "Sunroom", r: [600, 250, 1000, 620], img: "media/mc.webp", pj: "Memory Care",
+      meta: "Interaction Designer · 2020–2023", d: "Plush cats that purr when you pet them, for people living with dementia. 98% positive evaluations across 200+ sessions.",
+      links: [["Case study", "https://hridaew.com/memory-care"]] },
+    { id: "kitchen", no: "105", name: "Kitchen", r: [280, 0, 540, 250], img: "media/butter.webp", pj: "Butter Chicken",
+      meta: "Side build · recipe", d: "A vibes-based recipe. Taste scales linearly with butter.",
+      links: [["Recipe", "https://hridaew.com/butter-chicken"]] },
+    { id: "garage", no: "106", name: "Garage", r: [0, 0, 280, 250], img: "media/garage.webp", pj: "Side builds",
+      meta: "Savor · Saving Baby J · Recorder-Proto", d: "Things I build to learn: a Gaussian-splat capture tool, an orca-throwing arcade game, a voice recorder you scrub like a turntable.",
+      links: [["Savor", "https://hridaew.com/waffling/savor"], ["Baby J", "https://hridaew.com/waffling/orca"], ["Recorder", "https://hridaew.com/waffling/recorder"]] },
+    { id: "entry", no: "100", name: "Entry", r: [420, 440, 600, 620], img: "media/me.webp", pj: "Hello",
+      meta: "Hridae Walia · San Francisco", d: "I'm a product designer obsessed with making. Six years designing for interaction models that barely exist yet, on the canvas, in code and in the physical world.",
+      links: [["CV", CV], ["LinkedIn", "https://www.linkedin.com/in/hridae"]] },
+  ];
+  // walls: [x1,y1,x2,y2]; exterior thick, interior thin; openings are left as gaps
+  const EXT = [
+    [0,0,360,0],[460,0,620,0],[720,0,820,0],[920,0,1000,0],
+    [1000,0,1000,80],[1000,180,1000,290],[1000,600,1000,620],
+    [0,620,120,620],[300,620,470,620],[540,620,640,620],[980,620,1000,620],
+    [0,0,0,40],[0,210,0,330],[0,420,0,500],[0,580,0,620],
+  ];
+  const WIN = [[360,0,460,0],[620,0,720,0],[820,0,920,0],[1000,80,1000,180],[1000,290,1000,600],[0,330,0,420],[0,500,0,580],[120,620,300,620],[640,620,980,620]];
+  const INT = [
+    [0,250,70,250],[130,250,310,250],[410,250,780,250],[880,250,1000,250],
+    [280,0,280,160],[280,215,280,250],
+    [540,0,540,150],[540,205,540,250],
+    [420,250,420,500],[420,560,420,620],
+    [600,250,600,470],[600,580,600,620],
+    [420,440,450,440],[500,440,600,440],
+  ];
+  // doors: hinge, closed end (along wall), open end (into room)
+  const DOORS = [
+    [[540,620],[470,620],[540,550]],
+    [[130,250],[70,250],[130,190]],
+    [[280,215],[280,160],[225,215]],
+    [[540,205],[540,150],[595,205]],
+    [[420,500],[420,560],[480,500]],
+    [[500,440],[450,440],[500,490]],
+  ];
+  const FIX = [ // thin furniture lines, [type, ...]
+    ["rect", 18, 14, 262, 52], ["rect", 200, 170, 262, 232, "dash"],          // garage: bench, crate
+    ["rect", 290, 10, 530, 56], ["circ", 322, 33, 9], ["circ", 346, 33, 9], ["rect", 390, 16, 450, 50],            // kitchen counter, burners, sink
+    ["rect", 572, 26, 700, 70], ["circ", 636, 92, 14], ["rect", 960, 30, 990, 230],                               // office desk, chair, shelf
+    ["rect", 432, 262, 462, 428], ["rect", 436, 280, 458, 318], ["rect", 436, 328, 458, 366], ["rect", 436, 376, 458, 414], // darkroom bench + trays
+    ["rect", 60, 300, 360, 560, "dash"], ["cone", 60, 300], ["cone", 360, 300], ["cone", 60, 560], ["cone", 360, 560], ["tri", 210, 600, 210, 585], // studio: calibration square, cones, camera
+    ["rect", 650, 300, 720, 370], ["rect", 760, 300, 830, 370], ["circ", 940, 560, 22], ["circ", 940, 560, 12],     // sunroom chairs, plant
+    ["rect", 470, 590, 540, 612],                                                                                     // entry mat
+  ];
+
+  const svg = document.getElementById("svg");
+  let portrait = false, ppu = 1, active = -1;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const M = (x, y) => (portrait ? [620 - y, x] : [x, y]);
+  const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+  const line = (a, b, cls, parent) => { const [x1, y1] = M(...a), [x2, y2] = M(...b); return el("line", { x1, y1, x2, y2, class: cls }, parent); };
+  const rectM = (x1, y1, x2, y2) => { const [a, b] = M(x1, y1), [c, d] = M(x2, y2); return { x: Math.min(a, c), y: Math.min(b, d), width: Math.abs(c - a), height: Math.abs(d - b) }; };
+  const ft = (u) => { const inch = Math.round((u / 20) * 12); return `${Math.floor(inch / 12)}'-${inch % 12}"`; };
+
+  function draw() {
+    portrait = innerWidth <= 900;
+    svg.textContent = "";
+    const pad = { l: 92, t: 92, r: 30, b: 30 };
+    const c1 = M(-pad.l, -pad.t), c2 = M(1000 + pad.r, 620 + pad.b);
+    const vb = [Math.min(c1[0], c2[0]), Math.min(c1[1], c2[1]), Math.abs(c2[0] - c1[0]), Math.abs(c2[1] - c1[1])];
+    if (portrait) { vb[0] -= 64; vb[2] += 64; } // room for the north arrow
+    else { vb[2] += 64; }
+    svg.setAttribute("viewBox", vb.join(" "));
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    if (portrait) svg.style.aspectRatio = `${vb[2]} / ${vb[3]}`; else svg.style.aspectRatio = "";
+    const r = svg.getBoundingClientRect();
+    ppu = Math.min(r.width / vb[2], (r.height || 1e9) / vb[3]);
+    const px = (p) => p / ppu; // css px -> user units
+
+    const defs = el("defs", {}, svg);
+    const gRooms = el("g", {}, svg), gFix = el("g", { "pointer-events": "none" }, svg), gWall = el("g", { "pointer-events": "none" }, svg);
+    const gHit = el("g", {}, svg), gTag = el("g", {}, svg), gDim = el("g", { "pointer-events": "none" }, svg);
+
+    ROOMS.forEach((R, i) => {
+      const [x1, y1, x2, y2] = R.r, rc = rectM(x1 + 4, y1 + 4, x2 - 4, y2 - 4);
+      const cp = el("clipPath", { id: "cp" + i }, defs); el("rect", rc, cp);
+      const g = el("g", { class: "room", "data-i": i }, gRooms);
+      el("image", { href: R.img, ...rc, preserveAspectRatio: "xMidYMid slice", "clip-path": `url(#cp${i})`, class: "ph" }, g);
+      R.g = g;
+      const hg = el("g", { class: "room", "data-i": i }, gHit);
+      const hit = el("rect", { ...rc, class: "hit", tabindex: 0, role: "button", "aria-label": `${R.name}: ${R.pj}` }, hg);
+      el("rect", { ...rectM(x1 + 6, y1 + 6, x2 - 6, y2 - 6), class: "sel" }, hg);
+      R.h = hg;
+      hit.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") select(i); });
+      hit.addEventListener("click", () => select(i));
+      hit.addEventListener("focus", () => select(i));
+      hit.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); const a = document.querySelector("#note .links a"); if (a) a.focus(); } });
+      // room tag
+      const tg = el("g", { class: "tag room", "data-i": i }, gTag); R.t = tg;
+      const cx = rc.x + rc.width / 2, cy = rc.y + rc.height / 2;
+      const small = rc.width * ppu < 120;
+      const fsN = px(9.5), fsM = px(small ? 8.5 : 10), fsP = px(small ? 14.5 : 19);
+      const plate = el("rect", { class: "plate" }, tg);
+      const t1 = el("text", { x: cx, y: cy - fsP * .85, "text-anchor": "middle", class: "no", "font-size": fsN }, tg); t1.textContent = R.no;
+      const t2 = el("text", { x: cx, y: cy + fsM * .2, "text-anchor": "middle", class: "nm", "font-size": fsM, "letter-spacing": small ? ".08em" : ".18em" }, tg); t2.textContent = R.name.toUpperCase();
+      const t3 = el("text", { x: cx, y: cy + fsM * .2 + fsP * 1.25, "text-anchor": "middle", class: "pj", "font-size": fsP }, tg); t3.textContent = R.pj;
+      requestAnimationFrame(() => { try { const b = (small ? t3 : tg).getBBox(); const p = px(10); plate.setAttribute("x", b.x - p); plate.setAttribute("y", b.y - p * .8); plate.setAttribute("width", b.width + 2 * p); plate.setAttribute("height", b.height + 1.6 * p); } catch (e) {} });
+    });
+
+    FIX.forEach(([type, a, b, c, d, mod]) => {
+      if (type === "rect") el("rect", { ...rectM(a, b, c, d), class: "fx" + (mod ? " " + mod : "") }, gFix);
+      else if (type === "circ") { const [x, y] = M(a, b); el("circle", { cx: x, cy: y, r: c, class: "fx" }, gFix); }
+      else if (type === "cone") { const [x, y] = M(a, b); el("path", { d: `M${x} ${y - 9} L${x + 8} ${y + 6} L${x - 8} ${y + 6} Z`, class: "fx" }, gFix); }
+      else if (type === "tri") { const [x, y] = M(a, b); el("path", { d: `M${x - 10} ${y} h20 v-12 h-20 Z M${x - 4} ${y - 12} l4 -8 l4 8`, class: "fx" }, gFix); }
+    });
+
+    // walls: outer line stroke, then poche overlay -> double-line walls with clean joins
+    EXT.forEach(([a, b, c, d]) => line([a, b], [c, d], "wo", gWall).setAttribute("stroke-width", 14));
+    INT.forEach(([a, b, c, d]) => line([a, b], [c, d], "wo", gWall).setAttribute("stroke-width", 7));
+    EXT.forEach(([a, b, c, d]) => line([a, b], [c, d], "wi", gWall).setAttribute("stroke-width", 11));
+    INT.forEach(([a, b, c, d]) => line([a, b], [c, d], "wi", gWall).setAttribute("stroke-width", 4));
+    // windows: frame + glass lines
+    WIN.forEach(([a, b, c, d]) => {
+      const vert = a === c, o = 7;
+      const off = (k) => (vert ? [[a + k, b], [c + k, d]] : [[a, b + k], [c, d + k]]);
+      line(...off(-o), "thin", gWall); line(...off(o), "thin", gWall); line(...off(0), "thin", gWall);
+      const cap = (x, y) => line(vert ? [x - o, y] : [x, y - o], vert ? [x + o, y] : [x, y + o], "thin", gWall);
+      cap(a, b); cap(c, d);
+    });
+    // garage overhead door (dashed)
+    line([-14, 40], [-14, 210], "thin dash", gWall); line([16, 40], [16, 210], "thin dash", gWall);
+    // doors
+    DOORS.forEach(([H, C, O]) => {
+      const [hx, hy] = M(...H), [cx2, cy2] = M(...C), [ox, oy] = M(...O);
+      el("line", { x1: hx, y1: hy, x2: ox, y2: oy, class: "thin" }, gWall);
+      const cross = (ox - hx) * (cy2 - hy) - (oy - hy) * (cx2 - hx);
+      const rr = Math.hypot(ox - hx, oy - hy);
+      el("path", { d: `M${ox} ${oy} A${rr} ${rr} 0 0 ${cross > 0 ? 1 : 0} ${cx2} ${cy2}`, class: "thin", "stroke-dasharray": "3 4", opacity: .7 }, gWall);
+    });
+
+    // dimension chains
+    const fsD = px(9);
+    function chain(stops, off, horiz) {
+      const P = (s) => (horiz ? [s, off] : [off, s]);
+      line(P(stops[0]), P(stops[stops.length - 1]), "dim", gDim);
+      stops.forEach((s) => {
+        const [x, y] = M(...P(s)), k = 6;
+        el("line", { x1: x - k, y1: y + k, x2: x + k, y2: y - k, class: "dim", "stroke-width": 1.6 }, gDim);
+        const w0 = horiz ? [s, off + 10] : [off + 10, s], w1 = horiz ? [s, -6] : [-6, s];
+        line(w0, w1, "dim", gDim).setAttribute("opacity", .5);
+      });
+      for (let i = 0; i < stops.length - 1; i++) {
+        const mid = (stops[i] + stops[i + 1]) / 2, [x, y] = M(...P(mid));
+        const vertical = portrait ? horiz : !horiz;
+        const t = el("text", { x, y, "text-anchor": "middle", class: "dimt", "font-size": fsD, dy: -fsD * .55 }, gDim);
+        if (vertical) t.setAttribute("transform", `rotate(-90 ${x} ${y})`);
+        t.textContent = ft(stops[i + 1] - stops[i]);
+      }
+    }
+    chain([0, 280, 540, 1000], -40, true);
+    chain([0, 1000], -72, true);
+    chain([0, 250, 620], -40, false);
+    chain([0, 620], -72, false);
+
+    // north arrow: rotates with the drawing
+    const [nx, ny] = portrait ? [vb[0] + 36, vb[1] + vb[3] - 60] : [1066, 570];
+    const ng = el("g", { class: "north", transform: `translate(${nx} ${ny}) rotate(${portrait ? 90 : 0})` }, gDim);
+    el("circle", { r: 22, class: "thin" }, ng);
+    el("path", { d: "M0 -30 L7 8 L0 3 L-7 8 Z", fill: "var(--line)" }, ng);
+    const nt = el("text", { y: -38, "text-anchor": "middle", "font-size": px(11), transform: portrait ? "rotate(-90 0 -38)" : "" }, ng); nt.textContent = "N";
+
+    if (active >= 0) paint(active);
+  }
+
+  const sched = document.getElementById("sched");
+  const order = [6, 0, 1, 2, 3, 4, 5];
+  order.forEach((i) => {
+    const R = ROOMS[i], li = document.createElement("li"), b = document.createElement("button");
+    b.type = "button"; b.innerHTML = `<span class="n">${R.no}</span><span class="r">${R.name}</span><span class="p">${R.pj}</span>`;
+    b.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") select(i); });
+    b.addEventListener("click", () => select(i)); b.addEventListener("focus", () => select(i));
+    R.b = b; li.appendChild(b); sched.appendChild(li);
+  });
+
+  const note = document.getElementById("note");
+  function paint(i) { ROOMS.forEach((R, j) => { R.g && R.g.classList.toggle("on", j === i); R.h && R.h.classList.toggle("on", j === i); R.t && R.t.classList.toggle("on", j === i); R.b.setAttribute("aria-current", j === i); }); }
+  function select(i) {
+    if (i === active) return;
+    const first = active < 0; active = i; paint(i);
+    const R = ROOMS[i];
+    const html = `<p class="label">${R.no} · ${R.name}</p><h2>${R.pj}</h2><p class="meta">${R.meta}</p><p class="d">${R.d}</p>
+      <div class="links">${R.links.map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</div>`;
+    if (first || reduce) { note.innerHTML = html; return; }
+    note.classList.add("out"); clearTimeout(select.t);
+    select.t = setTimeout(() => { note.innerHTML = html; note.classList.remove("out"); }, 140);
+  }
+
+  if (matchMedia("(hover: none)").matches) document.getElementById("hint").textContent = "Tap a room";
+  draw(); select(0);
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
+  if (document.fonts) document.fonts.ready.then(draw);
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+})();
+</script>
+</body>
+</html>

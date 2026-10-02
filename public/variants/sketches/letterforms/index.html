@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Letterforms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400;62..125,600;62..125,900&family=Fragment+Mono&display=swap">
+<style>
+/* Layout: the name, set as large as the screen allows, is the whole page. Every letter is a window onto a project; a thin band of text sits above and below. */
+:root {
+  color-scheme: light;
+  --ground: #FFFFFF; --ink: #0B0B0C; --muted: #5E5F63; --rule: rgb(11 11 12 / .14);
+  --f-display: "Archivo", "Arial Black", "Helvetica Neue", sans-serif;
+  --f-mono: "Fragment Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ground); color: var(--ink); font: 400 14px/1.45 var(--f-display); -webkit-font-smoothing: antialiased; overflow: hidden; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+.page { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: clamp(18px, 3vh, 30px) clamp(20px, 2.8vw, 44px) calc(clamp(18px, 3vh, 30px) + env(safe-area-inset-bottom, 0px)); }
+.bar { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font: 400 12px/1.5 var(--f-mono); }
+.bar .contact { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 14px; }
+.bar .email { user-select: all; }
+.bar button, .bar a, .index a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+.bar button:hover, .bar a:hover, .index a:hover { border-bottom-color: var(--ink); }
+
+.stage { position: relative; min-height: 0; }
+.name { position: absolute; left: 0; top: 50%; margin: 0; font: 900 100px/1 var(--f-display); white-space: nowrap; transform: translateY(-50%); transform-origin: 50% 50%; visibility: hidden; }
+.name.ready { visibility: visible; }
+.line { display: flex; }
+.line + .line { margin-top: -.2em; }
+.L { position: relative; display: inline-grid; font: inherit; line-height: 1; cursor: pointer; }
+.L > .g { grid-area: 1 / 1; color: transparent; -webkit-text-fill-color: transparent; -webkit-background-clip: text; background-clip: text; background-repeat: no-repeat; background-color: #1d1d1f; }
+.L > .f { opacity: 0; transition: opacity .28s var(--ease); background-color: transparent; }
+.L > .f.on { opacity: 1; }
+.L:focus-visible { outline: none; }
+.L:focus-visible::after { content: ""; position: absolute; left: 6%; right: 6%; bottom: .1em; height: 4px; background: var(--ink); }
+
+.foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; min-height: 104px; }
+.cap { max-width: 560px; transition: opacity .2s var(--ease), transform .3s var(--ease); }
+.cap.out { opacity: 0; transform: translateY(6px); }
+.cap h2 { margin: 0 0 4px; font: 600 26px/1.05 var(--f-display); font-stretch: 112%; letter-spacing: -.01em; }
+.cap .meta { font: 400 11.5px/1.5 var(--f-mono); color: var(--muted); }
+.cap p { margin: 6px 0 8px; font-size: 15px; max-width: 52ch; text-wrap: pretty; }
+.cap a { font: 400 12px/1 var(--f-mono); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+.cap .hint { color: var(--muted); font: 400 12px/1.5 var(--f-mono); }
+.index { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font: 400 12px/1.5 var(--f-mono); }
+.index nav { display: flex; gap: 14px; }
+.index .all { color: var(--muted); border-bottom: 0; margin-top: 6px; font-size: 11px; }
+
+@media (max-width: 760px) {
+  .page { padding: 16px 16px calc(18px + env(safe-area-inset-bottom, 0px)); }
+  .bar { flex-direction: column; gap: 6px; }
+  .bar .contact { justify-content: flex-start; }
+  .bar .xtra { display: none; }
+  .foot { grid-template-columns: 1fr; gap: 14px; min-height: 0; }
+  .cap { min-height: 128px; }
+  .cap h2 { font-size: 24px; }
+  .cap p { font-size: 14px; }
+  .index { align-items: flex-start; }
+  .index nav { flex-wrap: wrap; gap: 2px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .L > .f, .cap { transition: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="bar">
+    <span>Product Designer · San Francisco<span class="xtra"> · Founding Product Designer at Domis</span></span>
+    <span class="contact"><span class="email" id="email">hridaew@gmail.com</span><button id="copy" type="button">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></span>
+  </header>
+  <main class="stage" id="stage">
+    <h1 class="name" id="name" aria-label="Hridae Walia"></h1>
+  </main>
+  <footer class="foot">
+    <section class="cap" id="cap" aria-live="polite"></section>
+    <div class="index">
+      <nav aria-label="Case studies">
+        <a href="https://hridaew.com/domis" target="_blank" rel="noopener">Domis</a>
+        <a href="https://hridaew.com/virdio" target="_blank" rel="noopener">Virdio</a>
+        <a href="https://hridaew.com/obscura" target="_blank" rel="noopener">OBSCURA</a>
+        <a href="https://hridaew.com/memory-care" target="_blank" rel="noopener">Memory Care</a>
+      </nav>
+      <a class="all" href="../index.html">all sketches</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // a project shows through a letter; its "flood" image is the one that fills the whole name
+  const PROJ = {
+    domis:   { t: "Domis", img: "media/domis.webp", w: 1024, h: 1024, fx: .5, fy: .42, meta: "Founding Product Designer · 2024–now", href: "https://hridaew.com/domis", cs: 1,
+               p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report." },
+    virdio:  { t: "Virdio", img: "media/virdio.webp", w: 1600, h: 849, fx: .62, fy: .55, meta: "Product Designer · 2021–2022", href: "https://hridaew.com/virdio", cs: 1,
+               p: "AR fitness with no hardware: an ordinary camera reads your body and counts every rep, on six platforms." },
+    obscura: { t: "OBSCURA", img: "media/obscura.webp", w: 1600, h: 1536, fx: .5, fy: .42, meta: "Interaction design, Unity · MOHAI, Seattle, 2025", href: "https://hridaew.com/obscura", cs: 1,
+               p: "300+ never-seen photographs from 1946 Japan, curated by a visitor's gaze in VR while an audience watches through their eyes. Sold out." },
+    memory:  { t: "Memory Care", img: "media/memory-care-2.webp", w: 1600, h: 1200, fx: .45, fy: .5, meta: "Interaction Designer · 2020–2023", href: "https://hridaew.com/memory-care", cs: 1,
+               p: "Plush cats wired with pressure sensors and haptic motors, for people living with dementia. Pet one and it purrs. 98% positive across 200+ sessions." },
+    savor:   { t: "Savor", img: "media/savor.webp", w: 788, h: 1400, fx: .5, fy: .42, meta: "Side build · macOS", href: "https://hridaew.com/waffling/savor",
+               p: "Turns a phone video into a 3D Gaussian splat you can orbit, trained on-device. Built to capture Rodin's Mighty Hand." },
+    orca:    { t: "Saving Baby J", img: "media/orca-2.webp", w: 1600, h: 1200, fx: .5, fy: .5, meta: "Side build · arcade game", href: "https://hridaew.com/waffling/orca",
+               p: "Throw plush orcas at a projected hit board to free a calf from a net. Nobody needed a tutorial." },
+    butter:  { t: "Butter Chicken", img: "media/butter.webp", w: 797, h: 733, fx: .5, fy: .5, meta: "Side build · recipe", href: "https://hridaew.com/butter-chicken",
+               p: "A vibes-based recipe. Taste scales linearly with butter." },
+  };
+  const LINES = [
+    [["H", "domis", "media/domis.webp", "50% 40%"], ["R", "virdio", "media/virdio.webp", "62% 60%"], ["I", "obscura", "media/obscura-2.webp", "50% 30%"],
+     ["D", "memory", "media/memory-care.webp", "70% 35%"], ["A", "savor", "media/savor.webp", "50% 40%"], ["E", "orca", "media/orca-2.webp", "45% 50%"]],
+    [["W", "obscura", "media/obscura.webp", "50% 55%"], ["A", "memory", "media/memory-care-2.webp", "45% 50%"], ["L", "butter", "media/butter.webp", "50% 50%"],
+     ["I", "virdio", "media/virdio-2.webp", "47% 40%"], ["A", "domis", "media/domis.webp", "30% 70%"]],
+  ];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const touch = matchMedia("(hover: none)").matches;
+  const name = document.getElementById("name"), stage = document.getElementById("stage"), cap = document.getElementById("cap");
+
+  const letters = [];
+  LINES.forEach((ln) => {
+    const row = document.createElement("span"); row.className = "line";
+    ln.forEach(([ch, key, img, pos]) => {
+      const b = document.createElement("button");
+      b.className = "L"; b.type = "button";
+      b.setAttribute("aria-label", `${ch}: ${PROJ[key].t}`);
+      b.innerHTML = `<span class="g r" aria-hidden="true">${ch}</span><span class="g f" aria-hidden="true">${ch}</span><span class="g f" aria-hidden="true">${ch}</span>`;
+      const [r, fa, fb] = b.children;
+      r.style.backgroundSize = "cover";
+      row.appendChild(b);
+      letters.push({ el: b, key, r, f: [fa, fb], img, pos });
+    });
+    name.appendChild(row);
+  });
+
+  /* fit: pick the width axis (62 condensed … 125 expanded) that lets the name fill the stage */
+  const rowW = (r) => [...r.children].reduce((a, c) => a + c.offsetWidth, 0);
+  let rotated = false;
+  function fit() {
+    const sw = stage.clientWidth, sh = stage.clientHeight;
+    rotated = sw < 560 && sh > sw * 1.3;      // tall phones: the name runs up the screen
+    const W = (rotated ? sh * .96 : sw), H = rotated ? sw : sh * .88;
+    let best = null;
+    for (let wd = 125; wd >= 62; wd -= 3) {
+      name.style.fontStretch = wd + "%"; name.style.fontSize = "100px";
+      letters.forEach((l) => (l.el.style.marginRight = "0px"));
+      const ws = [...name.children].map(rowW), hh = name.offsetHeight - 34; // ink height: caps only, no ascender/descender slack
+      const fs = Math.min(W / Math.max(...ws), H / hh) * 100;
+      if (!best || fs > best.fs * 1.04) best = { wd, fs };
+    }
+    name.style.fontStretch = best.wd + "%"; name.style.fontSize = best.fs.toFixed(1) + "px";
+    // justify both lines to the same measure
+    const rows = [...name.children], ws = rows.map(rowW), max = Math.max(...ws);
+    rows.forEach((r, i) => { const n = r.children.length, gap = (max - ws[i]) / (n - 1); [...r.children].forEach((c, j) => (c.style.marginRight = j < n - 1 ? gap + "px" : "0px")); });
+    if (rotated) { name.style.left = "50%"; name.style.transform = "translate(-50%, -50%) rotate(-90deg) translateY(-.055em)"; }
+    else { name.style.left = Math.max(0, (sw - max) / 2) + "px"; name.style.transform = "translateY(-50%) translateY(.02em)"; }
+    // a rotated name gets pre-rotated photographs so they still read upright
+    letters.forEach((l) => {
+      const [px, py] = l.pos.split(" ").map(parseFloat);
+      l.r.style.backgroundImage = `url(${rotated ? l.img.replace(".webp", "-r.webp") : l.img})`;
+      l.r.style.backgroundPosition = rotated ? `${100 - py}% ${px}%` : l.pos;
+    });
+    name.classList.add("ready");
+    layoutFlood();
+  }
+
+  /* flood geometry: one image covers the whole name; each letter shows its own slice of it */
+  function layoutFlood() {
+    const bw = name.offsetWidth, bh = name.offsetHeight;
+    letters.forEach((l) => {
+      l.x = l.el.offsetLeft; l.y = l.el.offsetTop;
+      l.f.forEach((f) => f.dataset.key && place(f, PROJ[f.dataset.key], l, bw, bh));
+    });
+  }
+  function place(f, p0, l, bw = name.offsetWidth, bh = name.offsetHeight) {
+    const p = rotated ? { img: p0.img.replace(".webp", "-r.webp"), w: p0.h, h: p0.w, fx: 1 - p0.fy, fy: p0.fx } : p0;
+    const s = Math.max(bw / p.w, bh / p.h), iw = p.w * s, ih = p.h * s;
+    const ox = Math.min(0, Math.max(bw - iw, bw / 2 - iw * p.fx)), oy = Math.min(0, Math.max(bh - ih, bh / 2 - ih * p.fy));
+    f.style.backgroundImage = `url(${p.img})`;
+    f.style.backgroundSize = `${iw.toFixed(1)}px ${ih.toFixed(1)}px`;
+    f.style.backgroundPosition = `${(ox - l.x).toFixed(1)}px ${(oy - l.y).toFixed(1)}px`;
+  }
+
+  let layer = 0, current = null, idle = null;
+  function flood(i) {
+    const key = letters[i].key;
+    if (current === key) { caption(key); return; }
+    current = key; layer ^= 1;
+    const src = letters[i];
+    letters.forEach((l) => {
+      const d = reduce ? 0 : Math.hypot(l.x - src.x, (l.y - src.y) * .6) / name.offsetWidth * 420;
+      const on = l.f[layer], off = l.f[layer ^ 1];
+      on.dataset.key = key; place(on, PROJ[key], l);
+      on.style.transitionDelay = d.toFixed(0) + "ms"; off.style.transitionDelay = d.toFixed(0) + "ms";
+      on.style.zIndex = 2; off.style.zIndex = 1;
+      on.classList.add("on"); off.classList.remove("on");
+    });
+    caption(key);
+  }
+  function unflood() {
+    if (current === null) return;
+    current = null;
+    letters.forEach((l) => l.f.forEach((f) => { f.style.transitionDelay = "0ms"; f.classList.remove("on"); }));
+    caption(null);
+  }
+
+  let shown;
+  function caption(key) {
+    if (key === shown) return; shown = key;
+    const html = key
+      ? `<h2>${PROJ[key].t}</h2><div class="meta">${PROJ[key].meta}</div><p>${PROJ[key].p}</p><a href="${PROJ[key].href}" target="_blank" rel="noopener">${PROJ[key].cs ? "Read the case study" : "Have a look"} ↗</a>`
+      : `<h2>Hridae Walia</h2><div class="meta">Product designer, six years of interaction models that barely exist yet</div><p>Every letter is a window onto something I made: an AI home app, AR fitness, a gaze-tracked museum piece, haptic cats.</p><span class="hint">${touch ? "tap" : "hover"} a letter</span>`;
+    if (reduce || !cap.innerHTML) { cap.innerHTML = html; return; }
+    cap.classList.add("out");
+    clearTimeout(caption.t); caption.t = setTimeout(() => { cap.innerHTML = html; cap.classList.remove("out"); }, 150);
+  }
+
+  letters.forEach((l, i) => {
+    l.el.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { clearTimeout(idle); flood(i); } });
+    l.el.addEventListener("click", () => flood(i));
+    l.el.addEventListener("focus", () => flood(i));
+  });
+  name.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") { clearTimeout(idle); idle = setTimeout(unflood, 900); } });
+  document.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse" && !e.target.closest(".L, .cap")) unflood(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") unflood(); });
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+
+  caption(null);
+  fit();
+  if (document.fonts) document.fonts.ready.then(fit);
+  new ResizeObserver(() => fit()).observe(stage);
+})();
+</script>
+</body>
+</html>

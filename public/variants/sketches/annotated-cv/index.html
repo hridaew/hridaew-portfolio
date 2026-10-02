@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Annotated CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nanum+Pen+Script&display=swap">
+<style>
+/* Layout: a typeset CV on a sheet of paper, the right third of the sheet left as margin for red-pencil notes that point at the work. */
+:root {
+  color-scheme: light;
+  --desk: #8F999C; --paper: #FFFFFE; --ink: #16181A; --muted: #5C6266; --rule: rgb(22 24 26 / .12);
+  --pencil: #CC2419;
+  --f-text: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --f-hand: "Nanum Pen Script", "Bradley Hand", "Segoe Print", cursive;
+  --ease: cubic-bezier(.3,.7,.2,1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--desk); color: var(--ink); font: 400 14.5px/1.5 var(--f-text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+[hidden] { display: none !important; }
+img, svg { max-width: none; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--pencil); outline-offset: 3px; border-radius: 2px; }
+
+.desk { padding: clamp(16px, 3.2vh, 36px) 24px 64px; }
+.sheet { position: relative; max-width: 1120px; margin: 0 auto; background: var(--paper);
+  box-shadow: 0 1px 1px rgb(0 0 0 / .08), 0 12px 30px -10px rgb(20 28 32 / .35), 0 40px 80px -40px rgb(20 28 32 / .4);
+  padding: 52px 56px 44px 72px;
+  display: grid; grid-template-columns: minmax(0, 580px) minmax(0, 1fr); column-gap: 56px; }
+.row { display: contents; }
+.row > .cv { grid-column: 1; position: relative; }
+.row > .note { grid-column: 2; }
+
+/* CV typesetting */
+h1 { margin: 0; font: 500 44px/1 var(--f-text); font-variation-settings: "opsz" 72; letter-spacing: -.015em; }
+.role { margin: 8px 0 12px; font-size: 16px; color: var(--muted); font-style: italic; }
+.contact { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; font-size: 13.5px; }
+.contact .email { user-select: all; }
+.contact button, .contact a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+.contact button:hover, .contact a:hover { border-bottom-color: var(--ink); }
+.thesis { margin: 26px 0 0; font-size: 16.5px; line-height: 1.5; max-width: 54ch; text-wrap: pretty; }
+h2 { margin: 26px 0 6px; font: 500 11px/1 var(--f-text); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.job { padding: 12px 0 10px; border-bottom: 1px solid var(--rule); }
+.job .hd { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.job .t { font-size: 16.5px; font-weight: 500; }
+.job .t i { font-weight: 400; color: var(--muted); }
+.job .yr { font-size: 13px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.job p { margin: 3px 0 0; color: #2A2D30; text-wrap: pretty; }
+.line { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--rule); text-wrap: pretty; }
+.line b { font-weight: 500; }
+.line a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+.line a:hover { border-bottom-color: var(--ink); }
+.cv[data-g] { cursor: default; }
+
+/* red-pencil marks */
+.mark { position: relative; white-space: nowrap; }
+.t .mark.circle { margin-right: 8px; }
+.mark > svg { position: absolute; pointer-events: none; overflow: visible; }
+.mark.circle > svg { left: -12px; right: -14px; top: -9px; bottom: -8px; width: calc(100% + 26px); height: calc(100% + 17px); }
+.mark.under { white-space: normal; }
+.mark.under > svg { left: -2px; bottom: -7px; width: calc(100% + 4px); height: 10px; }
+.pen { fill: none; stroke: var(--pencil); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; filter: url(#grain); }
+
+.note { position: relative; align-self: start; display: block; color: var(--pencil); text-decoration: none;
+  font: 400 25px/1 var(--f-hand); padding: 10px 0 0 64px; margin: 0 0 8px var(--x, 0px); transform: rotate(var(--r, -1.5deg)); transform-origin: 0 50%; }
+.note .ln { display: block; width: max-content; max-width: 100%; padding: 1px 0 2px; }
+.note .go { display: inline-block; margin-top: 4px; position: relative; }
+.note .go::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: currentColor; opacity: .55; transform-origin: 0 50%; transform: scaleX(.0); transition: transform .25s var(--ease); }
+a.note:hover .go::after, a.note:focus-visible .go::after { transform: scaleX(1); }
+.note .arrow { position: absolute; left: calc(-30px - var(--x, 0px)); top: 12px; width: calc(86px + var(--x, 0px)); height: 28px; overflow: visible; }
+.note .doodle { position: absolute; width: 58px; height: 58px; overflow: visible; }
+a.note { cursor: pointer; }
+a.note:hover { color: #A51A11; }
+
+/* draw-in */
+.anim .pen { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.anim .ln { clip-path: inset(-6px 100% -6px 0); }
+.anim .on .pen, .anim .note.on .pen { animation: draw var(--t, .45s) var(--ease) var(--d, 0s) forwards; }
+.anim .on .ln, .anim .note.on .ln { animation: write var(--t, .5s) cubic-bezier(.45,.1,.6,.95) var(--d, 0s) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes write { to { clip-path: inset(-6px 0 -6px 0); } }
+
+.corner { position: fixed; left: 14px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 5; font: 400 12px/1 var(--f-text); color: #F3F5F5; text-decoration: none; opacity: .85; }
+.corner:hover { opacity: 1; text-decoration: underline; }
+
+@media (max-width: 1000px) {
+  .sheet { grid-template-columns: minmax(0, 1fr) minmax(0, 240px); column-gap: 28px; padding: 40px 32px 36px 40px; }
+  .note { font-size: 22px; padding-left: 50px; }
+  .note .arrow { left: -16px; width: 60px; }
+}
+@media (max-width: 720px) {
+  .desk { padding: 12px 10px 52px; }
+  .sheet { display: block; padding: 30px 22px 28px; }
+  h1 { font-size: 38px; }
+  .thesis { font-size: 16px; }
+  .note { padding: 6px 0 4px 50px; margin: 2px 0 6px; font-size: 23px; max-width: 100%; }
+  .note .arrow { left: 4px; top: -4px; width: 40px; transform: rotate(52deg); }
+  .note { margin-left: 0; margin-top: 4px !important; }
+  .corner { position: static; display: block; width: max-content; margin: -38px 0 0 14px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+  .note .doodle { width: 46px; height: 46px; }
+  .job { border-bottom: 0; padding-bottom: 2px; }
+  .job .hd { flex-wrap: wrap; gap: 0 12px; }
+  .row.r-job + .row .cv h2 { margin-top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim .pen { stroke-dashoffset: 0; animation: none !important; }
+  .anim .ln { clip-path: none; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<main class="desk">
+<article class="sheet anim" id="sheet">
+
+  <div class="row">
+    <header class="cv" data-g="hello">
+      <h1>Hridae Walia</h1>
+      <p class="role">Product Designer · Founding Product Designer at Domis · San Francisco</p>
+      <p class="contact">
+        <span class="mark circle"><span class="email" id="email">hridaew@gmail.com</span><svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M150 6 C185 9 198 22 194 35 C188 52 120 58 70 55 C25 52 4 42 6 28 C9 12 52 4 112 4 C142 4 170 9 183 16"/></svg></span>
+        <button id="copy" type="button">copy</button>
+        <a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/hridaew" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV (PDF)</a>
+      </p>
+    </header>
+    <div class="note" data-g="hello" style="--r:-2deg; margin-top: 64px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 14 C58 6 34 10 6 24"/><path class="pen" pathLength="1" d="M17 13 L5 24 L19 30"/></svg>
+      <span class="ln">write me!</span>
+      <span class="ln">(the copy button works)</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cv" data-g="method">
+      <p class="thesis">I'm a Product Designer obsessed with making, and I have 6 years of experience designing for interaction models that barely exist yet. I focus on the user and <span class="mark under">learn by making<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M2 7 C30 2 52 11 82 6 S142 3 198 8"/></svg></span>, whether on the canvas, in code, or the physical world.</p>
+    </div>
+    <div class="note" data-g="method" style="--r:1deg; --x:22px; margin-top: 46px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 20 C56 24 32 22 6 16"/><path class="pen" pathLength="1" d="M16 8 L5 16 L15 25"/></svg>
+      <span class="ln">the short version.</span>
+      <span class="ln">proof below ↓</span>
+    </div>
+  </div>
+
+  <div class="row r-job">
+    <div class="cv" data-g="domis">
+      <h2>Experience</h2>
+      <div class="job">
+        <div class="hd"><span class="t"><span class="mark circle">Domis<svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M146 5 C184 8 199 22 194 36 C186 53 118 58 68 55 C24 51 3 41 6 27 C10 11 54 4 112 4 C142 5 168 9 181 17"/></svg></span> <i>Founding Product Designer</i></span><span class="yr">Nov 2024 – now</span></div>
+        <p>AI home-maintenance app for iOS and web. I designed setup around the smallest action a person will actually take: an address, a photo of an appliance nameplate, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.</p>
+      </div>
+    </div>
+    <a class="note" data-g="domis" href="https://hridaew.com/domis" target="_blank" rel="noopener" style="--r:-1.5deg; margin-top: 50px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 22 C60 12 36 8 6 14"/><path class="pen" pathLength="1" d="M18 6 L5 14 L17 22"/></svg>
+      <span class="ln">snap the nameplate, it finds</span>
+      <span class="ln">the manual + the warranty</span>
+      <span class="ln go">see the case study ↗</span>
+      <svg class="doodle" viewBox="0 0 60 60" style="right: 6px; top: 64px" aria-hidden="true"><path class="pen" pathLength="1" d="M9 53 L9 29 L30 11 L51 29 L51 53 Z"/><path class="pen" pathLength="1" d="M25 53 L25 39 L35 39 L35 53"/><path class="pen" pathLength="1" d="M40 21 L40 11 L46 11 L46 26"/><path class="pen" pathLength="1" d="M14 33 L21 33 L21 40 L14 40 Z"/></svg>
+    </a>
+  </div>
+
+  <div class="row r-job">
+    <div class="cv" data-g="obscura">
+      <div class="job">
+        <div class="hd"><span class="t"><span class="mark circle">OBSCURA<svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M40 7 C90 1 170 2 192 22 C202 36 170 54 104 56 C44 57 6 46 5 30 C4 16 22 9 52 6"/></svg></span> <i>MOHAI, Seattle · design, prototyping, Unity</i></span><span class="yr">2025</span></div>
+        <p>A gaze-driven documentary for 300+ never-seen photographs Wayne Wong took in 1946 Japan. A visitor looks in VR while an audience watches through their eyes. Exhibited 13 Sep 2025, sold out.</p>
+      </div>
+    </div>
+    <a class="note" data-g="obscura" href="https://hridaew.com/obscura" target="_blank" rel="noopener" style="--r:1.2deg; --x:30px; margin-top: 18px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 16 C56 22 30 24 6 18"/><path class="pen" pathLength="1" d="M15 9 L5 18 L16 26"/></svg>
+      <span class="ln">“who is really doing</span>
+      <span class="ln">the looking?”</span>
+      <span class="ln go">see the case study ↗</span>
+      <svg class="doodle" viewBox="0 0 60 60" style="right: 30px; top: 0" aria-hidden="true"><path class="pen" pathLength="1" d="M4 30 Q30 8 56 30 Q30 52 4 30 Z"/><path class="pen" pathLength="1" d="M37 30 a7 7 0 1 1 -14 0 a7 7 0 1 1 14 0"/><path class="pen" pathLength="1" d="M31 29 l-1 1"/><path class="pen" pathLength="1" d="M18 19 L14 12 M30 15 L30 7 M42 19 L46 12"/></svg>
+    </a>
+  </div>
+
+  <div class="row r-job">
+    <div class="cv" data-g="virdio">
+      <div class="job">
+        <div class="hd"><span class="t"><span class="mark circle">Virdio<svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M152 8 C186 12 198 26 192 38 C182 54 112 57 64 53 C22 50 4 40 7 26 C11 11 58 5 114 5 C146 6 172 12 184 20"/></svg></span> <i>Product Designer</i></span><span class="yr">2021 – 2022</span></div>
+        <p>Hardware-free AR fitness: machine vision counts your reps through an ordinary camera. Shipped on iOS, Android, web, desktop, Apple Watch and TV, with a design-token system that cut handoff time 50%.</p>
+      </div>
+    </div>
+    <a class="note" data-g="virdio" href="https://hridaew.com/virdio" target="_blank" rel="noopener" style="--r:-1deg; --x:6px; margin-top: 16px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 24 C60 14 34 12 6 18"/><path class="pen" pathLength="1" d="M17 10 L5 18 L17 26"/></svg>
+      <span class="ln">no $1,500 bike. just a camera</span>
+      <span class="ln">and some virtual cones</span>
+      <span class="ln go">see the case study ↗</span>
+      <svg class="doodle" viewBox="0 0 60 60" style="right: 24px; top: 54px" aria-hidden="true"><path class="pen" pathLength="1" d="M30 6 L17 50 M30 6 L43 50"/><path class="pen" pathLength="1" d="M23 29 L37 29 M20 39 L40 39"/><path class="pen" pathLength="1" d="M9 50 L51 50 L51 55 L9 55 Z"/></svg>
+    </a>
+  </div>
+
+  <div class="row r-job">
+    <div class="cv" data-g="memory">
+      <div class="job">
+        <div class="hd"><span class="t"><span class="mark circle">Memory Care<svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M150 6 C186 10 199 24 193 37 C185 53 116 58 66 54 C22 50 3 40 6 26 C10 10 56 3 114 4 C144 5 170 10 182 18"/></svg></span> <i>Interaction Designer, Maria Mortati Experience Design</i></span><span class="yr">2020 – 2023</span></div>
+        <p>An experience station for people living with dementia at SF Campus for Jewish Living. R&amp;D lead on 10+ experiences, including a driving simulator with a haptic footrest every resident could reach from their wheelchair. 98% positive across 200+ sessions.</p>
+      </div>
+    </div>
+    <a class="note" data-g="memory" href="https://hridaew.com/memory-care" target="_blank" rel="noopener" style="--r:-2deg; margin-top: 18px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 18 C58 10 34 12 6 20"/><path class="pen" pathLength="1" d="M16 11 L5 20 L17 27"/></svg>
+      <span class="ln">this one has haptic cats.</span>
+      <span class="ln">pet one and it purrs</span>
+      <span class="ln go">see the case study ↗</span>
+      <svg class="doodle" viewBox="0 0 60 60" style="right: 18px; top: 50px" aria-hidden="true"><path class="pen" pathLength="1" d="M17 54 C12 44 13 33 20 27 L18 13 L26 21 C29 20 34 20 37 21 L44 13 L43 27 C49 33 50 44 45 54 Z"/><path class="pen" pathLength="1" d="M45 52 C54 52 58 44 53 37"/><path class="pen" pathLength="1" d="M24 31 l0 1 M38 31 l0 1"/><path class="pen" pathLength="1" d="M14 35 L4 33 M14 38 L4 40 M48 35 L58 33 M48 38 L58 40"/></svg>
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="cv" data-g="side">
+      <h2>Also built</h2>
+      <p class="line"><a href="https://hridaew.com/waffling/savor" target="_blank" rel="noopener">Savor</a>, a phone video turned into a 3D Gaussian splat · <a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener">Saving Baby J</a>, an orca-throwing arcade game · <a href="https://hridaew.com/waffling/recorder" target="_blank" rel="noopener">Recorder</a>, a voice memo you scrub like a turntable · <span class="mark under"><a href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener">Butter Chicken</a><svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M2 6 C40 10 90 2 198 6"/><path class="pen" pathLength="1" d="M8 10 C60 12 120 6 190 10"/></svg></span>, a recipe</p>
+    </div>
+    <div class="note" data-g="side" style="--r:-3deg; --x:40px; margin-top: 46px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 10 C58 20 34 26 6 26"/><path class="pen" pathLength="1" d="M14 18 L5 26 L15 33"/></svg>
+      <span class="ln">very serious.</span>
+      <span class="ln">taste scales with butter</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cv" data-g="honors">
+      <h2>Recognition · Education · Tools</h2>
+      <p class="line">Fast Company <span class="mark under" style="white-space:nowrap">World Changing Ideas<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M2 8 C50 4 120 9 198 5"/></svg></span>, finalist 2022 · CABHI award, twice · SCAN Foundation Innovation Award</p>
+      <p class="line"><b>M.HCI+D</b>, University of Washington, 2024 · <b>BFA Interaction Design</b>, California College of the Arts, 2020</p>
+    </div>
+    <div class="note" data-g="honors" style="--r:1.5deg; --x:12px; margin-top: 30px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 26 C56 18 32 14 6 14"/><path class="pen" pathLength="1" d="M15 6 L5 14 L15 22"/></svg>
+      <span class="ln">all three: Memory Care</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cv" data-g="tools">
+      <p class="line" style="border-bottom:0"><span class="mark circle" style="margin-right:6px">Pencil,<svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path class="pen" pathLength="1" d="M150 6 C186 10 199 24 193 37 C185 53 116 58 66 54 C22 50 3 40 6 26 C10 10 56 3 114 4 C144 5 170 10 182 18"/></svg></span> Paper, Figma, Cursor, Claude Code, Xcode, Origami, ProtoPie · Unity, ARKit, RealityKit, visionOS · React, Next.js, SwiftUI, GSAP</p>
+    </div>
+    <div class="note" data-g="tools" style="--r:-2deg; --x:28px; margin-top: 6px">
+      <svg class="arrow" viewBox="0 0 80 40" aria-hidden="true"><path class="pen" pathLength="1" d="M78 14 C56 8 32 12 6 22"/><path class="pen" pathLength="1" d="M17 12 L5 22 L18 28"/></svg>
+      <span class="ln">red, apparently</span>
+    </div>
+  </div>
+
+</article>
+</main>
+<a class="corner" href="../index.html">all sketches</a>
+
+<script>
+(() => {
+  const sheet = document.getElementById("sheet");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const groups = {};
+  sheet.querySelectorAll("[data-g]").forEach((el) => (groups[el.dataset.g] ||= []).push(el));
+
+  // order the strokes of one annotation: circles/underlines, then arrow, then words, then doodle
+  function sequence(name) {
+    let t = 0;
+    const els = groups[name];
+    const marks = els.filter((e) => !e.classList.contains("note")).flatMap((e) => [...e.querySelectorAll(".mark .pen")]);
+    const note = els.find((e) => e.classList.contains("note"));
+    const step = (el, dur, gap) => { el.style.setProperty("--d", t + "s"); el.style.setProperty("--t", dur + "s"); t += gap; };
+    marks.forEach((p) => step(p, .42, .3));
+    if (note) {
+      note.querySelectorAll(".arrow .pen").forEach((p, i) => step(p, i ? .14 : .26, i ? .14 : .2));
+      note.querySelectorAll(".ln").forEach((l) => { const d = Math.max(.25, l.textContent.length * .028); step(l, d, d + .06); });
+      note.querySelectorAll(".doodle .pen").forEach((p) => step(p, .3, .16));
+    }
+    return t;
+  }
+
+  function draw(name) {
+    if (reduce) return;
+    sequence(name);
+    groups[name].forEach((el) => {
+      const targets = el.matches(".note") ? [el] : [el, ...el.querySelectorAll(".mark")];
+      targets.forEach((x) => x.classList.remove("on"));
+    });
+    void sheet.offsetWidth;
+    groups[name].forEach((el) => {
+      if (el.matches(".note")) el.classList.add("on");
+      else el.classList.add("on");
+    });
+  }
+
+  const order = ["hello", "method", "domis", "obscura", "virdio", "memory", "side", "honors", "tools"];
+  if (reduce) {
+    sheet.classList.remove("anim");
+  } else {
+    let delay = 350;
+    order.forEach((g) => { setTimeout(() => draw(g), delay); delay += Math.min(480, sequence(g) * 1000 * .35); });
+  }
+
+  // hover or tap a CV line and its note redraws itself
+  let last = 0;
+  sheet.querySelectorAll(".cv[data-g]").forEach((el) => {
+    const g = el.dataset.g;
+    const go = () => { if (performance.now() - last < 250) return; last = performance.now(); draw(g); };
+    el.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") go(); });
+    el.addEventListener("click", (e) => { if (!e.target.closest("a,button")) go(); });
+  });
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recipe Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* A ruled index card on an aqua Formica table: the method, typeset like a recipe. Tick the steps off. */
+:root {
+  color-scheme: light;
+  --table: #86C3BA; --table-2: #74B5AC;
+  --card: #FFFEFA; --ink: #1D2128; --muted: #59606B; --rule: #BFD5EE; --red: #DD4B54; --pen: #22398C;
+  --f-serif: "Bodoni Moda", "Didot", "Bodoni 72", "Times New Roman", serif;
+  --f-sans: "Libre Franklin", "Franklin Gothic", "Helvetica Neue", Arial, sans-serif;
+  --lh: 26px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body {
+  background-color: var(--table);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / .16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, rgb(0 60 55 / .12) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 40% 80%, rgb(255 255 255 / .1) 0 .8px, transparent 1.3px),
+    radial-gradient(ellipse 90% 80% at 50% 40%, var(--table), var(--table-2));
+  background-size: 23px 19px, 31px 27px, 17px 13px, 100% 100%;
+  color: var(--ink); font: 400 14px/var(--lh) var(--f-sans); -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+img { max-width: none; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+
+.back { position: fixed; left: 20px; top: 16px; font: 500 11px/1 var(--f-sans); letter-spacing: .04em; color: #0E3B36; text-decoration: none; border-bottom: 1px solid rgb(14 59 54 / .35); z-index: 3; }
+
+.table { height: 100%; display: flex; align-items: center; justify-content: center; padding: 28px 24px; }
+.card {
+  position: relative; width: min(1120px, 100%); max-height: 100%;
+  background-color: var(--card);
+  background-image: linear-gradient(var(--red), var(--red)), repeating-linear-gradient(transparent 0 calc(var(--lh) - 1px), var(--rule) calc(var(--lh) - 1px) var(--lh));
+  background-size: 100% 1.5px, 100% calc(100% - var(--rules-top, 150px));
+  background-position: 0 calc(var(--rules-top, 150px) - 8px), 0 var(--rules-top, 150px);
+  background-repeat: no-repeat;
+  padding: 38px 56px 30px;
+  transform: rotate(-.6deg);
+  box-shadow: 0 1px 0 #fff inset, 0 2px 3px rgb(0 40 36 / .18), 0 30px 60px -24px rgb(0 40 36 / .45);
+  border-radius: 3px;
+}
+
+.from { margin: 0; font: 500 10.5px/1 var(--f-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.from b { color: var(--ink); font-weight: 600; }
+h1 { margin: 12px 0 0; max-width: 17em; font: italic 500 clamp(30px, 3.4vw, 46px)/1.02 var(--f-serif); font-optical-sizing: auto; letter-spacing: -.01em; }
+.meta { display: flex; gap: 28px; margin: 22px 0 0; padding: 0; list-style: none; font-size: 12px; line-height: var(--lh); color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 10px; margin-right: 6px; }
+
+.body { display: grid; grid-template-columns: minmax(180px, 250px) minmax(0, 1fr); column-gap: 52px; margin-top: var(--lh); }
+h2 { margin: 0; font: 600 10.5px/var(--lh) var(--f-sans); letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+.ing { list-style: none; margin: 0; padding: 0; font-size: 13.5px; }
+.ing li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ing .q { display: inline-block; min-width: 3.4em; font-family: var(--f-serif); font-style: normal; font-size: 15px; color: var(--muted); }
+
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.step { position: relative; display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; }
+.tick { position: relative; width: 22px; height: 22px; margin-top: 2px; border: 1.25px solid var(--ink); border-radius: 50%; display: grid; place-items: center; font: 500 13px/1 var(--f-serif); transition: transform .12s cubic-bezier(.3,.7,.4,1); }
+.tick:active { transform: scale(.88); }
+.tick svg { position: absolute; left: -5px; top: -9px; width: 34px; height: 34px; overflow: visible; pointer-events: none; }
+.tick path { fill: none; stroke: var(--pen); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; transition: stroke-dashoffset .22s cubic-bezier(.4,.1,.3,1); }
+.step.done .tick path { stroke-dashoffset: 0; }
+.step.done .tick { color: transparent; }
+.step p { margin: 0; font-size: 14px; max-width: 64ch; transition: color .25s; }
+.step p strong { font: italic 600 16px/1 var(--f-serif); }
+.step.done p { color: #7E8590; }
+.step .cite { font-size: 12px; font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--red); margin-left: 4px; }
+.step .cite:hover { text-decoration: underline; }
+
+/* the plated dish, clipped to the card */
+.dish { position: absolute; right: 44px; top: -26px; width: clamp(170px, 17vw, 230px); transform: rotate(3.2deg); z-index: 2; text-decoration: none; }
+.dish .print { background: #fff; padding: 9px 9px 0; box-shadow: 0 1px 2px rgb(0 0 0 / .2), 0 14px 26px -12px rgb(0 0 0 / .45); }
+.dish img { width: 100%; aspect-ratio: 1 / .92; object-fit: cover; }
+.dish .print span { display: block; font: italic 400 12.5px/1.25 var(--f-serif); padding: 7px 2px 9px; color: var(--ink); }
+.dish .clip { position: absolute; left: 24px; top: -14px; width: 22px; height: 56px; z-index: 3; }
+.dish:hover .print { box-shadow: 0 1px 2px rgb(0 0 0 / .2), 0 20px 30px -12px rgb(0 0 0 / .5); }
+
+.foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin-top: var(--lh); font-size: 12.5px; color: var(--muted); }
+.foot .email { color: var(--ink); user-select: all; font-weight: 500; }
+.foot button, .foot a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgb(29 33 40 / .3); line-height: 1.3; }
+.foot .note { margin-left: auto; font: italic 400 13px/1 var(--f-serif); }
+
+.stamp { position: absolute; right: 64px; bottom: 54px; width: 128px; height: 128px; border: 2.5px solid var(--red); border-radius: 50%; display: grid; place-items: center; text-align: center; color: var(--red); font: 700 11px/1.15 var(--f-sans); letter-spacing: .14em; text-transform: uppercase; transform: rotate(-14deg) scale(1); opacity: .85; pointer-events: none; mix-blend-mode: multiply; }
+.stamp::before { content: ""; position: absolute; inset: 6px; border: 1px solid var(--red); border-radius: 50%; }
+.stamp em { display: block; font: italic 600 20px/1 var(--f-serif); letter-spacing: 0; text-transform: none; margin: 4px 0; }
+.stamp.thunk { animation: thunk .32s cubic-bezier(.2,.9,.3,1.2) both; }
+@keyframes thunk { 0% { opacity: 0; transform: rotate(-8deg) scale(1.5); } 60% { opacity: .9; transform: rotate(-15deg) scale(.96); } 100% { opacity: .85; transform: rotate(-14deg) scale(1); } }
+
+@media (max-height: 820px) and (min-width: 821px) {
+  :root { --lh: 23px; }
+  .card { padding-top: 28px; }
+  .meta { margin-top: 14px; }
+  .step p { font-size: 13.5px; }
+}
+@media (max-width: 1100px) and (min-width: 821px) { .meta .opt { display: none; } }
+@media (max-width: 820px) {
+  :root { --lh: 25px; }
+  body { overflow-x: hidden; overflow-y: auto; }
+  .table { display: block; height: auto; padding: 44px 12px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .card { transform: none; padding: 26px 18px 24px; }
+  h1 { font-size: 31px; max-width: 11em; }
+  .meta { flex-direction: column; gap: 0; margin-top: 14px; }
+  .meta .opt { display: none; }
+  .dish { position: relative; right: auto; top: auto; display: block; width: 62%; margin: 22px 0 6px auto; transform: rotate(2.4deg); }
+  .body { display: block; }
+  .ing { columns: 2; column-gap: 14px; font-size: 12.5px; margin-bottom: var(--lh); }
+  .ing .q { min-width: 2.7em; font-size: 13.5px; }
+  .step { grid-template-columns: 28px 1fr; column-gap: 10px; }
+  .ing li { white-space: normal; }
+  .foot .note { margin-left: 0; flex-basis: 100%; }
+  .stamp { right: 18px; bottom: 70px; width: 104px; height: 104px; font-size: 9.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tick path, .step p, .tick { transition: none; }
+  .stamp.thunk { animation: none; }
+}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">all sketches</a>
+<div class="table">
+  <article class="card" id="card">
+    <p class="from">From the kitchen of <b>Hridae Walia</b> · product designer, San Francisco</p>
+    <h1 id="title">Method for designing interaction models that barely exist yet</h1>
+    <ul class="meta" id="meta">
+      <li><b>Prep</b>6 years</li>
+      <li><b>Serves</b>the people who will use it</li>
+      <li class="opt"><b>Currently</b>Founding designer at Domis</li>
+    </ul>
+
+    <a class="dish" href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener" aria-label="Butter chicken, the plated dish: open the recipe">
+      <svg class="clip" viewBox="0 0 22 56" aria-hidden="true"><path d="M6 44 V8 a5 5 0 0 1 10 0 V48 a7 7 0 0 1 -14 0 V14" fill="none" stroke="#8C9399" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <div class="print"><img src="media/butter-chicken.webp" alt="Butter chicken in a pan"><span>Serving suggestion: my butter&nbsp;chicken&nbsp;↗</span></div>
+    </a>
+
+    <div class="body">
+      <section aria-labelledby="h-ing">
+        <h2 id="h-ing">Ingredients</h2>
+        <ul class="ing">
+          <li><span class="q">1</span>pencil, sharpened</li>
+          <li><span class="q">lots</span>paper</li>
+          <li><span class="q">1</span>Figma file</li>
+          <li><span class="q">2</span>Cursor, Claude Code</li>
+          <li><span class="q">2</span>Origami, ProtoPie</li>
+          <li><span class="q">dash</span>Xcode, SwiftUI</li>
+          <li><span class="q">dash</span>Unity, visionOS</li>
+          <li><span class="q">pinch</span>React, GSAP</li>
+          <li><span class="q">some</span>sensors, Arduino</li>
+          <li><span class="q">2</span>design degrees</li>
+          <li><span class="q">1</span>cat, for morale</li>
+        </ul>
+      </section>
+      <section aria-labelledby="h-method">
+        <h2 id="h-method">Method</h2>
+        <ol class="steps" id="steps"></ol>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <span>Questions for the cook:</span><span class="email" id="email">hridaew@gmail.com</span><button id="copy">copy</button>
+      <a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a>
+      <span class="note">Taste as you go.</span>
+    </footer>
+    <div class="stamp" id="stamp" hidden aria-hidden="true"><div>Kitchen<em>tested</em>SF</div></div>
+  </article>
+</div>
+<script>
+(() => {
+  const S = [
+    ["Start from the smallest action.", "Build on what a person will actually do: type an address, snap a nameplate, upload an inspection report.", "Domis", "https://hridaew.com/domis"],
+    ["Test every platform, then pick a side.", "Testing showed mobile was the worst place for an AR workout, so we argued for desktop first.", "Virdio", "https://hridaew.com/virdio"],
+    ["Bring the interface to the person.", "Moving the haptics to a footrest let 100% of residents use it without leaving their wheelchairs.", "Memory Care", "https://hridaew.com/memory-care"],
+    ["Ask who is really doing the looking.", "One visitor's gaze curates 300+ unseen photos while an audience watches through their eyes.", "OBSCURA", "https://hridaew.com/obscura"],
+    ["Test the throw, not the tutorial.", "Two controllers, Wizard-of-Oz tested. The throw won, and nobody needed instructions.", "Saving Baby J", "https://hridaew.com/waffling/orca"],
+    ["Learn by making.", "On the canvas, in code, or in the physical world: a phone video becomes a 3D splat of Rodin's hand.", "Savor", "https://hridaew.com/waffling/savor"],
+    ["Season generously.", "Taste scales linearly with butter.", "Butter chicken", "https://hridaew.com/butter-chicken"],
+  ];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ol = document.getElementById("steps"), stamp = document.getElementById("stamp");
+  const els = S.map(([lead, rest, name, href], i) => {
+    const li = document.createElement("li"); li.className = "step";
+    li.innerHTML = `<button class="tick" aria-pressed="false" aria-label="Mark step ${i + 1} done">${i + 1}<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M7 19 C10 21 12 24 14 27 C17 19 23 10 31 4"/></svg></button>
+      <p><strong>${lead}</strong> ${rest} <a class="cite" href="${href}" target="_blank" rel="noopener">${name}&nbsp;↗</a></p>`;
+    const b = li.querySelector(".tick");
+    b.addEventListener("click", () => {
+      const on = !li.classList.contains("done");
+      li.classList.toggle("done", on); b.setAttribute("aria-pressed", on);
+      const all = els.every((x) => x.classList.contains("done"));
+      if (all && stamp.hidden) { stamp.hidden = false; stamp.classList.remove("thunk"); void stamp.offsetWidth; if (!reduce) stamp.classList.add("thunk"); }
+      else if (!all) stamp.hidden = true;
+    });
+    ol.appendChild(li); return li;
+  });
+
+  // start the ruled lines just under the title block, so the text sits on the rules
+  const card = document.getElementById("card"), meta = document.getElementById("meta");
+  function rules() {
+    const lh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--lh")) || 26;
+    const c = card.getBoundingClientRect(), m = meta.getBoundingClientRect();
+    // the first rule sits one line below the top of the meta row
+    const top = Math.round(m.top - c.top + lh * (innerWidth <= 820 ? 1 : 1));
+    card.style.setProperty("--rules-top", `${top}px`);
+  }
+  addEventListener("resize", rules);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(rules);
+  rules();
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+})();
+</script>
+</body>
+</html>

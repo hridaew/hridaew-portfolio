@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Red+Hat+Mono:wght@400;500;600&display=swap">
+<style>
+/* A darkroom contact sheet on a slate bench: five strips of 35mm frames, a red grease pencil marks the select. */
+:root {
+  color-scheme: light;
+  --bench: #474C4F; --bench-ink: #C9CDCF;
+  --paper: #FBFBF8; --ink: #161616; --muted: #5C5C58; --rule: rgb(22 22 22 / .14);
+  --film: #0C0C0C; --edge: #D8D4C6; --grease: #C4231B;
+  --tape: rgb(226 214 172 / .92);
+  --f-mono: "Red Hat Mono", ui-monospace, Menlo, Consolas, monospace;
+  --f-hand: "Caveat Brush", "Marker Felt", "Comic Sans MS", cursive;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bench);
+  background-image: radial-gradient(ellipse 80% 70% at 50% 40%, rgb(255 255 255 / .07), transparent 70%);
+  color: var(--ink); font: 400 13px/1.5 var(--f-mono); overflow: hidden; -webkit-font-smoothing: antialiased;
+}
+img { max-width: none; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--grease); outline-offset: 3px; }
+
+.wrap { height: 100%; display: flex; align-items: center; justify-content: center; padding: clamp(14px, 2.6vh, 28px) clamp(14px, 2vw, 32px); }
+.sheet {
+  position: relative; width: min(100%, 1400px); height: 100%; max-height: 980px;
+  background: var(--paper);
+  box-shadow: 0 1px 0 rgb(255 255 255 / .6) inset, 0 40px 80px -30px rgb(0 0 0 / .55), 0 6px 14px rgb(0 0 0 / .22);
+  display: grid; grid-template-columns: minmax(0, 1fr) clamp(250px, 21vw, 310px); grid-template-rows: auto minmax(0, 1fr);
+  padding: clamp(18px, 3vh, 30px) clamp(20px, 2.4vw, 40px) clamp(18px, 3vh, 30px);
+  column-gap: clamp(20px, 2.4vw, 40px);
+}
+
+/* edge label: masking tape with the name, typed line beside it */
+.label { grid-column: 1 / -1; display: flex; align-items: center; gap: 22px; margin-bottom: clamp(10px, 2vh, 20px); }
+.tape {
+  position: relative; background: var(--tape); padding: 6px 22px 4px; transform: rotate(-1.6deg); margin-left: -6px;
+  clip-path: polygon(0 6%, 3% 0, 6% 9%, 9% 2%, 100% 0, 98% 30%, 100% 55%, 97% 80%, 100% 100%, 4% 98%, 1% 92%, 3% 70%, 0 50%, 2% 28%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .1);
+}
+.tape h1 { margin: 0; font: 400 clamp(26px, 2.5vw, 34px)/1 var(--f-hand); color: #1c1a16; letter-spacing: .01em; white-space: nowrap; }
+.typed { font-size: 12px; line-height: 1.45; color: var(--muted); letter-spacing: .02em; }
+.typed b { color: var(--ink); font-weight: 500; }
+.back { margin-left: auto; align-self: flex-start; font-size: 11px; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+
+/* strips */
+.strips { position: relative; display: flex; flex-direction: column; justify-content: center; gap: calc(var(--fw, 150px) * .13); min-height: 0; overflow: hidden; padding: 6px 0; }
+.strip {
+  --reb: calc(var(--fw, 150px) * .15);
+  position: relative; align-self: flex-start; background: var(--film); padding: var(--reb) calc(var(--fw, 150px) * .05);
+  display: flex; gap: calc(var(--fw, 150px) * .055);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .4);
+}
+.strip::before, .strip::after {
+  content: ""; position: absolute; left: 0; right: 0; height: calc(var(--reb) * .34);
+  background: repeating-linear-gradient(90deg, transparent 0 calc(var(--fw, 150px) * .043), rgb(255 255 255 / .2) calc(var(--fw, 150px) * .043) calc(var(--fw, 150px) * .093), transparent calc(var(--fw, 150px) * .093) calc(var(--fw, 150px) * .136));
+  -webkit-mask: linear-gradient(#000, #000); border-radius: 1px;
+}
+.strip::before { top: calc(var(--reb) * .16); }
+.strip::after { bottom: calc(var(--reb) * .16); }
+.edge { position: absolute; left: calc(var(--fw, 150px) * .06); right: 0; font: 500 max(7px, calc(var(--fw, 150px) * .052))/1 var(--f-mono); color: var(--edge); letter-spacing: .12em; white-space: nowrap; overflow: hidden; pointer-events: none; opacity: .82; }
+.edge.t { top: calc(var(--reb) * .6); }
+.edge.b { bottom: calc(var(--reb) * .56); display: flex; }
+.edge.b span { flex: 0 0 calc(var(--fw, 150px) * 1.055); }
+.frame { position: relative; width: var(--fw, 150px); aspect-ratio: 3 / 2; flex: 0 0 auto; overflow: hidden; border-radius: 2px; background: #222; }
+.frame img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.06); transition: filter .2s, transform .25s cubic-bezier(.2,.8,.2,1); user-select: none; -webkit-user-drag: none; }
+.frame:hover img { filter: contrast(1.12) brightness(1.06); }
+.frame:active img { transform: scale(.97); }
+.frame:focus-visible { outline-offset: 2px; }
+
+/* grease pencil layer */
+svg.grease { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 3; }
+svg.grease path { fill: none; stroke: var(--grease); stroke-linecap: round; stroke-linejoin: round; }
+
+/* margin column */
+.margin { padding-left: clamp(0px, 3vw, 56px); display: flex; flex-direction: column; min-height: 0; position: relative; }
+.note { position: relative; z-index: 4; font-family: var(--f-hand); color: var(--grease); min-height: 150px; margin-top: var(--note-y, 0px); }
+.note .w { clip-path: inset(-10px 100% -10px -10px); }
+.note.on .w { clip-path: inset(-10px -10px -10px -10px); transition: clip-path .5s steps(14, end); }
+.note.on .w2 { transition-delay: .15s; }
+.note.on .w3 { transition-delay: .3s; }
+.note .proj { font-size: clamp(30px, 2.6vw, 38px); line-height: 1; display: block; transform: rotate(-2deg); transform-origin: left; }
+.note .cap { font-size: clamp(21px, 1.6vw, 25px); line-height: 1.1; display: block; margin: 8px 0 8px; max-width: 14em; }
+.note a { font-size: 21px; text-decoration: none; display: inline-block; background: linear-gradient(var(--grease), var(--grease)) 0 100% / 100% 2px no-repeat; padding-bottom: 1px; }
+.note .fr { font: 500 11px/1 var(--f-mono); color: var(--muted); letter-spacing: .08em; display: block; margin-bottom: 8px; }
+
+.index { margin-top: auto; padding-top: 18px; }
+.index h2 { margin: 0 0 6px; font: 500 11px/1 var(--f-mono); letter-spacing: .12em; color: var(--muted); }
+.index ol { list-style: none; margin: 0 0 16px; padding: 0; border-top: 1px solid var(--rule); }
+.index li { border-bottom: 1px solid var(--rule); display: flex; align-items: baseline; }
+.index li button { font-size: 10px; color: var(--muted); width: 3.4em; text-align: left; padding: 8px 0; }
+.index li a { flex: 1; text-decoration: none; font-size: 13px; font-weight: 500; padding: 7px 0; display: flex; justify-content: space-between; }
+.index li a:hover { color: var(--grease); }
+.contact { font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); }
+.contact .email { color: var(--ink); user-select: all; }
+.contact button, .contact a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+
+@media (max-width: 820px) {
+  body { overflow: auto; }
+  .wrap { height: auto; min-height: 100%; display: block; padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .sheet { display: block; height: auto; max-height: none; padding: 18px 16px 22px; }
+  .label { flex-wrap: wrap; gap: 8px 14px; margin-bottom: 18px; }
+  .tape h1 { font-size: 28px; }
+  .back { position: absolute; right: 16px; top: 14px; }
+  .typed { flex-basis: 100%; }
+  .strips { gap: calc(var(--fw) * .16); overflow: visible; }
+  .edge.t { display: none; }
+  .edge.b { font-size: 6px; letter-spacing: .06em; bottom: calc(var(--reb) * .5); }
+  .note { margin-top: 30px !important; min-height: 128px; padding-left: 6px; }
+  .note .proj { font-size: 32px; }
+  .index { padding-top: 10px; }
+  .margin { padding-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .note.on .w, .note { transition: none !important; }
+  .frame img { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="sheet" id="sheet">
+    <header class="label">
+      <div class="tape"><h1>Hridae Walia</h1></div>
+      <p class="typed"><b>Product designer</b>, San Francisco. Founding designer at Domis.<br>Roll of selected work, 2020–now · tap a frame to mark it</p>
+      <a class="back" href="../index.html">all sketches</a>
+    </header>
+    <section class="strips" id="strips" aria-label="Contact sheet of project frames"></section>
+    <aside class="margin" id="margin">
+      <div class="note" id="note" aria-live="polite"></div>
+      <nav class="index" aria-label="Case studies">
+        <h2>SELECTS</h2>
+        <ol id="index"></ol>
+        <footer class="contact">
+          <span class="email" id="email">hridaew@gmail.com</span><button id="copy">copy</button>
+          <a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a>
+        </footer>
+      </nav>
+    </aside>
+    <svg class="grease" id="grease" aria-hidden="true">
+      <defs>
+        <filter id="wax" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/>
+        </filter>
+      </defs>
+      <g filter="url(#wax)"><path id="ring" stroke-width="4"/><path id="arrow" stroke-width="3"/></g>
+    </svg>
+  </main>
+</div>
+<script>
+(() => {
+  const P = {
+    mc: ["Memory Care", "https://hridaew.com/memory-care"],
+    vi: ["Virdio", "https://hridaew.com/virdio"],
+    do: ["Domis", "https://hridaew.com/domis"],
+    ob: ["OBSCURA", "https://hridaew.com/obscura"],
+    sa: ["Savor", "https://hridaew.com/waffling/savor"],
+    bj: ["Saving Baby J", "https://hridaew.com/waffling/orca"],
+    re: ["Recorder", "https://hridaew.com/waffling/recorder"],
+    bc: ["Butter chicken", "https://hridaew.com/butter-chicken"],
+    me: ["me + my cat", "https://www.linkedin.com/in/hridae"],
+  };
+  const F = [
+    ["mc", "residents petting a plush cat I wired up. pet it and it purrs"],
+    ["mc", "Arduino + pressure sensors inside the cat"],
+    ["mc", "testing textures and sensors"],
+    ["mc", "haptic footrest: 100% of residents could reach it"],
+    ["mc", "driving simulator, no need to leave the wheelchair"],
+    ["mc", "the station: 98% positive over 200+ sessions"],
+    ["vi", "calibration, sketched as a stick figure"],
+    ["vi", "AR workout. no hardware, just a camera"],
+    ["vi", "machine vision counts every rep"],
+    ["vi", "virtual cones mark the corners of your space"],
+    ["vi", "“Did you step out of frame?” no-blame recovery"],
+    ["vi", "the calibration flow"],
+    ["do", "setup starts from the smallest thing: an address"],
+    ["do", "a nameplate photo, read by an agent"],
+    ["do", "the AI 3D home avatar: +60% new-user engagement"],
+    ["do", "a task found in an inspection report"],
+    ["do", "the home screen"],
+    ["ob", "1946 Japan, by Wayne Wong. never seen before"],
+    ["ob", "who is really doing the looking?"],
+    ["ob", "300+ photos from one box of film"],
+    ["ob", "a Signal Corps soldier at a market"],
+    ["ob", "sketch: the visitor and the audience"],
+    ["ob", "the audience watches through the visitor's eyes"],
+    ["ob", "MOHAI, Seattle, Sept 2025. sold out"],
+    ["sa", "Rodin's Mighty Hand, as a Gaussian splat"],
+    ["bj", "throw the orca. nobody needed a tutorial"],
+    ["bj", "giant cardboard controllers lost to the throw"],
+    ["re", "a voice recorder you scrub like a turntable"],
+    ["bc", "taste scales linearly with butter"],
+    ["me", "that's me. hi!"],
+  ];
+  const KEY = { do: 15, vi: 8, ob: 18, mc: 1 };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const strips = document.getElementById("strips"), sheet = document.getElementById("sheet"), note = document.getElementById("note");
+  const ring = document.getElementById("ring"), arrow = document.getElementById("arrow");
+  let per = 0, frames = [], cur = -1, seed = 1;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  function build() {
+    const p = innerWidth <= 820 ? 5 : 6;
+    if (p === per) return; per = p;
+    strips.innerHTML = ""; frames = [];
+    for (let s = 0; s < F.length / per; s++) {
+      const st = document.createElement("div"); st.className = "strip";
+      const tilt = [-0.35, 0.25, -0.15, 0.4, -0.3, 0.2][s], off = [0, 6, 2, 9, 4, 1][s];
+      st.style.transform = `rotate(${tilt}deg) translateX(${off}px)`;
+      st.innerHTML = `<span class="edge t">${"HRIDAE WALIA ◂ SAFETY FILM ◂ ".repeat(4)}</span><span class="edge b"></span>`;
+      const eb = st.querySelector(".edge.b");
+      for (let k = 0; k < per; k++) {
+        const i = s * per + k, n = i + 1, [pk, cap] = F[i];
+        eb.insertAdjacentHTML("beforeend", `<span>▸${n}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${n}A</span>`);
+        const b = document.createElement("button"); b.className = "frame";
+        b.setAttribute("aria-label", `Frame ${n}, ${P[pk][0]}: ${cap}`);
+        b.innerHTML = `<img src="media/f${String(n).padStart(2, "0")}.webp" alt="" ${s > 2 ? 'loading="lazy"' : ""} draggable="false">`;
+        b.addEventListener("click", () => mark(i));
+        st.appendChild(b); frames.push(b);
+      }
+      strips.appendChild(st);
+    }
+  }
+
+  function size() {
+    build();
+    const narrow = innerWidth <= 820, rows = F.length / per;
+    sheet.style.gridTemplateColumns = "";
+    const W = strips.clientWidth - 14, H = strips.clientHeight;
+    let fw = W / (per * 1.055 + 0.12);
+    if (!narrow) fw = Math.min(fw, (H - 8) / (rows * (2 / 3 + 0.3) + (rows - 1) * 0.13));
+    fw = Math.floor(fw);
+    strips.style.setProperty("--fw", `${fw}px`);
+    // the margin column takes whatever the strips don't need
+    if (!narrow) sheet.style.gridTemplateColumns = `${Math.ceil(per * fw * 1.055 + fw * 0.1 + 22)}px minmax(250px, 1fr)`;
+  }
+
+  /* a loose, overshooting grease-pencil loop around a rect */
+  function loop(r) {
+    const cx = r.x + r.w / 2, cy = r.y + r.h / 2, rx = r.w * 0.64, ry = r.h * 0.74;
+    const a0 = -2.2 + rnd() * 0.6, span = Math.PI * 2 + 0.55, n = 28, ph = rnd() * 6, pts = [];
+    for (let k = 0; k <= n; k++) {
+      const t = k / n, a = a0 + span * t, wob = 1 + Math.sin(a * 2 + ph) * 0.035 + (t > 0.85 ? (t - 0.85) * 0.5 : 0);
+      pts.push([cx + Math.cos(a) * rx * wob, cy + Math.sin(a) * ry * wob * (1 - t * 0.04)]);
+    }
+    let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let k = 0; k < pts.length - 1; k++) {
+      const p0 = pts[k - 1] || pts[k], p1 = pts[k], p2 = pts[k + 1], p3 = pts[k + 2] || p2;
+      d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return { d, cx, cy, rx, ry };
+  }
+
+  function draw(path, d, dur, delay) {
+    path.setAttribute("d", d);
+    const L = path.getTotalLength();
+    path.style.transition = "none"; path.style.strokeDasharray = `${L} ${L}`;
+    path.style.strokeDashoffset = reduce || !dur ? 0 : L;
+    path.getBoundingClientRect();
+    if (!reduce && dur) { path.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(.3,.6,.3,1) ${delay}ms`; path.style.strokeDashoffset = 0; }
+  }
+
+  function geometry(animate) {
+    if (cur < 0) return;
+    const s = sheet.getBoundingClientRect(), f = frames[cur].getBoundingClientRect();
+    const r = { x: f.left - s.left, y: f.top - s.top, w: f.width, h: f.height };
+    seed = 97 + cur * 13;
+    const L = loop(r);
+    draw(ring, L.d, animate ? 420 : 0, 0);
+    // arrow: leaves the loop, runs along the gutter above the strip, lands at the note
+    const narrow = innerWidth <= 820;
+    const nb = note.getBoundingClientRect(), sb = frames[cur].parentElement.getBoundingClientRect();
+    let d;
+    const head = (x1, y1, ang, h = 12) => ` M${(x1 - h * Math.cos(ang - 0.5)).toFixed(1)} ${(y1 - h * Math.sin(ang - 0.5)).toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)} L${(x1 - h * Math.cos(ang + 0.5)).toFixed(1)} ${(y1 - h * Math.sin(ang + 0.5)).toFixed(1)}`;
+    if (narrow) {
+      const x0 = L.cx + L.rx * 0.15, y0 = L.cy + L.ry * 1.0, x1 = nb.left - s.left + 30, y1 = nb.top - s.top - 4;
+      const c1x = x0 + 10, c1y = y0 + 60, c2x = x1 + 30, c2y = y1 - 70;
+      d = `M${x0.toFixed(1)} ${y0.toFixed(1)} C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}` + head(x1, y1, Math.atan2(y1 - c2y, x1 - c2x));
+    } else {
+      const a = -1.15, x0 = L.cx + Math.cos(a) * L.rx * 1.02, y0 = L.cy + Math.sin(a) * L.ry * 1.02;
+      const gy = sb.top - s.top - 10, x1 = nb.left - s.left - 12, y1 = nb.top - s.top + 40;
+      const c1x = x0 + 30, c1y = gy, c2x = x1 - 120, c2y = gy;
+      d = `M${x0.toFixed(1)} ${y0.toFixed(1)} C${c1x.toFixed(1)} ${(gy - 4).toFixed(1)} ${(x0 + 60).toFixed(1)} ${gy.toFixed(1)} ${(x0 + 110).toFixed(1)} ${gy.toFixed(1)} L${(x1 - 160).toFixed(1)} ${(gy + 1.5).toFixed(1)} C${c2x.toFixed(1)} ${gy.toFixed(1)} ${(x1 - 40).toFixed(1)} ${(y1 - 6).toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}` + head(x1, y1, Math.atan2(6, 40));
+    }
+    draw(arrow, d, animate ? 300 : 0, 360);
+  }
+
+  function placeNote() {
+    if (innerWidth <= 820 || cur < 0) { note.style.setProperty("--note-y", "0px"); return; }
+    const m = document.getElementById("margin").getBoundingClientRect(), f = frames[cur].getBoundingClientRect();
+    const idxTop = document.querySelector(".index").getBoundingClientRect().top;
+    const sbt = frames[cur].parentElement.getBoundingClientRect().top;
+    const y = Math.max(0, Math.min(sbt - m.top - 24, idxTop - m.top - note.offsetHeight - 24 + parseFloat(getComputedStyle(note).marginTop || 0)));
+    note.style.setProperty("--note-y", `${Math.round(y)}px`);
+  }
+
+  function mark(i, quiet) {
+    cur = i;
+    const [pk, cap] = F[i], [name, href] = P[pk];
+    note.classList.remove("on");
+    note.innerHTML = `<span class="fr">FRAME ${i + 1}</span><span class="w w1 proj">${name}</span><span class="w w2 cap">${cap}</span>` +
+      `<span class="w w3"><a href="${href}" target="_blank" rel="noopener">${pk === "me" ? "say hi on LinkedIn" : "see the case study"} ↗</a></span>`;
+    note.getBoundingClientRect();
+    placeNote();
+    requestAnimationFrame(() => {
+      geometry(!quiet);
+      setTimeout(() => note.classList.add("on"), reduce || quiet ? 0 : 380);
+    });
+  }
+
+  const idx = document.getElementById("index");
+  ["do", "vi", "ob", "mc"].forEach((k) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button aria-label="Mark ${P[k][0]} on the sheet">fr.${KEY[k]}</button><a href="${P[k][1]}" target="_blank" rel="noopener"><span>${P[k][0]}</span><span>↗</span></a>`;
+    li.querySelector("button").addEventListener("click", () => mark(KEY[k] - 1));
+    li.querySelector("a").addEventListener("mouseenter", () => { if (matchMedia("(hover: hover)").matches) mark(KEY[k] - 1); });
+    idx.appendChild(li);
+  });
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+
+  let rt;
+  addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { const keep = cur; size(); if (keep >= 0) { cur = keep; placeNote(); geometry(false); } }, 80); });
+  size();
+  const first = () => mark(0, false);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(first, reduce ? 0 : 450)); else setTimeout(first, 450);
+  mark(0, true); // complete at rest, then redrawn with the pencil once fonts land
+})();
+</script>
+</body>
+</html>

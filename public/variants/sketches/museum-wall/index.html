@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Museum Wall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Libre+Franklin:wght@400;500;600&display=swap">
+<style>
+/* A gallery wall: the work hung at eye level with museum tombstone labels. Drag or scroll along it. */
+:root {
+  color-scheme: dark;
+  --wall: #34403A; --wall-hi: #3D4A43; --vinyl: #F3F0E8; --label: #F6F4EE; --label-ink: #1D1C1A; --label-muted: #5C5A55;
+  --ink-soft: rgb(243 240 232 / .66); --floor: #2A2119; --frame: #17150F; --mat: #F3F1EA; --oak: #9C7A52;
+  --f-serif: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --f-sans: "Libre Franklin", "Franklin Gothic Book", "Helvetica Neue", Arial, sans-serif;
+  --h: clamp(220px, 44dvh, 440px);
+  --floorH: 17dvh;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--wall); color: var(--vinyl); font: 400 15px/1.5 var(--f-sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+img { max-width: none; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid #E9C98F; outline-offset: 4px; }
+
+.wall { position: fixed; inset: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; cursor: grab; overscroll-behavior-x: contain;
+  background: radial-gradient(120% 70% at 50% 0%, rgb(0 0 0 / .28), transparent 60%), linear-gradient(180deg, #2C3631, var(--wall) 30%, var(--wall-hi) 70%, var(--wall)); }
+.wall::-webkit-scrollbar { display: none; }
+.wall.drag { cursor: grabbing; user-select: none; }
+.track { position: relative; display: flex; align-items: center; height: calc(100% - var(--floorH)); width: max-content; padding: 0 12vw 0 clamp(28px, 6vw, 110px); gap: clamp(90px, 11vw, 200px); }
+/* floor + baseboard travel with the wall */
+.track::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: var(--floorH);
+  background: linear-gradient(180deg, #14110D 0 3px, #4A3B2C 3px 5px, transparent 5px),
+    linear-gradient(180deg, transparent 0 13%, rgb(0 0 0 / .22) 13% calc(13% + 1px), transparent 0 30%, rgb(0 0 0 / .22) 30% calc(30% + 1px), transparent 0 52%, rgb(0 0 0 / .22) 52% calc(52% + 1px), transparent 0 80%, rgb(0 0 0 / .22) 80% calc(80% + 1px), transparent 0),
+    linear-gradient(180deg, rgb(255 228 185 / .10), transparent 45%),
+    linear-gradient(180deg, #45352545, transparent),
+    linear-gradient(180deg, #3B2E22, var(--floor) 60%, #1E1812); }
+
+.bay { position: relative; height: 100%; display: flex; align-items: center; gap: 30px; flex-shrink: 0; }
+.work { position: relative; margin: 0; isolation: isolate; margin-top: -4dvh; }
+.work::before { content: ""; position: absolute; z-index: -1; left: -55%; right: -55%; top: -70%; bottom: -35%; pointer-events: none;
+  background: radial-gradient(ellipse 46% 58% at 50% 46%, rgb(255 238 205 / .26), rgb(255 238 205 / .08) 55%, transparent 72%);
+  opacity: calc(.35 + .65 * var(--lit, 0)); transition: opacity .5s ease-out; }
+.work img { width: min(calc(var(--h) * var(--k, 1) * var(--ar, 1)), calc(100vw - 72px)); aspect-ratio: var(--ar, 1); height: auto; object-fit: cover; }
+.framed { padding: calc(var(--h) * .07); background: var(--mat); box-shadow: 0 0 0 9px var(--frame), 0 0 0 10px #2a2720, 0 28px 40px -10px rgb(0 0 0 / .55), 0 6px 14px rgb(0 0 0 / .35); }
+.framed img { box-shadow: inset 0 0 0 1px rgb(0 0 0 / .1); filter: brightness(calc(.8 + .2 * var(--lit, 0))); }
+.oak { padding: 0; box-shadow: 0 0 0 7px var(--oak), 0 0 0 8px #6E5436, 0 26px 40px -12px rgb(0 0 0 / .55), 0 5px 12px rgb(0 0 0 / .3); }
+.oak img { filter: brightness(calc(.78 + .22 * var(--lit, 0))); }
+.mount img { filter: drop-shadow(0 26px 22px rgb(0 0 0 / .45)) drop-shadow(0 4px 6px rgb(0 0 0 / .3)) brightness(calc(.82 + .18 * var(--lit, 0))); }
+.work a { display: block; color: inherit; }
+
+.tomb { width: 230px; align-self: center; margin-top: calc(var(--h) * .55); background: var(--label); color: var(--label-ink); padding: 14px 15px 13px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 2px 4px rgb(0 0 0 / .3); flex-shrink: 0; }
+.tomb .ti { font: italic 500 17px/1.15 var(--f-serif); }
+.tomb .yr { font-weight: 400; }
+.tomb .med, .tomb .dim, .tomb .cr { display: block; color: var(--label-muted); }
+.tomb .med { margin-top: 6px; color: var(--label-ink); }
+.tomb .cr { margin-top: 6px; }
+.tomb p { margin: 9px 0 10px; color: var(--label-ink); }
+.tomb a { font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; font-size: 11.5px; letter-spacing: .02em; }
+
+/* title wall */
+.title { width: min(540px, calc(100vw - 56px)); flex-direction: column; align-items: flex-start; justify-content: center; }
+.title .kick { font: 500 11px/1 var(--f-sans); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); }
+.title h1 { margin: 18px 0 14px; font: 600 clamp(62px, 8.2vw, 124px)/.9 var(--f-serif); font-variation-settings: "opsz" 30; letter-spacing: -.02em; color: var(--vinyl); }
+.title h1 i { font-weight: 400; }
+.title .sub { font: italic 400 clamp(19px, 1.7vw, 24px)/1.3 var(--f-serif); margin: 0 0 22px; max-width: 24ch; }
+.title .text { font-size: 14px; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0; }
+.title .text b { color: var(--vinyl); font-weight: 500; }
+
+/* plinth */
+.plinth { display: flex; flex-direction: column; align-items: center; align-self: flex-end; margin-top: 0; }
+.plinth img { width: min(calc(var(--h) * .62), 62vw); aspect-ratio: 519 / 481; margin-bottom: -6px; position: relative; z-index: 1; }
+.plinth .box { width: calc(var(--h) * .58); height: calc(var(--h) * .7); background: linear-gradient(90deg, #E9E6DE, #F4F2EC 40%, #DCD8CE); box-shadow: 0 30px 30px -20px rgb(0 0 0 / .5), inset 0 1px 0 #fff; position: relative; }
+.plinth .box::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px; background: #FBFAF6; }
+.plinth::before { top: -10%; bottom: 30%; }
+
+/* salon hang */
+.salon { display: grid; grid-template-columns: auto auto; gap: calc(var(--h) * .09); align-items: center; justify-items: center; margin-top: -4dvh; }
+.salon .work { margin: 0; }
+.salon .work::before { left: -30%; right: -30%; top: -40%; bottom: -30%; }
+.salon .cap { position: absolute; left: 0; top: calc(100% + 14px); white-space: nowrap; font: 500 10.5px/1.3 var(--f-sans); letter-spacing: .04em; color: var(--ink-soft); text-decoration: none; }
+.salon a:hover .cap { color: var(--vinyl); }
+
+/* exit wall */
+.exit { flex-direction: column; align-items: flex-start; justify-content: center; width: min(420px, calc(100vw - 56px)); }
+.exit h2 { margin: 0 0 14px; font: italic 400 clamp(36px, 3.6vw, 52px)/1 var(--f-serif); }
+.exit p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; max-width: 36ch; }
+.exit .row { display: flex; gap: 10px 18px; flex-wrap: wrap; align-items: baseline; font-size: 14px; }
+.exit .row a, .exit .row button { text-decoration: none; border-bottom: 1px solid rgb(243 240 232 / .4); }
+
+/* fixed wayfinding */
+.way { position: fixed; z-index: 4; left: clamp(20px, 3vw, 44px); top: calc(clamp(18px, 3.4vh, 34px) + env(safe-area-inset-top, 0px)); font: 500 10.5px/1 var(--f-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft); pointer-events: none; }
+.back { position: fixed; z-index: 4; right: clamp(20px, 3vw, 44px); top: calc(clamp(18px, 3.4vh, 34px) + env(safe-area-inset-top, 0px)); font: 400 11px/1 var(--f-sans); letter-spacing: .04em; color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid rgb(243 240 232 / .3); padding-bottom: 2px; }
+.guide { position: fixed; z-index: 4; left: 0; right: 0; bottom: 0; height: var(--floorH); padding: 0 clamp(20px, 3vw, 44px) env(safe-area-inset-bottom, 0px); display: flex; align-items: center; justify-content: space-between; gap: 12px 28px; pointer-events: none; }
+.guide > * { pointer-events: auto; }
+.guide ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px 22px; flex-wrap: wrap; }
+.guide button { font: 500 12px/1.6 var(--f-sans); letter-spacing: .06em; color: rgb(243 240 232 / .55); transition: color .2s; }
+.guide button:hover, .guide button[aria-current="true"] { color: var(--vinyl); }
+.guide button[aria-current="true"] { border-bottom: 1px solid currentColor; }
+.guide .contact { font-size: 12px; display: flex; gap: 14px; align-items: baseline; color: var(--ink-soft); }
+.guide .contact .email { color: var(--vinyl); user-select: all; }
+.guide .contact button { font: inherit; letter-spacing: 0; color: var(--vinyl); border-bottom: 1px solid rgb(243 240 232 / .4); }
+.hint { position: fixed; z-index: 4; left: 50%; transform: translateX(-50%); top: calc(clamp(18px, 3.4vh, 34px) + env(safe-area-inset-top, 0px)); font: italic 400 13px/1 var(--f-serif); color: var(--ink-soft); pointer-events: none; transition: opacity .6s; }
+.hint.gone { opacity: 0; }
+
+@media (max-width: 820px) {
+  :root { --h: clamp(200px, 36dvh, 340px); --floorH: 20dvh; }
+  .track { gap: 64px; padding-right: 40px; padding-left: 24px; }
+  .bay:not(.title):not(.exit) { flex-direction: column; justify-content: center; gap: 22px; }
+  .tomb { margin-top: 0; width: min(280px, calc(100vw - 72px)); align-self: flex-start; font-size: 12px; padding: 11px 12px; }
+  .tomb p { display: none; }
+  .work { margin-top: 0; }
+  .alt { display: none; }
+  .salon .cap { top: calc(100% + 8px); }
+  .plinth { align-self: center; margin-top: 0; }
+  .bay.mc { justify-content: flex-end !important; }
+  .bay.mc .tomb { order: -1; align-self: flex-start; margin-bottom: 4px; }
+  .plinth img { width: calc(var(--h) * .5); }
+  .plinth .box { height: calc(var(--h) * .36); width: calc(var(--h) * .48); }
+  .title h1 { font-size: 64px; }
+  .bay.title { width: 74vw; }
+  .title .text { font-size: 13.5px; }
+  .guide { flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; }
+  .guide ol { gap: 2px 16px; }
+  .hint { top: auto; bottom: calc(var(--floorH) + 14px); }
+  .way { max-width: 60vw; line-height: 1.5; }
+}
+@media (max-height: 640px) and (min-width: 821px) { .tomb p { display: none; } }
+@media (prefers-reduced-motion: reduce) { .work::before { transition: none; } }
+</style>
+</head>
+<body>
+<p class="way">Hridae Walia · Selected works</p>
+<a class="back" href="../index.html">all sketches</a>
+<p class="hint" id="hint" aria-hidden="true">drag or scroll along the wall →</p>
+
+<main class="wall" id="wall" tabindex="0" aria-label="Gallery wall">
+  <div class="track" id="track">
+
+    <section class="bay title" data-k="intro" aria-label="Exhibition title">
+      <div class="kick">Product design, 2020 to now</div>
+      <h1>Hridae<br>Walia</h1>
+      <p class="sub">Interaction models that barely exist yet</p>
+      <p class="text">I'm a <b>product designer</b> obsessed with making, with six years of designing for phones, the web, headsets and the physical world. I learn by making: on the canvas, in code, and with wires and plush. Founding Product Designer at Domis, based in San Francisco.</p>
+    </section>
+
+    <section class="bay" data-k="domis" id="b-domis" aria-label="Domis">
+      <figure class="work mount"><a href="https://hridaew.com/domis" target="_blank" rel="noopener" aria-label="Domis case study"><img src="media/domis.webp" alt="The Domis home screen on a phone" style="--k:1.08;--ar:.462;border-radius:calc(var(--h) * .05)" draggable="false"></a></figure>
+      <figure class="work oak alt" style="align-self:center;margin-top:calc(var(--h) * .28)"><a href="https://hridaew.com/domis" target="_blank" rel="noopener" aria-label="Domis case study" tabindex="-1"><img src="media/house.webp" alt="An AI-generated 3D avatar of a brick house" style="--k:.44;--ar:1;background:#EDE7DC" draggable="false"></a></figure>
+      <div class="tomb">
+        <span class="ti">Domis</span>, <span class="yr">2024–present</span>
+        <span class="med">iOS and web app; agentic multimodal scanner, AI image translation</span>
+        <span class="dim">Phone screen, 1170 × 2532 px</span>
+        <p>A home maintenance app that learns a house from the smallest thing its owner will give: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.</p>
+        <span class="cr">Founding Product Designer</span>
+        <p style="margin:10px 0 0;display:block"><a href="https://hridaew.com/domis" target="_blank" rel="noopener">View the case study ↗</a></p>
+      </div>
+    </section>
+
+    <section class="bay" data-k="virdio" id="b-virdio" aria-label="Virdio">
+      <figure class="work oak"><a href="https://hridaew.com/virdio" target="_blank" rel="noopener" aria-label="Virdio case study"><img src="media/virdio.webp" alt="An AR workout in a red-lit room, with rep counts overlaid" style="--k:.78;--ar:1.885" draggable="false"></a></figure>
+      <div class="tomb">
+        <span class="ti">Virdio</span>, <span class="yr">2021–2022</span>
+        <span class="med">Machine vision and AR on iOS, Android, web, desktop, Apple Watch and smart TV</span>
+        <span class="dim">Any room; no hardware</span>
+        <p>An ordinary camera reads the body and simulates the equipment. I designed calibration, no-blame recovery, and a token system that halved handoff time across four platforms.</p>
+        <span class="cr">Product Designer</span>
+        <p style="margin:10px 0 0;display:block"><a href="https://hridaew.com/virdio" target="_blank" rel="noopener">View the case study ↗</a></p>
+      </div>
+    </section>
+
+    <section class="bay" data-k="obscura" id="b-obscura" aria-label="OBSCURA">
+      <figure class="work framed"><a href="https://hridaew.com/obscura" target="_blank" rel="noopener" aria-label="OBSCURA case study"><img src="media/crowd.webp" alt="Wayne Wong, 1946: a crowd before a theater in Japan" style="--k:.86;--ar:1.042" draggable="false"></a></figure>
+      <figure class="work mount alt"><a href="https://hridaew.com/obscura" target="_blank" rel="noopener" aria-label="OBSCURA case study" tabindex="-1"><img src="media/strip.webp" alt="The OBSCURA photo-strip souvenir" style="--k:1.12;--ar:.231" draggable="false"></a></figure>
+      <div class="tomb">
+        <span class="ti">OBSCURA</span>, <span class="yr">2025</span>
+        <span class="med">Unity, Meta Quest 3S, gaze tracking; 300+ photographs by Wayne Wong, 1946</span>
+        <span class="dim">Photo-strip souvenir, one per visitor</span>
+        <p>One visitor views never-seen photographs in VR while the audience outside watches through their eyes. Who is really doing the looking?</p>
+        <span class="cr">Exhibited at MOHAI, Seattle, 13 September 2025. Sold out.</span>
+        <p style="margin:10px 0 0;display:block"><a href="https://hridaew.com/obscura" target="_blank" rel="noopener">View the case study ↗</a></p>
+      </div>
+    </section>
+
+    <section class="bay mc" data-k="mc" id="b-mc" aria-label="Memory Care Experience Station" style="align-items:flex-end">
+      <figure class="work plinth"><a href="https://hridaew.com/memory-care" target="_blank" rel="noopener" aria-label="Memory Care case study"><img src="media/cat.webp" alt="A plush cat wired with pressure sensors and a haptic motor" draggable="false"></a><div class="box"></div></figure>
+      <figure class="work framed alt" style="align-self:center"><a href="https://hridaew.com/memory-care" target="_blank" rel="noopener" aria-label="Memory Care case study" tabindex="-1"><img src="media/station.webp" alt="A resident at the driving-simulator station, plush cats beside the wheel" style="--k:.6;--ar:1.333" draggable="false"></a></figure>
+      <div class="tomb" style="align-self:center">
+        <span class="ti">Memory Care Experience Station</span>, <span class="yr">2020–2023</span>
+        <span class="med">Plush cats, pressure sensors, haptic vibration motors, Arduino; driving simulator, haptic footrest</span>
+        <span class="dim">Reachable from a wheelchair</span>
+        <p>For people living with mid-to-late stage dementia. Pet the cat and it purrs. 98% positive across 200+ sessions; a Fast Company World Changing Ideas finalist.</p>
+        <span class="cr">SF Campus for Jewish Living, with Maria Mortati Experience Design</span>
+        <p style="margin:10px 0 0;display:block"><a href="https://hridaew.com/memory-care" target="_blank" rel="noopener">View the case study ↗</a></p>
+      </div>
+    </section>
+
+    <section class="bay" data-k="side" id="b-side" aria-label="Side builds">
+      <div class="salon">
+        <figure class="work oak"><a href="https://hridaew.com/waffling/savor" target="_blank" rel="noopener"><img src="media/hand.webp" alt="Rodin's Mighty Hand, captured with Savor" style="--k:.5;--ar:.563;--lit:var(--l2)" draggable="false"><span class="cap">Savor ↗</span></a></figure>
+        <figure class="work framed" style="padding:calc(var(--h) * .04)"><a href="https://hridaew.com/waffling/orca" target="_blank" rel="noopener"><img src="media/orca.webp" alt="Someone throwing a plush orca at a projected game" style="--k:.34;--ar:1.508" draggable="false"><span class="cap">Saving Baby J ↗</span></a></figure>
+        <figure class="work mount"><a href="https://hridaew.com/waffling/recorder" target="_blank" rel="noopener"><img src="media/recorder.webp" alt="A grey voice-recorder prototype with a turntable" style="--k:.36;--ar:.83" draggable="false"><span class="cap">Recorder ↗</span></a></figure>
+        <figure class="work oak"><a href="https://hridaew.com/butter-chicken" target="_blank" rel="noopener"><img src="media/butter.webp" alt="Butter chicken in a pan" style="--k:.34;--ar:1.087" draggable="false"><span class="cap">Butter chicken ↗</span></a></figure>
+      </div>
+      <div class="tomb">
+        <span class="ti">Wafflings</span>, <span class="yr">ongoing</span>
+        <span class="med">Metal, RealityKit, cardboard, plush orcas, butter</span>
+        <p>Things I make to learn: a phone video turned into a Gaussian splat, an arcade game you play by throwing, a recorder you scrub like a turntable, a serious butter chicken.</p>
+        <span class="cr">Taste scales linearly with butter.</span>
+      </div>
+    </section>
+
+    <section class="bay exit" data-k="exit" id="b-exit" aria-label="Contact">
+      <h2>Thank you for visiting.</h2>
+      <p>I'm always glad to talk about work, prototypes, or butter chicken.</p>
+      <div class="row"><span class="email" id="email2">hridaew@gmail.com</span><button data-copy="email2">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/hridaew" target="_blank" rel="noopener">GitHub</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></div>
+    </section>
+  </div>
+</main>
+
+<nav class="guide" aria-label="Gallery guide">
+  <ol id="guide">
+    <li><button data-go="b-domis">Domis</button></li>
+    <li><button data-go="b-virdio">Virdio</button></li>
+    <li><button data-go="b-obscura">OBSCURA</button></li>
+    <li><button data-go="b-mc">Memory Care</button></li>
+    <li><button data-go="b-side">Wafflings</button></li>
+  </ol>
+  <div class="contact"><span class="email" id="email">hridaew@gmail.com</span><button data-copy="email">copy</button></div>
+</nav>
+
+<script>
+(() => {
+  const wall = document.getElementById("wall"), hint = document.getElementById("hint");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const bays = [...document.querySelectorAll(".bay")];
+  const works = [...document.querySelectorAll(".work")];
+  const guide = [...document.querySelectorAll("#guide button")];
+
+  /* lights come up on whatever is in front of you */
+  let lightRaf = 0;
+  function lights() {
+    lightRaf = 0;
+    const W = innerWidth, mid = W / 2;
+    works.forEach((w) => {
+      const r = w.getBoundingClientRect(), c = r.left + r.width / 2;
+      const lit = Math.max(0, 1 - Math.abs(c - mid) / (W * 0.55));
+      w.style.setProperty("--lit", (lit * lit * (3 - 2 * lit)).toFixed(3));
+    });
+    let best = -1, bd = 1e9;
+    bays.forEach((b, i) => { const r = b.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - mid); if (d < bd) { bd = d; best = i; } });
+    const k = bays[best].id;
+    guide.forEach((g) => g.setAttribute("aria-current", g.dataset.go === k));
+    if (wall.scrollLeft > 40) hint.classList.add("gone");
+  }
+  const queue = () => { if (!lightRaf) lightRaf = requestAnimationFrame(lights); };
+  wall.addEventListener("scroll", queue, { passive: true });
+  addEventListener("resize", queue);
+
+  /* smooth wheel -> horizontal travel, eased */
+  let target = null, vel = 0, anim = 0;
+  function step() {
+    anim = 0;
+    const max = wall.scrollWidth - wall.clientWidth;
+    if (target != null) {
+      target = Math.max(0, Math.min(max, target));
+      const d = target - wall.scrollLeft;
+      if (Math.abs(d) < 0.5) { wall.scrollLeft = target; target = null; return; }
+      wall.scrollLeft += d * 0.16;
+    } else if (Math.abs(vel) > 0.3) {
+      wall.scrollLeft += vel; vel *= 0.94;
+      if (wall.scrollLeft <= 0 || wall.scrollLeft >= max) vel = 0;
+    } else return;
+    anim = requestAnimationFrame(step);
+  }
+  const run = () => { if (!anim) anim = requestAnimationFrame(step); };
+  wall.addEventListener("wheel", (e) => {
+    const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (!d) return;
+    e.preventDefault(); vel = 0;
+    const unit = e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? innerWidth : 1;
+    target = (target ?? wall.scrollLeft) + d * unit * 1.1;
+    if (reduce) { wall.scrollLeft = target; target = null; } else run();
+  }, { passive: false });
+
+  /* mouse drag with a little momentum (touch keeps native scrolling) */
+  let drag = null;
+  wall.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    drag = { x: e.clientX, s: wall.scrollLeft, moved: false, hist: [[performance.now(), e.clientX]] }; target = null; vel = 0;
+  });
+  addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) > 5) { drag.moved = true; wall.classList.add("drag"); }
+    if (drag.moved) { wall.scrollLeft = drag.s - dx; drag.hist.push([performance.now(), e.clientX]); if (drag.hist.length > 5) drag.hist.shift(); }
+  });
+  addEventListener("pointerup", () => {
+    if (!drag) return;
+    const d = drag; drag = null; wall.classList.remove("drag");
+    if (d.moved) {
+      const [t0, x0] = d.hist[0], [t1, x1] = d.hist[d.hist.length - 1];
+      if (!reduce && t1 > t0) { vel = -((x1 - x0) / (t1 - t0)) * 16; vel = Math.max(-60, Math.min(60, vel)); run(); }
+      // swallow the click that ends a drag
+      const stop = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
+      wall.addEventListener("click", stop, { capture: true, once: true });
+      setTimeout(() => wall.removeEventListener("click", stop, { capture: true }), 0);
+    }
+  });
+
+  /* keyboard + guide */
+  function goTo(el) {
+    const r = el.getBoundingClientRect();
+    const x = wall.scrollLeft + r.left + r.width / 2 - innerWidth / 2;
+    vel = 0;
+    if (reduce) { wall.scrollLeft = x; } else { target = x; run(); }
+  }
+  guide.forEach((g) => g.addEventListener("click", () => goTo(document.getElementById(g.dataset.go))));
+  addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("input,textarea")) return;
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      const mid = innerWidth / 2;
+      const cur = bays.reduce((b, x, i) => { const r = x.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); return d < b[1] ? [i, d] : b; }, [0, 1e9])[0];
+      const n = Math.max(0, Math.min(bays.length - 1, cur + (e.key === "ArrowRight" ? 1 : -1)));
+      goTo(bays[n]);
+    }
+  });
+
+  document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+    const el = document.getElementById(b.dataset.copy);
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  }));
+  lights();
+})();
+</script>
+</body>
+</html>

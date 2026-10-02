@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gaze Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Martian+Mono:wght@300;400&display=swap">
+<style>
+/* Layout: a calm grid of project photographs on the right; a reading column on the left that, after a few seconds, reports what the visitor looked at most. */
+:root {
+  color-scheme: dark;
+  --ground: #121315; --panel: #121315; --ink: #ECEAE5; --muted: #8F9297; --faint: rgb(236 234 229 / .1);
+  --rec: #F0262B;
+  --f-sans: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Martian Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ground); color: var(--ink); font: 400 15px/1.5 var(--f-sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+[hidden] { display: none !important; }
+img { max-width: none; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.mono { font-family: var(--f-mono); }
+
+.app { height: 100%; display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: clamp(28px, 3.5vw, 56px); padding: clamp(24px, 4.5vh, 44px) clamp(24px, 3.5vw, 52px); }
+.side { display: flex; flex-direction: column; min-height: 0; }
+.who b { display: block; font: 600 19px/1.2 var(--f-sans); letter-spacing: -.01em; }
+.who span { font: 300 11px/1.6 var(--f-mono); color: var(--muted); }
+.q { margin: clamp(28px, 7vh, 72px) 0 0; font: 500 clamp(24px, 2.2vw, 31px)/1.16 var(--f-sans); letter-spacing: -.02em; text-wrap: balance; }
+.q small { display: block; margin-top: 12px; font: 300 11px/1.6 var(--f-mono); letter-spacing: 0; color: var(--muted); }
+.rec { margin-top: 22px; display: flex; align-items: center; gap: 10px; font: 300 11px/1 var(--f-mono); color: var(--muted); }
+.rec i { width: 7px; height: 7px; border-radius: 50%; background: var(--rec); animation: blink 1.6s steps(1) infinite; }
+.rec .t { margin-left: auto; color: var(--ink); font-variant-numeric: tabular-nums; }
+@keyframes blink { 50% { opacity: .25; } }
+
+.result { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--faint); min-height: 220px; transition: opacity .28s var(--ease), transform .4s var(--ease); }
+.result.out { opacity: 0; transform: translateY(6px); }
+.result .k { font: 300 11px/1.6 var(--f-mono); color: var(--muted); }
+.result h1 { margin: 6px 0 4px; font: 600 clamp(36px, 3.6vw, 52px)/1 var(--f-sans); letter-spacing: -.035em; }
+.result .meta { font: 300 11px/1.6 var(--f-mono); color: var(--muted); }
+.result p { margin: 12px 0 14px; max-width: 38ch; color: #CFCDC8; text-wrap: pretty; }
+.result a { font: 400 12px/1 var(--f-mono); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 3px; }
+.result .wait { color: #CFCDC8; max-width: 34ch; margin: 0; }
+
+.foot { margin-top: auto; font: 300 11px/1.8 var(--f-mono); color: var(--muted); }
+.foot nav { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-bottom: 10px; }
+.foot nav a, .foot .contact a, .foot .contact button { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--faint); }
+.foot nav a:hover, .foot .contact a:hover, .foot .contact button:hover { border-bottom-color: var(--ink); }
+.foot .contact { display: flex; flex-wrap: wrap; gap: 2px 14px; align-items: baseline; }
+.foot .email { color: var(--ink); user-select: all; }
+.corner { position: fixed; right: 12px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); font: 300 10px/1 var(--f-mono); color: var(--muted); text-decoration: none; z-index: 5; }
+.corner:hover { color: var(--ink); }
+
+.field { position: relative; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 14px 12px; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: none; }
+.tile { position: relative; display: flex; flex-direction: column; min-height: 0; text-align: left; cursor: none; }
+.tile .ph { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #1C1D20; border-radius: 2px; }
+.tile img { width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; pointer-events: none; }
+.tile .lb { display: flex; justify-content: space-between; gap: 8px; padding-top: 7px; font: 300 10.5px/1.3 var(--f-mono); color: var(--muted); }
+.tile .lb b { font-weight: 400; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile .lb s { text-decoration: none; font-variant-numeric: tabular-nums; }
+.tile .ph::after { content: ""; position: absolute; inset: 0; border: 1.5px solid var(--ink); opacity: 0; transition: opacity .3s var(--ease); border-radius: 2px; }
+.tile.lead .ph::after { opacity: .9; }
+.tile:focus-visible { outline-offset: 4px; }
+canvas.heat { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.reticle { position: fixed; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .9); box-shadow: 0 0 0 1px rgb(0 0 0 / .25); pointer-events: none; z-index: 6; opacity: 0; transition: opacity .2s; will-change: transform; }
+.reticle::after { content: ""; position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px; border-radius: 50%; background: #fff; }
+.reticle.on { opacity: 1; }
+
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  html, body { height: auto; min-height: 100%; }
+  .app { display: flex; flex-direction: column; height: auto; gap: 0; padding: 18px 16px calc(36px + env(safe-area-inset-bottom, 0px)); }
+  .side { display: contents; }
+  .who { order: 0; }
+  .q { order: 1; margin-top: 18px; font-size: 21px; }
+  .q small { margin-top: 6px; }
+  .rec { order: 2; margin: 14px 0 12px; }
+  .field { order: 3; height: 520px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 10px 8px; cursor: auto; }
+  .tile { cursor: auto; }
+  .result { order: 4; min-height: 0; }
+  .result h1 { font-size: 38px; }
+  .foot { order: 5; margin-top: 22px; }
+  .corner { position: static; order: 6; margin-top: 16px; }
+}
+@media (max-height: 760px) and (min-width: 861px) { .q { margin-top: 28px; font-size: 24px; } .result { min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { .rec i { animation: none; } .result, .tile .ph::after { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <header class="who"><b>Hridae Walia</b><span>Product designer · San Francisco</span></header>
+    <p class="q">When you look at a photograph, who is really doing the looking?<small>A question from OBSCURA, my gaze-tracked documentary at MOHAI.</small></p>
+    <div class="rec" aria-hidden="true"><i></i><span id="recLabel">recording where you look</span><span class="t" id="clock">0.0 s</span></div>
+    <section class="result" id="result" aria-live="polite">
+      <p class="k">Eight projects, from 2020 to now.</p>
+      <p class="wait">Look around for a few seconds. I'll tell you which one held your eye.</p>
+    </section>
+    <footer class="foot">
+      <nav aria-label="Case studies">
+        <a href="https://hridaew.com/domis" target="_blank" rel="noopener">Domis</a>
+        <a href="https://hridaew.com/virdio" target="_blank" rel="noopener">Virdio</a>
+        <a href="https://hridaew.com/obscura" target="_blank" rel="noopener">OBSCURA</a>
+        <a href="https://hridaew.com/memory-care" target="_blank" rel="noopener">Memory Care</a>
+      </nav>
+      <div class="contact"><span class="email" id="email">hridaew@gmail.com</span><button id="copy" type="button">copy</button><a href="https://www.linkedin.com/in/hridae" target="_blank" rel="noopener">LinkedIn</a><a href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing" target="_blank" rel="noopener">CV</a></div>
+    </footer>
+  </aside>
+  <div class="field" id="field" role="group" aria-label="Eight project photographs"></div>
+  <a class="corner" href="../index.html">all sketches</a>
+</div>
+<div class="reticle" id="reticle" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const P = [
+    { t: "Domis", img: "media/domis.webp", pos: "50% 60%", meta: "Founding Product Designer · 2024–now", href: "https://hridaew.com/domis", cs: true,
+      p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report." },
+    { t: "Virdio", img: "media/virdio.webp", pos: "82% 50%", meta: "Product Designer · 2021–2022", href: "https://hridaew.com/virdio", cs: true,
+      p: "AR fitness with no hardware: an ordinary camera reads your body and counts every rep, on six platforms." },
+    { t: "OBSCURA", img: "media/obscura.webp", pos: "50% 40%", meta: "Interaction design, Unity · MOHAI, 2025", href: "https://hridaew.com/obscura", cs: true,
+      p: "300+ never-seen photographs from 1946 Japan, curated by a visitor's gaze in VR while an audience watches through their eyes. Sold out." },
+    { t: "Memory Care", img: "media/memory-care.webp", pos: "72% 40%", meta: "Interaction Designer · 2020–2023", href: "https://hridaew.com/memory-care", cs: true,
+      p: "Plush cats wired with pressure sensors and haptic motors, for people living with dementia. Pet one and it purrs. 98% positive across 200+ sessions." },
+    { t: "Savor", img: "media/savor.webp", pos: "50% 45%", meta: "Side build · macOS", href: "https://hridaew.com/waffling/savor",
+      p: "Turns a phone video into a 3D Gaussian splat you can orbit, trained on-device. Built to capture Rodin's Mighty Hand." },
+    { t: "Saving Baby J", img: "media/orca.webp", pos: "30% 50%", meta: "Side build · arcade game", href: "https://hridaew.com/waffling/orca",
+      p: "Throw plush orcas at a projected hit board to free a calf from a net. The throw beat every other controller, and nobody needed a tutorial." },
+    { t: "Recorder", img: "media/recorder.webp", pos: "50% 50%", fit: "contain", bg: "#cfcfcc", meta: "Side build · prototype", href: "https://hridaew.com/waffling/recorder",
+      p: "A voice recorder you scrub like a turntable, with a cassette-eject sound." },
+    { t: "Butter Chicken", img: "media/butter.webp", pos: "50% 50%", meta: "Side build · recipe", href: "https://hridaew.com/butter-chicken",
+      p: "A vibes-based recipe. Taste scales linearly with butter." },
+  ];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarse = matchMedia("(pointer: coarse)").matches;
+  const field = document.getElementById("field"), result = document.getElementById("result"), clock = document.getElementById("clock"), ret = document.getElementById("reticle");
+  if (coarse) document.getElementById("recLabel").textContent = "rest a finger where you look";
+
+  const tiles = P.map((p, i) => {
+    const b = document.createElement("button");
+    b.className = "tile"; b.type = "button";
+    b.setAttribute("aria-label", `${p.t}: look here`);
+    b.innerHTML = `<span class="ph"${p.bg ? ` style="background:${p.bg}"` : ""}><img src="${p.img}" alt="" draggable="false" style="object-position:${p.pos};object-fit:${p.fit || "cover"}"></span><span class="lb"><b>${p.t}</b><s>0.0s</s></span>`;
+    field.appendChild(b);
+    return { el: b, s: b.querySelector("s"), dwell: 0 };
+  });
+  const cv = document.createElement("canvas"); cv.className = "heat"; field.appendChild(cv);
+  const ctx = cv.getContext("2d");
+
+  /* heat buffer: one cell per CELL css px; gaussian stamps accumulate, then a lookup table colours them */
+  const CELL = 4, RAD = 13; // kernel radius in cells (~52px)
+  let W = 0, H = 0, buf, img, fr;
+  const kern = []; for (let y = -RAD; y <= RAD; y++) for (let x = -RAD; x <= RAD; x++) { const d2 = (x * x + y * y) / (RAD * RAD / 4.4); kern.push(Math.exp(-d2 * 1.0)); }
+  function resize() {
+    fr = field.getBoundingClientRect();
+    const nW = Math.max(1, Math.ceil(fr.width / CELL)), nH = Math.max(1, Math.ceil(fr.height / CELL));
+    if (nW === W && nH === H) return;
+    const old = buf, oW = W, oH = H;
+    W = nW; H = nH; buf = new Float32Array(W * H);
+    if (old) for (let y = 0; y < Math.min(oH, H); y++) for (let x = 0; x < Math.min(oW, W); x++) buf[y * W + x] = old[y * oW + x];
+    cv.width = W; cv.height = H; img = ctx.createImageData(W, H); dirty = true;
+  }
+  // transparent → green → yellow → orange → red, the colours of an eye-tracking heatmap
+  const LUT = new Uint8ClampedArray(256 * 4);
+  const stops = [[0, [40, 200, 110, 0]], [.12, [40, 200, 110, 70]], [.4, [150, 225, 60, 120]], [.62, [250, 220, 50, 145]], [.82, [255, 130, 30, 160]], [1, [235, 35, 40, 175]]];
+  for (let i = 0; i < 256; i++) {
+    const v = i / 255; let k = 0; while (k < stops.length - 2 && v > stops[k + 1][0]) k++;
+    const [a, ca] = stops[k], [b, cb] = stops[k + 1], f = Math.min(1, Math.max(0, (v - a) / (b - a)));
+    for (let c = 0; c < 4; c++) LUT[i * 4 + c] = ca[c] + (cb[c] - ca[c]) * f;
+  }
+  const FULL = 1.6; // seconds of dwell at one spot to reach red
+  function stamp(cx, cy, w) {
+    const gx = Math.round(cx / CELL), gy = Math.round(cy / CELL); let k = 0;
+    for (let y = -RAD; y <= RAD; y++) for (let x = -RAD; x <= RAD; x++, k++) {
+      const X = gx + x, Y = gy + y; if (X < 0 || Y < 0 || X >= W || Y >= H) continue;
+      buf[Y * W + X] += kern[k] * w;
+    }
+    dirty = true;
+  }
+  function paint() {
+    const d = img.data;
+    for (let i = 0; i < buf.length; i++) {
+      const v = buf[i] / FULL, li = (v >= 1 ? 255 : (v * 255) | 0) * 4, o = i * 4;
+      d[o] = LUT[li]; d[o + 1] = LUT[li + 1]; d[o + 2] = LUT[li + 2]; d[o + 3] = LUT[li + 3];
+    }
+    ctx.putImageData(img, 0, 0); dirty = false;
+  }
+
+  /* gaze = pointer; slow movement counts as a fixation, fast movement as a saccade */
+  let gaze = null, last = null, dirty = false, total = 0, lastT = performance.now(), held = false;
+  let rx = -100, ry = -100;
+  function tileAt(x, y) { const el = document.elementFromPoint(x, y); const t = el && el.closest && el.closest(".tile"); return t ? tiles.findIndex((q) => q.el === t) : -1; }
+  field.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse" && !held) return;
+    gaze = { x: e.clientX, y: e.clientY, t: performance.now() };
+  });
+  field.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") { gaze = null; ret.classList.remove("on"); } });
+  field.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse") { held = true; gaze = { x: e.clientX, y: e.clientY, t: performance.now() }; }
+    addDwell(e.clientX, e.clientY, .35); // a tap is a deliberate look
+  });
+  const lift = () => { held = false; if (coarse) gaze = null; };
+  addEventListener("pointerup", lift); addEventListener("pointercancel", lift);
+  field.addEventListener("contextmenu", (e) => e.preventDefault());
+  // keyboard: focusing or pressing a tile looks at its centre
+  let focusIdx = -1;
+  tiles.forEach((t, i) => {
+    t.el.addEventListener("focus", () => { if (t.el.matches(":focus-visible")) focusIdx = i; });
+    t.el.addEventListener("blur", () => { if (focusIdx === i) focusIdx = -1; });
+    t.el.addEventListener("click", (e) => { if (e.detail === 0) { const r = t.el.getBoundingClientRect(); addDwell(r.left + r.width / 2, r.top + r.height * .45, .6); } });
+  });
+
+  function addDwell(x, y, w) {
+    if (!fr) return;
+    const i = tileAt(x, y); if (i < 0) return;
+    stamp(x - fr.left, y - fr.top, w);
+    tiles[i].dwell += w; total += w;
+  }
+
+  let leader = -1, shownLeader = -1, lastSwap = 0;
+  function frame(now) {
+    const dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
+    if (gaze) {
+      const sp = last ? Math.hypot(gaze.x - last.x, gaze.y - last.y) / Math.max(dt, .001) : 0;
+      last = { x: gaze.x, y: gaze.y };
+      const fix = Math.exp(-sp / 500); // 1 when still, ~0 when sweeping
+      addDwell(gaze.x, gaze.y, dt * (.15 + .85 * fix));
+      if (!coarse) {
+        if (reduce) { rx = gaze.x; ry = gaze.y; } else { rx += (gaze.x - rx) * .35; ry += (gaze.y - ry) * .35; }
+        ret.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0) scale(${(1 - .35 * fix).toFixed(3)})`;
+        ret.classList.add("on");
+      }
+    } else last = null;
+    if (focusIdx >= 0) { const r = tiles[focusIdx].el.getBoundingClientRect(); addDwell(r.left + r.width / 2, r.top + r.height * .45, dt); }
+    if (dirty) { paint(); update(now); }
+    requestAnimationFrame(frame);
+  }
+
+  function update(now) {
+    clock.textContent = total.toFixed(1) + " s";
+    let best = -1, bv = 0;
+    tiles.forEach((t, i) => { t.s.textContent = t.dwell.toFixed(1) + "s"; if (t.dwell > bv) { bv = t.dwell; best = i; } });
+    if (total < 3.5) return;
+    if (best !== leader) { leader = best; tiles.forEach((t, i) => t.el.classList.toggle("lead", i === best)); }
+    if (leader !== shownLeader && now - lastSwap > 500) show(leader, now);
+    else if (shownLeader >= 0) { const s = result.querySelector("[data-share]"); if (s) s.textContent = `${tiles[shownLeader].dwell.toFixed(1)} s of your ${total.toFixed(1)} s`; }
+  }
+  function show(i, now) {
+    shownLeader = i; lastSwap = now;
+    const p = P[i];
+    const html = `<p class="k">You looked longest at</p><h1>${p.t}</h1><p class="meta">${p.meta} · <span data-share>${tiles[i].dwell.toFixed(1)} s of your ${total.toFixed(1)} s</span></p><p>${p.p}</p><a href="${p.href}" target="_blank" rel="noopener">${p.cs ? "Read the case study" : "Have a look"} ↗</a>`;
+    if (reduce) { result.innerHTML = html; return; }
+    result.classList.add("out");
+    setTimeout(() => { result.innerHTML = html; result.classList.remove("out"); }, 200);
+  }
+
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText("hridaew@gmail.com"); b.textContent = "copied"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "selected"; }
+    setTimeout(() => (b.textContent = "copy"), 1500);
+  });
+
+  new ResizeObserver(resize).observe(field);
+  addEventListener("scroll", () => (fr = field.getBoundingClientRect()), { passive: true });
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
