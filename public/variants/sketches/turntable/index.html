@@ -64,7 +64,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 @media (max-height: 740px) and (min-width: 801px) { .now p { display: none; } }
 @media (max-width: 800px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: clamp(290px, 42vh, 400px) minmax(0, 1fr); }
+  .app { grid-template-columns: 1fr; grid-template-rows: clamp(320px, 50vh, 440px) minmax(0, 1fr); }
   .panel { min-height: 0; }
   .who { left: 16px; top: calc(16px + env(safe-area-inset-top, 0px)); }
   .who h1 { font-size: 21px; }
@@ -147,7 +147,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     const r = deck.getBoundingClientRect(); W = r.width; H = r.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     const phone = innerWidth <= 800;
-    const top = phone ? 64 : 104, bottom = phone ? 18 : 56, side = phone ? 16 : 48;
+    const top = phone ? 76 : 104, bottom = phone ? 30 : 56, side = phone ? 16 : 48;
     const pw = Math.min(W - side * 2, (H - top - bottom) / 0.8), ph = pw * 0.8;
     const px = phone ? (W - pw) / 2 : Math.max(side, (W - pw) / 2 + 10), py = top + (H - top - bottom - ph) / 2;
     const C = { x: px + pw * 0.41, y: py + ph * 0.5 };

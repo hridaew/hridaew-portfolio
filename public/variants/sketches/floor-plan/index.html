@@ -244,7 +244,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     const px = (p) => p / ppu; // css px -> user units
 
     const defs = el("defs", {}, svg);
-    const gRooms = el("g", {}, svg), gFix = el("g", { "pointer-events": "none" }, svg), gWall = el("g", { "pointer-events": "none" }, svg);
+    const gFix = el("g", { "pointer-events": "none" }, svg), gRooms = el("g", {}, svg), gWall = el("g", { "pointer-events": "none" }, svg);
     const gHit = el("g", {}, svg), gTag = el("g", {}, svg), gDim = el("g", { "pointer-events": "none" }, svg);
 
     ROOMS.forEach((R, i) => {
