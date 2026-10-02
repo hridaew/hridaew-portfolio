@@ -242,7 +242,7 @@ canvas.drag { cursor: grabbing; }
   gl.linkProgram(prog); gl.useProgram(prog);
   const U = (n) => gl.getUniformLocation(prog, n);
 
-  const NMAX = 30000, TW = 1024, TH = Math.ceil(NMAX / TW), TN = TW * TH;
+  const NMAX = 50000, TW = 1024, TH = Math.ceil(NMAX / TW), TN = TW * TH;
   const mkTex = (unit, name) => {
     const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -269,10 +269,10 @@ canvas.drag { cursor: grabbing; }
     const h16 = new Uint16Array(buf, 4, n * 9), rgba = new Uint8Array(buf, 4 + n * 18, n * 4);
     const pos = new Float32Array(TN * 4), ca = new Float32Array(TN * 4), cb = new Float32Array(TN * 4), col = new Float32Array(TN * 4);
     let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    const clone = new Uint8Array(n); let extra = NMAX - n; while (extra > 0) { const i = (rnd() * n) | 0; if (!clone[i]) { clone[i] = 1; extra--; } }
+    const extra = Math.max(0, NMAX - n), base = Math.floor(extra / n), clone = new Uint8Array(n).fill(base); let rest = extra % n; while (rest > 0) { const i = (rnd() * n) | 0; if (clone[i] === base) { clone[i]++; rest--; } }
     let j = 0;
     for (let i = 0; i < n && j < NMAX; i++) {
-      for (let r = 0; r < (clone[i] ? 2 : 1) && j < NMAX; r++, j++) {
+      for (let r = 0; r <= clone[i] && j < NMAX; r++, j++) {
         pos[j * 4] = f16(h16[i * 3]); pos[j * 4 + 1] = f16(h16[i * 3 + 1]); pos[j * 4 + 2] = f16(h16[i * 3 + 2]);
         const c = n * 3 + i * 6;
         ca[j * 4] = f16(h16[c]) * 1e-4; ca[j * 4 + 1] = f16(h16[c + 1]) * 1e-4; ca[j * 4 + 2] = f16(h16[c + 2]) * 1e-4; ca[j * 4 + 3] = f16(h16[c + 3]) * 1e-4;

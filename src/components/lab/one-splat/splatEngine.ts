@@ -14,7 +14,7 @@
 
 export type SplatKey = "about" | "domis" | "virdio" | "obscura" | "mc" | "side";
 
-const NMAX = 30000;
+const NMAX = 50000;
 const TW = 1024;
 const TH = Math.ceil(NMAX / TW);
 const TN = TW * TH;
@@ -286,18 +286,20 @@ export class SplatEngine {
         const out = buffers();
         let seed = 11;
         const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-        const clone = new Uint8Array(n);
-        let extra = Math.max(0, NMAX - n);
-        while (extra > 0) {
+        // pad to NMAX with invisible clones, spread evenly (a splat may be cloned more than once)
+        const extra = Math.max(0, NMAX - n);
+        const clone = new Uint8Array(n).fill(Math.floor(extra / n));
+        let rest = extra % n;
+        while (rest > 0) {
           const i = (rnd() * n) | 0;
-          if (!clone[i]) {
-            clone[i] = 1;
-            extra--;
+          if (clone[i] === Math.floor(extra / n)) {
+            clone[i]++;
+            rest--;
           }
         }
         let j = 0;
         for (let i = 0; i < n && j < NMAX; i++) {
-          for (let r = 0; r < (clone[i] ? 2 : 1) && j < NMAX; r++, j++) {
+          for (let r = 0; r <= clone[i] && j < NMAX; r++, j++) {
             const o = j * 4;
             out.pos[o] = f16(h16[i * 3]);
             out.pos[o + 1] = f16(h16[i * 3 + 1]);

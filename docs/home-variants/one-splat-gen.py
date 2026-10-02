@@ -266,7 +266,10 @@ ONLY = sys.argv[2:]
 _save = save
 save = lambda k, *a: (not ONLY or k in ONLY) and _save(k, *a)
 save("about", *inflate("home/hero-face-badge.png", 10000, thick=0.34))
-save("domis", *inflate("domis/live/home-avatar.png", 11000, thick=0.42))
+import importlib.util as _u
+_spec = _u.spec_from_file_location("house", os.path.join(os.path.dirname(os.path.abspath(__file__)), "one-splat-house.py"))
+house = _u.module_from_spec(_spec); _spec.loader.exec_module(house)  # Pixar-style SDF model of the Domis home avatar
+save("domis", *house.build(h=0.024, budget=50000))
 save("virdio", *cone())
 save("obscura", *card("obscura/wayne_girl_kimono.jpg", 11000, crop=(0.08, 0.06, 0.84, 0.8)))
 save("mc", *inflate("grid/memorycare-cat-straight.png", 11000, thick=0.44))
