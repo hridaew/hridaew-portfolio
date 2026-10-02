@@ -311,7 +311,12 @@ function HeroSignatureMark({
         />
       ) : null}
       {SHOW_HERO_SIGNATURE_GIF || mark === "signature" ? (
-        <div className="relative h-8 w-[73px] overflow-visible opacity-80">
+        <div
+          className={cn(
+            "relative h-8 w-[73px] overflow-visible",
+            mark === "signature" ? "brightness-0" : "opacity-80",
+          )}
+        >
           <button
             type="button"
             onClick={onReplay}

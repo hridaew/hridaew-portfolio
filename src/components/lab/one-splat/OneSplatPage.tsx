@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import { homepageProjects } from "@/data/homepage-projects";
+import { SITE_VERSION } from "@/components/home/HomePage";
 import { HeroCard } from "@/components/home/HeroCard";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
 import { SplatEngine, type SplatKey } from "./splatEngine";
@@ -62,13 +65,34 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
+const HomeCheatEasterEggs = dynamic(
+  () => import("@/components/home/HomeCheatEasterEggs").then((m) => m.HomeCheatEasterEggs),
+  { ssr: false },
+);
+
+/** The home page's three carousel cards for a project, as stand-alone media. */
+type CardMedia = { src: string; poster?: string; video: boolean; alt: string; bg: string };
+function homeCards(href: string): CardMedia[] {
+  const slug = href.replace(/^\//, "");
+  const p = homepageProjects.find((x) => x.slug === slug);
+  if (!p) return [];
+  return p.cards.map((c) =>
+    c.videoSrc
+      ? { src: c.videoSrc, poster: c.imageSrc, video: true, alt: c.imageAlt, bg: p.bgColor }
+      : { src: c.imageSrc, video: false, alt: c.imageAlt, bg: p.bgColor },
+  );
+}
+
 const ORDER: SplatKey[] = ["about", ...CHAPTERS.map((c) => c.k)];
 const NARROW = 820;
 
-export function OneSplatPage() {
+/** variant "one": a single hand-picked screen per project. "three": the home page's three carousel cards. */
+export function OneSplatPage({ variant = "one" }: { variant?: "one" | "three" } = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const screenRef = useRef<HTMLDivElement>(null);
+  const screenSpaceRef = useRef<HTMLDivElement>(null);
+  const sideRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLElement>(null);
   const engineRef = useRef<SplatEngine | null>(null);
   const router = useRouter();
   const routerRef = useRef(router);
@@ -88,9 +112,16 @@ export function OneSplatPage() {
     const W = stage.clientWidth, H = stage.clientHeight;
     const narrow = window.innerWidth <= NARROW;
     const hasScreen = !!CHAPTERS.find((c) => c.k === currentRef.current)?.media;
-    const size = Math.min(W * 0.8, H * (narrow ? 0.72 : 0.74));
-    if (narrow) engine.setFrame(W / 2, H * 0.5, size, instant);
-    else engine.setFrame(W * (hasScreen ? 0.42 : 0.5), H * 0.5, size, instant);
+    if (narrow) {
+      engine.setFrame(W / 2, H * 0.5, Math.min(W * 0.8, H * 0.72), instant);
+      return;
+    }
+    // the canvas spans the whole page so wide objects never clip; frame within the area right of the column
+    const side = sideRef.current?.offsetWidth ?? 0;
+    pageRef.current?.style.setProperty("--side-w", `${side}px`);
+    const aw = W - side;
+    const size = Math.min(aw * 0.62, H * 0.74);
+    engine.setFrame(side + aw * (hasScreen ? 0.4 : 0.5), H * 0.5, size, instant);
   }, []);
 
   useEffect(() => {
@@ -111,8 +142,8 @@ export function OneSplatPage() {
         return true;
       },
       onTurn: (yaw, pitch) => {
-        // the screen sits in the same space: it turns a little with the object
-        const s = screenRef.current;
+        // the screens sit in the same space: they turn a little with the object
+        const s = screenSpaceRef.current;
         if (!s) return;
         s.style.setProperty("--turn-y", `${(yaw * 9).toFixed(2)}deg`);
         s.style.setProperty("--turn-x", `${(-pitch * 6).toFixed(2)}deg`);
@@ -186,8 +217,8 @@ export function OneSplatPage() {
 
   return (
     <HomeChoomLingoProvider>
-      <main className={styles.page}>
-        <div className={styles.side}>
+      <main className={styles.page} ref={pageRef}>
+        <div className={styles.side} ref={sideRef}>
           <div className={styles.hero}>
             <HeroCard mark="signature" />
           </div>
@@ -234,6 +265,12 @@ export function OneSplatPage() {
               })}
             </ol>
           </nav>
+          <footer className={styles.footer}>
+            <HomeCheatEasterEggs />
+            <p className={styles.version}>
+              Hridae Walia - {new Date().getFullYear()} - {SITE_VERSION}
+            </p>
+          </footer>
         </div>
 
         <div className={styles.stage} ref={stageRef} data-linked={chapter ? "" : undefined}>
@@ -244,10 +281,14 @@ export function OneSplatPage() {
             aria-label={`A 3D gaussian splat of ${chapter ? chapter.t : "Hridae"}. Drag to turn it${chapter ? "; click to open the project" : "; tap to make it jiggle"}.`}
           />
           <p className={styles.fallback}>This page draws with WebGL2, which this browser doesn&apos;t support.</p>
-          <div className={styles.screenSpace} aria-live="polite">
-            {CHAPTERS.filter((c) => c.media).map((c) => (
-              <Screen key={c.k} href={c.href} title={c.t} media={c.media!} active={c.k === current} refFn={c.k === current ? screenRef : undefined} />
-            ))}
+          <div className={styles.screenSpace} ref={screenSpaceRef} aria-live="polite">
+            {variant === "one"
+              ? CHAPTERS.filter((c) => c.media).map((c) => (
+                  <Screen key={c.k} href={c.href} title={c.t} media={c.media!} active={c.k === current} />
+                ))
+              : CHAPTERS.filter((c) => c.media).map((c) => (
+                  <CardFan key={c.k} href={c.href} title={c.t} cards={homeCards(c.href)} active={c.k === current} />
+                ))}
           </div>
         </div>
       </main>
@@ -255,7 +296,7 @@ export function OneSplatPage() {
   );
 }
 
-function Screen({ href, title, media, active, refFn }: { href: string; title: string; media: Media; active: boolean; refFn?: React.RefObject<HTMLDivElement | null> }) {
+function Screen({ href, title, media, active }: { href: string; title: string; media: Media; active: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // load the video the first time its chapter opens, then keep it
   const [armed, setArmed] = useState(false);
@@ -267,7 +308,7 @@ function Screen({ href, title, media, active, refFn }: { href: string; title: st
     else v.pause();
   }, [active, armed]);
   return (
-    <div ref={refFn} className={`${styles.screen} ${styles[media.shape]} ${active ? styles.screenOn : ""}`} aria-hidden={!active}>
+    <div className={`${styles.screen} ${styles[media.shape]} ${active ? styles.screenOn : ""}`} aria-hidden={!active}>
       <Link href={href} className={styles.screenLink} tabIndex={active ? 0 : -1} aria-label={`Open ${title}`}>
       {media.kind === "video" ? (
         <video ref={videoRef} src={armed ? media.src : undefined} poster={media.poster} muted loop playsInline preload="none" aria-label={media.alt} />
@@ -275,6 +316,67 @@ function Screen({ href, title, media, active, refFn }: { href: string; title: st
         // eslint-disable-next-line @next/next/no-img-element
         <img src={media.src} alt={media.alt} loading="lazy" />
       )}
+      </Link>
+    </div>
+  );
+}
+
+/**
+ * Three cards fanned beside the object, each at a slightly different angle and depth.
+ * Each card takes its media's own shape (portrait phone screens, wide stills), measured on load.
+ */
+function CardFan({ href, title, cards, active }: { href: string; title: string; cards: CardMedia[]; active: boolean }) {
+  const [armed, setArmed] = useState(false);
+  if (active && !armed) setArmed(true);
+  return (
+    <div className={`${styles.fan} ${active ? styles.fanOn : ""}`} aria-hidden={!active}>
+      {cards.map((c, i) => (
+        <FanCard key={c.src} card={c} index={i} href={href} title={title} active={active} armed={armed} />
+      ))}
+    </div>
+  );
+}
+
+function FanCard({ card, index, href, title, active, armed }: { card: CardMedia; index: number; href: string; title: string; active: boolean; armed: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // each card takes its media's own proportions, on the project's card colour (as on the home carousel)
+  const [ratio, setRatio] = useState(4 / 3);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (active) void v.play().catch(() => {});
+    else v.pause();
+  }, [active, armed]);
+  const measure = (w: number, h: number) => setRatio(Math.min(1.9, Math.max(0.46, w / h)));
+  // videos load lazily, so read their shape from the poster frame
+  useEffect(() => {
+    if (!card.video || !card.poster) return;
+    const im = new Image();
+    im.onload = () => measure(im.naturalWidth, im.naturalHeight);
+    im.src = card.poster;
+  }, [card.video, card.poster]);
+  return (
+    <div
+      className={`${styles.card} ${styles[`card${index}`]} ${ratio < 0.95 ? styles.tall : styles.wide} ${card.video ? styles.cardVideo : ""}`}
+      style={{ aspectRatio: String(ratio), backgroundColor: card.bg }}
+    >
+      <Link href={href} className={styles.screenLink} tabIndex={active ? 0 : -1} aria-label={`Open ${title}`}>
+        {card.video ? (
+          <video
+            ref={videoRef}
+            src={armed ? card.src : undefined}
+            poster={card.poster}
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-label={card.alt}
+            onLoadedMetadata={(e) => measure(e.currentTarget.videoWidth, e.currentTarget.videoHeight)}
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={card.src} alt={card.alt} loading="lazy" onLoad={(e) => measure(e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} />
+        )}
       </Link>
     </div>
   );
