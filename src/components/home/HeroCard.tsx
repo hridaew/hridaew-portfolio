@@ -283,6 +283,40 @@ function useBouncingOrbs(containerWidth: number, containerHeight: number) {
 /** Signature replay GIF — hidden for now; set true to bring it back. */
 const SHOW_HERO_SIGNATURE_GIF = false;
 
+/** The animated signature on its own (the lab masthead): click replays it with the hero card's burst. */
+export function HeroSignatureReplay() {
+  const choom = useChoomLingo();
+  const reduceMotion = useReducedMotion();
+  const [tick, setTick] = useState(0);
+  const [burst, setBurst] = useState<BurstParticleSpec[] | null>(null);
+  const clearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (clearRef.current) clearTimeout(clearRef.current);
+  }, []);
+  const replay = useCallback(() => {
+    if (clearRef.current) clearTimeout(clearRef.current);
+    clearRef.current = null;
+    if (!reduceMotion) {
+      setBurst(createAvatarBurst());
+      clearRef.current = setTimeout(() => setBurst(null), AVATAR_BURST_CLEAR_MS);
+    } else {
+      setBurst(null);
+    }
+    setTick((n) => n + 1);
+  }, [reduceMotion]);
+  return (
+    <HeroSignatureMark
+      mark="signature"
+      avatarReplayTick={tick}
+      avatarBurst={burst}
+      onReplay={replay}
+      reduceMotion={reduceMotion}
+      replayLabel={choom ? CHOOM.heroReplayAvatar : "Replay portrait animation"}
+      replayTitle={choom ? CHOOM.heroReplayTitle : "Replay animation"}
+    />
+  );
+}
+
 /** What sits in the card's top-left: the face badge (home) or the animated signature (lab pages). */
 export type HeroMark = "face" | "signature";
 
@@ -324,7 +358,7 @@ function HeroSignatureMark({
             onClick={onReplay}
             aria-label={replayLabel}
             title={replayTitle}
-            className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/[0.28] focus-visible:ring-offset-2 focus-visible:ring-offset-paper touch-manipulation"
+            className="relative size-full cursor-pointer overflow-visible rounded-sm border-0 bg-transparent p-0 focus-visible:ring-2 focus-visible:ring-ink/[0.28] focus-visible:ring-offset-2 focus-visible:ring-offset-paper touch-manipulation"
           >
             <motion.img
               key={avatarReplayTick}

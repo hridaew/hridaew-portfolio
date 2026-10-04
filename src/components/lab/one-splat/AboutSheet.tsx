@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { HeroCardExpandedBody } from "@/components/home/HeroCardExpandedBody";
 import styles from "./OneSplat.module.css";
@@ -13,6 +13,23 @@ export function AboutSheet({ open, onClose }: { open: boolean; onClose: () => vo
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotion();
+  const [more, setMore] = useState(false);
+  const roRef = useRef<ResizeObserver | null>(null);
+  // fade the bottom only while there's more to scroll to
+  const measure = useCallback((el: HTMLElement) => setMore(el.scrollHeight - el.scrollTop - el.clientHeight > 2), []);
+  const bodyRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      roRef.current?.disconnect();
+      roRef.current = null;
+      if (!el) return;
+      const ro = new ResizeObserver(() => measure(el));
+      ro.observe(el);
+      if (el.firstElementChild) ro.observe(el.firstElementChild);
+      roRef.current = ro;
+      measure(el);
+    },
+    [measure],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -64,7 +81,14 @@ export function AboutSheet({ open, onClose }: { open: boolean; onClose: () => vo
                 About
               </p>
             </header>
-            <div className={styles.sheetBody} data-testid="about-sheet-scroll" data-lenis-prevent>
+            <div
+              ref={bodyRef}
+              className={styles.sheetBody}
+              data-testid="about-sheet-scroll"
+              data-lenis-prevent
+              data-more={more ? "" : undefined}
+              onScroll={(e) => measure(e.currentTarget)}
+            >
               <HeroCardExpandedBody />
             </div>
           </motion.div>

@@ -2,11 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { homepageProjects } from "@/data/homepage-projects";
 import { HomeProjectCard } from "@/components/home/WorkSection";
-import { SITE_VERSION } from "@/components/home/HomePage";
 import { HeroCard } from "@/components/home/HeroCard";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
 import { SplatEngine, type SplatKey } from "./splatEngine";
@@ -17,15 +15,18 @@ import styles from "./OneSplat.module.css";
 const MEDIA = "/variants/one-splat/media"; // splat data
 
 /** href: where the title, the splat and the screen all lead. links: extra links shown under the copy (side builds only). */
-type Chapter = { k: Exclude<SplatKey, "about">; t: string; sub?: string; meta: string; p: string; href: string; links?: [string, string][]; cards?: boolean };
+type Chapter = { k: Exclude<SplatKey, "about" | "overview">; t: string; sub: string; meta: string; p: string; href: string; links?: [string, string][]; cards?: boolean };
+
+/** The home page's description for a case study, so the two stay in sync. */
+const desc = (slug: string) => homepageProjects.find((p) => p.slug === slug)?.description ?? "";
 
 const CHAPTERS: Chapter[] = [
   {
     k: "domis",
     t: "Domis",
-    sub: "Home maintenance made easy",
+    sub: "AI home maintenance app",
     meta: "Founding Product Designer · 2024–now",
-    p: "A home maintenance app that learns your house from the smallest thing you'll give it: an address, a nameplate photo, an inspection report. My 3D home-avatar prototypes lifted new-user engagement 60%.",
+    p: desc("domis"),
     href: "/domis",
     cards: true,
   },
@@ -34,33 +35,34 @@ const CHAPTERS: Chapter[] = [
     t: "Virdio",
     sub: "AR home fitness app",
     meta: "Product Designer · 2021–2022",
-    p: "Hardware-free AR fitness: an ordinary camera reads your body and counts every rep. I designed calibration around virtual cones you walk to, across six platforms.",
+    p: desc("virdio"),
     href: "/virdio",
     cards: true,
   },
   {
     k: "obscura",
     t: "OBSCURA",
-    sub: "A social, immersive experience",
-    meta: "Interaction design, Unity · MOHAI, 2025",
-    p: "300+ never-seen photographs from 1946 Japan, curated by one visitor's gaze in VR while an audience outside watches through their eyes. It sold out.",
+    sub: "Immersive VR exhibition",
+    meta: "Interaction Designer · MOHAI · 2025",
+    p: desc("obscura"),
     href: "/obscura",
     cards: true,
   },
   {
     k: "mc",
-    t: "Memory Care Experience Station",
-    sub: "Multisensory memory care",
+    t: "Memory Care",
+    sub: "Multisensory dementia care",
     meta: "Interaction Designer · 2020–2023",
-    p: "For people living with dementia, I wired plush cats with pressure sensors and haptic motors: pet one and it purrs. 98% positive across 200+ sessions; a Fast Company World Changing Ideas finalist.",
+    p: desc("memory-care"),
     href: "/memory-care",
     cards: true,
   },
   {
     k: "side",
     t: "Side builds",
-    meta: "Things I make to learn",
-    p: "Savor turns a phone video into a 3D Gaussian splat; this hand is one of its captures. Also: an arcade game played by throwing plush orcas, a voice recorder you scrub like a turntable, and a serious butter chicken.",
+    sub: "Things I make to learn",
+    meta: "Personal projects · ongoing",
+    p: "Savor turns a phone video into a 3D Gaussian splat; this hand is one of its captures. Also: an arcade game played with plush orcas, a recorder you scrub like a turntable, and a serious butter chicken.",
     href: "/waffling/savor",
     links: [
       ["Savor", "/waffling/savor"],
@@ -76,7 +78,8 @@ const HomeCheatEasterEggs = dynamic(
   { ssr: false },
 );
 
-const ORDER: SplatKey[] = ["about", ...CHAPTERS.map((c) => c.k)];
+// opens on Domis; the face only appears behind the open bio
+const ORDER: SplatKey[] = CHAPTERS.map((c) => c.k);
 const NARROW = 820;
 
 /**
@@ -89,16 +92,10 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
   const sideRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLElement>(null);
   const engineRef = useRef<SplatEngine | null>(null);
-  const router = useRouter();
-  const routerRef = useRef(router);
-  useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
-  const [current, setCurrent] = useState<SplatKey>("about");
+  const [current, setCurrent] = useState<SplatKey>("domis");
   const [aboutOpen, setAboutOpen] = useState(false);
   const aboutOpenRef = useRef(false);
-  const beforeAbout = useRef<SplatKey>("about");
-  const currentRef = useRef<SplatKey>("about");
+  const currentRef = useRef<SplatKey>("domis");
 
   const chapter = CHAPTERS.find((c) => c.k === current);
 
@@ -109,9 +106,11 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
     if (!engine || !stage) return;
     const W = stage.clientWidth, H = stage.clientHeight;
     const narrow = window.innerWidth <= NARROW;
-    const hasScreen = !!CHAPTERS.find((c) => c.k === currentRef.current)?.cards;
+    const hasScreen = !aboutOpenRef.current && !!CHAPTERS.find((c) => c.k === currentRef.current)?.cards;
+    const place = (cx: number, cy: number, s: number) => engine.setFrame(cx, cy, s, instant);
     if (narrow) {
-      engine.setFrame(W / 2, H * 0.5, Math.min(W * 0.8, H * 0.72), instant);
+      if (hasScreen) place(W / 2, H * 0.34, Math.min(W * 0.62, H * 0.5));
+      else place(W / 2, H * 0.5, Math.min(W * 0.8, H * 0.72));
       return;
     }
     // the canvas spans the whole page so wide objects never clip; frame within the area right of the column
@@ -119,7 +118,7 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
     pageRef.current?.style.setProperty("--side-w", `${side}px`);
     const aw = W - side;
     const size = Math.min(aw * 0.62, H * 0.74);
-    engine.setFrame(side + aw * (hasScreen ? 0.4 : 0.5), H * 0.5, size, instant);
+    place(side + aw * (hasScreen ? 0.33 : 0.5), H * 0.5, hasScreen ? size * 0.92 : size);
   }, []);
 
   useEffect(() => {
@@ -133,17 +132,11 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
     const engine = new SplatEngine(canvas, {
       baseUrl: MEDIA,
       reducedMotion: reduced,
-      onTap: () => {
-        const c = CHAPTERS.find((x) => x.k === currentRef.current);
-        if (!c) return false;
-        routerRef.current.push(c.href);
-        return true;
-      },
     });
     engineRef.current = engine;
     frame(true);
-    void engine.select("about");
-    const t = window.setTimeout(() => engine.preload(CHAPTERS.map((c) => c.k)), 1200);
+    void engine.select("domis");
+    const t = window.setTimeout(() => engine.preload([...CHAPTERS.map((c) => c.k), "about"]), 1200);
     const onResize = () => frame(true);
     window.addEventListener("resize", onResize);
     return () => {
@@ -155,16 +148,17 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
   }, [frame]);
 
   const openAbout = useCallback(() => {
-    beforeAbout.current = currentRef.current;
     aboutOpenRef.current = true;
     setAboutOpen(true);
     void engineRef.current?.select("about");
-  }, []);
+    frame();
+  }, [frame]);
   const closeAbout = useCallback(() => {
     aboutOpenRef.current = false;
     setAboutOpen(false);
     void engineRef.current?.select(currentRef.current);
-  }, []);
+    frame();
+  }, [frame]);
 
   const go = useCallback(
     (k: SplatKey) => {
@@ -177,7 +171,6 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
     [frame],
   );
 
-
   // One chapter per scroll gesture on desktop (the canvas and index own the wheel; the hero card scrolls itself).
   useEffect(() => {
     let lock = 0;
@@ -186,6 +179,8 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
       if (window.innerWidth <= NARROW || !onLabPage() || aboutOpenRef.current) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("[data-testid='hero-card-expanded-scroll']")) return;
+      // over the left column the wheel scrolls it (it can be taller than the window); projects step only over the stage
+      if (t && sideRef.current?.contains(t)) return;
       // the bio is open: let it scroll
       if (document.querySelector("button[aria-expanded='true'][aria-label*='bio' i]")) return;
       if (Math.abs(e.deltaY) + Math.abs(e.deltaX) < 8) return;
@@ -214,14 +209,14 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
 
   return (
     <HomeChoomLingoProvider>
-      <main className={styles.page} ref={pageRef}>
+      <main className={styles.page} ref={pageRef} data-proj={current}>
         <div className={styles.side} ref={sideRef}>
           {header === "card" ? (
             <div className={styles.hero}>
               <HeroCard mark="signature" orbs={false} />
             </div>
           ) : (
-            <Masthead onAbout={openAbout} aboutOpen={aboutOpen} />
+            <Masthead onAbout={openAbout} aboutOpen={aboutOpen} onProject={go} />
           )}
           <nav aria-label="Work">
             <ol className={styles.index}>
@@ -241,13 +236,19 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
                         }
                       }}
                     >
-                      <span className={styles.title}>{c.t}</span>
-                      {c.sub ? <span className={styles.sub}>{c.sub}</span> : null}
+                      <span className={styles.head}>
+                        <span className={styles.title}>{c.t}</span>
+                        <GoArrow />
+                      </span>
+                      <span className={styles.sub}>{c.sub}</span>
                     </Link>
                     <div className={styles.detail} id={`ch-${c.k}`}>
                       <div>
-                        <p className={styles.meta}>{c.meta}</p>
-                        <p className={styles.copy}>{c.p}</p>
+                        {/* the description opens the project too (as do its title, once open, and its cards) */}
+                        <Link href={c.href} className={styles.detailLink} tabIndex={on ? undefined : -1}>
+                          <p className={styles.meta}>{c.meta}</p>
+                          <p className={styles.copy}>{c.p}</p>
+                        </Link>
                         {c.links ? (
                           <p className={styles.links}>
                             {c.links.map(([label, href]) => (
@@ -266,27 +267,37 @@ export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead"
           </nav>
           <footer className={styles.footer}>
             <HomeCheatEasterEggs />
-            <p className={styles.version}>
-              Hridae Walia - {new Date().getFullYear()} - {SITE_VERSION}
-            </p>
           </footer>
         </div>
 
-        <div className={styles.stage} ref={stageRef} data-linked={chapter ? "" : undefined}>
+        <div className={styles.stage} ref={stageRef}>
           <canvas
             ref={canvasRef}
             className={styles.canvas}
             role="img"
-            aria-label={`A 3D gaussian splat of ${chapter ? chapter.t : "Hridae"}. Drag to turn it${chapter ? "; click to open the project" : "; tap to make it jiggle"}.`}
+            aria-label={
+              chapter
+                ? `A 3D gaussian splat of ${chapter.t}. Drag to turn it; tap to make it jiggle.`
+                : "3D gaussian splats of five projects, floating. Drag to turn them; click one to see that project."
+            }
           />
           <p className={styles.fallback}>This page draws with WebGL2, which this browser doesn&apos;t support.</p>
           <div className={styles.screenSpace} aria-live="polite">
-            {chapter?.cards ? <CardFan key={chapter.k} slug={chapter.href.replace(/^\//, "")} /> : null}
+            {chapter?.cards && !aboutOpen ? <CardFan key={chapter.k} slug={chapter.href.replace(/^\//, "")} /> : null}
           </div>
         </div>
       </main>
       {header === "masthead" ? <AboutSheet open={aboutOpen} onClose={closeAbout} /> : null}
     </HomeChoomLingoProvider>
+  );
+}
+
+/** The open project's "go to case study" mark: drawn to match the About chevron (1.5 stroke, round caps). */
+function GoArrow() {
+  return (
+    <svg className={styles.go} width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M3.25 8h9.5M8.75 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

@@ -65,26 +65,26 @@ function ExperienceSection() {
         />
         <ExpBlock
           title="Domis"
-          date="2024 -"
-          body="Founding Product Designer for an AI-Powered home maintenance app."
+          date="2024–now"
+          body="Founding Product Designer for an AI-powered home maintenance app."
         />
         <ExpDivider />
         <ExpBlock
           title="Projects for MOHAI, Stanford, and others"
-          date="2022 - 2023"
+          date="2022–2023"
           body="Interactive exhibits, installations, and product design."
         />
         <ExpDivider />
         <ExpBlock
           title="Virdio"
-          date="2021 - 2022"
+          date="2021–2022"
           body="Built a cross-platform AR workout app."
         />
         <ExpDivider />
         <ExpBlock
           title="Maria Mortati Experience Design"
-          date="2020 - 2021, 2023"
-          body="Tangible multi-sensory experiences for people living with mid-to-late stage Dementia."
+          date="2020–2021, 2023"
+          body="Tangible multisensory experiences for people living with mid-to-late stage dementia."
         />
       </div>
     </div>
@@ -303,12 +303,12 @@ function Top3Section() {
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col items-start justify-center gap-8">
       <div className="relative w-full shrink-0 font-[family-name:var(--font-geist)] text-base font-semibold leading-none text-ink-muted">
-        <p className="leading-normal">Top 3:</p>
+        <p className="leading-normal">Top 3</p>
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
-          Games:
+          Games
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
           <div
@@ -391,7 +391,7 @@ function Top3Section() {
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
-          Albums:
+          Albums
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2 overflow-visible">
           {(
@@ -429,7 +429,7 @@ function Top3Section() {
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
-          moves:
+          Movies
         </p>
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">

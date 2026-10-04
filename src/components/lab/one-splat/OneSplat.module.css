@@ -9,7 +9,14 @@
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
+  /* each project's colour ("r g b") for the glass buttons: muted the way an averaged object colour is (about half-way
+     to grey), so the glass only hints at the project */
+  --tint: 205 115 115;
 }
+.page[data-proj="virdio"] { --tint: 147 121 206; }
+.page[data-proj="obscura"] { --tint: 70 70 70; } /* black-and-white */
+.page[data-proj="mc"] { --tint: 208 145 103; }
+.page[data-proj="side"] { --tint: 147 121 206; } /* multi: see the glass rules below */
 
 .side {
   position: relative;
@@ -17,10 +24,10 @@
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 28px;
   min-height: 0;
   overflow-y: auto;
-  padding: clamp(28px, 6vh, 64px) clamp(20px, 3vw, 48px) 40px clamp(20px, 4vw, 64px);
+  padding: clamp(24px, 4.5vh, 56px) clamp(20px, 3vw, 48px) 32px clamp(20px, 4vw, 64px);
   scrollbar-width: none;
 }
 .side::-webkit-scrollbar { display: none; }
@@ -29,38 +36,96 @@
 .hero { position: relative; z-index: 3; width: 100%; max-width: 656px; }
 .side > nav { margin: auto 0; }
 .footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 0 32px; max-width: 656px; }
-.version {
-  margin: 0; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.6875rem; line-height: 1.4;
-  font-variant-numeric: tabular-nums; color: rgb(var(--ink-rgb) / 0.4);
-}
+
+/* ── type: Geist everywhere on this page except the name (Bricolage); no mono. The blanket rule covers the shared
+   components rendered here (bio content, cheat-code box, cards) without changing them on other pages. ── */
+.page, .page *, .sheetPanel, .sheetPanel * { font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; }
+.page .mastName, .page .mastNameBtn { font-family: var(--font-display), system-ui, sans-serif; }
+/* labels that were small uppercase mono: open the tracking so caps in Geist don't crowd, and keep figures aligned */
+.page :global(.uppercase), .sheetPanel :global(.uppercase) { letter-spacing: 0.06em; font-weight: 500; }
 
 /* ── masthead (card-less header) ── */
 .mast { position: relative; z-index: 3; max-width: 656px; padding: 4px 32px 0; }
-.mastSignature { display: block; width: 73px; height: 32px; margin: 0 0 18px -4px; filter: brightness(0); opacity: 0.6; }
+.mastSignature { width: 73px; height: 32px; margin: 0 0 14px -4px; } /* the replay mark brings its own tint */
 .mastName {
   margin: 0; font-family: var(--font-display), system-ui, sans-serif; font-weight: 700;
   font-size: 2.5rem; line-height: 1; letter-spacing: -0.025em; color: var(--ink);
 }
-.mastRole {
-  margin: 10px 0 0; font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.9375rem; line-height: 1.45; color: var(--ink-muted);
+.mastName { display: flex; align-items: baseline; gap: 0.6rem; min-width: 0; }
+.mastNameBtn {
+  border: 0; padding: 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: default;
+  border-radius: 4px; touch-action: manipulation;
 }
-.mastActions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; }
+.mastPron {
+  overflow: hidden; white-space: nowrap; font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.9375rem; font-weight: 500; letter-spacing: 0; color: var(--ink-muted);
+}
+.mastPron > span { display: inline-block; opacity: 0; transform: translateX(-8px); transition: opacity 250ms cubic-bezier(0.15, 1, 0.38, 1), transform 250ms cubic-bezier(0.15, 1, 0.38, 1); }
+.mastName[data-pron] .mastPron > span { opacity: 1; transform: none; }
+.mastIntro { max-width: 52ch; margin-top: 16px; font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 1rem; line-height: 1.5rem; color: var(--ink-secondary, rgb(var(--ink-rgb) / 0.7)); }
+.mastIntro p { margin: 0; text-wrap: pretty; }
+.mastIntro p + p { margin-top: 16px; }
+/* as in the home bio: icon + underlined name, kept together */
+.bioLink { white-space: nowrap; font-weight: 500; color: var(--ink); text-decoration: none; }
+.bioLink img { display: inline-block; width: 24px; height: 24px; margin-right: 4px; vertical-align: -0.35em; object-fit: contain; }
+.bioLink span, .links a, .detailLink:hover .copy {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: rgb(var(--ink-rgb) / 0.3); transition: text-decoration-color 160ms ease-out, color 160ms ease-out;
+}
+.bioLink:hover span, .links a:hover { text-decoration-color: var(--ink); }
+.mastActions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 20px; }
 .mastAbout {
   display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 14px; border: 0; border-radius: 999px;
-  background: var(--ink); color: var(--paper); cursor: pointer;
+  background: transparent; color: var(--ink); cursor: pointer;
   font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; line-height: 1;
-  transition: transform 150ms ease-out, background-color 150ms ease-out;
 }
-.mastAbout:hover { background: #000; }
-.mastAbout:active { transform: scale(0.96); }
 .mastIcon {
   display: grid; place-items: center; width: 32px; height: 32px; border-radius: 16px;
-  background: rgb(28 28 28 / 0.045); color: rgb(28 28 28 / 0.8); text-decoration: none;
-  font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.75rem; font-weight: 800;
+  background: rgb(28 28 28 / 0.045); color: var(--ink); text-decoration: none;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; line-height: 1;
   transition: background-color 150ms ease-out;
 }
 .mastIcon:hover { background: rgb(28 28 28 / 0.08); }
+
+/* ── liquid glass (intro buttons): white glass that takes the project's colour (--tint) at its edges, with only a
+   faint wash of it in the body ── */
+.glass {
+  position: relative; display: inline-flex; border-radius: 999px; isolation: isolate;
+  background: linear-gradient(rgb(var(--tint) / 0.06), rgb(var(--tint) / 0.06)), rgb(255 255 255 / 0.5);
+  -webkit-backdrop-filter: blur(10px) saturate(1.6); backdrop-filter: blur(10px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0.5px rgb(255 255 255 / 0.95),
+    inset 0 0 0 0.5px rgb(var(--tint) / 0.16),
+    inset -1px -2px 5px -2px rgb(var(--tint) / 0.4),
+    0 0 0 0.5px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05), 0 3px 8px -4px rgb(0 0 0 / 0.08);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), background 500ms ease, box-shadow 500ms ease;
+}
+.glass:active { transform: scale(0.97); }
+/* the rim: a bright specular catch top-left turning into the tint toward the bottom-right edge */
+.glass::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 0.5px; pointer-events: none;
+  background: linear-gradient(140deg, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.2) 35%, rgb(var(--tint) / 0.18) 60%, rgb(var(--tint) / 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+/* a highlight that follows the pointer */
+.glass::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(90px circle at var(--mx, 30%) var(--my, 0%), rgb(255 255 255 / 0.45), transparent 70%);
+  opacity: 0; transition: opacity 200ms ease;
+}
+.glass:hover::after { opacity: 1; }
+/* side builds are many things: the edge runs through several colours */
+.page[data-proj="side"] .glass {
+  background: linear-gradient(100deg, rgb(205 115 115 / 0.06), rgb(147 121 206 / 0.06), rgb(208 145 103 / 0.06)), rgb(255 255 255 / 0.5);
+}
+.page[data-proj="side"] .glass::before {
+  background: linear-gradient(140deg, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.2) 35%, rgb(205 115 115 / 0.3) 55%, rgb(147 121 206 / 0.4) 75%, rgb(208 145 103 / 0.5));
+}
+.glass > * { position: relative; z-index: 1; }
+.glass :global(button), .glass a { background: transparent; }
+.glass :global(button) > span { font-size: 0.8125rem; }
+.glass :global(button):hover, .glass a:hover { background: transparent; }
 
 /* ── about sheet: the case-study sheet's mirror image, entering from the left ── */
 .sheetRoot { position: fixed; inset: 0; z-index: 200; }
@@ -82,61 +147,71 @@
 .sheetClose:hover { background: rgb(var(--ink-rgb) / 0.05); color: var(--ink); }
 .sheetTitle { margin: 0; font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 500; color: var(--ink); }
 .sheetBody { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 clamp(20px, 4vw, 48px) 48px; }
+/* no scrollbar; a fade at the bottom says there's more */
+.sheetBody { scrollbar-width: none; }
+.sheetBody img { background-color: var(--paper-sunken); }
+.sheetBody::-webkit-scrollbar { display: none; }
+.sheetBody[data-more] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 96px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 96px), transparent);
+}
 
 /* ── work index ── */
 .index { list-style: none; margin: 0; padding: 0 32px; max-width: 656px; }
 .index li { border-top: 1px solid rgb(var(--ink-rgb) / 0.08); }
 .index li:last-child { border-bottom: 1px solid rgb(var(--ink-rgb) / 0.08); }
 .row {
-  display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 2px; width: 100%; align-items: baseline; padding: 12px 0;
-  text-align: left; color: inherit; text-decoration: none; cursor: pointer;
+  display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); column-gap: 16px; align-items: baseline;
+  width: 100%; padding: 10px 0; text-align: left; color: inherit; text-decoration: none; cursor: pointer;
 }
+.head { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .title {
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 700; font-size: 1.5rem; line-height: 1.1; letter-spacing: -0.015em;
-  color: rgb(var(--ink-rgb) / 0.34);
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600; font-size: 1.375rem; line-height: 1.15; letter-spacing: -0.025em;
+  color: rgb(var(--ink-rgb) / 0.52);
   transition: color 240ms ease-out;
 }
 .sub {
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.3;
-  color: rgb(var(--ink-rgb) / 0.24); transition: color 240ms ease-out;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.3; min-width: 0;
+  color: var(--ink-muted); transition: color 240ms ease-out;
 }
-.row:hover .title { color: var(--ink); }
-.row:hover .sub, .on .sub { color: rgb(var(--ink-rgb) / 0.44); }
-.on .title { color: var(--ink); }
+.row:hover .title { color: rgb(var(--ink-rgb) / 0.72); }
+.row:hover .sub, .on .sub { color: var(--ink-secondary); }
+.on .title, .on .row:hover .title { color: var(--ink); }
+/* the open project's title leads to its case study: an arrow says so */
+.go {
+  flex: none; margin-top: 1px; color: var(--ink-muted);
+  opacity: 0; transform: translateX(-6px); transition: opacity 240ms ease-out, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1), color 160ms ease-out;
+}
+.on .go { opacity: 1; transform: none; }
+.on .row:hover .go { color: var(--ink); transform: translateX(3px); }
 
 .detail {
   display: grid; grid-template-rows: 0fr; overflow: hidden;
   transition: grid-template-rows 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .on .detail { grid-template-rows: 1fr; }
-.detail > div { min-height: 0; padding: 0 0 4px; }
+.detail > div { min-height: 0; }
+.detailLink { display: block; color: inherit; text-decoration: none; cursor: pointer; }
+.detailLink:hover .copy { color: var(--ink); }
 .meta {
   margin: 0 0 6px;
-  font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.75rem; line-height: 1.5;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.5; font-variant-numeric: tabular-nums;
   color: var(--ink-muted);
 }
 .copy {
-  margin: 0 0 10px; max-width: 40ch;
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.94rem; line-height: 1.55;
-  color: var(--ink-secondary);
+  margin: 0 0 10px; max-width: 52ch;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.9375rem; line-height: 1.55;
+  color: var(--ink-secondary); transition: color 160ms ease-out; text-wrap: pretty;
 }
 .links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 14px; }
-.links a {
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500;
-  color: var(--ink); text-decoration: none;
-  background-image: linear-gradient(rgb(var(--ink-rgb) / 0.22), rgb(var(--ink-rgb) / 0.22));
-  background-size: 100% 1px; background-repeat: no-repeat; background-position: 0 100%;
-  padding-bottom: 2px; transition: background-image 160ms ease-out;
-}
-.links a:hover { background-image: linear-gradient(var(--ink), var(--ink)); }
+.links a { font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: var(--ink); }
 
 /* ── stage ── */
 /* the stage spans the whole page (under the column) so wide objects never clip */
 .stage { position: absolute; inset: 0; z-index: 1; }
 .canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-.stage[data-linked] .canvas { cursor: pointer; }
-.canvas[data-dragging], .stage[data-linked] .canvas[data-dragging] { cursor: grabbing; }
+.canvas[data-dragging] { cursor: grabbing; }
 .fallback {
   position: absolute; inset: 0; display: none; place-items: center; margin: 0; padding: 24px;
   font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif; color: var(--ink-muted);
@@ -151,9 +226,10 @@
 
 /* three home cards on the right, on a slight arc that wraps toward the object */
 .fan {
-  --home-work-card-max: min(26vw, 380px);
+  /* as wide as fits: three stacked cards (each ~0.58 as tall as wide) still clear the viewport height */
+  --home-work-card-max: min(28vw, 440px, calc((100svh - 160px) * 0.5));
   position: absolute; top: 50%; right: clamp(24px, 3.5vw, 56px);
-  display: flex; flex-direction: column; align-items: flex-end; gap: 18px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 22px;
   transform: translateY(-50%);
 }
 .arcCard {
@@ -176,7 +252,12 @@
   .side { display: contents; }
   .hero { order: 1; padding: 20px 16px 0; }
   .stage { order: 2; height: 62svh; flex: none; }
-  .side nav { order: 3; padding: 8px 16px 48px; }
+  .side nav { order: 3; padding: 8px 0 48px; }
+  .index { padding: 0 16px; }
+  .row { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
+  .mastActions { gap: 6px; }
+  .mastAbout { padding: 0 10px 0 12px; }
+  .mastAbout, .mastIcon, .glass :global(button) > span { font-size: 0.75rem; }
   .canvas { touch-action: pan-y; }
   .stage { position: relative; inset: auto; }
   .screenSpace { left: 0; }
@@ -184,11 +265,18 @@
   .mast { order: 1; padding: 20px 16px 0; }
   .mastName { font-size: 2rem; }
   .sheetPanel { width: calc(100vw - 1.5rem); }
-  .fan { --home-work-card-max: 38vw; right: 12px; gap: 8px; top: auto; bottom: 12px; transform: none; }
-  .arc0, .arc2 { --ax: -10px; }
+  .fan {
+    --home-work-card-max: 68vw; left: 0; right: 0; top: auto; bottom: 8px; transform: none;
+    flex-direction: row; align-items: stretch; gap: 10px; padding: 8px 16px 12px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none; pointer-events: auto;
+  }
+  .fan::-webkit-scrollbar { display: none; }
+  .arcCard { flex: none; scroll-snap-align: start; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title, .sub, .detail { transition: none; }
+  .title, .sub, .detail, .go { transition: none; }
   .arcCard { animation: none; }
+  .glass { transition: none; }
+  .mastPron > span { transition: none; }
 }

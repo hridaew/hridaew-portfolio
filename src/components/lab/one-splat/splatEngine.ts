@@ -10,11 +10,15 @@
  *   Data lives in float textures; only a sorted index buffer is re-uploaded per sort.
  * - Interaction: drag to turn (inertia, then a soft spring back to the object's best
  *   angle), hover pushes splats aside, tap pops them toward you, flicks wobble the top.
+ * - "overview" is built here from the five project sets: each shrunk, turned to its best
+ *   angle and placed in a loose constellation. Every splat carries its object's group in
+ *   pos.w so the shader can bob and sway each object on its own.
  */
 
-export type SplatKey = "about" | "domis" | "virdio" | "obscura" | "mc" | "side";
+export type SplatKey = "overview" | "about" | "domis" | "virdio" | "obscura" | "mc" | "side";
+type ObjectKey = Exclude<SplatKey, "overview">;
 
-const NMAX = 50000;
+const NMAX = 120000;
 const TW = 1024;
 const TH = Math.ceil(NMAX / TW);
 const TN = TW * TH;
@@ -22,6 +26,7 @@ const DIST = 6;
 
 /** Each object's best-looking angle: [yaw, pitch]. */
 const FRONTS: Record<SplatKey, [number, number]> = {
+  overview: [-0.3, 0.1],
   about: [-0.3, 0.06],
   domis: [-0.42, 0.14],
   virdio: [-0.5, 0.22],
@@ -30,24 +35,44 @@ const FRONTS: Record<SplatKey, [number, number]> = {
   side: [-1.9, 0.05],
 };
 
+/** The overview constellation: where each object floats [x, y, z] and its scale (objects are ~2 units tall). */
+const LAYOUT: [Exclude<ObjectKey, "about">, number, number, number, number][] = [
+  ["domis", -0.42, 0.5, 0.0, 0.5],
+  ["virdio", 0.78, 0.6, -0.2, 0.34],
+  ["obscura", 1.0, -0.36, 0.05, 0.4],
+  ["mc", 0.05, -0.62, 0.3, 0.38],
+  ["side", -1.08, -0.6, -0.1, 0.4],
+];
+
 const VS = `#version 300 es
 precision highp float; precision highp int;
 uniform highp sampler2D uPos, uCovA, uCovB, uCol, uDisp;
-uniform mat4 uView; uniform vec2 uFocal, uViewport, uOffset; uniform float uWob;
+uniform mat4 uView; uniform vec2 uFocal, uViewport, uOffset; uniform float uWob, uTime, uFloat;
+uniform vec4 uGroups[5];
 in vec2 aQuad; in uint aIdx;
 out vec4 vCol; out vec2 vPos;
 ivec2 tc(uint i) { return ivec2(int(i & 1023u), int(i >> 10u)); }
 void main() {
   ivec2 t = tc(aIdx);
-  vec3 p = texelFetch(uPos, t, 0).xyz + texelFetch(uDisp, t, 0).xyz;
+  vec4 P = texelFetch(uPos, t, 0);
+  vec3 p = P.xyz + texelFetch(uDisp, t, 0).xyz;
+  vec4 A = texelFetch(uCovA, t, 0); vec2 B = texelFetch(uCovB, t, 0).xy;
+  mat3 V = mat3(A.x, A.y, A.z,  A.y, A.w, B.x,  A.z, B.x, B.y);
+  if (uFloat > 0.0 && P.w > 0.5) {
+    // overview: each object bobs and sways about its own centre
+    vec4 G = uGroups[int(P.w + 0.5) - 1];
+    float g = uFloat * 0.3 * sin(uTime * 0.42 + G.w), cg = cos(g), sg = sin(g);
+    vec3 q = p - G.xyz;
+    p = G.xyz + vec3(cg * q.x + sg * q.z, q.y, -sg * q.x + cg * q.z) + vec3(0.0, uFloat * 0.05 * sin(uTime * 0.8 + G.w * 1.7), 0.0);
+    mat3 Rg = mat3(cg, 0.0, -sg,  0.0, 1.0, 0.0,  sg, 0.0, cg);
+    V = Rg * V * transpose(Rg);
+  }
   float a = uWob * (p.y + 1.0) * 0.5, ca = cos(a), sa = sin(a);
   p = vec3(ca * p.x + sa * p.z, p.y, -sa * p.x + ca * p.z);
   vec4 cam = uView * vec4(p, 1.0);
   float z = -cam.z;
   vec4 col = texelFetch(uCol, t, 0);
   if (z < 0.2 || col.a < 0.004) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); return; }
-  vec4 A = texelFetch(uCovA, t, 0); vec2 B = texelFetch(uCovB, t, 0).xy;
-  mat3 V = mat3(A.x, A.y, A.z,  A.y, A.w, B.x,  A.z, B.x, B.y);
   mat3 J = mat3(uFocal.x / z, 0.0, 0.0,  0.0, uFocal.y / z, 0.0,  uFocal.x * cam.x / (z * z), uFocal.y * cam.y / (z * z), 0.0);
   mat3 T = J * mat3(uView);
   mat3 C = T * V * transpose(T);
@@ -67,6 +92,8 @@ in vec4 vCol; in vec2 vPos; out vec4 o;
 void main() { float A = -dot(vPos, vPos); if (A < -4.0) discard; float B = exp(A) * vCol.a; o = vec4(vCol.rgb * B, B); }`;
 
 type SplatSet = { pos: Float32Array; ca: Float32Array; cb: Float32Array; col: Float32Array; n: number };
+/** A decoded set before padding: n splats, pos x3, cov x6 (xx xy xz yy yz zz), rgba x4, group per splat. */
+type Raw = { pos: Float32Array; cov: Float32Array; col: Float32Array; grp: Float32Array; n: number };
 type Buffers = { pos: Float32Array; ca: Float32Array; cb: Float32Array; col: Float32Array };
 type Tex = { t: WebGLTexture; unit: number };
 
@@ -92,8 +119,9 @@ export type SplatEngineOptions = {
   reducedMotion: boolean;
   /** Called every frame with how far the object is turned from its front (radians). */
   onTurn?: (yawFromFront: number, pitchFromFront: number) => void;
-  /** A click/tap on the canvas that wasn't a drag. Return true if it was handled (then no poke). */
-  onTap?: () => boolean;
+  /** A click/tap on the canvas that wasn't a drag; in the overview, `picked` is the object under it.
+   *  Return true if it was handled (then no poke). */
+  onTap?: (picked: ObjectKey | null) => boolean;
 };
 
 export class SplatEngine {
@@ -104,11 +132,16 @@ export class SplatEngine {
   private ib: WebGLBuffer;
   private sets: Partial<Record<SplatKey, SplatSet>> = {};
   private loading: Partial<Record<SplatKey, Promise<SplatSet>>> = {};
+  private raws: Partial<Record<ObjectKey, Promise<Raw>>> = {};
+  private floatAmt = 0;
   private st = buffers();
   private from = buffers();
   private D = new Float32Array(TN * 4);
   private DV = new Float32Array(NMAX * 3);
   private HSH = new Float32Array(NMAX);
+  private RND = new Float32Array(NMAX);
+  /** Per-splat start delay (0..1) for the current morph. */
+  private DL = new Float32Array(NMAX);
   private SP = new Float32Array(NMAX * 2);
   private depth = new Float32Array(NMAX);
   private keys = new Uint32Array(NMAX);
@@ -200,6 +233,7 @@ export class SplatEngine {
     gl.disable(gl.DEPTH_TEST);
 
     for (let i = 0; i < NMAX; i++) this.HSH[i] = (Math.sin(i * 12.9898) * 43758.5453) % 1;
+    for (let i = 0; i < NMAX; i++) this.RND[i] = Math.random();
     // opening state: a loose, invisible cloud the first object condenses out of
     for (let i = 0; i < NMAX; i++) {
       const o = i * 4;
@@ -214,6 +248,7 @@ export class SplatEngine {
       this.st.cb[o + 1] = 1e-5;
     }
     this.upload(this.tex.disp, this.D);
+    gl.uniform4fv(this.U("uGroups"), LAYOUT.flatMap(([, x, y, z], g) => [x, y, z, g * 2.1]));
     this.bindInput();
     this.raf = requestAnimationFrame(this.frame);
   }
@@ -245,6 +280,15 @@ export class SplatEngine {
       this.from.cb.set(this.st.cb);
       this.from.col.set(this.st.col);
       this.target = s;
+      // the overview's groups take effect at once (they only matter while it floats)
+      if (key === "overview") for (let i = 3; i < TN * 4; i += 4) this.st.pos[i] = s.pos[i];
+      // stagger by where each splat lands, not by its index (the index order is a Morton curve, which
+      // made the morph break into blocks with straight edges): a warped ripple out from the centre plus noise
+      for (let i = 0; i < NMAX; i++) {
+        const o = i * 4, x = s.pos[o], y = s.pos[o + 1], z = s.pos[o + 2];
+        const r = Math.sqrt(x * x + y * y + z * z) + 0.14 * Math.sin(5 * x + 3 * y) + 0.14 * Math.sin(4 * z - 2.3 * y);
+        this.DL[i] = Math.min(1, Math.max(0, 0.6 * (r / 1.5) + 0.4 * this.RND[i]));
+      }
       this.t0 = performance.now();
       this.dur = this.hasShown ? 1700 : 2200;
       this.hasShown = true;
@@ -275,6 +319,18 @@ export class SplatEngine {
   private load(k: SplatKey): Promise<SplatSet> {
     if (this.sets[k]) return Promise.resolve(this.sets[k]!);
     if (this.loading[k]) return this.loading[k]!;
+    const raw = k === "overview" ? Promise.all(LAYOUT.map(([key]) => this.raw(key))).then((rs) => this.compose(rs)) : this.raw(k);
+    const p = raw.then((r) => {
+      const set = this.pad(r);
+      this.sets[k] = set;
+      return set;
+    });
+    this.loading[k] = p;
+    return p;
+  }
+
+  private raw(k: ObjectKey): Promise<Raw> {
+    if (this.raws[k]) return this.raws[k]!;
     const p = fetch(`${this.opts.baseUrl}/${k}.json`)
       .then((r) => r.json())
       .then(({ splats }: { splats: string }) => {
@@ -283,46 +339,103 @@ export class SplatEngine {
         const n = new DataView(buf).getUint32(0, true);
         const h16 = new Uint16Array(buf, 4, n * 9);
         const rgba = new Uint8Array(buf, 4 + n * 18, n * 4);
-        const out = buffers();
-        let seed = 11;
-        const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-        // pad to NMAX with invisible clones, spread evenly (a splat may be cloned more than once)
-        const extra = Math.max(0, NMAX - n);
-        const clone = new Uint8Array(n).fill(Math.floor(extra / n));
-        let rest = extra % n;
-        while (rest > 0) {
-          const i = (rnd() * n) | 0;
-          if (clone[i] === Math.floor(extra / n)) {
-            clone[i]++;
-            rest--;
-          }
-        }
-        let j = 0;
-        for (let i = 0; i < n && j < NMAX; i++) {
-          for (let r = 0; r <= clone[i] && j < NMAX; r++, j++) {
-            const o = j * 4;
-            out.pos[o] = f16(h16[i * 3]);
-            out.pos[o + 1] = f16(h16[i * 3 + 1]);
-            out.pos[o + 2] = f16(h16[i * 3 + 2]);
-            const c = n * 3 + i * 6;
-            out.ca[o] = f16(h16[c]) * 1e-4;
-            out.ca[o + 1] = f16(h16[c + 1]) * 1e-4;
-            out.ca[o + 2] = f16(h16[c + 2]) * 1e-4;
-            out.ca[o + 3] = f16(h16[c + 3]) * 1e-4;
-            out.cb[o] = f16(h16[c + 4]) * 1e-4;
-            out.cb[o + 1] = f16(h16[c + 5]) * 1e-4;
-            out.col[o] = rgba[i * 4] / 255;
-            out.col[o + 1] = rgba[i * 4 + 1] / 255;
-            out.col[o + 2] = rgba[i * 4 + 2] / 255;
-            out.col[o + 3] = r ? 0 : rgba[i * 4 + 3] / 255;
-          }
-        }
-        const set = { ...out, n };
-        this.sets[k] = set;
-        return set;
+        const r: Raw = { pos: new Float32Array(n * 3), cov: new Float32Array(n * 6), col: new Float32Array(n * 4), grp: new Float32Array(n), n };
+        for (let i = 0; i < n * 3; i++) r.pos[i] = f16(h16[i]);
+        for (let i = 0; i < n * 6; i++) r.cov[i] = f16(h16[n * 3 + i]) * 1e-4;
+        for (let i = 0; i < n * 4; i++) r.col[i] = rgba[i] / 255;
+        return r;
       });
-    this.loading[k] = p;
+    this.raws[k] = p;
     return p;
+  }
+
+  /** The overview: every project object shrunk, turned to its best angle, and placed per LAYOUT. */
+  private compose(rs: Raw[]): Raw {
+    const per = Math.floor(NMAX / rs.length);
+    const total = rs.reduce((a, r) => a + Math.min(per, r.n), 0);
+    const out: Raw = { pos: new Float32Array(total * 3), cov: new Float32Array(total * 6), col: new Float32Array(total * 4), grp: new Float32Array(total), n: total };
+    let j = 0;
+    rs.forEach((r, g) => {
+      const [key, ox, oy, oz, sc] = LAYOUT[g];
+      const m = Math.min(per, r.n);
+      // fewer splats cover the same surface: widen each to keep it closed
+      const k2 = sc * sc * (r.n / m);
+      const th = FRONTS.overview[0] - FRONTS[key][0], c = Math.cos(th), s = Math.sin(th);
+      for (let k = 0; k < m; k++, j++) {
+        const i = Math.floor((k * r.n) / m); // sets are Morton-ordered, so a stride samples evenly
+        const x = r.pos[i * 3], y = r.pos[i * 3 + 1], z = r.pos[i * 3 + 2];
+        out.pos[j * 3] = ox + sc * (c * x + s * z);
+        out.pos[j * 3 + 1] = oy + sc * y;
+        out.pos[j * 3 + 2] = oz + sc * (-s * x + c * z);
+        // turn the covariance about y too: R C R^T
+        const o = i * 6, xx = r.cov[o], xy = r.cov[o + 1], xz = r.cov[o + 2], yy = r.cov[o + 3], yz = r.cov[o + 4], zz = r.cov[o + 5];
+        out.cov[j * 6] = k2 * (c * c * xx + 2 * c * s * xz + s * s * zz);
+        out.cov[j * 6 + 1] = k2 * (c * xy + s * yz);
+        out.cov[j * 6 + 2] = k2 * (c * s * (zz - xx) + (c * c - s * s) * xz);
+        out.cov[j * 6 + 3] = k2 * yy;
+        out.cov[j * 6 + 4] = k2 * (c * yz - s * xy);
+        out.cov[j * 6 + 5] = k2 * (s * s * xx - 2 * c * s * xz + c * c * zz);
+        out.col.set(r.col.subarray(i * 4, i * 4 + 4), j * 4);
+        out.grp[j] = g + 1;
+      }
+    });
+    return out;
+  }
+
+  /** Pad to NMAX with invisible clones, spread evenly (a splat may be cloned more than once). */
+  private pad(r: Raw): SplatSet {
+    const n = Math.min(NMAX, r.n);
+    const out = buffers();
+    let seed = 11;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const extra = Math.max(0, NMAX - n);
+    const clone = new Uint8Array(n).fill(Math.floor(extra / n));
+    let rest = extra % n;
+    while (rest > 0) {
+      const i = (rnd() * n) | 0;
+      if (clone[i] === Math.floor(extra / n)) {
+        clone[i]++;
+        rest--;
+      }
+    }
+    let j = 0;
+    for (let i = 0; i < n && j < NMAX; i++) {
+      for (let c = 0; c <= clone[i] && j < NMAX; c++, j++) {
+        const o = j * 4;
+        out.pos[o] = r.pos[i * 3];
+        out.pos[o + 1] = r.pos[i * 3 + 1];
+        out.pos[o + 2] = r.pos[i * 3 + 2];
+        out.pos[o + 3] = r.grp[i];
+        out.ca.set(r.cov.subarray(i * 6, i * 6 + 4), o);
+        out.cb[o] = r.cov[i * 6 + 4];
+        out.cb[o + 1] = r.cov[i * 6 + 5];
+        out.col[o] = r.col[i * 4];
+        out.col[o + 1] = r.col[i * 4 + 1];
+        out.col[o + 2] = r.col[i * 4 + 2];
+        out.col[o + 3] = c ? 0 : r.col[i * 4 + 3];
+      }
+    }
+    return { ...out, n };
+  }
+
+  /** In the overview, which object is under a canvas point (nearest centre, within its size). */
+  private pick(px: number, py: number): ObjectKey | null {
+    if (this.current !== "overview") return null;
+    const { M, W, H, offset, focal } = this;
+    let best: ObjectKey | null = null, bd = 1.15;
+    for (const [key, x, y, z, sc] of LAYOUT) {
+      const cx = M[0] * x + M[4] * y + M[8] * z;
+      const cy = M[1] * x + M[5] * y + M[9] * z;
+      const cz = M[2] * x + M[6] * y + M[10] * z + M[14];
+      const sx = W / 2 + (offset[0] * W) / 2 + (focal * cx) / -cz;
+      const sy = H / 2 - (offset[1] * H) / 2 - (focal * cy) / -cz;
+      const d = Math.hypot(sx - px, sy - py) / ((sc * focal) / -cz);
+      if (d < bd) {
+        bd = d;
+        best = key;
+      }
+    }
+    return best;
   }
 
   private upload(tex: Tex, data: Float32Array) {
@@ -367,7 +480,7 @@ export class SplatEngine {
       return;
     }
     for (let i = 0; i < NMAX; i++) {
-      const k = ease(Math.min(1, Math.max(0, mt * 1.45 - (i / NMAX) * 0.45)));
+      const k = ease(Math.min(1, Math.max(0, mt * 1.45 - this.DL[i] * 0.45)));
       const lift = Math.sin(k * Math.PI);
       const o = i * 4;
       const fx = from.pos[o], fy = from.pos[o + 1], fz = from.pos[o + 2];
@@ -491,6 +604,10 @@ export class SplatEngine {
       this.cleanup.push(() => cv.removeEventListener(k, f as EventListener));
     };
     on("pointerdown", (e) => {
+      // a touch has no hover before it: aim from the press itself
+      const r = cv.getBoundingClientRect();
+      this.mouse.x = e.clientX - r.left;
+      this.mouse.y = e.clientY - r.top;
       this.down = { x: e.clientX, y: e.clientY };
       this.moved = 0;
       this.rot.dragging = true;
@@ -503,6 +620,8 @@ export class SplatEngine {
       this.mouse.x = e.clientX - r.left;
       this.mouse.y = e.clientY - r.top;
       this.mouse.in = true;
+      if (!this.down && this.pick(this.mouse.x, this.mouse.y)) cv.dataset.hot = "";
+      else delete cv.dataset.hot;
       if (!this.down) return;
       const dx = e.clientX - this.down.x, dy = e.clientY - this.down.y;
       this.moved += Math.abs(dx) + Math.abs(dy);
@@ -517,7 +636,7 @@ export class SplatEngine {
     });
     const up = () => {
       if (!this.down) return;
-      if (this.moved < 6 && !this.opts.onTap?.()) this.poke(this.mouse.x, this.mouse.y);
+      if (this.moved < 6 && !this.opts.onTap?.(this.pick(this.mouse.x, this.mouse.y))) this.poke(this.mouse.x, this.mouse.y);
       this.down = null;
       this.rot.dragging = false;
       delete cv.dataset.dragging;
@@ -570,6 +689,10 @@ export class SplatEngine {
 
     const gl = this.gl;
     gl.uniform1f(this.U("uWob"), reduce ? 0 : rot.wob);
+    // the overview's objects drift on their own; fade that in and out with it
+    this.floatAmt += ((this.current === "overview" && !reduce ? 1 : 0) - this.floatAmt) * 0.03;
+    gl.uniform1f(this.U("uFloat"), this.floatAmt < 0.002 ? 0 : this.floatAmt);
+    gl.uniform1f(this.U("uTime"), now / 1000);
     this.viewMatrix();
     if (this.morphing) this.stepMorph(now);
     this.stepJiggle();

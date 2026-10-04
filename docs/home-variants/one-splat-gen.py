@@ -266,8 +266,8 @@ def save(key, p, cov, rgba, height=2.0):
 def _house():
     import importlib.util as _u
     spec = _u.spec_from_file_location("house", os.path.join(os.path.dirname(os.path.abspath(__file__)), "one-splat-house.py"))
-    house = _u.module_from_spec(spec); spec.loader.exec_module(house)  # Pixar-style SDF model of the Domis home avatar
-    return house.build(h=0.024, budget=50000)
+    house = _u.module_from_spec(spec); spec.loader.exec_module(house)  # soft, rounded Pixar-style house (SDF model)
+    return house.build(budget=120000)
 
 
 BUILDERS = {
