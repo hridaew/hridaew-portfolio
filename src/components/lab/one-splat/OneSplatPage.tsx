@@ -10,6 +10,8 @@ import { SITE_VERSION } from "@/components/home/HomePage";
 import { HeroCard } from "@/components/home/HeroCard";
 import { HomeChoomLingoProvider } from "@/components/home/HomeChoomLingoContext";
 import { SplatEngine, type SplatKey } from "./splatEngine";
+import { Masthead } from "./Masthead";
+import { AboutSheet } from "./AboutSheet";
 import styles from "./OneSplat.module.css";
 
 const MEDIA = "/variants/one-splat/media"; // splat data
@@ -77,7 +79,11 @@ const HomeCheatEasterEggs = dynamic(
 const ORDER: SplatKey[] = ["about", ...CHAPTERS.map((c) => c.k)];
 const NARROW = 820;
 
-export function OneSplatPage() {
+/**
+ * header "card": the site's HeroCard (its own expand holds the about content).
+ * header "masthead": a light card-less header; About opens a sheet from the left.
+ */
+export function OneSplatPage({ header = "card" }: { header?: "card" | "masthead" } = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const sideRef = useRef<HTMLDivElement>(null);
@@ -89,6 +95,9 @@ export function OneSplatPage() {
     routerRef.current = router;
   }, [router]);
   const [current, setCurrent] = useState<SplatKey>("about");
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const aboutOpenRef = useRef(false);
+  const beforeAbout = useRef<SplatKey>("about");
   const currentRef = useRef<SplatKey>("about");
 
   const chapter = CHAPTERS.find((c) => c.k === current);
@@ -145,6 +154,18 @@ export function OneSplatPage() {
     };
   }, [frame]);
 
+  const openAbout = useCallback(() => {
+    beforeAbout.current = currentRef.current;
+    aboutOpenRef.current = true;
+    setAboutOpen(true);
+    void engineRef.current?.select("about");
+  }, []);
+  const closeAbout = useCallback(() => {
+    aboutOpenRef.current = false;
+    setAboutOpen(false);
+    void engineRef.current?.select(currentRef.current);
+  }, []);
+
   const go = useCallback(
     (k: SplatKey) => {
       if (k === currentRef.current) return;
@@ -162,7 +183,7 @@ export function OneSplatPage() {
     let lock = 0;
     const onLabPage = () => window.location.pathname.startsWith("/lab/");
     const onWheel = (e: WheelEvent) => {
-      if (window.innerWidth <= NARROW || !onLabPage()) return;
+      if (window.innerWidth <= NARROW || !onLabPage() || aboutOpenRef.current) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("[data-testid='hero-card-expanded-scroll']")) return;
       // the bio is open: let it scroll
@@ -177,7 +198,7 @@ export function OneSplatPage() {
       if (next !== currentRef.current) go(next);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (!onLabPage()) return;
+      if (!onLabPage() || aboutOpenRef.current) return;
       if ((e.target as HTMLElement | null)?.closest("input, textarea")) return;
       const i = ORDER.indexOf(currentRef.current);
       if (e.key === "ArrowDown" || e.key === "ArrowRight") go(ORDER[Math.min(ORDER.length - 1, i + 1)]);
@@ -195,9 +216,13 @@ export function OneSplatPage() {
     <HomeChoomLingoProvider>
       <main className={styles.page} ref={pageRef}>
         <div className={styles.side} ref={sideRef}>
-          <div className={styles.hero}>
-            <HeroCard mark="signature" orbs={false} />
-          </div>
+          {header === "card" ? (
+            <div className={styles.hero}>
+              <HeroCard mark="signature" orbs={false} />
+            </div>
+          ) : (
+            <Masthead onAbout={openAbout} aboutOpen={aboutOpen} />
+          )}
           <nav aria-label="Work">
             <ol className={styles.index}>
               {CHAPTERS.map((c) => {
@@ -260,6 +285,7 @@ export function OneSplatPage() {
           </div>
         </div>
       </main>
+      {header === "masthead" ? <AboutSheet open={aboutOpen} onClose={closeAbout} /> : null}
     </HomeChoomLingoProvider>
   );
 }

@@ -1,0 +1,4 @@
+# Python packages for the One Splat generator (docs/home-variants/one-splat-gen.py)
+numpy>=1.26
+scipy>=1.11
+pillow>=10

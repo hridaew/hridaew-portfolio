@@ -14,7 +14,7 @@ import numpy as np, struct, sys, os
 from PIL import Image
 from scipy import ndimage
 
-A = "/home/user/hridaew-portfolio/public/assets/"
+A = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "public", "assets") + os.sep
 OUT = sys.argv[1]  # e.g. public/variants/one-splat/media; the Mighty Hand reads SAVOR_PLY (github.com/hridaew/savor samples/sample.ply)
 os.makedirs(OUT, exist_ok=True)
 rng = np.random.default_rng(3)
@@ -262,15 +262,24 @@ def save(key, p, cov, rgba, height=2.0):
     print(key, len(p), f"{os.path.getsize(f'{OUT}/{key}.json') / 1024:.0f}KB")
 
 
-ONLY = sys.argv[2:]
-_save = save
-save = lambda k, *a: (not ONLY or k in ONLY) and _save(k, *a)
-save("about", *inflate("home/hero-face-badge.png", 10000, thick=0.34))
-import importlib.util as _u
-_spec = _u.spec_from_file_location("house", os.path.join(os.path.dirname(os.path.abspath(__file__)), "one-splat-house.py"))
-house = _u.module_from_spec(_spec); _spec.loader.exec_module(house)  # Pixar-style SDF model of the Domis home avatar
-save("domis", *house.build(h=0.024, budget=50000))
-save("virdio", *cone())
-save("obscura", *card("obscura/wayne_girl_kimono.jpg", 11000, crop=(0.08, 0.06, 0.84, 0.8)))
-save("mc", *inflate("grid/memorycare-cat-straight.png", 11000, thick=0.44))
-save("side", *ply(os.environ.get("SAVOR_PLY", "savor/samples/sample.ply")))
+# ── which objects to build: pass keys after the output dir to rebuild only those (e.g. `... media domis virdio`)
+def _house():
+    import importlib.util as _u
+    spec = _u.spec_from_file_location("house", os.path.join(os.path.dirname(os.path.abspath(__file__)), "one-splat-house.py"))
+    house = _u.module_from_spec(spec); spec.loader.exec_module(house)  # Pixar-style SDF model of the Domis home avatar
+    return house.build(h=0.024, budget=50000)
+
+
+BUILDERS = {
+    "about": lambda: inflate("home/hero-face-badge.png", 10000, thick=0.34),
+    "domis": _house,
+    "virdio": cone,
+    "obscura": lambda: card("obscura/wayne_girl_kimono.jpg", 11000, crop=(0.08, 0.06, 0.84, 0.8)),
+    "mc": lambda: inflate("grid/memorycare-cat-straight.png", 11000, thick=0.44),
+    # Rodin's Mighty Hand, a real Savor capture: set SAVOR_PLY to github.com/hridaew/savor samples/sample.ply
+    "side": lambda: ply(os.environ.get("SAVOR_PLY", "savor/samples/sample.ply")),
+}
+
+if __name__ == "__main__":
+    for key in sys.argv[2:] or BUILDERS:
+        save(key, *BUILDERS[key]())
