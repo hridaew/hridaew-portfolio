@@ -429,7 +429,7 @@ function Top3Section() {
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
-          moves:
+          Movies:
         </p>
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">
