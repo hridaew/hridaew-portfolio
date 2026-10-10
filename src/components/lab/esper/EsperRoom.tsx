@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { EsperSidebar } from "./EsperSidebar";
 
 type UnityInstance = {
   SendMessage: (object: string, method: string, value?: string | number) => void;
@@ -22,15 +23,6 @@ declare global {
 type EsperEvent = CustomEvent<{ event: string; payload: string }>;
 
 const BUILD = "/esper/Build";
-const WORK = [
-  { id: "domis", title: "Domis", href: "/domis" },
-  { id: "virdio", title: "Virdio", href: "/virdio" },
-  { id: "obscura", title: "OBSCURA", href: "/obscura" },
-  { id: "memory-care", title: "Memory Care", href: "/memory-care" },
-  { id: "wafflings", title: "Wafflings", href: null },
-  { id: "about", title: "About", href: null },
-] as const;
-
 export function EsperRoom() {
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -40,6 +32,8 @@ export function EsperRoom() {
   const [hovering, setHovering] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const [lightsOn, setLightsOn] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -86,6 +80,10 @@ export function EsperRoom() {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           unityRef.current?.SendMessage("ESPER", "SetReducedMotion", "1");
         }
+      } else if (event === "focus") {
+        setActive(payload);
+      } else if (event === "overview") {
+        setActive(null);
       } else if (event === "hover") {
         setHovering(payload !== "");
       } else if (event === "enhance" && payload) {
@@ -104,7 +102,19 @@ export function EsperRoom() {
     };
   }, [router]);
 
-  const goto = (id: string) => unityRef.current?.SendMessage("ESPER", "Goto", id);
+  const send = (method: string, value?: string) => unityRef.current?.SendMessage("ESPER", method, value);
+  const goto = (id: string) => {
+    setActive(id);
+    send("Goto", id);
+  };
+  const back = () => {
+    setActive(null);
+    send("Back");
+  };
+  const lights = (on: boolean) => {
+    setLightsOn(on);
+    send("SetLights", on ? "1" : "0");
+  };
 
   return (
     <main className="fixed inset-0 overflow-hidden bg-[#040506]">
@@ -133,30 +143,9 @@ export function EsperRoom() {
         />
       </div>
 
-      {/* Keyboard / screen-reader index. Invisible until focused. */}
-      <nav aria-label="Work" className="absolute bottom-6 left-6 flex flex-col gap-2">
-        {WORK.map((w) =>
-          w.href ? (
-            <Link
-              key={w.id}
-              href={w.href}
-              onFocus={() => goto(w.id)}
-              className="sr-only rounded-full bg-black/70 px-4 py-2 font-[family-name:var(--font-dm-sans)] text-sm text-[#e8eef5] focus:not-sr-only focus:outline focus:outline-1 focus:outline-[#cfe8ff]"
-            >
-              {w.title}
-            </Link>
-          ) : (
-            <button
-              key={w.id}
-              type="button"
-              onClick={() => goto(w.id)}
-              className="sr-only rounded-full bg-black/70 px-4 py-2 text-left font-[family-name:var(--font-dm-sans)] text-sm text-[#e8eef5] focus:not-sr-only focus:outline focus:outline-1 focus:outline-[#cfe8ff]"
-            >
-              {w.title}
-            </button>
-          ),
-        )}
-      </nav>
+      {ready && !leaving && (
+        <EsperSidebar active={active} lightsOn={lightsOn} onSelect={goto} onBack={back} onLights={lights} />
+      )}
 
       {failed && (
         <nav className="absolute inset-0 flex items-center justify-center gap-8 font-[family-name:var(--font-display)] text-2xl font-bold text-[#e8eef5]">

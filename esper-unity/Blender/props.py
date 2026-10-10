@@ -411,4 +411,106 @@ def frame_wall():
     _frame("frame_wall", 0.36, 0.27, (0.06, 0.045, 0.035), stand=False)
 
 
-ALL = {f.__name__: f for f in (frame_landscape, frame_portrait, frame_wall, round_display, phone, phone_stand, laptop, drafting_table, domis_house, kettlebells, exercise_mat, steering_wheel, haptic_pucks)}
+def credenza():
+    """A low Space Age walnut credenza on tapered legs: sliding doors, a recessed pull line."""
+    reset()
+    walnut = mat("Walnut", (0.22, 0.12, 0.07), rough=0.45)
+    dark = mat("Shadow", (0.04, 0.03, 0.025), rough=0.8)
+    brass = mat("Brass", (0.85, 0.65, 0.32), rough=0.3, metal=1.0)
+    W, D, H = 1.3, 0.44, 0.38
+    leg = 0.2
+    box("Case", (W, D, H), (0, 0, leg + H / 2), walnut, bev=0.01)
+    box("Recess", (W - 0.04, 0.004, H - 0.08), (0, -D / 2 - 0.0005, leg + H / 2), dark, bev=0.0)
+    for i, x in enumerate((-W / 4, W / 4)):
+        box(f"Door{i}", (W / 2 - 0.03, 0.012, H - 0.09), (x, -D / 2 - 0.006, leg + H / 2), walnut, bev=0.003)
+        box(f"Pull{i}", (0.012, 0.006, H * 0.45), (x + (0.18 if i == 0 else -0.18), -D / 2 - 0.014, leg + H / 2), brass, bev=0.002)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            x, y = sx * (W / 2 - 0.08), sy * (D / 2 - 0.06)
+            bpy.ops.mesh.primitive_cone_add(radius1=0.014, radius2=0.022, depth=leg, location=(x, y, leg / 2),
+                                            rotation=(sy * 0.12, -sx * 0.12, 0), vertices=16)
+            o = bpy.context.active_object
+            assign(o, walnut)
+            for p in o.data.polygons:
+                p.use_smooth = True
+            cyl(f"Cap{sx}{sy}", 0.015, 0.012, (x + sx * 0.012, y + sy * 0.012, 0.006), brass, verts=16, bev=0.002)
+    export("credenza")
+
+
+def turntable():
+    """A turntable with a record spinning on it (the record is a separate 'Platter' child for Unity to spin)."""
+    reset()
+    plinth = mat("Plinth", (0.07, 0.06, 0.055), rough=0.35)
+    alu = mat("Alu", (0.7, 0.7, 0.72), rough=0.25, metal=1.0)
+    vinyl = mat("Vinyl", (0.012, 0.012, 0.014), rough=0.25)
+    label = mat("Label", (0.6, 0.1, 0.12), rough=0.6)
+    box("Plinth", (0.45, 0.35, 0.08), (0, 0, 0.04), plinth, bev=0.008)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            cyl(f"Foot{sx}{sy}", 0.025, 0.02, (sx * 0.19, sy * 0.14, -0.005), alu, verts=24, bev=0.003)
+    # Platter + record, grouped so Unity can find and spin it.
+    pl = cyl("Platter", 0.15, 0.018, (-0.04, 0, 0.09), alu, verts=96, bev=0.002)
+    rec = cyl("Record", 0.152, 0.003, (-0.04, 0, 0.1005), vinyl, verts=96, bev=0.0)
+    for k in range(6):
+        torus(f"Groove{k}", 0.07 + k * 0.013, 0.0006, (-0.04, 0, 0.1023), vinyl, minor=4)
+    lab = cyl("RecordLabel", 0.045, 0.0015, (-0.04, 0, 0.103), label, verts=48, bev=0.0)
+    cyl("Spindle", 0.0035, 0.02, (-0.04, 0, 0.11), alu, verts=12, bev=0.0)
+    for o in (rec, lab):
+        o.parent = pl
+        o.matrix_parent_inverse = pl.matrix_world.inverted()
+    # Tonearm resting on the record.
+    cyl("ArmBase", 0.022, 0.03, (0.16, 0.1, 0.095), alu, verts=32, bev=0.003)
+    tube("Arm", [(0.16, 0.1, 0.112), (0.12, -0.02, 0.112), (0.04, -0.06, 0.108)], 0.0035, alu)
+    box("Headshell", (0.02, 0.03, 0.008), (0.035, -0.07, 0.106), plinth, rot=(0, 0, 0.5), bev=0.002)
+    cyl("Counterweight", 0.012, 0.025, (0.17, 0.13, 0.112), alu, rot=(math.radians(90), 0, math.radians(-20)), verts=24, bev=0.002)
+    export("turntable")
+
+
+def neon_sign():
+    """'hridae' in glass tube neon (Tilt Neon, OFL) on a clear acrylic backer."""
+    import os
+    reset()
+    font = bpy.data.fonts.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "TiltNeon.ttf"))
+    tube_m = mat("NeonTube", (1.0, 0.2, 0.75), rough=0.2, emission=(1.0, 0.18, 0.72), strength=4.0)
+    curve = bpy.data.curves.new("NeonText", "FONT")
+    curve.body = "hridae"
+    curve.font = font
+    curve.size = 0.26
+    curve.align_x = "CENTER"
+    curve.align_y = "CENTER"
+    curve.extrude = 0.004
+    curve.bevel_depth = 0.0025
+    t = bpy.data.objects.new("Neon", curve)
+    bpy.context.collection.objects.link(t)
+    t.rotation_euler = (math.pi / 2, 0, 0)
+    t.location = (0, -0.03, 0)
+    bpy.context.view_layer.objects.active = t
+    t.select_set(True)
+    bpy.ops.object.convert(target="MESH")
+    assign(bpy.context.active_object, tube_m)
+    # Acrylic backer and standoffs.
+    acrylic = mat("Acrylic", (0.015, 0.015, 0.02), rough=0.05)
+    box("Backer", (0.86, 0.008, 0.3), (0, -0.012, 0), acrylic, bev=0.003)
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            cyl(f"Standoff{sx}{sz}", 0.006, 0.02, (sx * 0.39, -0.002, sz * 0.12), mat("Steel", (0.6, 0.6, 0.6), 0.3, 1.0), rot=(math.pi / 2, 0, 0), verts=12, bev=0.0)
+    export("neon_sign")
+
+
+def monitor():
+    """A slim wall-mounted monitor on a short arm: 16:10 Screen surface, UV 0..1."""
+    reset()
+    shell = mat("Shell", (0.03, 0.03, 0.035), rough=0.4)
+    W, H = 0.6, 0.375
+    rounded_slab("Panel", W, H, 0.022, 0.006, shell, loc=(0, 0, 0))
+    screen_quad("Screen", W - 0.016, H - 0.016, (0, 0, 0.0115))
+    for o in list(bpy.context.scene.objects):
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        o.location = (o.location.x, -o.location.z, o.location.y)
+    # Arm back to the wall (+Y).
+    box("Arm", (0.04, 0.12, 0.04), (0, 0.07, 0), shell, bev=0.006)
+    box("WallPlate", (0.12, 0.012, 0.12), (0, 0.13, 0), shell, bev=0.003)
+    export("monitor")
+
+
+ALL = {f.__name__: f for f in (credenza, turntable, neon_sign, monitor, frame_landscape, frame_portrait, frame_wall, round_display, phone, phone_stand, laptop, drafting_table, domis_house, kettlebells, exercise_mat, steering_wheel, haptic_pucks)}

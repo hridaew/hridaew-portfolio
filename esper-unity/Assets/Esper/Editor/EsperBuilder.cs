@@ -47,6 +47,9 @@ namespace Esper.EditorTools
             BuildProps();
             BuildPhotoLine();
             BuildLights();
+            BuildRoomLights();
+            BuildInteriorNeon();
+            BuildCityLife();
             BuildAtmosphere();
             BuildCameras();
             BuildInteraction();

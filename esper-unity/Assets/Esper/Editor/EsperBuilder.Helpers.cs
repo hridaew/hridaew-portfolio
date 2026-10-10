@@ -57,7 +57,9 @@ namespace Esper.EditorTools
                     m.SetFloat("_Scanlines", 1600f);
                     m.SetFloat("_Mask", 0.06f);
                     m.SetFloat("_Noise", 0.008f);
-                    m.SetFloat("_Glass", 0.12f);
+                    m.SetFloat("_Glass", 0.08f);
+                    m.SetFloat("_Vignette", 0f);
+                    m.SetFloat("_ScanAmount", 0.04f);
                 }
             });
             var r = screenT.GetComponent<MeshRenderer>();

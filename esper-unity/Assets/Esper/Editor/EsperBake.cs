@@ -39,6 +39,7 @@ namespace Esper.EditorTools
                 indirectSampleCount = 512,
                 environmentSampleCount = 256,
                 maxBounces = 4,
+                indirectScale = 1.6f,
                 filteringMode = LightingSettings.FilterMode.Auto,
                 ao = true,
                 aoMaxDistance = 0.6f,

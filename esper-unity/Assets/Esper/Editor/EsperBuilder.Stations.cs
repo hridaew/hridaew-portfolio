@@ -131,36 +131,40 @@ namespace Esper.EditorTools
         {
             float hw = RoomW / 2;
             var g = Group("MemoryCare", props);
-            // Arranged like the station: the armchair faces the screen, the wheel on a low table between them.
-            var chair = Place("mid_century_lounge_chair", g, new Vector3(-1.75f, 0, 1.55f), -105f);
+            // Arranged like the station: the armchair faces a big round screen, the wheel on a low table between them.
+            var chair = Place("mid_century_lounge_chair", g, new Vector3(-1.75f, 0, 0.95f), -100f);
             SitOn(chair, 0f);
-            var plant = Place("potted_plant_02", g, new Vector3(-2.62f, 0, 2.3f), 30f, 0.85f);
-            SitOn(plant, 0f);
-            var disp = PlaceModel("round_display", g, new Vector3(-hw + 0.06f, 1.3f, 1.45f), 90f, 0.9f);
-            var screen = Display(disp, "MemoryCare/kitten.jpg", crt: true, brightness: 1.5f);
+            var disp = PlaceModel("round_display", g, new Vector3(-hw + 0.06f, 1.38f, 0.95f), 90f, 1.45f);
+            var screen = Display(disp, "MemoryCare/kitten.jpg", crt: true, brightness: 2.2f);
             var dm = FindChild(disp, "Screen").GetComponent<MeshRenderer>().sharedMaterial;
             dm.SetFloat("_Curvature", 0.02f);
-            dm.SetFloat("_Scanlines", 180f);
-            dm.SetFloat("_Mask", 0.12f);
-            dm.SetFloat("_Brightness", 2.2f);
+            dm.SetFloat("_Scanlines", 260f);
+            dm.SetFloat("_ScanAmount", 0.12f);
+            dm.SetFloat("_Mask", 0.1f);
+            dm.SetFloat("_Vignette", 0.4f);
 
-            var table = Place("side_table_01", g, new Vector3(-2.55f, 0, 1.45f), 0f, 0.95f);
+            var table = Place("side_table_01", g, new Vector3(-2.5f, 0, 0.95f), 0f, 0.95f);
             SitOn(table, 0f);
             float top = BoundsOf(table).max.y;
-            var wheel = PlaceModel("steering_wheel", g, new Vector3(-2.5f, 0f, 1.45f), 90f, 0.85f);
+            var wheel = PlaceModel("steering_wheel", g, new Vector3(-2.45f, 0f, 0.95f), 90f, 0.85f);
             SitOn(wheel, top);
-            var frame = PlaceModel("frame_landscape", g, new Vector3(-2.68f, 0f, 1.12f), 70f, 0.9f);
-            SitOn(frame, top);
-            FramePhoto(frame, "MemoryCare/resident_wheel.jpg");
-            var pucks = PlaceModel("haptic_pucks", g, new Vector3(-2.1f, 0f, 1.5f), -90f, 0.85f);
+            var pucks = PlaceModel("haptic_pucks", g, new Vector3(-2.05f, 0f, 0.95f), -90f, 0.85f);
+            // The station in the common room, large on the wall beside the screen.
+            var big = PlaceModel("frame_wall", g, new Vector3(-hw + 0.02f, 1.12f, 1.95f), 90f, 1.7f);
+            FramePhoto(big, "MemoryCare/station.jpg");
+            var small = PlaceModel("frame_landscape", g, new Vector3(-2.66f, 0f, 0.62f), 70f, 0.9f);
+            SitOn(small, top);
+            FramePhoto(small, "MemoryCare/resident_wheel.jpg");
 
-            var glow = Practical("Memory_Glow", g, disp.transform.position + new Vector3(0.45f, -0.05f, 0), new Color(1f, 0.82f, 0.9f), 0.45f, 2.4f);
+            var glow = Practical("Memory_Glow", g, disp.transform.position + new Vector3(0.5f, -0.05f, 0), new Color(0.85f, 0.75f, 1f), 0.8f, 2.8f);
             glow.shadows = LightShadows.None;
             screen.glow = glow;
-            screen.glowIntensity = 0.45f;
+            screen.glowIntensity = 0.8f;
+            Practical("Memory_PictureLight", g, new Vector3(-hw + 0.45f, 2.3f, 1.95f), new Color(1f, 0.75f, 0.5f), 1.2f, 2.2f,
+                LightType.Spot, BoundsOf(big).center, 55f);
             stationAccent["memory-care"] = glow;
             stationScreen["memory-care"] = screen;
-            Remember("memory-care", chair, disp, table, pucks);
+            Remember("memory-care", chair, disp, table, pucks, big);
         }
 
         static void BuildWafflings()
@@ -209,7 +213,7 @@ namespace Esper.EditorTools
             var shelfGlow = Practical("Wafflings_Inner", g, new Vector3(x - 0.08f, L(2) + 0.3f, zc), new Color(1f, 0.62f, 0.32f), 0.35f, 1.1f);
             shelfGlow.shadows = LightShadows.Soft;
 
-            var lamp = Practical("Wafflings_Sconce", g, new Vector3(hw - 0.12f, 2.05f, -1.75f), new Color(1f, 0.6f, 0.3f), 0.9f, 2.4f,
+            var lamp = Practical("Wafflings_Sconce", g, new Vector3(hw - 0.12f, 2.05f, -1.75f), new Color(1f, 0.6f, 0.3f), 0.55f, 2.4f,
                 LightType.Spot, sb.center + Vector3.up * 0.2f, 70f);
             stationAccent["wafflings"] = lamp;
             Remember("wafflings", shelf);
@@ -219,13 +223,50 @@ namespace Esper.EditorTools
         {
             float hw = RoomW / 2, hd = RoomD / 2;
             var g = Group("Taste", props);
-            // The scarf on a hook by the window: the one red thing in the room.
-            PlaceModel("scarf", g, new Vector3(-1.95f, 1.95f, hd), 180f);
+            // Off hours: one wall for the records, the games and the club, under my name in neon.
+            var cred = PlaceModel("credenza", g, new Vector3(-2.28f, 0f, hd - 0.25f), 180f);
+            float top = BoundsOf(cred).max.y;
+            var deck = PlaceModel("turntable", g, new Vector3(-2.62f, 0f, hd - 0.27f), 180f);
+            SitOn(deck, top);
+            var platter = FindChild(deck, "Platter");
+            if (platter) platter.gameObject.AddComponent<Spin>().degreesPerSecond = 200f;
+            var console = Place("gaming_console", g, new Vector3(-1.98f, 0, hd - 0.28f), 180f, 0.9f);
+            SitOn(console, top);
+            var pad = Place("gamepad", g, new Vector3(-1.85f, 0, hd - 0.45f), 160f, 0.6f);
+            SitOn(pad, top);
 
-            // A milk crate of records by the TV, three leaning out front.
-            var crate = Place("cardboard_box_01", g, new Vector3(-2.6f, 0, -1.85f), 80f);
-            SitOn(crate, 0f);
-            var cb = BoundsOf(crate);
+            // Picture ledges: records face out on the lower one, games on the upper.
+            var ledgeMat = Plain("Ledge", new Color(0.16f, 0.09f, 0.05f), 0.5f);
+            float l1 = 1.12f, l2 = 1.62f;
+            Block("LedgeRecords", g, new Vector3(-2.28f, l1, hd - 0.05f), new Vector3(1.2f, 0.02f, 0.09f), ledgeMat);
+            Block("LedgeRecordsLip", g, new Vector3(-2.28f, l1 + 0.025f, hd - 0.093f), new Vector3(1.2f, 0.05f, 0.012f), ledgeMat);
+            Block("LedgeGames", g, new Vector3(-2.28f, l2, hd - 0.05f), new Vector3(1.0f, 0.02f, 0.09f), ledgeMat);
+            Block("LedgeGamesLip", g, new Vector3(-2.28f, l2 + 0.02f, hd - 0.093f), new Vector3(1.0f, 0.04f, 0.012f), ledgeMat);
+            var lean = Quaternion.Euler(8, 0, 0); // covers face the room (-z), tops resting back on the wall
+            Album(g, "Albums/motm2_front.jpg", new Vector3(-2.68f, l1 + 0.165f, hd - 0.055f), lean);
+            Album(g, "Albums/lgseo_front.jpg", new Vector3(-2.28f, l1 + 0.165f, hd - 0.055f), lean);
+            Album(g, "Albums/reanimation_front.jpg", new Vector3(-1.88f, l1 + 0.165f, hd - 0.055f), lean);
+            for (int i = 0; i < 3; i++)
+                GameCase(g, $"Games/game_{i + 1}.jpg", new Vector3(-2.58f + i * 0.3f, l2 + 0.105f, hd - 0.052f), lean);
+
+            var neon = PlaceModel("neon_sign", g, new Vector3(-2.28f, 2.08f, hd - 0.01f), 180f);
+            var neonLight = Practical("NeonSpill", g, new Vector3(-2.28f, 2.1f, hd - 0.35f), new Color(1f, 0.25f, 0.75f), 1.3f, 2.6f);
+            neonLight.shadows = LightShadows.None;
+            neonLight.gameObject.AddComponent<LightFlicker>().stutterChance = 0.003f;
+            Practical("MediaWash", g, new Vector3(-2.28f, 2.6f, hd - 0.7f), new Color(1f, 0.7f, 0.5f), 1.1f, 2.6f,
+                LightType.Spot, new Vector3(-2.28f, 1.3f, hd), 70f);
+
+            // The scarf hangs between the media wall and the window.
+            PlaceModel("scarf", g, new Vector3(-1.62f, 1.98f, hd), 180f);
+
+            // Half-Life: a crowbar leaning by the door. Arsenal again: a ball under the ESPER desk.
+            Place("crowbar_01", g, new Vector3(hw - 0.06f, 0.28f, -1.55f), 0, 1f, new Vector3(0, -90, -12));
+            var ball = Place("dirty_football", g, new Vector3(2.35f, 0, 0.55f), 40f);
+            SitOn(ball, 0f);
+            // Records that didn't make the wall, in a box by the set.
+            var box = Place("cardboard_box_01", g, new Vector3(-2.6f, 0, -1.65f), 80f);
+            SitOn(box, 0f);
+            var cb = BoundsOf(box);
             var sleeveMat = Plain("Sleeve", new Color(0.18f, 0.16f, 0.14f), 0.3f);
             for (int i = 0; i < 9; i++)
             {
@@ -233,14 +274,29 @@ namespace Esper.EditorTools
                 Block("Sleeve", g, new Vector3(cb.center.x - 0.08f + t * 0.16f, cb.min.y + 0.24f, cb.center.z + (i % 2) * 0.01f),
                     new Vector3(0.004f, 0.31f, 0.31f), sleeveMat, isStatic: false, rot: Quaternion.Euler(0, 75, 8 - t * 16));
             }
-            Album(g, "Albums/reanimation_front.jpg", new Vector3(-2.3f, 0.155f, -1.72f), Quaternion.Euler(0, -105, 0) * Quaternion.Euler(12, 0, 0));
-            Album(g, "Albums/lgseo_front.jpg", new Vector3(-2.45f, 0.155f, -1.45f), Quaternion.Euler(0, -80, 0) * Quaternion.Euler(14, 0, 0));
-            Album(g, "Albums/motm2_front.jpg", new Vector3(-2.75f, 0.155f, -1.4f), Quaternion.Euler(0, -55, 0) * Quaternion.Euler(10, 0, 0));
+            var plant = Place("potted_plant_02", g, new Vector3(-2.65f, 0, -2.25f), 30f, 0.85f);
+            SitOn(plant, 0f);
 
-            // Half-Life: a crowbar leaning by the door. Arsenal again: a ball under the ESPER desk.
-            Place("crowbar_01", g, new Vector3(hw - 0.06f, 0.28f, -1.55f), 0, 1f, new Vector3(0, -90, -12));
-            var ball = Place("dirty_football", g, new Vector3(2.35f, 0, 0.55f), 40f);
-            SitOn(ball, 0f);
+            stationAccent["taste"] = neonLight;
+            Remember("taste", cred, neon);
+        }
+
+        static void GameCase(Transform parent, string content, Vector3 pos, Quaternion rot)
+        {
+            var go = new GameObject("GameCase");
+            go.transform.SetParent(parent, false);
+            go.transform.SetPositionAndRotation(pos, rot);
+            var tex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>($"{ContentDir}/{content}");
+            var m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            m.SetTexture("_BaseMap", tex);
+            m.SetFloat("_Smoothness", 0.75f);
+            var face = new GameObject("Cover");
+            face.transform.SetParent(go.transform, false);
+            face.transform.localPosition = new Vector3(0, 0, -0.0076f);
+            face.transform.localScale = new Vector3(0.135f, 0.19f, 1);
+            face.AddComponent<MeshFilter>().sharedMesh = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
+            face.AddComponent<MeshRenderer>().sharedMaterial = SaveMat(m, "Game_" + System.IO.Path.GetFileNameWithoutExtension(content));
+            Block("Case", go.transform, Vector3.zero, new Vector3(0.137f, 0.192f, 0.014f), Plain("GameCaseShell", new Color(0.05f, 0.08f, 0.15f), 0.6f), isStatic: false);
         }
 
         static void Album(Transform parent, string content, Vector3 pos, Quaternion rot)

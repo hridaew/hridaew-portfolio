@@ -14,7 +14,7 @@ namespace Esper
         public Hotspot[] hotspots;
         public float parallaxDegrees = 1.4f;
         [Tooltip("Overview: how far you can look around the room toward the pointer.")]
-        public Vector2 overviewLook = new Vector2(26f, 5f);
+        public Vector2 overviewLook = new Vector2(18f, 4f);
         public float enhanceDuration = 1.9f;
 
         enum State { Overview, Focus, Enhance }
@@ -199,6 +199,12 @@ namespace Esper
             focused = null;
             Activate(overviewCamera);
             WebBridge.Emit("overview");
+        }
+
+        public void SetLights(string on)
+        {
+            var lights = GetComponent<RoomLights>();
+            if (lights) lights.Set(on == "1");
         }
 
         public void SetReducedMotion(string on)

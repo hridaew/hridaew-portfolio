@@ -5,7 +5,7 @@ Shader "Esper/RainGlass"
         _Tint ("Glass tint", Color) = (0.82, 0.9, 0.95, 1)
         _DropScale ("Drop scale (per metre)", Float) = 9
         _Refraction ("Refraction", Float) = 0.045
-        _Blur ("Condensation blur", Float) = 0.004
+        _Blur ("Condensation blur", Float) = 0.0012
         _Speed ("Rain speed", Float) = 1
         _StaticAmount ("Static beads", Range(0, 1)) = 0.8
         _SlideAmount ("Sliding drops", Range(0, 1)) = 0.9

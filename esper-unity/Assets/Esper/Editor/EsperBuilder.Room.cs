@@ -98,7 +98,7 @@ namespace Esper.EditorTools
             // Left unit fully down, with a few slats bent open at eye height — someone has been watching the street.
             BlindUnit(blinds, "Blind_A", WinX.x - 0.04f, mid - 0.01f, z, WinY.x + 0.06f, 0f, peek: true, seed: 3);
             // Right unit hauled up crooked, the stack bunched at the head.
-            BlindUnit(blinds, "Blind_B", mid + 0.01f, WinX.y + 0.04f, z, 1.08f, 5.5f, peek: false, seed: 11);
+            BlindUnit(blinds, "Blind_B", mid + 0.01f, WinX.y + 0.04f, z, 1.72f, 5.5f, peek: false, seed: 11);
         }
 
         static void BlindUnit(Transform parent, string name, float x0, float x1, float z, float bottomY, float crookDeg, bool peek, int seed)

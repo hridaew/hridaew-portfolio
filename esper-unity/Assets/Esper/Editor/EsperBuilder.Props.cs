@@ -181,38 +181,29 @@ namespace Esper.EditorTools
             return go;
         }
 
+        /// The ESPER bank: three monitors on the wall above the desk, the archive photographs at a size you can read.
         static void BuildPhotoLine()
         {
             float hw = RoomW / 2;
-            var line = Group("PhotoLine", props);
-            var wire = Plain("Wire", new Color(0.12f, 0.12f, 0.12f), 0.3f, 0.6f);
-            var clipMat = Plain("Clip", new Color(0.32f, 0.3f, 0.27f), 0.5f, 0.8f);
-            Vector3 a = new Vector3(hw - 0.06f, 2.12f, 0.35f), b = new Vector3(hw - 0.06f, 2.12f, 2.35f);
-            Vector3 Sag(float t) => Vector3.Lerp(a, b, t) + Vector3.down * (0.07f * 4f * t * (1f - t));
-            const int segs = 16;
-            for (int i = 0; i < segs; i++)
+            var g = Group("ESPER_Bank", props);
+            var photos = new[] { "wayne_archive_dsc05232awayne2soldiers.jpg", "wayne_archive_dsc05265acjapanesefamily.jpg", "wayne_archive_dsc05218ac_waynewong.jpg" };
+            var spots = new[] { (new Vector3(hw - 0.16f, 1.62f, 0.78f), -95f), (new Vector3(hw - 0.16f, 1.66f, 1.48f), -90f), (new Vector3(hw - 0.16f, 2.14f, 1.12f), -88f) };
+            for (int i = 0; i < 3; i++)
             {
-                var p0 = Sag(i / (float)segs); var p1 = Sag((i + 1) / (float)segs);
-                var seg = Block("Wire", line, (p0 + p1) / 2, new Vector3(0.0018f, 0.0018f, (p1 - p0).magnitude), wire, isStatic: false, rot: Quaternion.LookRotation(p1 - p0));
-                seg.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.On;
+                var mon = PlaceModel("monitor", g, spots[i].Item1, spots[i].Item2, 0.95f);
+                Display(mon, $"Obscura/{photos[i]}", brightness: 1.5f);
+                var mm = FindChild(mon, "Screen").GetComponent<MeshRenderer>().sharedMaterial;
+                mm.SetFloat("_Mono", 0.9f);
+                mm.SetColor("_Tint", new Color(0.8f, 0.95f, 1f));
+                var tex = mm.GetTexture("_MainTex");
+                // Fit the photograph inside the 16:10 panel without stretching (pillarbox).
+                float aspect = tex ? tex.width / (float)tex.height : 1f;
+                float sx = Mathf.Max(1f, 1.6f / aspect);
+                mm.SetTextureScale("_MainTex", new Vector2(sx, 1f));
+                mm.SetTextureOffset("_MainTex", new Vector2(-(sx - 1f) / 2f, 0f));
             }
-            Block("Hook_A", line, a, new Vector3(0.02f, 0.02f, 0.02f), clipMat);
-            Block("Hook_B", line, b, new Vector3(0.02f, 0.02f, 0.02f), clipMat);
-
-            var photos = Directory.GetFiles(ObscuraDir, "*.jpg").Select(p => p.Replace('\\', '/')).OrderBy(p => p).ToArray();
-            int[] pick = { 15, 3, 12, 18, 6, 14, 17 };
-            var rng = new System.Random(7);
-            for (int i = 0; i < pick.Length; i++)
-            {
-                float t = 0.08f + i * (0.84f / (pick.Length - 1));
-                var p = Sag(t);
-                float w = 0.12f + (float)rng.NextDouble() * 0.03f;
-                var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(photos[pick[i]]);
-                float h = w * (tex ? tex.height / (float)tex.width : 1.3f);
-                float sway = ((float)rng.NextDouble() - 0.5f) * 8f;
-                Print(line, photos[pick[i]], p + new Vector3(-0.004f, -h / 2 - 0.008f, 0), new Vector3(sway * 0.4f, 90f, sway), w, 0.006f);
-                Block("Clip", line, p + new Vector3(-0.004f, -0.006f, 0), new Vector3(0.008f, 0.022f, 0.016f), clipMat, isStatic: false);
-            }
+            var wash = Practical("BankGlow", g, new Vector3(hw - 0.6f, 1.8f, 1.12f), new Color(0.65f, 0.9f, 1f), 0.6f, 2.2f);
+            wash.shadows = LightShadows.None;
         }
     }
 }

@@ -15,6 +15,8 @@ Shader "Esper/CrtScreen"
         _Grid ("ESPER grid", Range(0, 1)) = 0
         _Mono ("Monochrome", Range(0, 1)) = 0
         _Glass ("Glass reflection", Range(0, 1)) = 0.18
+        _Vignette ("Vignette", Range(0, 1)) = 1
+        _ScanAmount ("Scanline depth", Range(0, 1)) = 0.35
     }
 
     SubShader
@@ -34,7 +36,7 @@ Shader "Esper/CrtScreen"
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_ST, _Tint, _EnhanceRect;
-                float _Brightness, _Power, _Curvature, _Scanlines, _Mask, _Noise, _Enhance, _Grid, _Mono, _Glass;
+                float _Brightness, _Power, _Curvature, _Scanlines, _Mask, _Noise, _Enhance, _Grid, _Mono, _Glass, _Vignette, _ScanAmount;
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; };
@@ -77,10 +79,12 @@ Shader "Esper/CrtScreen"
                 col.r = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, cuv + float2(0.0012, 0)).r;
                 col.g = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, cuv).g;
                 col.b = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, cuv - float2(0.0012, 0)).b;
+                // Letterbox / pillarbox: black outside the image instead of repeating it.
+                col *= step(0.0, cuv.x) * step(cuv.x, 1.0) * step(0.0, cuv.y) * step(cuv.y, 1.0);
                 float lum = dot(col, float3(0.299, 0.587, 0.114));
                 col = lerp(col, lum.xxx, _Mono);
 
-                float scan = 0.65 + 0.35 * sin(uv.y * _Scanlines * PI * 2.0);
+                float scan = 1.0 - _ScanAmount + _ScanAmount * sin(uv.y * _Scanlines * PI * 2.0);
                 float3 mask = lerp(1.0.xxx, float3(1.1, 0.9, 1.1) * (0.85 + 0.15 * frac(i.uv.x * _Scanlines * 1.5).xxx), _Mask);
                 col *= scan * mask;
                 col *= 1.0 - 0.06 * smoothstep(0.0, 1.0, frac(uv.y * 0.6 - t * 0.12));
@@ -92,7 +96,7 @@ Shader "Esper/CrtScreen"
                 float cross = smoothstep(0.0025, 0.0, min(g.x, g.y)) * step(max(g.x, g.y), 0.48);
                 col = lerp(col, float3(0.75, 0.95, 1.0), saturate(frame + cross * 0.6) * _Grid);
 
-                float vign = smoothstep(1.25, 0.35, length(c * float2(0.9, 1.0)));
+                float vign = lerp(1.0, smoothstep(1.25, 0.35, length(c * float2(0.9, 1.0))), _Vignette);
                 col *= vign * _Tint.rgb * _Brightness;
                 col *= picture * open;
                 col += float3(0.9, 0.95, 1.0) * smoothstep(0.02, 0.0, abs(uv.y - 0.5)) * (1.0 - beam) * step(0.001, _Power) * 3.0;

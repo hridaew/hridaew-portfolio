@@ -57,20 +57,26 @@ def scarf():
                 pass
             row.append(bm.verts.new((x + 0.0, y + ny * off, z + nz * off)))
         rows.append(row)
-    faces = []
+    uvl = bm.loops.layers.uv.new()
     for i in range(len(rows) - 1):
         for c in range(cols - 1):
             f = bm.faces.new((rows[i][c], rows[i][c + 1], rows[i + 1][c + 1], rows[i + 1][c]))
-            u = lengths[i] / total
-            x = abs(u - 0.5) * 2
-            f.material_index = 1 if (0.8 < x < 0.85 or 0.9 < x < 0.95) else 0
+            # U across the width, V along the length (0 = wall end, 1 = front end): the knit texture maps here.
+            for loop, (ci, ri) in zip(f.loops, ((c, i), (c + 1, i), (c + 1, i + 1), (c, i + 1))):
+                loop[uvl].uv = (ci / (cols - 1), lengths[ri] / total)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     me = bpy.data.meshes.new("Scarf")
     bm.to_mesh(me)
     o = bpy.data.objects.new("Scarf", me)
     bpy.context.collection.objects.link(o)
-    o.data.materials.append(red)
-    o.data.materials.append(white)
+    knit = bpy.data.materials.new("ScarfKnit")
+    knit.use_nodes = True
+    nt = knit.node_tree
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "textures", "scarf_knit.png"))
+    nt.links.new(tex.outputs["Color"], nt.nodes["Principled BSDF"].inputs["Base Color"])
+    nt.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.95
+    o.data.materials.append(knit)
     sol = o.modifiers.new("Thick", "SOLIDIFY")
     sol.thickness = T
     sol.offset = 0
