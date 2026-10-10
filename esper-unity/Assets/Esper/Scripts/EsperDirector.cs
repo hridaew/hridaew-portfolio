@@ -13,6 +13,8 @@ namespace Esper
         public CinemachineCamera overviewCamera;
         public Hotspot[] hotspots;
         public float parallaxDegrees = 1.4f;
+        [Tooltip("Overview: how far you can look around the room toward the pointer.")]
+        public Vector2 overviewLook = new Vector2(26f, 5f);
         public float enhanceDuration = 1.9f;
 
         enum State { Overview, Focus, Enhance }
@@ -84,10 +86,14 @@ namespace Esper
             if (state != State.Enhance && !reducedMotion)
             {
                 Vector2 n = new Vector2(pointer.x / Mathf.Max(1, Screen.width), pointer.y / Mathf.Max(1, Screen.height)) - Vector2.one * 0.5f;
-                parallax = Vector2.Lerp(parallax, n, 1f - Mathf.Exp(-dt * 2.5f));
+                bool overview = state == State.Overview;
+                parallax = Vector2.Lerp(parallax, n, 1f - Mathf.Exp(-dt * (overview ? 1.6f : 2.5f)));
                 var live = Live;
+                // In the overview the pointer turns your head across the room; up close it only breathes.
+                Vector2 range = overview ? overviewLook * 2f : new Vector2(parallaxDegrees * 1.6f, parallaxDegrees);
+                float ease(float v) => Mathf.Sign(v) * Mathf.SmoothStep(0f, 1f, Mathf.Abs(v) * 2f) * 0.5f;
                 if (live && baseRotation.TryGetValue(live, out var rot))
-                    live.transform.rotation = rot * Quaternion.Euler(-parallax.y * parallaxDegrees, parallax.x * parallaxDegrees * 1.6f, 0);
+                    live.transform.rotation = Quaternion.Euler(0, ease(parallax.x) * range.x, 0) * rot * Quaternion.Euler(-ease(parallax.y) * range.y, 0, 0);
             }
         }
 

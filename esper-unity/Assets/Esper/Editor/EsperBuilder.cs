@@ -86,7 +86,8 @@ namespace Esper.EditorTools
 
         public static GameObject Place(string model, Transform parent, Vector3 pos, float yaw, float scale = 1f, Vector3? euler = null)
         {
-            var path = Directory.GetFiles(Path.Combine(Models, model), "*.gltf").FirstOrDefault();
+            var dir = Path.Combine(Models, model);
+            var path = Directory.Exists(dir) ? Directory.GetFiles(dir, "*.gltf").FirstOrDefault() : null;
             var prefab = path != null ? AssetDatabase.LoadAssetAtPath<GameObject>(path.Replace('\\', '/')) : null;
             if (prefab == null) { Debug.LogError($"[esper] missing model {model}"); return new GameObject(model); }
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);

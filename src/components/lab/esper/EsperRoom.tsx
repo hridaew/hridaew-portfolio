@@ -23,7 +23,11 @@ type EsperEvent = CustomEvent<{ event: string; payload: string }>;
 
 const BUILD = "/esper/Build";
 const WORK = [
+  { id: "domis", title: "Domis", href: "/domis" },
+  { id: "virdio", title: "Virdio", href: "/virdio" },
   { id: "obscura", title: "OBSCURA", href: "/obscura" },
+  { id: "memory-care", title: "Memory Care", href: "/memory-care" },
+  { id: "wafflings", title: "Wafflings", href: null },
   { id: "about", title: "About", href: null },
 ] as const;
 

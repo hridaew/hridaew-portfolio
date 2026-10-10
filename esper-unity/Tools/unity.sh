@@ -5,4 +5,4 @@ LOG="Logs/${2:-batch}.log"
 "$U" -batchmode -quit -projectPath "E:/Documents/hridaew-portfolio/esper-unity" -executeMethod "$1" -logFile "$LOG" ${UNITY_ARGS}
 code=$?
 grep -E "error CS|Shader error|\[esper\]|Exception|Error:|ERROR" "$LOG" | grep -v "^UnityEngine" | head -60
-echo "exit $code"
+echo "exit $code"; exit $code

@@ -61,21 +61,12 @@ namespace Esper.EditorTools
             Print(prints, photos[9], new Vector3(hw - 0.58f, top + 0.004f, 1.38f), new Vector3(90, 0, 84), 0.13f, 0.002f);
             Print(prints, photos[16], new Vector3(hw - 0.9f, top + 0.003f, 1.15f), new Vector3(90, 0, 117), 0.1f, 0.002f);
 
-            // The rest of the room — set dressing that gives the corner a life around it.
-            var room = Group("Room", props);
-            var lounge = Place("mid_century_lounge_chair", room, new Vector3(-2.05f, 0, 1.55f), 145f);
-            SitOn(lounge, 0f);
-            var plant = Place("potted_plant_02", room, new Vector3(-2.55f, 0, 2.2f), 30f, 0.85f);
-            SitOn(plant, 0f);
-            var fan = Place("ceiling_fan", room, new Vector3(-0.2f, 0, 0.2f), 0f);
-            var fb = BoundsOf(fan);
-            fan.transform.position += Vector3.up * (RoomH - fb.max.y);
-            fan.AddComponent<Spin>().degreesPerSecond = 55f;
-            var clock = Place("wall_clock", room, new Vector3(-hw + 0.03f, 2.02f, 0.4f), 90f);
-            var cabinet = Place("drawer_cabinet", room, new Vector3(-hw + 0.27f, 0, -0.55f), 90f);
-            SitOn(cabinet, 0f);
-            var kettle = Place("vintage_electric_kettle", room, new Vector3(-hw + 0.3f, 0, -0.3f), 120f);
-            SitOn(kettle, BoundsOf(cabinet).max.y);
+            BuildRoomDressing();
+            BuildVirdio();
+            BuildDomis();
+            BuildMemoryCare();
+            BuildWafflings();
+            BuildTaste();
         }
 
         static void Recolour(GameObject go, Color tint, string name)

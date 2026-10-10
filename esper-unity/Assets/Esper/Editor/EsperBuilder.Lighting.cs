@@ -175,11 +175,20 @@ namespace Esper.EditorTools
             return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
-        public struct Shot { public string name; public Vector3 pos; public Vector3 target; public float fov; }
+        public struct Shot { public string name; public Vector3 pos; public Vector3 target; public float fov; public bool reviewOnly; }
+
+        static Vector3 Yawed(Vector3 pos, Vector3 target, float deg) => pos + Quaternion.Euler(0, deg, 0) * (target - pos);
+        static readonly Vector3 OverviewPos = new Vector3(0.35f, 1.58f, -2.3f), OverviewTarget = new Vector3(0.05f, 1.05f, 2.6f);
 
         public static readonly Shot[] Shots =
         {
-            new Shot { name = "overview", pos = new Vector3(-1.75f, 1.42f, -1.55f), target = new Vector3(1.35f, 1.05f, 1.75f), fov = 44f },
+            new Shot { name = "overview", pos = OverviewPos, target = OverviewTarget, fov = 50f },
+            new Shot { name = "overview_left", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, -26f), fov = 50f, reviewOnly = true },
+            new Shot { name = "overview_right", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, 26f), fov = 50f, reviewOnly = true },
+            new Shot { name = "domis", pos = new Vector3(0.1f, 1.38f, 0.1f), target = new Vector3(-0.45f, 0.98f, 1.1f), fov = 40f },
+            new Shot { name = "virdio", pos = new Vector3(-0.75f, 1.3f, -1.45f), target = new Vector3(-2.45f, 0.5f, -0.65f), fov = 46f },
+            new Shot { name = "memory", pos = new Vector3(-1.05f, 1.45f, 1.95f), target = new Vector3(-2.85f, 1.05f, 1.35f), fov = 44f },
+            new Shot { name = "wafflings", pos = new Vector3(1.25f, 1.5f, -1.45f), target = new Vector3(2.75f, 1.3f, -0.85f), fov = 44f },
             new Shot { name = "esper", pos = new Vector3(1.32f, 1.34f, 0.98f), target = new Vector3(2.66f, 1.02f, 1.5f), fov = 38f },
             new Shot { name = "window", pos = new Vector3(0.25f, 1.5f, 0.45f), target = new Vector3(-0.8f, 1.5f, 2.6f), fov = 40f },
         };
@@ -192,30 +201,39 @@ namespace Esper.EditorTools
             var director = root.gameObject.AddComponent<EsperDirector>();
             director.overviewCamera = vcams["overview"];
 
-            var obscura = new GameObject("Hotspot_Obscura").AddComponent<Hotspot>();
-            obscura.transform.SetParent(props, false);
-            obscura.id = "obscura";
-            obscura.url = "/obscura";
-            obscura.focusCamera = vcams["esper"];
-            obscura.accent = deskLamp;
-            obscura.screen = esperScreen.GetComponent<CrtScreen>();
+            Hotspot Spot(string id, string url, string shot, Bounds bounds, Light accent, CrtScreen screen, float boost = 1.8f)
+            {
+                var h = new GameObject("Hotspot_" + id).AddComponent<Hotspot>();
+                h.transform.SetParent(props, false);
+                h.id = id;
+                h.url = url;
+                h.focusCamera = vcams[shot];
+                h.accent = accent;
+                h.accentBoost = boost;
+                h.screen = screen;
+                h.enhanceRect = new Vector4(0.5f, 0.5f, 0.45f, 0.45f);
+                var c = h.gameObject.AddComponent<BoxCollider>();
+                c.center = bounds.center;
+                c.size = bounds.size + Vector3.one * 0.04f;
+                return h;
+            }
+
+            var deskB = deskBounds;
+            deskB.Encapsulate(deskB.max + Vector3.up * 0.7f);
+            var obscura = Spot("obscura", "/obscura", "esper", deskB, deskLamp, esperScreen.GetComponent<CrtScreen>());
             obscura.enhanceRect = new Vector4(0.47f, 0.6f, 0.34f, 0.34f);
-            var oc = obscura.gameObject.AddComponent<BoxCollider>();
-            oc.center = deskBounds.center + Vector3.up * 0.35f;
-            oc.size = deskBounds.size + new Vector3(0.05f, 0.7f, 0.05f);
+            var winB = new Bounds(new Vector3((WinX.x + WinX.y) / 2, (WinY.x + WinY.y) / 2, BackZ - 0.05f), new Vector3(WinX.y - WinX.x, WinY.y - WinY.x, 0.12f));
+            var about = Spot("about", "", "window", winB, streetSpill, null, 1.5f);
 
-            var about = new GameObject("Hotspot_Window").AddComponent<Hotspot>();
-            about.transform.SetParent(props, false);
-            about.id = "about";
-            about.url = "";
-            about.focusCamera = vcams["window"];
-            about.accent = streetSpill;
-            about.accentBoost = 1.5f;
-            var ac = about.gameObject.AddComponent<BoxCollider>();
-            ac.center = new Vector3((WinX.x + WinX.y) / 2, (WinY.x + WinY.y) / 2, BackZ - 0.05f);
-            ac.size = new Vector3(WinX.y - WinX.x, WinY.y - WinY.x, 0.12f);
-
-            director.hotspots = new[] { obscura, about };
+            director.hotspots = new[]
+            {
+                Spot("domis", "/domis", "domis", stationBounds["domis"], stationAccent["domis"], stationScreen["domis"]),
+                Spot("virdio", "/virdio", "virdio", stationBounds["virdio"], stationAccent["virdio"], stationScreen["virdio"]),
+                obscura,
+                Spot("memory-care", "/memory-care", "memory", stationBounds["memory-care"], stationAccent["memory-care"], stationScreen["memory-care"]),
+                Spot("wafflings", "", "wafflings", stationBounds["wafflings"], stationAccent["wafflings"], null),
+                about,
+            };
         }
 
         static void BuildCameras()
@@ -238,6 +256,7 @@ namespace Esper.EditorTools
             int prio = 20;
             foreach (var s in Shots)
             {
+                if (s.reviewOnly) continue;
                 var v = new GameObject("VCam_" + s.name).AddComponent<CinemachineCamera>();
                 v.transform.SetParent(cams, false);
                 v.transform.position = s.pos;
