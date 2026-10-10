@@ -1,0 +1,204 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Esper
+{
+    /// Overview -> focus -> enhance. Owns input, camera priorities and the page bridge.
+    /// Page -> Unity: SendMessage("ESPER", "Goto", id) / ("Back") / ("SetReducedMotion", "1").
+    public class EsperDirector : MonoBehaviour
+    {
+        public CinemachineCamera overviewCamera;
+        public Hotspot[] hotspots;
+        public float parallaxDegrees = 1.4f;
+        public float enhanceDuration = 1.9f;
+
+        enum State { Overview, Focus, Enhance }
+        State state = State.Overview;
+        Hotspot focused, hovered;
+        Camera cam;
+        CinemachineBrain brain;
+        readonly Dictionary<CinemachineCamera, Quaternion> baseRotation = new();
+        readonly Dictionary<CinemachineCamera, float> baseFov = new();
+        Vector2 parallax;
+        bool reducedMotion;
+
+        void Start()
+        {
+            cam = Camera.main;
+            brain = cam.GetComponent<CinemachineBrain>();
+            Remember(overviewCamera);
+            foreach (var h in hotspots) Remember(h.focusCamera);
+            Activate(overviewCamera);
+            WebBridge.Emit("ready");
+        }
+
+        void Remember(CinemachineCamera v)
+        {
+            if (v == null || baseRotation.ContainsKey(v)) return;
+            baseRotation[v] = v.transform.rotation;
+            baseFov[v] = v.Lens.FieldOfView;
+        }
+
+        void Activate(CinemachineCamera live)
+        {
+            overviewCamera.Priority = live == overviewCamera ? 20 : 0;
+            foreach (var h in hotspots)
+                if (h.focusCamera) h.focusCamera.Priority = h.focusCamera == live ? 20 : 0;
+        }
+
+        CinemachineCamera Live => state == State.Overview || focused == null ? overviewCamera : focused.focusCamera;
+
+        void Update()
+        {
+            var mouse = Mouse.current;
+            var touch = Touchscreen.current;
+            var kb = Keyboard.current;
+
+            Vector2 pointer = mouse != null ? mouse.position.ReadValue() : new Vector2(Screen.width, Screen.height) * 0.5f;
+            bool pressed = mouse != null && mouse.leftButton.wasPressedThisFrame;
+            if (touch != null && touch.primaryTouch.press.wasPressedThisFrame)
+            {
+                pointer = touch.primaryTouch.position.ReadValue();
+                pressed = true;
+            }
+
+            if (state != State.Enhance) UpdateHover(pointer);
+            float dt = Time.unscaledDeltaTime;
+            foreach (var h in hotspots)
+                h.hover = Mathf.MoveTowards(h.hover, h == hovered || h == focused ? 1f : 0f, dt * 3.5f);
+
+            if (pressed) OnPress();
+            if (kb != null)
+            {
+                if (kb.escapeKey.wasPressedThisFrame || kb.backspaceKey.wasPressedThisFrame) Back();
+                if ((kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame) && state == State.Focus) StartCoroutine(Enhance(focused));
+                for (int i = 0; i < hotspots.Length && i < 9; i++)
+                    if (kb[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) Select(hotspots[i]);
+            }
+            if (mouse != null && mouse.rightButton.wasPressedThisFrame) Back();
+
+            // Breathing parallax: the camera leans a degree toward the pointer.
+            if (state != State.Enhance && !reducedMotion)
+            {
+                Vector2 n = new Vector2(pointer.x / Mathf.Max(1, Screen.width), pointer.y / Mathf.Max(1, Screen.height)) - Vector2.one * 0.5f;
+                parallax = Vector2.Lerp(parallax, n, 1f - Mathf.Exp(-dt * 2.5f));
+                var live = Live;
+                if (live && baseRotation.TryGetValue(live, out var rot))
+                    live.transform.rotation = rot * Quaternion.Euler(-parallax.y * parallaxDegrees, parallax.x * parallaxDegrees * 1.6f, 0);
+            }
+        }
+
+        void UpdateHover(Vector2 pointer)
+        {
+            Hotspot hit = null;
+            if (cam && Physics.Raycast(cam.ScreenPointToRay(pointer), out var info, 30f))
+                hit = info.collider.GetComponentInParent<Hotspot>();
+            if (hit != hovered)
+            {
+                hovered = hit;
+                WebBridge.Emit("hover", hit ? hit.id : "");
+            }
+        }
+
+        void OnPress()
+        {
+            switch (state)
+            {
+                case State.Overview:
+                    if (hovered) Focus(hovered);
+                    break;
+                case State.Focus:
+                    if (hovered == focused) StartCoroutine(Enhance(focused));
+                    else if (hovered) Focus(hovered);
+                    else Back();
+                    break;
+            }
+        }
+
+        void Select(Hotspot h)
+        {
+            if (state == State.Focus && focused == h) StartCoroutine(Enhance(h));
+            else if (state != State.Enhance) Focus(h);
+        }
+
+        void Focus(Hotspot h)
+        {
+            focused = h;
+            state = State.Focus;
+            Activate(h.focusCamera);
+            WebBridge.Emit("focus", h.id);
+        }
+
+        IEnumerator Enhance(Hotspot h)
+        {
+            if (h == null || state == State.Enhance) yield break;
+            state = State.Enhance;
+            WebBridge.Emit("enhance-start", h.id);
+            var v = h.focusCamera;
+            Quaternion from = v.transform.rotation;
+            Vector3 aim = h.screen ? h.screen.transform.position : h.transform.position;
+            Quaternion to = Quaternion.LookRotation(aim - v.transform.position);
+            float fov0 = baseFov[v];
+            if (h.screen) h.screen.enhanceRect = h.enhanceRect;
+            float t = 0;
+            float duration = reducedMotion ? 0.35f : enhanceDuration;
+            while (t < 1f)
+            {
+                t += Time.unscaledDeltaTime / duration;
+                // Anticipation: a slight pull back before the push in.
+                float e = t < 0.18f ? -Mathf.Sin(t / 0.18f * Mathf.PI) * 0.04f : Mathf.SmoothStep(0, 1, (t - 0.18f) / 0.82f);
+                var lens = v.Lens;
+                lens.FieldOfView = Mathf.LerpUnclamped(fov0, h.enhanceFov, Mathf.Clamp(e, -0.1f, 1f));
+                v.Lens = lens;
+                v.transform.rotation = Quaternion.Slerp(from, to, Mathf.Clamp01(e * 1.4f));
+                if (h.screen)
+                {
+                    h.screen.grid = Mathf.Clamp01(t * 3f);
+                    h.screen.enhance = Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - 0.35f) / 0.65f));
+                }
+                yield return null;
+            }
+            WebBridge.Emit("enhance", h.url);
+            // If the page does not navigate (editor, blocked), settle back into focus.
+            yield return new WaitForSecondsRealtime(2.5f);
+            ResetEnhance(h);
+            state = State.Focus;
+        }
+
+        void ResetEnhance(Hotspot h)
+        {
+            var v = h.focusCamera;
+            var lens = v.Lens;
+            lens.FieldOfView = baseFov[v];
+            v.Lens = lens;
+            v.transform.rotation = baseRotation[v];
+            if (h.screen) { h.screen.enhance = 0; h.screen.grid = 0; }
+        }
+
+        // ---- page -> Unity ----
+
+        public void Goto(string id)
+        {
+            foreach (var h in hotspots)
+                if (h.id == id) { Select(h); return; }
+        }
+
+        public void Back()
+        {
+            if (state != State.Focus) return;
+            state = State.Overview;
+            focused = null;
+            Activate(overviewCamera);
+            WebBridge.Emit("overview");
+        }
+
+        public void SetReducedMotion(string on)
+        {
+            reducedMotion = on == "1";
+            if (brain) brain.DefaultBlend = new CinemachineBlendDefinition(reducedMotion ? CinemachineBlendDefinition.Styles.Cut : CinemachineBlendDefinition.Styles.EaseInOut, 1.4f);
+        }
+    }
+}

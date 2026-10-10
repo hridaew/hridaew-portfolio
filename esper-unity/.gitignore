@@ -1,0 +1,21 @@
+/Library/
+/Temp/
+/Obj/
+/Logs/
+/UserSettings/
+/Build/
+*.csproj
+*.sln
+*.slnx
+/Review/
+# Reproducible via Tools/fetch_polyhaven.py (ledger in ASSETS.md)
+/Assets/ThirdParty/
+/Assets/ThirdParty.meta
+# Rebuilt by EsperBuilder / EsperBake
+/Assets/Esper/Generated/
+/Assets/Esper/Generated.meta
+/Assets/Esper/Esper/
+/Assets/Esper/Esper.meta
+/Assets/Esper/Esper.unity
+/Assets/Esper/Esper.unity.meta
+/Data/
