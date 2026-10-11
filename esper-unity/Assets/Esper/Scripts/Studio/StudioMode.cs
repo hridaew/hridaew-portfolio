@@ -63,26 +63,12 @@ namespace Esper.Studio
 
         public void SetTool(string value) => tool = value == "note" ? Tool.Note : Tool.Select;
 
-        public void ApplyOverrides(string json)
-        {
-            if (string.IsNullOrEmpty(json)) return;
-            var o = JsonUtility.FromJson<Overrides>(json);
-            if (o == null) return;
-            StudioApply.Objects(transform, o);
-            StudioApply.Views(transform, o, director.CameraFor);
-            foreach (var v in o.views) director.Rebase(director.CameraFor(v.id));
-            var look = GetComponent<LookDev>();
-            foreach (var l in o.lights) look.Look($"light.{l.key}={l.value.ToString(CultureInfo.InvariantCulture)}");
-            foreach (var l in o.look) look.Look($"{l.key}={l.value.ToString(CultureInfo.InvariantCulture)}");
-            if (on) EmitScene();
-        }
-
         /// {"p":[x,y,z],"ry":deg,"s":scale}
         public void SetSelected(string json)
         {
             if (!selected) return;
             var o = JsonUtility.FromJson<ObjectOverride>(json);
-            selected.position = StudioApply.V(o.p);
+            selected.position = StudioPaths.V(o.p);
             selected.rotation = Quaternion.Euler(selected.eulerAngles.x, o.ry, selected.eulerAngles.z);
             selected.localScale = Vector3.one * Mathf.Max(0.05f, o.s);
             UpdateOutline();
@@ -171,7 +157,7 @@ namespace Esper.Studio
             {
                 var pin = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Destroy(pin.GetComponent<Collider>());
-                pin.transform.position = StudioApply.V(p.p);
+                pin.transform.position = StudioPaths.V(p.p);
                 pin.transform.localScale = Vector3.one * 0.05f;
                 pin.GetComponent<MeshRenderer>().sharedMaterial = PinMaterial();
                 pins.Add(pin);
@@ -202,7 +188,7 @@ namespace Esper.Studio
                     else
                     {
                         var s = StudioPaths.SelectableFor(hit.transform, transform);
-                        if (s) { Select(s); BeginDrag(ray); }
+                        if (s) { Select(s.transform); BeginDrag(ray); }
                         else Deselect();
                     }
                 }
@@ -290,7 +276,7 @@ namespace Esper.Studio
             var p = selected.position;
             WebBridge.Emit(evt, JsonUtility.ToJson(new ObjectOverride
             {
-                path = StudioPaths.PathOf(selected, transform),
+                path = selected.GetComponent<Esper.Live.LiveItem>().id,
                 p = new[] { p.x, p.y, p.z },
                 ry = selected.eulerAngles.y,
                 s = selected.localScale.x,
@@ -344,11 +330,12 @@ namespace Esper.Studio
         {
             var s = StudioPaths.SelectableFor(hit.transform, transform);
             var c = cam.transform;
+            string where = s ? s.id : hit.transform.name;
             WebBridge.Emit("studio-point", JsonUtility.ToJson(new PointInfo
             {
                 p = new[] { hit.point.x, hit.point.y, hit.point.z },
                 n = new[] { hit.normal.x, hit.normal.y, hit.normal.z },
-                path = s ? StudioPaths.PathOf(s, transform) : StudioPaths.PathOf(hit.transform, transform),
+                path = where,
                 cam = new[] { c.position.x, c.position.y, c.position.z, c.forward.x, c.forward.y, c.forward.z, cam.fieldOfView },
                 sx = pointer.x / Mathf.Max(1, Screen.width),
                 sy = 1f - pointer.y / Mathf.Max(1, Screen.height),
@@ -363,9 +350,8 @@ namespace Esper.Studio
         {
             var scene = new SceneInfo();
             var props = transform.Find("Props");
-            foreach (Transform station in props)
-                foreach (Transform obj in station)
-                    scene.objects.Add(StudioPaths.PathOf(obj, transform));
+            foreach (var li in props.GetComponentsInChildren<Esper.Live.LiveItem>(true))
+                if (li.transform.parent && li.transform.parent.parent == props) scene.objects.Add(li.id);
             foreach (var l in FindObjectsByType<Light>(FindObjectsSortMode.None).OrderBy(l => l.name))
                 scene.lights.Add(new ValueOverride { key = l.name, value = l.GetComponent<LightFlicker>() ? l.GetComponent<LightFlicker>().baseIntensity : l.intensity });
             scene.views.Add("overview");

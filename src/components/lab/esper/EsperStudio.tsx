@@ -11,14 +11,34 @@ import { cn } from "@/lib/utils";
  * - Note: click any point in the room and write what you want there; saved with a screenshot for Claude.
  * - Camera: fly (right-drag look, WASD, Q/E, Shift) and save the view to any station.
  * - Look / Lights / Fidelity: tune the render, or strip it back to clay.
- * Save layout writes esper-unity/Layout/overrides.json (baked by the scene builder; applied live on load).
+ * Every edit autosaves to esper-unity/Live/scene.json (the live spec); open pages re-apply it within a second
+ * and the next Unity build bakes it.
  */
 
 type Send = (method: string, value?: string) => void;
 type ObjectOverride = { path: string; p: number[]; ry: number; s: number };
 type ViewOverride = { id: string; pos: number[]; target: number[]; fov: number };
 type KV = { key: string; value: number };
-type Overrides = { objects: ObjectOverride[]; views: ViewOverride[]; lights: KV[]; look: KV[] };
+type Op = Record<string, unknown> & { op: string };
+
+/** Coalesce edits (slider drags) into one write per pause. Keyed so later edits replace earlier ones. */
+function usePatchQueue(onSaved: () => void) {
+  const queue = useRef(new Map<string, Op>());
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  return useCallback(
+    (key: string, op: Op) => {
+      queue.current.set(key, op);
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(async () => {
+        const ops = [...queue.current.values()];
+        queue.current.clear();
+        await fetch("/api/esper-live", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ops) });
+        onSaved();
+      }, 220);
+    },
+    [onSaved],
+  );
+}
 type SceneInfo = { objects: string[]; lights: KV[]; views: string[] };
 type Point = { p: number[]; n: number[]; path: string; cam: number[]; sx: number; sy: number };
 type Note = { id: string; text: string; point: number[]; path?: string; image?: string };
@@ -37,27 +57,16 @@ const LOOK_KEYS: Record<string, string> = {
 const geist = "font-[family-name:var(--font-geist)]";
 
 export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasElement | null }) {
-  const overrides = useRef<Overrides>({ objects: [], views: [], lights: [], look: [] });
   const [scene, setScene] = useState<SceneInfo | null>(null);
   const [selection, setSelection] = useState<ObjectOverride | null>(null);
   const [point, setPoint] = useState<Point | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [status, setStatus] = useState("");
 
-  const upsert = <T extends { key?: string; id?: string; path?: string }>(list: T[], item: T, by: keyof T) => {
-    const i = list.findIndex((x) => x[by] === item[by]);
-    if (i >= 0) list[i] = item;
-    else list.push(item);
-  };
+  const onSaved = useCallback(() => setStatus("Saved"), []);
+  const patch = usePatchQueue(onSaved);
 
-  // Load saved overrides once.
   useEffect(() => {
-    fetch("/api/esper-studio")
-      .then((r) => r.json())
-      .then((o: Overrides) => {
-        overrides.current = { objects: o.objects ?? [], views: o.views ?? [], lights: o.lights ?? [], look: o.look ?? [] };
-      })
-      .catch(() => {});
     fetch("/api/esper-notes")
       .then((r) => r.json())
       .then(setNotes)
@@ -77,21 +86,16 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       else if (event === "studio-moved") {
         const o = JSON.parse(payload) as ObjectOverride;
         setSelection(o);
-        upsert(overrides.current.objects, o, "path");
+        patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s });
       } else if (event === "studio-view") {
         const v = JSON.parse(payload) as ViewOverride;
-        upsert(overrides.current.views, v, "id");
-        setStatus(`Saved the camera to ${v.id}`);
+        patch(`view:${v.id}`, { op: "view", id: v.id, p: v.pos, target: v.target, fov: v.fov });
+        setStatus(`Camera saved to ${v.id}`);
       } else if (event === "studio-point") setPoint(JSON.parse(payload));
     };
     window.addEventListener("esper", on);
     return () => window.removeEventListener("esper", on);
-  }, []);
-
-  const save = useCallback(async () => {
-    await fetch("/api/esper-studio", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(overrides.current) });
-    setStatus("Layout saved");
-  }, []);
+  }, [patch]);
 
   // ---- Studio panel ----
   const studio = useDialKit(
@@ -100,9 +104,7 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       tool: { type: "select", options: ["Move", "Note"], default: "Move" },
       fidelity: [4, 0, 4, 1],
       flyCamera: false,
-      save: { type: "action", label: "Save layout" },
     },
-    { onAction: (a) => a === "save" && save() },
   );
   useEffect(() => send("SetTool", studio.tool === "Note" ? "note" : "select"), [studio.tool, send]);
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
@@ -122,17 +124,24 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
     lightsOn: false,
   });
   const lastLook = useRef<Record<string, number>>({});
+  const lookValues = useRef<Record<string, number>>({});
+  const lookReady = useRef(false);
   useEffect(() => {
     const parts: string[] = [];
+    const changed: Record<string, number> = {};
     for (const [k, key] of Object.entries(LOOK_KEYS)) {
       const v = look[k as keyof typeof look] as number;
       if (lastLook.current[k] === v) continue;
       lastLook.current[k] = v;
       parts.push(`${key}=${v}`);
-      upsert(overrides.current.look, { key, value: v }, "key");
+      changed[key] = v;
     }
     if (parts.length) send("Look", parts.join(";"));
-  }, [look, send]);
+    // The first pass only syncs Unity to the dials; persist real edits after that.
+    if (parts.length && lookReady.current) patch("look", { op: "look", values: { ...lookValues.current, ...changed } });
+    lookValues.current = { ...lookValues.current, ...changed };
+    lookReady.current = true;
+  }, [look, send, patch]);
   useEffect(() => send("SetLights", look.lightsOn ? "1" : "0"), [look.lightsOn, send]);
 
   // ---- Camera panel ----
@@ -163,8 +172,10 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   return (
     <>
       <DialRoot position="top-right" theme="dark" />
-      {scene && <LightsPanel key={scene.lights.map((l) => l.key).join()} lights={scene.lights} send={send} overrides={overrides} />}
-      {selection && <SelectionPanel selection={selection} send={send} onChange={(o) => upsert(overrides.current.objects, o, "path")} />}
+      {scene && <LightsPanel key={scene.lights.map((l) => l.key).join()} lights={scene.lights} send={send} patch={patch} />}
+      {selection && (
+        <SelectionPanel selection={selection} send={send} onChange={(o) => patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s })} />
+      )}
 
       {point && (
         <NoteComposer
@@ -214,7 +225,7 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   );
 }
 
-function LightsPanel({ lights, send, overrides }: { lights: KV[]; send: Send; overrides: React.RefObject<Overrides> }) {
+function LightsPanel({ lights, send, patch }: { lights: KV[]; send: Send; patch: (key: string, op: Op) => void }) {
   // Screen glows and ceiling tubes are driven by their own components; leave them out.
   const editable = useMemo(() => lights.filter((l) => !/Glow$|TubeLight/.test(l.key)), [lights]);
   const config = useMemo(
@@ -230,10 +241,7 @@ function LightsPanel({ lights, send, overrides }: { lights: KV[]; send: Send; ov
       if (v === undefined || last.current[l.key] === v) continue;
       if (last.current[l.key] !== undefined) {
         parts.push(`light.${l.key}=${v}`);
-        const list = overrides.current.lights;
-        const i = list.findIndex((x) => x.key === l.key);
-        if (i >= 0) list[i] = { key: l.key, value: v };
-        else list.push({ key: l.key, value: v });
+        patch(`light:${l.key}`, { op: "light", id: l.key, intensity: v });
       }
       last.current[l.key] = v;
     }

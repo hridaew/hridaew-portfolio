@@ -18,6 +18,7 @@ namespace Esper.EditorTools
         const string MatDir = "Assets/Esper/Generated/Materials";
         const string Models = "Assets/ThirdParty/PolyHaven/Models";
         const string Textures = "Assets/ThirdParty/PolyHaven/Textures";
+        const string ContentDir = "Assets/Esper/Content";
 
         // Room interior extents (metres). Window wall is +Z.
         // A loft: room to breathe between the stations, one long window as the hero.
@@ -45,15 +46,13 @@ namespace Esper.EditorTools
             BuildWindow();
             BuildBlinds();
             BuildCity();
-            BuildProps();
-            BuildPhotoLine();
             BuildLights();
             BuildRoomLights();
             BuildCityLife();
             BuildAtmosphere();
             BuildCameras();
             BuildInteraction();
-            ApplyStudioOverrides();
+            BuildLiveScene();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };

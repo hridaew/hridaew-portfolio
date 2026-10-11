@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEditor;
 using UnityEngine;
@@ -21,17 +22,6 @@ namespace Esper.EditorTools
             cityLight.shadowBias = 0.02f;
             cityLight.shadowNormalBias = 0.1f;
             cityLight.gameObject.AddComponent<SlowSweep>();
-
-            // Desk lamp: sodium-warm cone onto the ESPER work surface.
-            var lampLight = deskLamp = NewLight("DeskLamp", LightType.Spot, new Color(1f, 0.5f, 0.2f), 7f);
-            lampLight.transform.position = new Vector3(RoomW / 2 - 0.42f, deskBounds.max.y + 0.62f, 1.82f);
-            lampLight.transform.rotation = Quaternion.LookRotation(new Vector3(-0.5f, -1f, -0.45f));
-            lampLight.spotAngle = 78f;
-            lampLight.innerSpotAngle = 36f;
-            lampLight.range = 4f;
-            lampLight.shadows = LightShadows.Soft;
-            lampLight.gameObject.AddComponent<LightFlicker>().jitter = 0.015f;
-            AimLampAtBulb(lampModel, lampTarget);
 
             // Spill from the street: a cool wash on the window wall and ceiling.
             var spill = streetSpill = NewLight("StreetSpill", LightType.Spot, new Color(0.3f, 0.55f, 0.75f), 0.35f);
@@ -188,43 +178,24 @@ namespace Esper.EditorTools
         static void BuildInteraction()
         {
             var director = root.gameObject.AddComponent<EsperDirector>();
+            director.overviewCamera = vcams["overview"];
+            director.hotspots = new Hotspot[0];
             var look = root.gameObject.AddComponent<LookDev>();
             look.volumetric = AssetDatabase.LoadAssetAtPath<Material>($"{MatDir}/Volumetric.mat");
             look.post = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Esper/Generated/EsperPost.asset");
             root.gameObject.AddComponent<Esper.Studio.StudioMode>();
-            director.overviewCamera = vcams["overview"];
+            root.gameObject.AddComponent<Esper.Live.LiveScene>();
+        }
 
-            Hotspot Spot(string id, string url, string shot, Bounds bounds, Light accent, CrtScreen screen, float boost = 1.8f)
-            {
-                var h = new GameObject("Hotspot_" + id).AddComponent<Hotspot>();
-                h.transform.SetParent(props, false);
-                h.id = id;
-                h.url = url;
-                h.focusCamera = vcams[shot];
-                h.accent = accent;
-                h.accentBoost = boost;
-                h.screen = screen;
-                h.enhanceRect = new Vector4(0.5f, 0.5f, 0.45f, 0.45f);
-                var c = h.gameObject.AddComponent<BoxCollider>();
-                c.center = bounds.center;
-                c.size = bounds.size + Vector3.one * 0.04f;
-                return h;
-            }
-
-            var deskB = deskBounds;
-            deskB.Encapsulate(deskB.max + Vector3.up * 0.7f);
-            var obscura = Spot("obscura", "/obscura", "esper", deskB, deskLamp, esperScreen.GetComponent<CrtScreen>());
-            obscura.enhanceRect = new Vector4(0.47f, 0.6f, 0.34f, 0.34f);
-
-            director.hotspots = new[]
-            {
-                Spot("domis", "/domis", "domis", stationBounds["domis"], stationAccent["domis"], stationScreen["domis"]),
-                Spot("virdio", "/virdio", "virdio", stationBounds["virdio"], stationAccent["virdio"], stationScreen["virdio"]),
-                obscura,
-                Spot("memory-care", "/memory-care", "memory", stationBounds["memory-care"], stationAccent["memory-care"], stationScreen["memory-care"]),
-                Spot("wafflings", "", "wafflings", stationBounds["wafflings"], stationAccent["wafflings"], null),
-                Spot("taste", "", "taste", stationBounds["taste"], stationAccent["taste"], null, 1.4f),
-            };
+        /// Everything placed in the room comes from Live/scene.json — the same spec the page applies live.
+        static void BuildLiveScene()
+        {
+            var spec = Esper.Live.LiveJson.Scene(File.ReadAllText(EsperLive.ScenePath));
+            root.GetComponent<Esper.Live.LiveScene>().ApplyEditor(spec, new EsperLive.EditorServices());
+            var lib = root.gameObject.AddComponent<Esper.Live.LiveLibrary>();
+            lib.materials = AssetDatabase.FindAssets("t:Material", new[] { MatDir })
+                .Select(g => AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(g))).ToArray();
+            Debug.Log($"[esper] live scene: {spec.items.Count} items, {spec.lights.Count} lights, {spec.stations.Count} stations");
         }
 
         static void BuildCameras()
@@ -247,7 +218,7 @@ namespace Esper.EditorTools
             int prio = 20;
             foreach (var s in Shots)
             {
-                if (s.reviewOnly) continue;
+                if (s.reviewOnly || s.name != "overview") continue;
                 var v = new GameObject("VCam_" + s.name).AddComponent<CinemachineCamera>();
                 v.transform.SetParent(cams, false);
                 v.transform.position = s.pos;

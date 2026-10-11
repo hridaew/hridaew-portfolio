@@ -43,6 +43,7 @@ export function EsperRoom() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     let cancelled = false;
+    let liveEvents: EventSource | null = null;
     // Studio: internal tooling, dev only (/lab/esper?studio).
     const studioMode = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("studio");
     setStudio(studioMode);
@@ -92,14 +93,21 @@ export function EsperRoom() {
       if (event === "ready") {
         setReady(true);
         const u = unityRef.current;
-        // Hand-placed layout from Studio, applied live so edits show without a Unity rebuild.
-        fetch(process.env.NODE_ENV !== "production" ? "/api/esper-studio" : "/esper/overrides.json")
-          .then((r) => (r.ok ? r.text() : ""))
-          .then((json) => {
-            if (json) unityRef.current?.SendMessage("ESPER", "ApplyOverrides", json);
-            if (studioMode) unityRef.current?.SendMessage("ESPER", "Enable", "1");
-          })
-          .catch(() => studioMode && unityRef.current?.SendMessage("ESPER", "Enable", "1"));
+        // Live scene (dev): the room follows esper-unity/Live/scene.json as it changes — from Studio, an
+        // editor, or Claude. Production runs the baked build, which already is that file.
+        if (process.env.NODE_ENV !== "production") {
+          // Absolute: glTFast treats relative URLs as local file paths.
+          u?.SendMessage("ESPER", "SetAssetBase", `${window.location.origin}/api/esper-asset/`);
+          const applyLive = () =>
+            fetch("/api/esper-live", { cache: "no-store" })
+              .then((r) => r.text())
+              .then((json) => unityRef.current?.SendMessage("ESPER", "ApplyScene", json))
+              .catch(() => {});
+          applyLive().then(() => studioMode && unityRef.current?.SendMessage("ESPER", "Enable", "1"));
+          liveEvents?.close();
+          liveEvents = new EventSource("/api/esper-live/events");
+          liveEvents.addEventListener("change", applyLive);
+        }
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reduced) u?.SendMessage("ESPER", "SetReducedMotion", "1");
         // Up close, subjects sit left of the dossier on wide screens.
@@ -137,6 +145,7 @@ export function EsperRoom() {
 
     return () => {
       cancelled = true;
+      liveEvents?.close();
       window.removeEventListener("esper", onEsper);
       window.removeEventListener("pointerdown", dismissTitle);
       window.removeEventListener("keydown", onKey);

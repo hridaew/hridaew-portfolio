@@ -26,7 +26,15 @@ namespace Esper.EditorTools
             foreach (var probe in Object.FindObjectsByType<ReflectionProbe>(FindObjectsSortMode.None)) probe.RenderProbe();
 
             string only = System.Environment.GetEnvironmentVariable("ESPER_SHOT");
-            foreach (var s in EsperBuilder.Shots.Where(s => string.IsNullOrEmpty(only) || only.Split(',').Contains(s.name)))
+            // Overview variants from the builder, then every view in the live spec.
+            var shots = EsperBuilder.Shots.Where(s => s.name.StartsWith("overview")).ToList();
+            var spec = Esper.Live.LiveJson.Scene(File.ReadAllText(EsperLive.ScenePath));
+            foreach (var v in spec.views)
+            {
+                if (v.id == "overview") continue;
+                shots.Add(new EsperBuilder.Shot { name = v.id, pos = Esper.Live.LiveFactory.V(v.p, Vector3.zero), target = Esper.Live.LiveFactory.V(v.target, Vector3.forward), fov = v.fov });
+            }
+            foreach (var s in shots.Where(s => string.IsNullOrEmpty(only) || only.Split(',').Contains(s.name)))
             {
                 cam.transform.SetPositionAndRotation(s.pos, Quaternion.LookRotation(s.target - s.pos));
                 cam.fieldOfView = s.fov;

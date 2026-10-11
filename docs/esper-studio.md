@@ -2,14 +2,20 @@
 
 Open **http://localhost:3000/lab/esper?studio** (dev server only). The DialKit panel sits top right; collapse it to see the whole frame.
 
+## Everything is live
+The room is described by one file: **`esper-unity/Live/scene.json`** (items, lights, camera views, stations, look). It is the source of truth.
+- Studio edits autosave to it as you make them. There is no Save button.
+- Any change to the file, whether from Studio, a text editor or Claude, appears in every open tab within a second. There is no reload or rebuild.
+- Moves only shift the object. Screen, photo and tint changes re-dress it in place. A new model or a new `src` loads it on the fly from the Unity project.
+- A Unity rebuild (`Tools/rebuild.sh --web`) bakes the same file into the shipped build and its lighting. Rebuild when you are happy with a layout; you don't need to while iterating.
+
 ## Arrange the room
 - **Tool: Move.** Click an object to select it (cyan box). Drag to slide it across the floor. Hold `[` or `]` to rotate.
 - **Selection** dials fine-tune X, Y, Z, rotation and scale. **Drop onto surface** sits it on whatever is below.
-- **Save layout** writes `esper-unity/Layout/overrides.json`. The live page applies it on load; the next Unity rebuild bakes it in.
 
 ## Cameras
 - **Fly camera: On.** Right-drag to look, WASD to move, Q/E down/up, Shift for speed. FOV dial in **Camera**.
-- Pick a **view** (overview or a station) and **Save camera to view**, then **Save layout**.
+- Pick a **view** (overview or a station), then **Save camera to view**.
 - **Go to view** / **Back to the room** to check the result with the normal camera.
 
 ## Light and look
@@ -19,4 +25,4 @@ Open **http://localhost:3000/lab/esper?studio** (dev server only). The DialKit p
 
 ## Point and prompt
 - **Tool: Note.** Click anywhere in the room, write what you want there, Ctrl+Enter to save.
-- Notes land in `esper-unity/Notes/notes.json` with the exact 3D point, the surface, the camera and a screenshot. Ask Claude to "work through the Studio notes".
+- Notes land in `esper-unity/Notes/notes.json` with the exact 3D point, the surface, the camera and a screenshot. Ask Claude to "work through the Studio notes". The changes come back through `scene.json`, so you watch them happen in place.

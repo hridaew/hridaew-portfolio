@@ -1,0 +1,13 @@
+<linker>
+  <!-- Live scene specs are created by Newtonsoft via reflection; keep them through IL2CPP stripping. -->
+  <assembly fullname="Assembly-CSharp">
+    <namespace fullname="Esper.Live" preserve="all"/>
+  </assembly>
+  <!-- Live items can arrive with colliders the baked scene never referenced. -->
+  <assembly fullname="UnityEngine.PhysicsModule">
+    <type fullname="UnityEngine.SphereCollider" preserve="all"/>
+    <type fullname="UnityEngine.BoxCollider" preserve="all"/>
+    <type fullname="UnityEngine.CapsuleCollider" preserve="all"/>
+    <type fullname="UnityEngine.MeshCollider" preserve="all"/>
+  </assembly>
+</linker>
