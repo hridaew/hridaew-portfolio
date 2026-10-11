@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 /**
  * Studio: internal tooling for arranging the room. Dev only (/lab/esper?studio).
  * - Move: click an object, drag it across the floor, fine-tune with the Selection dials, [ ] to rotate.
- * - Note: click any point in the room and write what you want there; saved with a screenshot for Claude.
+ * - Prompt: click any point in the room and say what should change; an agent edits the live scene right away
+ *   (api/esper-prompt) and you watch it land. Each prompt can be undone.
  * - Camera: fly (right-drag look, WASD, Q/E, Shift) and save the view to any station.
  * - Look / Lights / Fidelity: tune the render, or strip it back to clay.
  * Every edit autosaves to esper-unity/Live/scene.json (the live spec); open pages re-apply it within a second
@@ -41,7 +42,9 @@ function usePatchQueue(onSaved: () => void) {
 }
 type SceneInfo = { objects: string[]; lights: KV[]; views: string[] };
 type Point = { p: number[]; n: number[]; path: string; cam: number[]; sx: number; sy: number };
-type Note = { id: string; text: string; point: number[]; path?: string; image?: string };
+type Status = "queued" | "running" | "done" | "failed" | "undone";
+type Note = { id: string; text: string; point: number[]; path?: string; image?: string; status?: Status; reply?: string };
+type Job = { id: string; text: string; sx: number; sy: number; status: Status; step: string; reply: string };
 
 const LOOK_KEYS: Record<string, string> = {
   exposure: "exposure",
@@ -62,19 +65,21 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   const [point, setPoint] = useState<Point | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [status, setStatus] = useState("");
+  const [active, setActive] = useState<Job | null>(null);
 
   const onSaved = useCallback(() => setStatus("Saved"), []);
   const patch = usePatchQueue(onSaved);
 
   useEffect(() => {
-    fetch("/api/esper-notes")
+    fetch("/api/esper-prompt")
       .then((r) => r.json())
       .then(setNotes)
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    send("SetPins", JSON.stringify({ pins: notes.map((n) => ({ p: n.point })) }));
+    const open = notes.filter((n) => n.status === "queued" || n.status === "running" || !n.status);
+    send("SetPins", JSON.stringify({ pins: open.map((n) => ({ p: n.point })) }));
   }, [notes, send]);
 
   // Unity -> Studio events.
@@ -97,16 +102,61 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
     return () => window.removeEventListener("esper", on);
   }, [patch]);
 
+  // ---- Point and prompt: an agent edits the live scene while you watch ----
+  const runPrompt = useCallback(
+    async (text: string, at: Point) => {
+      setPoint(null);
+      const imageData = canvas ? canvas.toDataURL("image/png") : undefined;
+      const res = await fetch("/api/esper-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, point: at.p, normal: at.n, path: at.path, camera: at.cam, screen: [at.sx, at.sy], imageData }),
+      });
+      const id = res.headers.get("X-Prompt-Id") ?? `local-${Date.now()}`;
+      setActive({ id, text, sx: at.sx, sy: at.sy, status: "queued", step: "Thinking", reply: "" });
+      setNotes((all) => [...all, { id, text, point: at.p, path: at.path, status: "queued" }]);
+      const set = (patch: Partial<Job>) => {
+        setActive((a) => (a && a.id === id ? { ...a, ...patch } : a));
+        if (patch.status || patch.reply)
+          setNotes((all) => all.map((n) => (n.id === id ? { ...n, ...(patch.status && { status: patch.status }), ...(patch.reply && { reply: patch.reply }) } : n)));
+      };
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      while (reader) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        let i: number;
+        while ((i = buf.indexOf("\n")) >= 0) {
+          const line = buf.slice(0, i);
+          buf = buf.slice(i + 1);
+          if (!line.trim()) continue;
+          const e = JSON.parse(line) as { type: string; status?: Status; label?: string; text?: string };
+          if (e.type === "status" && e.status) set({ status: e.status });
+          if (e.type === "step" && e.label) set({ step: e.label });
+          if (e.type === "reply") set({ reply: e.text ?? "" });
+        }
+      }
+    },
+    [canvas],
+  );
+  const undo = useCallback(async (id: string) => {
+    await fetch("/api/esper-prompt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ undo: id }) });
+    setActive((a) => (a && a.id === id ? { ...a, status: "undone", reply: "Undone" } : a));
+    setNotes((all) => all.map((n) => (n.id === id ? { ...n, status: "undone" } : n)));
+  }, []);
+
   // ---- Studio panel ----
   const studio = useDialKit(
     "Studio",
     {
-      tool: { type: "select", options: ["Move", "Note"], default: "Move" },
+      tool: { type: "select", options: ["Move", "Prompt"], default: "Move" },
       fidelity: [4, 0, 4, 1],
       flyCamera: false,
     },
   );
-  useEffect(() => send("SetTool", studio.tool === "Note" ? "note" : "select"), [studio.tool, send]);
+  useEffect(() => send("SetTool", studio.tool === "Prompt" ? "note" : "select"), [studio.tool, send]);
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
   useEffect(() => send("SetFly", studio.flyCamera ? "1" : "0"), [studio.flyCamera, send]);
 
@@ -177,42 +227,33 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
         <SelectionPanel selection={selection} send={send} onChange={(o) => patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s })} />
       )}
 
-      {point && (
-        <NoteComposer
-          point={point}
-          onCancel={() => setPoint(null)}
-          onSave={async (text) => {
-            const imageData = canvas ? canvas.toDataURL("image/png") : undefined;
-            const res = await fetch("/api/esper-notes", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ text, point: point.p, normal: point.n, path: point.path, camera: point.cam, screen: [point.sx, point.sy], imageData }),
-            });
-            const note = (await res.json()) as Note;
-            setNotes((n) => [...n, note]);
-            setPoint(null);
-            setStatus("Note saved for Claude");
-          }}
-        />
-      )}
+      {point && <PromptComposer point={point} onCancel={() => setPoint(null)} onSubmit={(text) => runPrompt(text, point)} />}
+      {active && <PromptStatus job={active} onUndo={() => undo(active.id)} onClose={() => setActive(null)} />}
 
       <div className={cn("pointer-events-auto fixed bottom-5 left-5 z-20 w-[300px] text-white", geist)}>
         {notes.length > 0 && (
           <div className="mb-2 max-h-[40vh] overflow-y-auto rounded-2xl bg-black/60 p-2 backdrop-blur-xl scrollbar-hide">
             {notes.map((n) => (
-              <div key={n.id} className="flex items-start justify-between gap-2 rounded-xl px-2 py-1.5 text-[12.5px] hover:bg-white/[0.06]">
-                <span className="text-white/85">{n.text}</span>
-                <button
-                  type="button"
-                  aria-label="Delete note"
-                  className="shrink-0 text-white/40 hover:text-white"
-                  onClick={async () => {
-                    await fetch("/api/esper-notes", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: n.id }) });
-                    setNotes((all) => all.filter((x) => x.id !== n.id));
-                  }}
-                >
-                  ×
-                </button>
+              <div key={n.id} className="group flex items-start justify-between gap-2 rounded-xl px-2 py-1.5 text-[12.5px] hover:bg-white/[0.06]">
+                <span className={cn("text-white/85", n.status === "undone" && "text-white/35 line-through")}>
+                  {n.text}
+                  {n.reply && n.status !== "undone" && <span className="mt-0.5 block text-white/45">{n.reply}</span>}
+                </span>
+                <span className="flex shrink-0 items-center gap-2 pt-1">
+                  {(n.status === "queued" || n.status === "running") && <Pulse />}
+                  {n.status === "failed" && <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b5e]" aria-label="Failed" />}
+                  <button
+                    type="button"
+                    aria-label="Remove"
+                    className="-mt-1 text-white/30 opacity-0 hover:text-white group-hover:opacity-100 focus-visible:opacity-100"
+                    onClick={async () => {
+                      await fetch("/api/esper-notes", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: n.id }) });
+                      setNotes((all) => all.filter((x) => x.id !== n.id));
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
               </div>
             ))}
           </div>
@@ -283,41 +324,68 @@ function SelectionPanel({ selection, send, onChange }: { selection: ObjectOverri
   return null;
 }
 
-function NoteComposer({ point, onSave, onCancel }: { point: Point; onSave: (text: string) => void; onCancel: () => void }) {
+function PromptComposer({ point, onSubmit, onCancel }: { point: Point; onSubmit: (text: string) => void; onCancel: () => void }) {
   const [text, setText] = useState("");
-  const left = `clamp(16px, calc(${point.sx * 100}% + 14px), calc(100% - 660px))`;
-  const top = `clamp(16px, calc(${point.sy * 100}% - 20px), calc(100% - 200px))`;
+  const target = point.path.split("/").slice(-1)[0].replace(/#\d+$/, "");
   return (
-    <div className={cn("pointer-events-auto fixed z-[2147483000] w-[320px] rounded-[22px] bg-[rgba(30,30,34,0.72)] p-3 text-white shadow-2xl backdrop-blur-2xl", geist)} style={{ left, top }}>
-      <p className="px-1 pb-2 text-[12px] text-white/55">{point.path.split("/").slice(-1)[0].replace(/#\d+$/, "")}</p>
+    <div className={cn(glass, "w-[320px] p-3")} style={anchor(point.sx, point.sy)}>
+      <p className="px-1 pb-2 text-[12px] text-white/55">{target}</p>
       <textarea
         autoFocus
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && text.trim()) onSave(text.trim());
+          if (e.key === "Enter" && !e.shiftKey && text.trim()) {
+            e.preventDefault();
+            onSubmit(text.trim());
+          }
           if (e.key === "Escape") onCancel();
         }}
-        placeholder="What should be here?"
-        rows={3}
+        placeholder="What should change here?"
+        rows={2}
         className="w-full resize-none rounded-xl bg-white/[0.08] px-3 py-2 text-[14px] leading-snug outline-none placeholder:text-white/40 focus:bg-white/[0.12]"
       />
-      <div className="mt-2 flex justify-end gap-2">
-        <button type="button" onClick={onCancel} className="rounded-full px-3 py-1.5 text-[13px] text-white/70 hover:bg-white/[0.08]">
-          Cancel
-        </button>
-        <button
-          type="button"
-          disabled={!text.trim()}
-          onClick={() => onSave(text.trim())}
-          className="rounded-full bg-white px-3.5 py-1.5 text-[13px] font-semibold text-black disabled:opacity-40"
-        >
-          Save note
-        </button>
-      </div>
     </div>
   );
 }
+
+function PromptStatus({ job, onUndo, onClose }: { job: Job; onUndo: () => void; onClose: () => void }) {
+  const working = job.status === "queued" || job.status === "running";
+  return (
+    <div className={cn(glass, "w-[320px] px-4 py-3")} style={anchor(job.sx, job.sy)} role="status" aria-live="polite">
+      <p className="text-[13px] text-white/50">{job.text}</p>
+      <div className="mt-1.5 flex items-start gap-2.5 text-[14px] leading-snug">
+        {working && <Pulse className="mt-[7px]" />}
+        <span className={cn("text-white/90", job.status === "failed" && "text-[#ffb4ac]")}>
+          {working ? (job.status === "queued" ? "Waiting for the previous change" : job.step) : job.reply || (job.status === "undone" ? "Undone" : "Done")}
+        </span>
+      </div>
+      {!working && (
+        <div className="mt-2.5 flex justify-end gap-1">
+          {job.status === "done" && (
+            <button type="button" onClick={onUndo} className="rounded-full px-3 py-1 text-[13px] text-white/75 hover:bg-white/[0.08]">
+              Undo
+            </button>
+          )}
+          <button type="button" onClick={onClose} className="rounded-full bg-white/[0.12] px-3 py-1 text-[13px] font-medium text-white hover:bg-white/[0.18]">
+            Done
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Pulse({ className }: { className?: string }) {
+  return <span className={cn("block h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-[#7fe3ff]", className)} />;
+}
+
+const glass = "pointer-events-auto fixed z-[2147483000] rounded-[22px] bg-[rgba(30,30,34,0.72)] text-white shadow-2xl backdrop-blur-2xl font-[family-name:var(--font-geist)]";
+// Beside the clicked point, kept clear of the screen edges and the DialKit panel.
+const anchor = (sx: number, sy: number) => ({
+  left: `clamp(16px, calc(${sx * 100}% + 14px), calc(100% - 660px))`,
+  top: `clamp(16px, calc(${sy * 100}% - 20px), calc(100% - 200px))`,
+});
 
 const round = (v: number) => Math.round(v * 100) / 100;
 const r2 = round;
