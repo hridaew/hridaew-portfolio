@@ -179,18 +179,18 @@ namespace Esper.EditorTools
 
         static Vector3 Yawed(Vector3 pos, Vector3 target, float deg) => pos + Quaternion.Euler(0, deg, 0) * (target - pos);
         // The opening frame: the window and the ESPER desk beside it, shafts crossing the floor.
-        static readonly Vector3 OverviewPos = new Vector3(-1.2f, 1.5f, -1.8f), OverviewTarget = new Vector3(1.35f, 1.02f, 1.7f);
+        static readonly Vector3 OverviewPos = new Vector3(0.3f, 1.72f, -2.5f), OverviewTarget = new Vector3(0.15f, 0.95f, 2.6f);
 
         public static readonly Shot[] Shots =
         {
-            new Shot { name = "overview", pos = OverviewPos, target = OverviewTarget, fov = 46f },
-            new Shot { name = "overview_left", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, -18f), fov = 46f, reviewOnly = true },
-            new Shot { name = "overview_right", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, 18f), fov = 46f, reviewOnly = true },
-            new Shot { name = "domis", pos = new Vector3(0.1f, 1.38f, 0.1f), target = new Vector3(-0.45f, 0.98f, 1.1f), fov = 40f },
-            new Shot { name = "virdio", pos = new Vector3(-0.75f, 1.3f, -1.45f), target = new Vector3(-2.45f, 0.5f, -0.65f), fov = 46f },
+            new Shot { name = "overview", pos = OverviewPos, target = OverviewTarget, fov = 60f },
+            new Shot { name = "overview_left", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, -10f), fov = 60f, reviewOnly = true },
+            new Shot { name = "overview_right", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, 10f), fov = 60f, reviewOnly = true },
+            new Shot { name = "domis", pos = new Vector3(0.75f, 1.42f, -0.35f), target = new Vector3(0.12f, 0.95f, 1.4f), fov = 46f },
+            new Shot { name = "virdio", pos = new Vector3(-0.55f, 1.4f, -1.85f), target = new Vector3(-2.25f, 0.5f, -0.55f), fov = 52f },
             new Shot { name = "memory", pos = new Vector3(-1.0f, 1.45f, 0.1f), target = new Vector3(-2.9f, 1.15f, 1.35f), fov = 48f },
-            new Shot { name = "wafflings", pos = new Vector3(1.25f, 1.5f, -1.45f), target = new Vector3(2.75f, 1.3f, -0.85f), fov = 44f },
-            new Shot { name = "esper", pos = new Vector3(1.32f, 1.34f, 0.98f), target = new Vector3(2.66f, 1.02f, 1.5f), fov = 38f },
+            new Shot { name = "wafflings", pos = new Vector3(0.75f, 1.5f, -1.95f), target = new Vector3(2.75f, 1.25f, -1.55f), fov = 52f },
+            new Shot { name = "esper", pos = new Vector3(0.95f, 1.62f, 0.55f), target = new Vector3(2.75f, 1.35f, 1.3f), fov = 50f },
             new Shot { name = "window", pos = new Vector3(0.25f, 1.5f, 0.45f), target = new Vector3(-0.8f, 1.5f, 2.6f), fov = 40f, reviewOnly = true },
             new Shot { name = "taste", pos = new Vector3(-1.5f, 1.5f, 0.45f), target = new Vector3(-2.3f, 1.45f, 2.6f), fov = 48f },
         };
@@ -201,6 +201,9 @@ namespace Esper.EditorTools
         static void BuildInteraction()
         {
             var director = root.gameObject.AddComponent<EsperDirector>();
+            var look = root.gameObject.AddComponent<LookDev>();
+            look.volumetric = AssetDatabase.LoadAssetAtPath<Material>($"{MatDir}/Volumetric.mat");
+            look.post = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Esper/Generated/EsperPost.asset");
             director.overviewCamera = vcams["overview"];
 
             Hotspot Spot(string id, string url, string shot, Bounds bounds, Light accent, CrtScreen screen, float boost = 1.8f)

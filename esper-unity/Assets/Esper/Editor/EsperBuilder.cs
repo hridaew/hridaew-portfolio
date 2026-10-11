@@ -240,6 +240,10 @@ namespace Esper.EditorTools
             {
                 m.SetVector("_BoxMin", new Vector4(-RoomW / 2, 0, -RoomD / 2, 0));
                 m.SetVector("_BoxMax", new Vector4(RoomW / 2, RoomH, RoomD / 2, 0));
+                // Art-directed in the browser: a trace of haze that only reads inside the shafts.
+                m.SetFloat("_Density", 0.09f);
+                m.SetFloat("_VolIntensity", 1.6f);
+                m.SetFloat("_NoiseStrength", 0.85f);
             });
             var feature = rendererData.rendererFeatures.OfType<VolumetricFeature>().FirstOrDefault();
             if (feature == null)

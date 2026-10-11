@@ -471,15 +471,16 @@ def neon_sign():
     import os
     reset()
     font = bpy.data.fonts.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "TiltNeon.ttf"))
-    tube_m = mat("NeonTube", (1.0, 0.2, 0.75), rough=0.2, emission=(1.0, 0.18, 0.72), strength=4.0)
+    tube_m = mat("NeonTube", (1.0, 0.2, 0.75), rough=0.2, emission=(1.0, 0.18, 0.72), strength=2.2)
     curve = bpy.data.curves.new("NeonText", "FONT")
     curve.body = "hridae"
     curve.font = font
-    curve.size = 0.26
+    curve.size = 0.28
+    curve.space_character = 1.12
     curve.align_x = "CENTER"
     curve.align_y = "CENTER"
-    curve.extrude = 0.004
-    curve.bevel_depth = 0.0025
+    curve.extrude = 0.002
+    curve.bevel_depth = 0.0012
     t = bpy.data.objects.new("Neon", curve)
     bpy.context.collection.objects.link(t)
     t.rotation_euler = (math.pi / 2, 0, 0)

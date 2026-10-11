@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { EsperSidebar } from "./EsperSidebar";
+import { EsperInterface } from "./EsperInterface";
 
 type UnityInstance = {
   SendMessage: (object: string, method: string, value?: string | number) => void;
@@ -29,11 +29,12 @@ export function EsperRoom() {
   const unityRef = useRef<UnityInstance | null>(null);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
-  const [hovering, setHovering] = useState(false);
+  const [hovering, setHovering] = useState<string>("");
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [lightsOn, setLightsOn] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -67,6 +68,12 @@ export function EsperRoom() {
             return;
           }
           unityRef.current = instance;
+          // Look development hook (dev only): esperLook("exposure=0.8;vol._Density=0.2")
+          if (process.env.NODE_ENV !== "production") {
+            const w = window as unknown as { esperLook?: (s: string) => void; esperSend?: (m: string, v?: string) => void };
+            w.esperLook = (s: string) => instance.SendMessage("ESPER", "Look", s);
+            w.esperSend = (m: string, v?: string) => instance.SendMessage("ESPER", m, v);
+          }
         })
         .catch(() => setFailed(true));
     };
@@ -77,25 +84,47 @@ export function EsperRoom() {
       const { event, payload } = (e as EsperEvent).detail;
       if (event === "ready") {
         setReady(true);
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          unityRef.current?.SendMessage("ESPER", "SetReducedMotion", "1");
+        const u = unityRef.current;
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduced) u?.SendMessage("ESPER", "SetReducedMotion", "1");
+        // Up close, subjects sit left of the dossier on wide screens.
+        u?.SendMessage("ESPER", "SetFrameOffset", window.innerWidth >= 768 ? "7" : "0");
+        // The opening: once per visit, the title holds while the camera eases in from the doorway.
+        let seen = false;
+        try {
+          seen = sessionStorage.getItem("esper-intro") === "1";
+          sessionStorage.setItem("esper-intro", "1");
+        } catch {}
+        if (!seen) {
+          setShowTitle(true);
+          u?.SendMessage("ESPER", "PlayIntro", "4.2");
+          window.setTimeout(() => setShowTitle(false), 4500);
         }
       } else if (event === "focus") {
         setActive(payload);
       } else if (event === "overview") {
         setActive(null);
       } else if (event === "hover") {
-        setHovering(payload !== "");
+        setHovering(payload);
       } else if (event === "enhance" && payload) {
         setLeaving(true);
         window.setTimeout(() => router.push(payload), 260);
       }
     };
     window.addEventListener("esper", onEsper);
+    const dismissTitle = () => setShowTitle(false);
+    const onKey = (e: KeyboardEvent) => {
+      dismissTitle();
+      if (e.key === "Escape") unityRef.current?.SendMessage("ESPER", "Back");
+    };
+    window.addEventListener("pointerdown", dismissTitle);
+    window.addEventListener("keydown", onKey);
 
     return () => {
       cancelled = true;
       window.removeEventListener("esper", onEsper);
+      window.removeEventListener("pointerdown", dismissTitle);
+      window.removeEventListener("keydown", onKey);
       unityRef.current?.Quit().catch(() => {});
       unityRef.current = null;
       script.remove();
@@ -143,8 +172,17 @@ export function EsperRoom() {
         />
       </div>
 
-      {ready && !leaving && (
-        <EsperSidebar active={active} lightsOn={lightsOn} onSelect={goto} onBack={back} onLights={lights} />
+      {!leaving && (
+        <EsperInterface
+          ready={ready}
+          active={active}
+          lightsOn={lightsOn}
+          showTitle={showTitle}
+          hovered={hovering}
+          onSelect={goto}
+          onBack={back}
+          onLights={lights}
+        />
       )}
 
       {failed && (

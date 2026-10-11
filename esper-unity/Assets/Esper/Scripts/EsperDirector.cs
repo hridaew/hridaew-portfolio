@@ -14,7 +14,7 @@ namespace Esper
         public Hotspot[] hotspots;
         public float parallaxDegrees = 1.4f;
         [Tooltip("Overview: how far you can look around the room toward the pointer.")]
-        public Vector2 overviewLook = new Vector2(18f, 4f);
+        public Vector2 overviewLook = new Vector2(10f, 3f);
         public float enhanceDuration = 1.9f;
 
         enum State { Overview, Focus, Enhance }
@@ -26,6 +26,8 @@ namespace Esper
         readonly Dictionary<CinemachineCamera, float> baseFov = new();
         Vector2 parallax;
         bool reducedMotion;
+        bool intro;
+        float frameOffset;
 
         void Start()
         {
@@ -83,7 +85,7 @@ namespace Esper
             if (mouse != null && mouse.rightButton.wasPressedThisFrame) Back();
 
             // Breathing parallax: the camera leans a degree toward the pointer.
-            if (state != State.Enhance && !reducedMotion)
+            if (state != State.Enhance && !reducedMotion && !intro)
             {
                 Vector2 n = new Vector2(pointer.x / Mathf.Max(1, Screen.width), pointer.y / Mathf.Max(1, Screen.height)) - Vector2.one * 0.5f;
                 bool overview = state == State.Overview;
@@ -93,7 +95,11 @@ namespace Esper
                 Vector2 range = overview ? overviewLook * 2f : new Vector2(parallaxDegrees * 1.6f, parallaxDegrees);
                 float ease(float v) => Mathf.Sign(v) * Mathf.SmoothStep(0f, 1f, Mathf.Abs(v) * 2f) * 0.5f;
                 if (live && baseRotation.TryGetValue(live, out var rot))
-                    live.transform.rotation = Quaternion.Euler(0, ease(parallax.x) * range.x, 0) * rot * Quaternion.Euler(-ease(parallax.y) * range.y, 0, 0);
+                {
+                    // Up close, the subject sits left of centre to clear the dossier on the right.
+                    float yaw = ease(parallax.x) * range.x + (overview ? 0f : frameOffset);
+                    live.transform.rotation = Quaternion.Euler(0, yaw, 0) * rot * Quaternion.Euler(-ease(parallax.y) * range.y, 0, 0);
+                }
             }
         }
 
@@ -199,6 +205,56 @@ namespace Esper
             focused = null;
             Activate(overviewCamera);
             WebBridge.Emit("overview");
+        }
+
+        /// The opening: the camera eases in from the doorway while the title card is up.
+        public void PlayIntro(string seconds)
+        {
+            if (reducedMotion) return;
+            float.TryParse(seconds, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float d);
+            StartCoroutine(Intro(d > 0 ? d : 4.5f));
+        }
+
+        IEnumerator Intro(float duration)
+        {
+            intro = true;
+            var t = overviewCamera.transform;
+            Vector3 end = t.position;
+            Quaternion endRot = baseRotation[overviewCamera];
+            Vector3 start = end - endRot * Vector3.forward * 1.6f + Vector3.up * 0.12f;
+            Quaternion startRot = endRot * Quaternion.Euler(4f, -6f, 0);
+            float fovEnd = baseFov[overviewCamera];
+            var lens = overviewCamera.Lens;
+            for (float k = 0; k < 1f; k += Time.unscaledDeltaTime / duration)
+            {
+                float e = 1f - Mathf.Pow(1f - k, 3f);
+                t.SetPositionAndRotation(Vector3.Lerp(start, end, e), Quaternion.Slerp(startRot, endRot, e));
+                lens.FieldOfView = Mathf.Lerp(fovEnd - 6f, fovEnd, e);
+                overviewCamera.Lens = lens;
+                yield return null;
+            }
+            t.SetPositionAndRotation(end, endRot);
+            lens.FieldOfView = fovEnd;
+            overviewCamera.Lens = lens;
+            intro = false;
+        }
+
+        public void SetFrameOffset(string degrees)
+        {
+            float.TryParse(degrees, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out frameOffset);
+        }
+
+        /// Look development: "x,y,z,tx,ty,tz,fov" re-aims the overview.
+        public void DevCamera(string spec)
+        {
+            var f = System.Array.ConvertAll(spec.Split(','), v => float.Parse(v, System.Globalization.CultureInfo.InvariantCulture));
+            var pos = new Vector3(f[0], f[1], f[2]);
+            overviewCamera.transform.position = pos;
+            baseRotation[overviewCamera] = Quaternion.LookRotation(new Vector3(f[3], f[4], f[5]) - pos);
+            var lens = overviewCamera.Lens;
+            lens.FieldOfView = f[6];
+            overviewCamera.Lens = lens;
+            baseFov[overviewCamera] = f[6];
         }
 
         public void SetLights(string on)
