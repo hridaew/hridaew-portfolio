@@ -28,4 +28,6 @@ The room is described by one file: **`esper-unity/Live/scene.json`** (items, lig
 - A Claude Code agent picks it up immediately. It gets the exact 3D point, the object, the camera and a screenshot, and edits `scene.json`; the change lands in the room as it saves. Progress shows beside the pin, then one line on what changed, with **Undo**.
 - Prompts run one at a time, in order. They're logged in `esper-unity/Notes/notes.json`, with a pre-change snapshot of the scene for each in `Notes/history/`.
 - The agent can only edit `scene.json`, and only with models and images already in the project. Its brief is `esper-unity/Live/AGENT.md`; other agents (Cursor, Codex) can use the same file.
-- One-time setup: the CLI must be signed in. Run `claude` in a terminal and use `/login`.
+- **Agent** (Studio panel): Claude (Claude Code, Sonnet) or Cursor (Cursor's CLI agent, on your Cursor plan). Pick a model with `ESPER_CLAUDE_MODEL` / `ESPER_CURSOR_MODEL` in `.env.local`.
+- One-time setup, in a terminal: `claude` then `/login` for Claude; `agent login` for Cursor.
+- Cursor runs in `esper-unity/Live`, whose `.cursor/cli.json` allows writing `scene.json` only and denies shell. With either agent, any other file it touches is flagged in its reply.

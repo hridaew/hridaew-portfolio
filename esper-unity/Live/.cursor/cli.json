@@ -1,0 +1,6 @@
+{
+  "permissions": {
+    "allow": ["Read(**)", "Write(scene.json)"],
+    "deny": ["Shell(*)", "Mcp(*:*)", "WebFetch(*)"]
+  }
+}

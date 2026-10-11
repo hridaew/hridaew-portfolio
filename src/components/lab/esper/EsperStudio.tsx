@@ -103,6 +103,7 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   }, [patch]);
 
   // ---- Point and prompt: an agent edits the live scene while you watch ----
+  const agentRef = useRef<"claude" | "cursor">("claude");
   const runPrompt = useCallback(
     async (text: string, at: Point) => {
       setPoint(null);
@@ -110,7 +111,7 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       const res = await fetch("/api/esper-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, point: at.p, normal: at.n, path: at.path, camera: at.cam, screen: [at.sx, at.sy], imageData }),
+        body: JSON.stringify({ text, point: at.p, normal: at.n, path: at.path, camera: at.cam, screen: [at.sx, at.sy], imageData, agent: agentRef.current }),
       });
       const id = res.headers.get("X-Prompt-Id") ?? `local-${Date.now()}`;
       setActive({ id, text, sx: at.sx, sy: at.sy, status: "queued", step: "Thinking", reply: "" });
@@ -152,10 +153,12 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
     "Studio",
     {
       tool: { type: "select", options: ["Move", "Prompt"], default: "Move" },
+      agent: { type: "select", options: ["Claude", "Cursor"], default: "Claude" },
       fidelity: [4, 0, 4, 1],
       flyCamera: false,
     },
   );
+  agentRef.current = studio.agent === "Cursor" ? "cursor" : "claude";
   useEffect(() => send("SetTool", studio.tool === "Prompt" ? "note" : "select"), [studio.tool, send]);
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
   useEffect(() => send("SetFly", studio.flyCamera ? "1" : "0"), [studio.flyCamera, send]);
