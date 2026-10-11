@@ -14,7 +14,7 @@ namespace Esper
         public Hotspot[] hotspots;
         public float parallaxDegrees = 1.4f;
         [Tooltip("Overview: how far you can look around the room toward the pointer.")]
-        public Vector2 overviewLook = new Vector2(10f, 3f);
+        public Vector2 overviewLook = new Vector2(14f, 3f);
         public float enhanceDuration = 1.9f;
 
         enum State { Overview, Focus, Enhance }
@@ -28,6 +28,9 @@ namespace Esper
         bool reducedMotion;
         bool intro;
         float frameOffset;
+        /// Studio turns off visitor input (clicks focus/enhance) and, while flying, the camera rig.
+        [HideInInspector] public bool inputEnabled = true;
+        [HideInInspector] public bool studioCamera;
 
         void Start()
         {
@@ -69,6 +72,20 @@ namespace Esper
                 pressed = true;
             }
 
+            if (!inputEnabled)
+            {
+                foreach (var h in hotspots)
+                {
+                    var col = h.GetComponent<Collider>();
+                    if (col) col.enabled = false;
+                }
+                return;
+            }
+            foreach (var h in hotspots)
+            {
+                var col = h.GetComponent<Collider>();
+                if (col && !col.enabled) col.enabled = true;
+            }
             if (state != State.Enhance) UpdateHover(pointer);
             float dt = Time.unscaledDeltaTime;
             foreach (var h in hotspots)
@@ -255,6 +272,21 @@ namespace Esper
             lens.FieldOfView = f[6];
             overviewCamera.Lens = lens;
             baseFov[overviewCamera] = f[6];
+        }
+
+        public CinemachineCamera CameraFor(string id)
+        {
+            if (id == "overview") return overviewCamera;
+            foreach (var h in hotspots) if (h.id == id) return h.focusCamera;
+            return null;
+        }
+
+        /// After a camera is moved by Studio or overrides, make it the new resting pose.
+        public void Rebase(CinemachineCamera v)
+        {
+            if (v == null) return;
+            baseRotation[v] = v.transform.rotation;
+            baseFov[v] = v.Lens.FieldOfView;
         }
 
         public void SetLights(string on)

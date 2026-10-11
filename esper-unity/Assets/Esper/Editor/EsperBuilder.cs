@@ -20,9 +20,10 @@ namespace Esper.EditorTools
         const string Textures = "Assets/ThirdParty/PolyHaven/Textures";
 
         // Room interior extents (metres). Window wall is +Z.
-        public const float RoomW = 6f, RoomD = 5.2f, RoomH = 2.85f, WallT = 0.25f;
-        public static readonly Vector2 WinX = new Vector2(-1.5f, 2.25f);
-        public static readonly Vector2 WinY = new Vector2(0.85f, 2.45f);
+        // A loft: room to breathe between the stations, one long window as the hero.
+        public const float RoomW = 10f, RoomD = 7.5f, RoomH = 3.3f, WallT = 0.25f;
+        public static readonly Vector2 WinX = new Vector2(-3.6f, 3.6f);
+        public static readonly Vector2 WinY = new Vector2(0.75f, 2.95f);
         static float BackZ => RoomD * 0.5f;
 
         static Transform root, shell, props, outside, lightsRoot, cams;
@@ -48,11 +49,11 @@ namespace Esper.EditorTools
             BuildPhotoLine();
             BuildLights();
             BuildRoomLights();
-            BuildInteriorNeon();
             BuildCityLife();
             BuildAtmosphere();
             BuildCameras();
             BuildInteraction();
+            ApplyStudioOverrides();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
@@ -241,8 +242,8 @@ namespace Esper.EditorTools
                 m.SetVector("_BoxMin", new Vector4(-RoomW / 2, 0, -RoomD / 2, 0));
                 m.SetVector("_BoxMax", new Vector4(RoomW / 2, RoomH, RoomD / 2, 0));
                 // Art-directed in the browser: a trace of haze that only reads inside the shafts.
-                m.SetFloat("_Density", 0.09f);
-                m.SetFloat("_VolIntensity", 1.6f);
+                m.SetFloat("_Density", 0.06f);
+                m.SetFloat("_VolIntensity", 1.0f);
                 m.SetFloat("_NoiseStrength", 0.85f);
             });
             var feature = rendererData.rendererFeatures.OfType<VolumetricFeature>().FirstOrDefault();

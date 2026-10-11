@@ -34,30 +34,17 @@ namespace Esper.EditorTools
             AimLampAtBulb(lampModel, lampTarget);
 
             // Spill from the street: a cool wash on the window wall and ceiling.
-            var spill = streetSpill = NewLight("StreetSpill", LightType.Spot, new Color(0.3f, 0.55f, 0.75f), 0.9f);
-            spill.transform.position = new Vector3(-0.2f, 0.2f, BackZ + 1.2f);
+            var spill = streetSpill = NewLight("StreetSpill", LightType.Spot, new Color(0.3f, 0.55f, 0.75f), 0.35f);
+            spill.transform.position = new Vector3(0f, 0.2f, BackZ + 1.8f);
             spill.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0.75f, -1f));
-            spill.spotAngle = 110f;
-            spill.range = 7f;
+            spill.spotAngle = 120f;
+            spill.range = 11f;
             spill.shadows = LightShadows.Soft;
 
-            // A neon sign somewhere below the sill: magenta kiss on the ceiling.
-            var neon = NewLight("Neon", LightType.Point, new Color(0.85f, 0.2f, 0.75f), 0.8f);
-            neon.transform.position = new Vector3(1.0f, -0.6f, BackZ + 1.0f);
-            neon.range = 5f;
-            neon.shadows = LightShadows.Soft;
-            neon.gameObject.AddComponent<LightFlicker>().stutterChance = 0.01f;
-
-            // Bare bulb by the lounge chair, turned low.
-            var bulb = NewLight("Bulb", LightType.Point, new Color(1f, 0.55f, 0.26f), 0.9f);
-            bulb.transform.position = new Vector3(-2.3f, 2.1f, 0.9f);
-            bulb.range = 3.5f;
-            bulb.shadows = LightShadows.Soft;
-
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.045f, 0.05f, 0.075f);
-            RenderSettings.ambientEquatorColor = new Color(0.05f, 0.04f, 0.045f);
-            RenderSettings.ambientGroundColor = new Color(0.02f, 0.016f, 0.016f);
+            RenderSettings.ambientSkyColor = new Color(0.016f, 0.018f, 0.026f);
+            RenderSettings.ambientEquatorColor = new Color(0.018f, 0.014f, 0.016f);
+            RenderSettings.ambientGroundColor = new Color(0.007f, 0.006f, 0.006f);
             RenderSettings.skybox = Custom("NightSky", "Esper/NightSky");
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
 
@@ -138,7 +125,7 @@ namespace Esper.EditorTools
             var vig = profile.Add<Vignette>(); vig.intensity.Override(0.34f); vig.smoothness.Override(0.45f);
             var grain = profile.Add<FilmGrain>(); grain.type.Override(FilmGrainLookup.Medium3); grain.intensity.Override(0.38f); grain.response.Override(0.75f);
             var lens = profile.Add<LensDistortion>(); lens.intensity.Override(-0.08f);
-            var adj = profile.Add<ColorAdjustments>(); adj.postExposure.Override(0.92f); adj.contrast.Override(14f); adj.saturation.Override(-6f);
+            var adj = profile.Add<ColorAdjustments>(); adj.postExposure.Override(0.9f); adj.contrast.Override(14f); adj.saturation.Override(-6f);
             var smh = profile.Add<ShadowsMidtonesHighlights>();
             smh.shadows.Override(new Vector4(0.92f, 1.0f, 1.08f, 0f));
             smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0f));
@@ -179,20 +166,20 @@ namespace Esper.EditorTools
 
         static Vector3 Yawed(Vector3 pos, Vector3 target, float deg) => pos + Quaternion.Euler(0, deg, 0) * (target - pos);
         // The opening frame: the window and the ESPER desk beside it, shafts crossing the floor.
-        static readonly Vector3 OverviewPos = new Vector3(0.3f, 1.72f, -2.5f), OverviewTarget = new Vector3(0.15f, 0.95f, 2.6f);
+        // The opening frame, as in the first slice: the window on the left, the ESPER desk on the right, shafts across the floor.
+        static readonly Vector3 OverviewPos = new Vector3(0.25f, 1.45f, -0.35f), OverviewTarget = new Vector3(3.35f, 1.05f, 2.95f);
 
         public static readonly Shot[] Shots =
         {
-            new Shot { name = "overview", pos = OverviewPos, target = OverviewTarget, fov = 60f },
-            new Shot { name = "overview_left", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, -10f), fov = 60f, reviewOnly = true },
-            new Shot { name = "overview_right", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, 10f), fov = 60f, reviewOnly = true },
-            new Shot { name = "domis", pos = new Vector3(0.75f, 1.42f, -0.35f), target = new Vector3(0.12f, 0.95f, 1.4f), fov = 46f },
-            new Shot { name = "virdio", pos = new Vector3(-0.55f, 1.4f, -1.85f), target = new Vector3(-2.25f, 0.5f, -0.55f), fov = 52f },
-            new Shot { name = "memory", pos = new Vector3(-1.0f, 1.45f, 0.1f), target = new Vector3(-2.9f, 1.15f, 1.35f), fov = 48f },
-            new Shot { name = "wafflings", pos = new Vector3(0.75f, 1.5f, -1.95f), target = new Vector3(2.75f, 1.25f, -1.55f), fov = 52f },
-            new Shot { name = "esper", pos = new Vector3(0.95f, 1.62f, 0.55f), target = new Vector3(2.75f, 1.35f, 1.3f), fov = 50f },
-            new Shot { name = "window", pos = new Vector3(0.25f, 1.5f, 0.45f), target = new Vector3(-0.8f, 1.5f, 2.6f), fov = 40f, reviewOnly = true },
-            new Shot { name = "taste", pos = new Vector3(-1.5f, 1.5f, 0.45f), target = new Vector3(-2.3f, 1.45f, 2.6f), fov = 48f },
+            new Shot { name = "overview", pos = OverviewPos, target = OverviewTarget, fov = 46f },
+            new Shot { name = "overview_left", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, -14f), fov = 46f, reviewOnly = true },
+            new Shot { name = "overview_right", pos = OverviewPos, target = Yawed(OverviewPos, OverviewTarget, 14f), fov = 46f, reviewOnly = true },
+            new Shot { name = "domis", pos = new Vector3(-0.9f, 1.45f, 0.75f), target = new Vector3(-1.95f, 0.95f, 2.65f), fov = 46f },
+            new Shot { name = "virdio", pos = new Vector3(1.9f, 1.45f, -0.2f), target = new Vector3(4.4f, 0.7f, -1.6f), fov = 52f },
+            new Shot { name = "memory", pos = new Vector3(-2.0f, 1.5f, -0.25f), target = new Vector3(-4.9f, 1.25f, -1.55f), fov = 50f },
+            new Shot { name = "wafflings", pos = new Vector3(-1.45f, 1.55f, -1.05f), target = new Vector3(-2.6f, 1.25f, -3.75f), fov = 50f },
+            new Shot { name = "esper", pos = new Vector3(2.75f, 1.62f, 1.6f), target = new Vector3(4.75f, 1.35f, 2.6f), fov = 50f },
+            new Shot { name = "taste", pos = new Vector3(-2.3f, 1.55f, 0.35f), target = new Vector3(-5f, 1.45f, 1.7f), fov = 50f },
         };
 
         static readonly System.Collections.Generic.Dictionary<string, CinemachineCamera> vcams = new();
@@ -204,6 +191,7 @@ namespace Esper.EditorTools
             var look = root.gameObject.AddComponent<LookDev>();
             look.volumetric = AssetDatabase.LoadAssetAtPath<Material>($"{MatDir}/Volumetric.mat");
             look.post = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Esper/Generated/EsperPost.asset");
+            root.gameObject.AddComponent<Esper.Studio.StudioMode>();
             director.overviewCamera = vcams["overview"];
 
             Hotspot Spot(string id, string url, string shot, Bounds bounds, Light accent, CrtScreen screen, float boost = 1.8f)

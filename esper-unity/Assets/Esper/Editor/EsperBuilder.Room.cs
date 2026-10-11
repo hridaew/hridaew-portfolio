@@ -38,7 +38,7 @@ namespace Esper.EditorTools
             Block("Skirt_F", shell, new Vector3(0, sk / 2, -hd + st / 2), new Vector3(RoomW, sk, st), trimMat);
             Block("Skirt_BL", shell, new Vector3(-hw + lw / 2, sk / 2, hd - st / 2), new Vector3(lw, sk, st), trimMat);
             Block("Skirt_BR", shell, new Vector3(hw - rw / 2, sk / 2, hd - st / 2), new Vector3(rw, sk, st), trimMat);
-            float pr = 2.3f;
+            float pr = 2.75f;
             Block("Rail_L", shell, new Vector3(-hw + 0.012f, pr, 0), new Vector3(0.024f, 0.04f, RoomD), trimMat);
             Block("Rail_R", shell, new Vector3(hw - 0.012f, pr, 0), new Vector3(0.024f, 0.04f, RoomD), trimMat);
             Block("Rail_F", shell, new Vector3(0, pr, -hd + 0.012f), new Vector3(RoomW, 0.04f, 0.024f), trimMat);
@@ -58,18 +58,19 @@ namespace Esper.EditorTools
             Block("Frame_B", win, new Vector3(cx, WinY.x + f / 2, z), new Vector3(ww, f, d), frameMat);
             Block("Frame_L", win, new Vector3(WinX.x + f / 2, cy, z), new Vector3(f, wh, d), frameMat);
             Block("Frame_R", win, new Vector3(WinX.y - f / 2, cy, z), new Vector3(f, wh, d), frameMat);
-            for (int i = 1; i < 4; i++)
+            // Six tall bays and a transom: the rhythm of an old industrial window.
+            const int bays = 6;
+            for (int i = 1; i < bays; i++)
             {
-                float x = WinX.x + ww * i / 4f;
-                Block($"Mullion_{i}", win, new Vector3(x, cy, z), new Vector3(0.04f, wh, 0.07f), frameMat);
+                float x = WinX.x + ww * i / bays;
+                Block($"Mullion_{i}", win, new Vector3(x, cy, z), new Vector3(0.05f, wh, 0.08f), frameMat);
             }
-            Block("Transom", win, new Vector3(cx, 1.98f, z), new Vector3(ww, 0.04f, 0.07f), frameMat);
-            // Glazing bars in the upper lights.
-            for (int i = 0; i < 8; i++)
+            float transom = WinY.y - 0.62f;
+            Block("Transom", win, new Vector3(cx, transom, z), new Vector3(ww, 0.045f, 0.08f), frameMat);
+            for (int i = 0; i < bays; i++)
             {
-                float x = WinX.x + ww * (i + 0.5f) / 8f;
-                if (i % 2 == 1) continue;
-                Block($"Bar_{i}", win, new Vector3(x + ww / 16f, (1.98f + WinY.y) / 2, z + 0.01f), new Vector3(0.018f, WinY.y - 1.98f, 0.03f), frameMat);
+                float x = WinX.x + ww * (i + 0.5f) / bays;
+                Block($"Bar_{i}", win, new Vector3(x, (transom + WinY.y) / 2, z + 0.01f), new Vector3(0.018f, WinY.y - transom, 0.03f), frameMat);
             }
 
             var glassMat = Custom("RainGlass", "Esper/RainGlass");
@@ -94,11 +95,14 @@ namespace Esper.EditorTools
             cordMat = Plain("Cord", new Color(0.55f, 0.52f, 0.46f), 0.2f);
             var blinds = Group("Blinds", shell);
             float z = BackZ - 0.04f;
-            float mid = 0.4f;
-            // Left unit fully down, with a few slats bent open at eye height — someone has been watching the street.
-            BlindUnit(blinds, "Blind_A", WinX.x - 0.04f, mid - 0.01f, z, WinY.x + 0.06f, 0f, peek: true, seed: 3);
-            // Right unit hauled up crooked, the stack bunched at the head.
-            BlindUnit(blinds, "Blind_B", mid + 0.01f, WinX.y + 0.04f, z, 1.72f, 5.5f, peek: false, seed: 11);
+            float third = (WinX.y - WinX.x) / 3f;
+            float a = WinX.x + third, b = WinX.x + 2 * third;
+            // Left: down, with a few slats bent open at eye height — someone has been watching the street.
+            BlindUnit(blinds, "Blind_A", WinX.x - 0.04f, a - 0.01f, z, WinY.x + 0.06f, 0f, peek: true, seed: 3);
+            // Middle: down, the city cut into lines.
+            BlindUnit(blinds, "Blind_B", a + 0.01f, b - 0.01f, z, WinY.x + 0.06f, 0f, peek: false, seed: 7);
+            // Right, over the desk: hauled up crooked, the stack bunched at the head.
+            BlindUnit(blinds, "Blind_C", b + 0.01f, WinX.y + 0.04f, z, 1.95f, 5.5f, peek: false, seed: 11);
         }
 
         static void BlindUnit(Transform parent, string name, float x0, float x1, float z, float bottomY, float crookDeg, bool peek, int seed)
@@ -133,7 +137,7 @@ namespace Esper.EditorTools
                 if (peekZone)
                 {
                     // Two fingers' width pulled down: split the slat and bend the middle.
-                    float g0 = -0.95f, g1 = -0.68f;
+                    float g0 = x0 + w * 0.62f, g1 = g0 + 0.27f;
                     float bend = Mathf.Lerp(30f, 42f, Mathf.InverseLerp(1.62f, 1.42f, y));
                     Slat(new Vector3((x0 + g0) / 2, yy, z), g0 - x0, rot);
                     Slat(new Vector3((g1 + x1) / 2, yy, z), x1 - g1, rot);

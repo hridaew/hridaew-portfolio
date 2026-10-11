@@ -55,14 +55,10 @@ namespace Esper.EditorTools
             // Light probes through the room so the (dynamic) props pick up the bounce.
             var group = new GameObject("LightProbes").AddComponent<LightProbeGroup>();
             var pts = new System.Collections.Generic.List<Vector3>();
-            for (float x = -2.8f; x <= 2.81f; x += 0.7f)
-                for (float y = 0.15f; y <= 2.7f; y += 0.6f)
-                    for (float z = -2.4f; z <= 2.41f; z += 0.6f)
-                        pts.Add(new Vector3(x, y, z));
-            // Denser around the ESPER desk.
-            for (float x = 1.7f; x <= 2.9f; x += 0.3f)
-                for (float y = 0.8f; y <= 1.7f; y += 0.3f)
-                    for (float z = 0.4f; z <= 2.4f; z += 0.3f)
+            float hw = EsperBuilder.RoomW / 2 - 0.2f, hd = EsperBuilder.RoomD / 2 - 0.2f;
+            for (float x = -hw; x <= hw + 0.01f; x += 0.8f)
+                for (float y = 0.15f; y <= EsperBuilder.RoomH - 0.2f; y += 0.65f)
+                    for (float z = -hd; z <= hd + 0.01f; z += 0.8f)
                         pts.Add(new Vector3(x, y, z));
             group.probePositions = pts.ToArray();
 

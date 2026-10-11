@@ -10,6 +10,7 @@ namespace Esper.EditorTools
     public static partial class EsperBuilder
     {
         const string ObscuraDir = "Assets/Esper/Content/Obscura";
+        const float EsperZ = 1.25f;
         public static GameObject esperScreen;
         static Bounds deskBounds;
 
@@ -17,6 +18,8 @@ namespace Esper.EditorTools
         {
             float hw = RoomW / 2;
             var esper = Group("ESPER_Desk", props);
+            // The hero: the desk keeps its original composition, slid into the window corner of the loft.
+            esper.localPosition = new Vector3(0, 0, EsperZ);
 
             // The ESPER station: steel desk along the right wall, its user facing the wall, the window at their left shoulder.
             var desk = Place("metal_office_desk", esper, new Vector3(hw - 0.5f, 0, 1.3f), -90f);
@@ -36,8 +39,6 @@ namespace Esper.EditorTools
             SitOn(glass, top);
             var specs = Place("round_spectacles", esper, new Vector3(hw - 0.86f, 0, 1.86f), 150f);
             SitOn(specs, top);
-            var pens = Place("stationery_supplies", esper, new Vector3(hw - 0.2f, 0, 0.5f), -80f);
-            SitOn(pens, top);
             var lamp = Place("desk_lamp_arm_01", esper, new Vector3(hw - 0.24f, 0, 2.12f), 38f);
             SitOn(lamp, top);
             Recolour(lamp, new Color(0.16f, 0.17f, 0.17f), "LampBody");
@@ -45,8 +46,6 @@ namespace Esper.EditorTools
 
             var chair = Place("modern_arm_chair_01", esper, new Vector3(hw - 1.45f, 0, 1.42f), 78f);
             SitOn(chair, 0f);
-            var radio = Place("vintage_radio_transceiver", esper, new Vector3(hw - 0.55f, 0, 2.38f), 190f);
-            SitOn(radio, 0f);
 
             // Glass measured with EsperProbe.DepthMap: centre (0, 0.257), 0.31 x 0.25 m, edge z 0.098 bulging to 0.122.
             esperScreen = CrtFace(crt, "ESPER_Screen", Path.Combine(ObscuraDir, "wayne_archive_dsc05127asoldierportrait.jpg"),
@@ -57,9 +56,9 @@ namespace Esper.EditorTools
             // Loose prints on the desk: the work in progress.
             var prints = Group("Prints", esper);
             var photos = Directory.GetFiles(ObscuraDir, "*.jpg").Select(p => p.Replace('\\', '/')).OrderBy(p => p).ToArray();
-            Print(prints, photos[0], new Vector3(hw - 0.62f, top + 0.002f, 1.28f), new Vector3(90, 0, 101), 0.13f, 0.002f);
-            Print(prints, photos[9], new Vector3(hw - 0.58f, top + 0.004f, 1.38f), new Vector3(90, 0, 84), 0.13f, 0.002f);
-            Print(prints, photos[16], new Vector3(hw - 0.9f, top + 0.003f, 1.15f), new Vector3(90, 0, 117), 0.1f, 0.002f);
+            Print(prints, photos[0], new Vector3(hw - 0.62f, top + 0.002f, 1.28f + EsperZ), new Vector3(90, 0, 101), 0.13f, 0.002f);
+            Print(prints, photos[9], new Vector3(hw - 0.58f, top + 0.004f, 1.38f + EsperZ), new Vector3(90, 0, 84), 0.13f, 0.002f);
+            Print(prints, photos[16], new Vector3(hw - 0.9f, top + 0.003f, 1.15f + EsperZ), new Vector3(90, 0, 117), 0.1f, 0.002f);
 
             BuildRoomDressing();
             BuildVirdio();
@@ -186,9 +185,10 @@ namespace Esper.EditorTools
         {
             float hw = RoomW / 2;
             var g = Group("ESPER_Bank", props);
-            var photos = new[] { "wayne_archive_dsc05232awayne2soldiers.jpg", "wayne_archive_dsc05265acjapanesefamily.jpg", "wayne_archive_dsc05218ac_waynewong.jpg" };
-            var spots = new[] { (new Vector3(hw - 0.16f, 1.62f, 0.78f), -95f), (new Vector3(hw - 0.16f, 1.66f, 1.48f), -90f), (new Vector3(hw - 0.16f, 2.14f, 1.12f), -88f) };
-            for (int i = 0; i < 3; i++)
+            var photos = new[] { "wayne_archive_dsc05232awayne2soldiers.jpg", "wayne_archive_dsc05218ac_waynewong.jpg" };
+            // Two panels, level and evenly spaced over the desk: the archive at a size you can read.
+            var spots = new[] { (new Vector3(hw - 0.16f, 1.72f, EsperZ + 0.92f), -90f), (new Vector3(hw - 0.16f, 1.72f, EsperZ + 1.6f), -90f) };
+            for (int i = 0; i < spots.Length; i++)
             {
                 var mon = PlaceModel("monitor", g, spots[i].Item1, spots[i].Item2, 0.95f);
                 Display(mon, $"Obscura/{photos[i]}", brightness: 1.5f);
@@ -202,7 +202,7 @@ namespace Esper.EditorTools
                 mm.SetTextureScale("_MainTex", new Vector2(sx, 1f));
                 mm.SetTextureOffset("_MainTex", new Vector2(-(sx - 1f) / 2f, 0f));
             }
-            var wash = Practical("BankGlow", g, new Vector3(hw - 0.6f, 1.8f, 1.12f), new Color(0.65f, 0.9f, 1f), 0.6f, 2.2f);
+            var wash = Practical("BankGlow", g, new Vector3(hw - 0.6f, 1.8f, EsperZ + 1.26f), new Color(0.65f, 0.9f, 1f), 0.6f, 2.2f);
             wash.shadows = LightShadows.None;
         }
     }

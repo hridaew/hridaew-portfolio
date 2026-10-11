@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { EsperInterface } from "./EsperInterface";
+import { EsperStudio } from "./EsperStudio";
 
 type UnityInstance = {
   SendMessage: (object: string, method: string, value?: string | number) => void;
@@ -35,12 +36,16 @@ export function EsperRoom() {
   const [active, setActive] = useState<string | null>(null);
   const [lightsOn, setLightsOn] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
+  const [studio, setStudio] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
     const canvas = canvasRef.current;
     if (!canvas) return;
     let cancelled = false;
+    // Studio: internal tooling, dev only (/lab/esper?studio).
+    const studioMode = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("studio");
+    setStudio(studioMode);
 
     const script = document.createElement("script");
     script.src = `${BUILD}/esper.loader.js`;
@@ -59,6 +64,8 @@ export function EsperRoom() {
             productVersion: "0.1",
             devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
             matchWebGLToCanvasSize: true,
+            // Studio notes capture a screenshot of the canvas.
+            webglContextAttributes: { preserveDrawingBuffer: studioMode },
           },
           (p) => !cancelled && setProgress(p),
         )
@@ -85,6 +92,14 @@ export function EsperRoom() {
       if (event === "ready") {
         setReady(true);
         const u = unityRef.current;
+        // Hand-placed layout from Studio, applied live so edits show without a Unity rebuild.
+        fetch(process.env.NODE_ENV !== "production" ? "/api/esper-studio" : "/esper/overrides.json")
+          .then((r) => (r.ok ? r.text() : ""))
+          .then((json) => {
+            if (json) unityRef.current?.SendMessage("ESPER", "ApplyOverrides", json);
+            if (studioMode) unityRef.current?.SendMessage("ESPER", "Enable", "1");
+          })
+          .catch(() => studioMode && unityRef.current?.SendMessage("ESPER", "Enable", "1"));
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reduced) u?.SendMessage("ESPER", "SetReducedMotion", "1");
         // Up close, subjects sit left of the dossier on wide screens.
@@ -95,7 +110,7 @@ export function EsperRoom() {
           seen = sessionStorage.getItem("esper-intro") === "1";
           sessionStorage.setItem("esper-intro", "1");
         } catch {}
-        if (!seen) {
+        if (!seen && !studioMode) {
           setShowTitle(true);
           u?.SendMessage("ESPER", "PlayIntro", "4.2");
           window.setTimeout(() => setShowTitle(false), 4500);
@@ -131,7 +146,7 @@ export function EsperRoom() {
     };
   }, [router]);
 
-  const send = (method: string, value?: string) => unityRef.current?.SendMessage("ESPER", method, value);
+  const send = useCallback((method: string, value?: string) => unityRef.current?.SendMessage("ESPER", method, value), []);
   const goto = (id: string) => {
     setActive(id);
     send("Goto", id);
@@ -172,7 +187,8 @@ export function EsperRoom() {
         />
       </div>
 
-      {!leaving && (
+      {studio && ready && <EsperStudio send={send} canvas={canvasRef.current} />}
+      {!leaving && !studio && (
         <EsperInterface
           ready={ready}
           active={active}

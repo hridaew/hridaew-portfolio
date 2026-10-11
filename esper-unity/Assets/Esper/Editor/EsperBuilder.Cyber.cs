@@ -23,7 +23,7 @@ namespace Esper.EditorTools
             var tubeMat = Plain("TubeGlass", new Color(0.25f, 0.26f, 0.27f), 0.6f, 0f, Color.black);
             var lights = new System.Collections.Generic.List<Light>();
             var glows = new System.Collections.Generic.List<Renderer>();
-            foreach (var c in new[] { new Vector3(-0.9f, 0, -0.4f), new Vector3(1.3f, 0, 0.7f) })
+            foreach (var c in new[] { new Vector3(-2.4f, 0, -0.6f), new Vector3(2.4f, 0, -0.6f), new Vector3(-2.4f, 0, 2.0f), new Vector3(2.4f, 0, 2.0f) })
             {
                 Block("Housing", g, new Vector3(c.x, RoomH - 0.03f, c.z), new Vector3(1.25f, 0.05f, 0.2f), housing, isStatic: false);
                 for (int i = -1; i <= 1; i += 2)
@@ -65,51 +65,14 @@ namespace Esper.EditorTools
             foreach (var r in glows) r.sharedMaterial.EnableKeyword("_EMISSION");
         }
 
-        static void BuildInteriorNeon()
-        {
-            var g = Group("Neon", props);
-            float hw = RoomW / 2;
-            // Cyan LED along the underside of the ESPER desk's front edge, washing the floor.
-            var cyan = Glow("LedCyan", new Color(0.3f, 2.4f, 3.2f));
-            Block("DeskLed", g, new Vector3(deskBounds.min.x + 0.02f, deskBounds.max.y - 0.045f, deskBounds.center.z), new Vector3(0.012f, 0.008f, deskBounds.size.z * 0.92f), cyan, isStatic: false);
-            var c1 = Practical("DeskLedLight", g, new Vector3(deskBounds.min.x - 0.05f, 0.35f, deskBounds.center.z), new Color(0.35f, 0.85f, 1f), 1.1f, 2.2f);
-            c1.shadows = LightShadows.None;
-            // Magenta bias light behind the Virdio set.
-            var m1 = Practical("TvBias", g, new Vector3(-hw + 0.06f, 1.05f, -0.75f), new Color(1f, 0.2f, 0.75f), 1.4f, 1.7f);
-            m1.shadows = LightShadows.None;
-            // A cyan strip along the floor under the window radiator.
-            Block("RadLed", g, new Vector3(0.4f, 0.02f, BackZ - 0.06f), new Vector3(2.0f, 0.01f, 0.01f), cyan, isStatic: false);
-        }
-
         static void BuildCityLife()
         {
             var g = Group("CityLife", outside);
-            // Billboards: the work, at city scale.
-            Billboard(g, "Billboards/virdio_climber.jpg", new Vector3(27f, 4f, 46.7f), new Vector2(24f, 13.5f));
-            Billboard(g, "Billboards/domis.jpg", new Vector3(-14f, 12f, 36.7f), new Vector2(21f, 11.8f));
-            Billboard(g, "Billboards/obscura_spectator.jpg", new Vector3(-33f, -4f, 36.7f), new Vector2(9.5f, 11.3f));
-            Billboard(g, "Billboards/orca.jpg", new Vector3(95f, 40f, 210f), new Vector2(64f, 36f));
-            Billboard(g, "Billboards/savor.jpg", new Vector3(-120f, 25f, 260f), new Vector2(56f, 31.5f));
-            Billboard(g, "Billboards/virdio_jump.jpg", new Vector3(10f, 70f, 420f), new Vector2(90f, 50f));
-
-            // Vertical neon signs on tower edges: segmented tubes, one red for Arsenal.
-            var magenta = Glow("NeonMagenta", new Color(3.2f, 0.4f, 2.4f));
-            var cyan = Glow("NeonCyan", new Color(0.4f, 2.6f, 3.4f));
-            var amber = Glow("NeonAmber", new Color(3.4f, 1.4f, 0.3f));
-            var red = Glow("NeonRed", new Color(4f, 0.25f, 0.25f));
-            NeonColumn(g, new Vector3(16.5f, -10f, 46.5f), 9, magenta);
-            NeonColumn(g, new Vector3(-4.6f, 0f, 36.5f), 12, cyan);
-            NeonColumn(g, new Vector3(42.5f, 20f, 46.5f), 7, red);
-            NeonColumn(g, new Vector3(-47f, 6f, 36.5f), 10, amber);
-            NeonColumn(g, new Vector3(60f, 10f, 140f), 14, magenta, 2.5f);
-            NeonColumn(g, new Vector3(-80f, -20f, 180f), 16, cyan, 2.5f);
-
-            // Coloured spill from the near billboards onto the facades.
-            var spillA = new GameObject("BillboardSpillA").AddComponent<Light>();
-            spillA.transform.SetParent(g, false);
-            spillA.transform.position = new Vector3(27f, 4f, 40f);
-            spillA.type = LightType.Point; spillA.range = 30f; spillA.intensity = 6f; spillA.color = new Color(0.7f, 0.35f, 1f);
-            spillA.lightmapBakeType = LightmapBakeType.Realtime;
+            // Two billboards at city scale, and two quiet neon signs. Restraint: the city is texture, not noise.
+            Billboard(g, "Billboards/virdio_climber.jpg", new Vector3(26f, 6f, 46.7f), new Vector2(22f, 12.4f));
+            Billboard(g, "Billboards/domis.jpg", new Vector3(-20f, 14f, 36.7f), new Vector2(18f, 10.1f));
+            var cyan = Glow("NeonCyan", new Color(0.2f, 1.2f, 1.6f));
+            NeonColumn(g, new Vector3(-70f, -10f, 160f), 12, cyan, 2.2f);
 
             // Sky traffic.
             var traffic = new GameObject("Traffic").AddComponent<Traffic>();
@@ -140,7 +103,7 @@ namespace Esper.EditorTools
             r.sharedMaterial = Custom("Billboard_" + System.IO.Path.GetFileNameWithoutExtension(content), "Esper/CrtScreen", m =>
             {
                 m.SetTexture("_MainTex", tex);
-                m.SetFloat("_Brightness", 2.4f);
+                m.SetFloat("_Brightness", 1.3f);
                 m.SetFloat("_Curvature", 0f);
                 m.SetFloat("_Scanlines", 90f);
                 m.SetFloat("_ScanAmount", 0.18f);
