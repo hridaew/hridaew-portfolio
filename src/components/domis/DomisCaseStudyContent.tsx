@@ -23,10 +23,10 @@ export function DomisCaseStudyContent() {
 
                         <Reveal delay={0.2}>
                             <p className="site-body max-w-[560px] text-ink-secondary">
-                                I&rsquo;m the Product Designer at Domis, a home
-                                maintenance platform that helps people understand
-                                their house and take care of it without the
-                                busywork getting in the way.
+                                Domis only works once it knows your home. Most
+                                owners don&rsquo;t fully know it either. As the
+                                founding product designer, I designed the ways it
+                                learns anyway, from one home to many.
                             </p>
                         </Reveal>
 
@@ -48,18 +48,19 @@ export function DomisCaseStudyContent() {
 
                         <Reveal delay={0.3}>
                             <div className="flex flex-wrap justify-start gap-x-8 gap-y-3 site-body text-ink-secondary">
-                                <div>
-                                    <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">
-                                        Role
-                                    </span>
-                                    Founding Product Designer
-                                </div>
-                                <div>
-                                    <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">
-                                        Timeline
-                                    </span>
-                                    2024 &mdash;
-                                </div>
+                                {[
+                                    ["Role", "Founding Product Designer"],
+                                    ["Timeline", "2024 to now"],
+                                    ["Surfaces", "iOS, web, Domis+"],
+                                    ["Status", "Launched · currently building"],
+                                ].map(([label, value]) => (
+                                    <div key={label}>
+                                        <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">
+                                            {label}
+                                        </span>
+                                        {value}
+                                    </div>
+                                ))}
                             </div>
                         </Reveal>
                         <Reveal delay={0.35}>
