@@ -18,10 +18,12 @@ export const DOMIS_SECTIONS: CaseStudySection[] = [
 
 export const VIRDIO_SECTIONS: CaseStudySection[] = [
   { id: "hero", label: "Intro", number: "00" },
-  { id: "problem", label: "Problem", number: "01" },
-  { id: "insight", label: "Insight", number: "02" },
-  { id: "solution", label: "Solution", number: "03" },
-  { id: "role-impact", label: "Role & Impact", number: "04" },
+  { id: "bet", label: "The bet", number: "01" },
+  { id: "catch", label: "The catch", number: "02" },
+  { id: "setup", label: "Room setup", number: "03" },
+  { id: "class", label: "The class", number: "04" },
+  { id: "system", label: "The system", number: "05" },
+  { id: "outcome", label: "Outcome", number: "06" },
 ];
 
 export const OBSCURA_SECTIONS: CaseStudySection[] = [
