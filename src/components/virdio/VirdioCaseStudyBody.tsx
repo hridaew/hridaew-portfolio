@@ -188,6 +188,47 @@ export function VirdioCaseStudyBody() {
                         <DecisionCards />
                     </Reveal>
 
+                    <div className="w-full min-w-0 case-study-block-gap pt-16 md:pt-24">
+                        <SubHead>On a phone, setup says so out loud</SubHead>
+                        <div className="case-study-prose-stack flex flex-col">
+                            <P delay={0.05}>
+                                Starting a class on a phone lists what you need, a stand and a clear area, and says
+                                plainly that a computer or tablet gives the better class. The next step asks you to turn
+                                the phone to landscape and set it down in front of you. We were honest at the moment it
+                                mattered, instead of letting people find out mid-workout.
+                            </P>
+                        </div>
+                    </div>
+
+                    <Reveal>
+                        <div className="grid grid-cols-1 items-center case-study-grid-gap md:grid-cols-[1fr_2.4fr]">
+                            <div className="mx-auto w-full max-w-[280px] overflow-hidden rounded-[28px] border border-ink/[0.08] bg-paper-sunken">
+                                <LightboxImage
+                                    src="/assets/virdio/figma/mobile_setup_start.jpg"
+                                    alt="Mobile Class Setup: Starting Class Setup, requirements of a stand for your phone and a clear workout area, and a recommendation to attend on the computer or tablet app"
+                                    className="h-auto w-full object-contain"
+                                    draggable={false}
+                                    loading="lazy"
+                                />
+                            </div>
+                            <figure className="m-0 flex min-w-0 flex-col gap-3">
+                                <div className="overflow-hidden rounded-2xl border border-ink/[0.08] bg-paper-sunken">
+                                    <LightboxImage
+                                        src="/assets/virdio/figma/mobile_room_setup.jpg"
+                                        alt="Mobile Room Setup step: rotate the phone to landscape and set it on a surface in front of you, with Skip and Continue"
+                                        className="h-auto w-full object-contain"
+                                        draggable={false}
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <figcaption className="site-gallery-caption text-left text-ink-subtle">
+                                    &ldquo;For the best experience, we recommend attending this class on the computer or
+                                    tablet app.&rdquo; The compromise, written into the first screen.
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </Reveal>
+
                     <div className="pt-16 md:pt-24">
                         <Reveal>
                             <VirdioPrinciple
@@ -236,12 +277,52 @@ export function VirdioCaseStudyBody() {
                     </Reveal>
 
                     <div className="w-full min-w-0 case-study-block-gap">
+                        <SubHead>Setup happens in the minutes before class starts</SubHead>
+                        <div className="case-study-prose-stack flex flex-col">
+                            <P delay={0.05}>
+                                Class setup is a six-step lobby that runs while you wait for the class, with a
+                                &ldquo;starts in&rdquo; countdown always in the corner. Device settings come first, with
+                                a live camera preview. Equipment is set per class, because a box jump that suits one
+                                person is wrong for another. Pairing a watch is optional and takes a four-digit code.
+                            </P>
+                        </div>
+                    </div>
+
+                    <Reveal>
+                        <VirdioShotRow
+                            cols={3}
+                            className="case-study-block-gap"
+                            shots={[
+                                {
+                                    src: "/assets/virdio/figma/class_setup_device.jpg",
+                                    alt: "Class Setup step 1 of 6, Device Settings: camera, resolution, speaker and mic pickers with a live camera preview",
+                                    strong: "1/6.",
+                                    caption: "Camera, speaker and mic, with a live preview.",
+                                },
+                                {
+                                    src: "/assets/virdio/figma/class_setup_equipment.jpg",
+                                    alt: "Class Setup step 4 of 6, Equipment Setup: box jump size and preferred boxing hand, with a virtual box previewed beside a trainer",
+                                    strong: "4/6.",
+                                    caption: "Virtual equipment for this class.",
+                                },
+                                {
+                                    src: "/assets/virdio/figma/class_setup_watch.jpg",
+                                    alt: "Setup Watch App dialog: launch the watch app and enter a 4-digit code to track calories",
+                                    strong: "Optional.",
+                                    caption: "Pair a watch with a four-digit code.",
+                                },
+                            ]}
+                        />
+                    </Reveal>
+
+                    <div className="w-full min-w-0 case-study-block-gap">
                         <SubHead>Stand on the spot, then walk to the cones</SubHead>
                         <div className="case-study-prose-stack flex flex-col">
                             <P delay={0.05}>
-                                Camera alignment only needed the user centered, so it became standing on a glowing
-                                target while the camera captures. Every state is one phrase in big type, readable from
-                                where you stand.
+                                Camera alignment only needed the user centered and the camera angled to see feet to
+                                shoulders. You stand on a glowing target and the frame does the instructing: the edge
+                                that&rsquo;s wrong glows red, and when both edges turn green it captures. Every state is
+                                one phrase in big type, readable from where you stand.
                             </P>
                             <P delay={0.1}>
                                 For the play space, virtual cones appear and you walk to each corner. The system
@@ -251,6 +332,33 @@ export function VirdioCaseStudyBody() {
                             </P>
                         </div>
                     </div>
+
+                    <Reveal>
+                        <VirdioShotRow
+                            cols={3}
+                            className="case-study-block-gap"
+                            shots={[
+                                {
+                                    src: "/assets/virdio/figma/tilt_down.jpg",
+                                    alt: "Tilt camera down: the top edge of the frame glows red and the bottom edge green",
+                                    strong: "Red edge.",
+                                    caption: "Tilt away from it.",
+                                },
+                                {
+                                    src: "/assets/virdio/figma/tilt_up.jpg",
+                                    alt: "Tilt camera up: the bottom edge of the frame glows red and the top edge green",
+                                    strong: "Other way.",
+                                    caption: "The red moves to the edge that’s off.",
+                                },
+                                {
+                                    src: "/assets/virdio/figma/tilt_capturing.jpg",
+                                    alt: "Capturing: both the top and bottom edges glow green",
+                                    strong: "Green on both.",
+                                    caption: "Hold still while it captures.",
+                                },
+                            ]}
+                        />
+                    </Reveal>
                 </div>
 
                 {/* ScrollRevealFlow — full width (must stay outside max-w container for GSAP pin) */}
@@ -321,21 +429,39 @@ export function VirdioCaseStudyBody() {
                         </div>
                     </Reveal>
 
+                    <div className="w-full min-w-0 case-study-block-gap">
+                        <SubHead>Three takes on losing tracking mid-class</SubHead>
+                        <div className="case-study-prose-stack flex flex-col">
+                            <P delay={0.05}>
+                                The hardest moment is mid-set, when someone steps out of frame to grab water. I explored
+                                a few ways to handle it. All of them frame the prompt as a system state, never the
+                                user&rsquo;s mistake.
+                            </P>
+                        </div>
+                    </div>
+
                     <Reveal>
                         <VirdioShotRow
+                            cols={3}
                             className="case-study-block-gap"
                             shots={[
                                 {
-                                    src: "/assets/virdio/step_out_of_frame.png",
-                                    alt: "Did you step out of frame: non-judgmental prompt with Ignore and Remind options",
-                                    strong: "No-blame copy.",
-                                    caption: "“Did you step out of frame?” is a system state, not the user’s fault. Ignore it, or get reminded after the exercise.",
+                                    src: "/assets/virdio/figma/active_calibrating.jpg",
+                                    alt: "Class HUD replaced by a Calibrating AR panel asking Did you step out of frame, with a Don’t show this again link",
+                                    strong: "Recalibrate on its own.",
+                                    caption: "It explains itself, with a way to stop the prompt.",
                                 },
                                 {
-                                    src: "/assets/virdio/ar_equipment_sizing.png",
-                                    alt: "Class Setup screen: box jump size and preferred boxing hand beside a figure at 6 ft 2 in next to a 7 by 7 inch box",
-                                    strong: "Sized to you.",
-                                    caption: "The box jump sketch became class setup: equipment shown at the scale of your own body.",
+                                    src: "/assets/virdio/figma/active_disable_recal.jpg",
+                                    alt: "Disable Recalibration dialog warning that virtual equipment won’t work if you move out of frame, with a Recalibration toggle in the class controls",
+                                    strong: "A switch, with its cost.",
+                                    caption: "Turn recalibration off, knowing the equipment stops working.",
+                                },
+                                {
+                                    src: "/assets/virdio/step_out_of_frame.png",
+                                    alt: "Did you step out of frame: non-judgmental prompt with Ignore and Remind options",
+                                    strong: "Ask, then let them choose when.",
+                                    caption: "Ignore for this session, or be reminded after this exercise.",
                                 },
                             ]}
                         />

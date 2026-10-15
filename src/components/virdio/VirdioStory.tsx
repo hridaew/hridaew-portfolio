@@ -120,7 +120,7 @@ export function VirdioShotRow({
     className,
 }: {
     shots: Shot[];
-    cols?: 2 | 3;
+    cols?: 2 | 3 | 4;
     contain?: boolean;
     className?: string;
 }) {
@@ -128,7 +128,7 @@ export function VirdioShotRow({
         <div
             className={cn(
                 "grid grid-cols-1 items-start case-study-grid-gap",
-                cols === 3 ? "md:grid-cols-3" : "md:grid-cols-2",
+                cols === 4 ? "grid-cols-2 md:grid-cols-4" : cols === 3 ? "md:grid-cols-3" : "md:grid-cols-2",
                 className,
             )}
         >
