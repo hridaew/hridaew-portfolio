@@ -56,17 +56,17 @@ function ParallaxHeroView({
                             className="relative z-30 space-y-10"
                         >
                             <p className="site-body w-full text-left text-ink-secondary">
-                                Designing an AR Fitness Platform Across Every
-                                Screen
+                                Turning the camera you already own into gym
+                                equipment, across six surfaces
                             </p>
 
                             <div className="flex w-full flex-wrap justify-start gap-x-10 gap-y-4 border-t border-ink/[0.08] pt-6">
                                 {[
-                                    { label: "Role", val: "Product Designer" },
+                                    { label: "Role", val: "Sole Product Designer" },
                                     { label: "Timeline", val: "2021 – 2022" },
                                     {
                                         label: "Platforms",
-                                        val: "iOS, Android, Web, TV",
+                                        val: "iOS, Android, Web, Desktop, Watch, TV",
                                     },
                                 ].map((item, i) => (
                                     <motion.div
