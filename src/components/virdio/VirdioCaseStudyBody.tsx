@@ -223,7 +223,7 @@ export function VirdioCaseStudyBody() {
                                 </div>
                                 <figcaption className="site-gallery-caption text-left text-ink-subtle">
                                     &ldquo;For the best experience, we recommend attending this class on the computer or
-                                    tablet app.&rdquo; The compromise, written into the first screen.
+                                    tablet app.&rdquo; The phone setup screen says this up front.
                                 </figcaption>
                             </figure>
                         </div>
@@ -234,7 +234,7 @@ export function VirdioCaseStudyBody() {
                             <VirdioPrinciple
                                 eyebrow="The design problem"
                                 statement="Once class starts, the user is across the room, mid-rep."
-                                note="Whatever device people picked, nothing in a class could depend on a tap. The body had to be the input. Every chapter below applies that test."
+                                note="Whatever device people picked, nothing in a class could depend on a tap or on reading small text."
                             />
                         </Reveal>
                     </div>
@@ -326,9 +326,8 @@ export function VirdioCaseStudyBody() {
                             </P>
                             <P delay={0.1}>
                                 For the play space, virtual cones appear and you walk to each corner. The system
-                                already tracks your body, so standing at a cone is the confirmation.{" "}
-                                <strong className="text-ink">Walking is the input.</strong> It ends with the floor
-                                filled in and a check mark.
+                                already tracks your body, so standing at a cone is the confirmation. It ends with the
+                                floor filled in and a check mark.
                             </P>
                         </div>
                     </div>
@@ -339,22 +338,19 @@ export function VirdioCaseStudyBody() {
                             className="case-study-block-gap"
                             shots={[
                                 {
-                                    src: "/assets/virdio/figma/tilt_down.jpg",
-                                    alt: "Tilt camera down: the top edge of the frame glows red and the bottom edge green",
-                                    strong: "Red edge.",
-                                    caption: "Tilt away from it.",
+                                    src: "/assets/virdio/figma/stand_marker.jpg",
+                                    alt: "Stand in the marked area, with a glowing marker on the floor and a Skip button",
+                                    caption: "Stand on the marker.",
                                 },
                                 {
-                                    src: "/assets/virdio/figma/tilt_up.jpg",
-                                    alt: "Tilt camera up: the bottom edge of the frame glows red and the top edge green",
-                                    strong: "Other way.",
-                                    caption: "The red moves to the edge that’s off.",
+                                    src: "/assets/virdio/figma/tilt_down.jpg",
+                                    alt: "Tilt your camera down: the top edge of the frame glows red and the bottom edge green",
+                                    caption: "The edge that’s off glows red.",
                                 },
                                 {
                                     src: "/assets/virdio/figma/tilt_capturing.jpg",
                                     alt: "Capturing: both the top and bottom edges glow green",
-                                    strong: "Green on both.",
-                                    caption: "Hold still while it captures.",
+                                    caption: "Both edges green, and it captures.",
                                 },
                             ]}
                         />
@@ -406,7 +402,7 @@ export function VirdioCaseStudyBody() {
                                 Living rooms are messy: a dog walks through, someone sits on the couch, the light
                                 changes. I mapped every way setup could fail, including tracking lost mid-class and
                                 people skipping setup entirely, and gave each one a way back to the workout. If
-                                tracking can&rsquo;t recover, the class continues with reduced AR instead of stopping.
+                                tracking can&rsquo;t recover, the class continues without virtual equipment instead of stopping.
                             </P>
                         </div>
                     </div>
@@ -430,12 +426,12 @@ export function VirdioCaseStudyBody() {
                     </Reveal>
 
                     <div className="w-full min-w-0 case-study-block-gap">
-                        <SubHead>Three takes on losing tracking mid-class</SubHead>
+                        <SubHead>When tracking drops mid-class</SubHead>
                         <div className="case-study-prose-stack flex flex-col">
                             <P delay={0.05}>
-                                The hardest moment is mid-set, when someone steps out of frame to grab water. I explored
-                                a few ways to handle it. All of them frame the prompt as a system state, never the
-                                user&rsquo;s mistake.
+                                If someone steps out of frame, a prompt asks whether they did, framed as a system state
+                                rather than a mistake. After 20 seconds, or if they turn recalibration off, the class
+                                continues without virtual equipment, and one link turns it back on.
                             </P>
                         </div>
                     </div>
@@ -447,21 +443,18 @@ export function VirdioCaseStudyBody() {
                             shots={[
                                 {
                                     src: "/assets/virdio/figma/active_calibrating.jpg",
-                                    alt: "Class HUD replaced by a Calibrating AR panel asking Did you step out of frame, with a Don’t show this again link",
-                                    strong: "Recalibrate on its own.",
-                                    caption: "It explains itself, with a way to stop the prompt.",
+                                    alt: "Lost tracking prompt in class: Calibrating AR, did you step out of frame, with a Don’t show this again link",
+                                    caption: "Tracking lost. The class keeps going while it asks.",
                                 },
                                 {
                                     src: "/assets/virdio/figma/active_disable_recal.jpg",
-                                    alt: "Disable Recalibration dialog warning that virtual equipment won’t work if you move out of frame, with a Recalibration toggle in the class controls",
-                                    strong: "A switch, with its cost.",
-                                    caption: "Turn recalibration off, knowing the equipment stops working.",
+                                    alt: "Disable Recalibration dialog warning that virtual equipment won’t work if you move out of frame",
+                                    caption: "Turning recalibration off explains what stops working.",
                                 },
                                 {
-                                    src: "/assets/virdio/step_out_of_frame.png",
-                                    alt: "Did you step out of frame: non-judgmental prompt with Ignore and Remind options",
-                                    strong: "Ask, then let them choose when.",
-                                    caption: "Ignore for this session, or be reminded after this exercise.",
+                                    src: "/assets/virdio/figma/class_without_ve.jpg",
+                                    alt: "Class continuing without virtual equipment, with an Enable virtual equipment link under the exercise name",
+                                    caption: "The class continues without virtual equipment, with a link to turn it back on.",
                                 },
                             ]}
                         />
@@ -469,8 +462,8 @@ export function VirdioCaseStudyBody() {
 
                     <div className="case-study-block-gap">
                         <VirdioBridge>
-                            Setup earns the class. Inside the class the rule was the same: nothing to tap, and
-                            nothing that needs reading up close.
+                            Inside the class the rule was the same: nothing to tap, and nothing that needs
+                            reading up close.
                         </VirdioBridge>
                     </div>
                 </div>
@@ -654,7 +647,7 @@ export function VirdioCaseStudyBody() {
                     </Reveal>
 
                     <div className="w-full min-w-0 case-study-block-gap">
-                        <SubHead>Specs that answered the question before it was asked</SubHead>
+                        <SubHead>Specs for a team twelve hours ahead</SubHead>
                         <div className="case-study-prose-stack flex flex-col">
                             <P delay={0.05}>
                                 With engineering twelve hours ahead, a question asked at the end of my day was answered
@@ -752,13 +745,11 @@ export function VirdioCaseStudyBody() {
                     </div>
 
                     <div className="case-study-block-gap">
-                        <Reveal>
-                            <VirdioPrinciple
-                                eyebrow="What I carried forward"
-                                statement="Focus is a design decision."
-                                note="At Domis, I designed a bulk intake feature I believe in, then argued to cut it from v1 because it sat on the onboarding critical path."
-                            />
-                        </Reveal>
+                        <SubHead>What I carried forward</SubHead>
+                        <P delay={0.05}>
+                            At Domis, I designed a bulk intake feature I believe in, then argued to cut it from v1
+                            because it sat on the onboarding critical path.
+                        </P>
                         <Reveal>
                             <p className="site-body mt-5 text-ink-muted">
                                 <Link href="/domis" className="font-medium text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">

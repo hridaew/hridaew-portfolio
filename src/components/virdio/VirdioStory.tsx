@@ -91,7 +91,6 @@ export function VirdioPrinciple({
             aria-label={eyebrow}
             className="rounded-3xl bg-[#5B3FD6] px-6 py-10 text-left text-[#F4F2F8] md:px-14 md:py-16"
         >
-            <p className="site-label mb-5 text-[#E4DCFF]">{eyebrow}</p>
             <p className="type-h2 m-0 text-[#F4F2F8] [text-wrap:balance]">{statement}</p>
             {note ? <p className="site-body mt-6 mb-0 text-[#E4DCFF]">{note}</p> : null}
         </aside>
@@ -173,7 +172,6 @@ export function VirdioCardRow({ cards }: { cards: Card[] }) {
                         c.accent ? "bg-[#5B3FD6]/[0.07] ring-[#5B3FD6]/30" : "bg-paper-raised ring-ink/[0.08]",
                     )}
                 >
-                    <span className="site-label text-ink-subtle">{c.kind}</span>
                     <span className="site-subheading text-ink">{c.title}</span>
                     <span className="site-body text-ink-muted">{c.body}</span>
                 </li>
