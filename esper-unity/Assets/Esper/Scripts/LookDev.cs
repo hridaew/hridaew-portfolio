@@ -7,7 +7,7 @@ namespace Esper
 {
     /// Live look development from the page: SendMessage("ESPER", "Look", "key=value;key=value").
     /// Keys: vol.<_Property> (volumetric material), exposure, contrast, saturation, bloom, vignette, grain,
-    /// light.<Name> (intensity), ambient (multiplier). Values are written back into the builder once chosen.
+    /// light.<Name> (intensity), ambient (multiplier), and the performance keys listed in Apply. Values are written back into the builder once chosen.
     public class LookDev : MonoBehaviour
     {
         public Material volumetric;
@@ -35,6 +35,20 @@ namespace Esper
 
         void Apply(string key, float v)
         {
+            // Performance: fog.res (1/n resolution), fog.steps; pipe.scale, pipe.msaa, pipe.shadow (map size).
+            if (key == "fog.res") { Esper.Rendering.VolumetricFeature.DownsampleOverride = Mathf.RoundToInt(v); return; }
+            if (key == "fog.steps") { Esper.Rendering.VolumetricFeature.StepsOverride = Mathf.RoundToInt(v); return; }
+            if (key.StartsWith("pipe.") && GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset urp)
+            {
+                if (key == "pipe.scale") urp.renderScale = v;
+                if (key == "pipe.msaa") urp.msaaSampleCount = Mathf.RoundToInt(v);
+                if (key == "pipe.shadow")
+                {
+                    urp.mainLightShadowmapResolution = Mathf.RoundToInt(v);
+                    urp.additionalLightsShadowmapResolution = Mathf.RoundToInt(v);
+                }
+                return;
+            }
             if (key.StartsWith("vol.") && volumetric) { volumetric.SetFloat(key.Substring(4), v); return; }
             if (key.StartsWith("light."))
             {

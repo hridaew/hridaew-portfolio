@@ -214,7 +214,7 @@ namespace Esper.EditorTools
             Set("m_RequireDepthTexture", p => p.boolValue = true);
             Set("m_RequireOpaqueTexture", p => p.boolValue = true);
             Set("m_SupportsHDR", p => p.boolValue = true);
-            Set("m_MSAA", p => p.intValue = 4);
+            Set("m_MSAA", p => p.intValue = 1); // SMAA on the camera does the anti-aliasing
             Set("m_RenderScale", p => p.floatValue = 1f);
             Set("m_MainLightShadowsSupported", p => p.boolValue = true);
             Set("m_MainLightShadowmapResolution", p => p.intValue = 4096);

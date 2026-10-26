@@ -6,7 +6,7 @@ Shader "Hidden/Esper/Volumetric"
         _VolIntensity ("Intensity", Float) = 0.9
         _Density ("Density", Float) = 0.35
         _Anisotropy ("Anisotropy", Range(-0.9, 0.95)) = 0.55
-        _Steps ("Steps", Float) = 64
+        _Steps ("Steps", Float) = 24
         _MaxDistance ("Max distance", Float) = 12
         _NoiseScale ("Dust scale", Float) = 1.6
         _NoiseStrength ("Dust strength", Range(0, 1)) = 0.65
@@ -22,14 +22,15 @@ Shader "Hidden/Esper/Volumetric"
         Tags { "RenderPipeline" = "UniversalPipeline" }
         ZWrite Off ZTest Always Cull Off Blend Off
 
+        // Pass 0 runs at half resolution and writes in-scattered light (rgb) and transmittance (a).
+        // One hard shadow tap per step: the per-pixel jitter and film grain already soften the shafts.
         Pass
         {
-            Name "Volumetric"
+            Name "March"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
@@ -94,7 +95,6 @@ Shader "Hidden/Esper/Volumetric"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 float2 uv = input.texcoord;
-                half4 scene = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
 
                 float rawDepth = SampleSceneDepth(uv);
                 #if !UNITY_REVERSED_Z
@@ -110,7 +110,7 @@ Shader "Hidden/Esper/Volumetric"
                 float2 tb = RayBox(ro, rd, _BoxMin.xyz, _BoxMax.xyz);
                 float tStart = max(tb.x, 0.0);
                 float tEnd = min(min(tb.y, sceneDist), _MaxDistance);
-                if (tEnd <= tStart) return scene;
+                if (tEnd <= tStart) return half4(0, 0, 0, 1);
 
                 int steps = (int)_Steps;
                 float stepLen = (tEnd - tStart) / steps;
@@ -136,7 +136,29 @@ Shader "Hidden/Esper/Volumetric"
                     transmittance *= exp(-dens * stepLen * 0.35);
                 }
 
-                return half4(scene.rgb * transmittance + scatter, scene.a);
+                return half4(scatter, transmittance);
+            }
+            ENDHLSL
+        }
+
+        // Pass 1: full resolution. Upsample the haze and lay it over the scene.
+        Pass
+        {
+            Name "Composite"
+            HLSLPROGRAM
+            #pragma vertex Vert
+            #pragma fragment Frag
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
+
+            TEXTURE2D(_EsperVolumetric);
+
+            half4 Frag(Varyings input) : SV_Target
+            {
+                float2 uv = input.texcoord;
+                half4 scene = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+                half4 fog = SAMPLE_TEXTURE2D(_EsperVolumetric, sampler_LinearClamp, uv);
+                return half4(scene.rgb * fog.a + fog.rgb, scene.a);
             }
             ENDHLSL
         }
