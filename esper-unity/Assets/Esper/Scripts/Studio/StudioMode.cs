@@ -179,7 +179,7 @@ namespace Esper.Studio
 
             if (flying) Fly(mouse, kb);
 
-            if (mouse.leftButton.wasPressedThisFrame)
+            if (mouse.leftButton.wasPressedThisFrame && !PointerGate.OverUi)
             {
                 var ray = cam.ScreenPointToRay(pointer);
                 if (Physics.Raycast(ray, out var hit, 60f))

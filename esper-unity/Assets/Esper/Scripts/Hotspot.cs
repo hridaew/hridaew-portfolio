@@ -19,22 +19,28 @@ namespace Esper
         public float enhanceFov = 9f;
 
         [HideInInspector] public float hover;
-        float accentBase;
-
-        void Awake()
-        {
-            if (accent) accentBase = accent.intensity;
-        }
+        float accentBase, lastSet = -1f;
+        Light tracked;
 
         void Update()
         {
             if (!accent) return;
+            float k = Mathf.Lerp(1f, accentBoost, hover);
             // Respect a flicker component driving the same light: scale on top of it.
             var flicker = accent.GetComponent<LightFlicker>();
-            float baseValue = flicker ? flicker.baseIntensity : accentBase;
-            float target = baseValue * Mathf.Lerp(1f, accentBoost, hover);
-            if (flicker) flicker.scale = Mathf.Lerp(1f, accentBoost, hover);
-            else accent.intensity = target;
+            if (flicker)
+            {
+                flicker.scale = k;
+                return;
+            }
+            // Anyone else setting the light (the live scene, Studio, look dev) sets its resting level.
+            if (accent != tracked || !Mathf.Approximately(accent.intensity, lastSet))
+            {
+                tracked = accent;
+                accentBase = accent.intensity;
+            }
+            lastSet = accentBase * k;
+            accent.intensity = lastSet;
         }
     }
 }

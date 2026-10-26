@@ -86,12 +86,12 @@ namespace Esper
                 var col = h.GetComponent<Collider>();
                 if (col && !col.enabled) col.enabled = true;
             }
-            if (state != State.Enhance) UpdateHover(pointer);
+            if (state != State.Enhance) UpdateHover(PointerGate.OverUi ? (Vector2?)null : pointer);
             float dt = Time.unscaledDeltaTime;
             foreach (var h in hotspots)
                 h.hover = Mathf.MoveTowards(h.hover, h == hovered || h == focused ? 1f : 0f, dt * 3.5f);
 
-            if (pressed) OnPress();
+            if (pressed && !PointerGate.OverUi) OnPress();
             if (kb != null)
             {
                 if (kb.escapeKey.wasPressedThisFrame || kb.backspaceKey.wasPressedThisFrame) Back();
@@ -99,7 +99,7 @@ namespace Esper
                 for (int i = 0; i < hotspots.Length && i < 9; i++)
                     if (kb[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) Select(hotspots[i]);
             }
-            if (mouse != null && mouse.rightButton.wasPressedThisFrame) Back();
+            if (mouse != null && mouse.rightButton.wasPressedThisFrame && !PointerGate.OverUi) Back();
 
             // Breathing parallax: the camera leans a degree toward the pointer.
             if (state != State.Enhance && !reducedMotion && !intro)
@@ -120,10 +120,10 @@ namespace Esper
             }
         }
 
-        void UpdateHover(Vector2 pointer)
+        void UpdateHover(Vector2? pointer)
         {
             Hotspot hit = null;
-            if (cam && Physics.Raycast(cam.ScreenPointToRay(pointer), out var info, 30f))
+            if (cam && pointer.HasValue && Physics.Raycast(cam.ScreenPointToRay(pointer.Value), out var info, 30f))
                 hit = info.collider.GetComponentInParent<Hotspot>();
             if (hit != hovered)
             {
@@ -255,6 +255,9 @@ namespace Esper
             overviewCamera.Lens = lens;
             intro = false;
         }
+
+        /// From the page: the pointer is over the interface, not the room. Hover and clicks stay out of the scene.
+        public void SetPointerOverUi(string on) => PointerGate.OverUi = on == "1";
 
         public void SetFrameOffset(string degrees)
         {

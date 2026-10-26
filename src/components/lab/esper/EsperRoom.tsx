@@ -142,6 +142,18 @@ export function EsperRoom() {
     };
     window.addEventListener("pointerdown", dismissTitle);
     window.addEventListener("keydown", onKey);
+    // Unity reads the mouse for the whole page, so a click on the interface would also land on whatever sits
+    // behind it in the room. Tell it when the pointer is over anything but the canvas. Capture phase, so this
+    // arrives before Unity's next frame sees the press.
+    let overUi = false;
+    const gate = (e: PointerEvent) => {
+      const over = e.target !== canvas;
+      if (over === overUi) return;
+      overUi = over;
+      unityRef.current?.SendMessage("ESPER", "SetPointerOverUi", over ? "1" : "0");
+    };
+    window.addEventListener("pointermove", gate, true);
+    window.addEventListener("pointerdown", gate, true);
 
     return () => {
       cancelled = true;
@@ -149,6 +161,8 @@ export function EsperRoom() {
       window.removeEventListener("esper", onEsper);
       window.removeEventListener("pointerdown", dismissTitle);
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointermove", gate, true);
+      window.removeEventListener("pointerdown", gate, true);
       unityRef.current?.Quit().catch(() => {});
       unityRef.current = null;
       script.remove();
