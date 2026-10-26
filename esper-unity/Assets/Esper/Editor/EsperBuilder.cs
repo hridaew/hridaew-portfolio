@@ -179,7 +179,7 @@ namespace Esper.EditorTools
         // Objects the camera gets close to keep 2K; everything else is 1K. All crunched for the web.
         static readonly string[] HeroModels = { "television_02", "metal_office_desk", "vintage_spacecraft_instrument", "desk_lamp_arm_01", "Camera_01", "magnifying_glass_01", "retro_multimeter" };
 
-        static void PrepareTextureImporters()
+        public static void PrepareTextureImporters()
         {
             AssetDatabase.StartAssetEditing();
             try
@@ -194,8 +194,10 @@ namespace Esper.EditorTools
                     int size = isRoomSet ? (data ? 1024 : 2048) : hero ? 2048 : 1024;
                     if (p.StartsWith("Assets/Esper/Content")) size = 1024;
                     bool dirty = false;
-                    if (p.Contains("_nor_gl") && isRoomSet && imp.textureType != TextureImporterType.NormalMap) { imp.textureType = TextureImporterType.NormalMap; dirty = true; }
-                    if (data && isRoomSet && imp.sRGBTexture) { imp.sRGBTexture = false; dirty = true; }
+                    // Data maps (roughness/metal/AO) are linear and normal maps are normal maps, for props as well as the
+                    // room. Imported as sRGB colour, roughness reads far lower than authored and everything turns glossy.
+                    if (p.Contains("_nor_gl") && imp.textureType != TextureImporterType.NormalMap) { imp.textureType = TextureImporterType.NormalMap; dirty = true; }
+                    if (data && imp.sRGBTexture) { imp.sRGBTexture = false; dirty = true; }
                     if (imp.maxTextureSize != size) { imp.maxTextureSize = size; dirty = true; }
                     if (!imp.crunchedCompression || imp.compressionQuality != 60) { imp.crunchedCompression = true; imp.compressionQuality = 60; dirty = true; }
                     if (dirty) imp.SaveAndReimport();
@@ -216,6 +218,9 @@ namespace Esper.EditorTools
             Set("m_SupportsHDR", p => p.boolValue = true);
             Set("m_MSAA", p => p.intValue = 1); // SMAA on the camera does the anti-aliasing
             Set("m_RenderScale", p => p.floatValue = 1f);
+            // Linear upscaling for the render cap. Auto picks FSR, which WebGL can't run, and URP then drops
+            // every post-processing pass.
+            Set("m_UpscalingFilter", p => p.intValue = (int)UpscalingFilterSelection.Linear);
             Set("m_MainLightShadowsSupported", p => p.boolValue = true);
             Set("m_MainLightShadowmapResolution", p => p.intValue = 4096);
             Set("m_AdditionalLightShadowsSupported", p => p.boolValue = true);
@@ -262,6 +267,7 @@ namespace Esper.EditorTools
             feature.material = volMat;
             feature.SetActive(true);
             EditorUtility.SetDirty(feature);
+            EsperRenderFeatures.InstallStylize(rendererData);
             EditorUtility.SetDirty(rendererData);
             EditorUtility.SetDirty(rp);
             AssetDatabase.SaveAssets();

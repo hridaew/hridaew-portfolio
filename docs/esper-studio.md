@@ -21,6 +21,10 @@ The room is described by one file: **`esper-unity/Live/scene.json`** (items, lig
 ## Light and look
 - **Look**: exposure, ambient, haze and haze glow (the light shafts), bloom, grain, vignette, contrast, saturation, ceiling lights.
 - **Lights**: every practical by name (city key, desk lamp, the pools of light over each station).
+- **Style**: whole-frame render styles: Pixel, Voxel, Obra Dinn (1-bit dither), Pixar (soft painterly CG), Cyberspace (wireframe + world grid), Cel, Noir. **Size** sets each style's scale (pixel size, voxel size, line weight). None turns the pass off entirely, so it costs nothing.
+- **Render** (collapsed): resolution cap (default 1080p: the room renders at most a 1080p frame's worth of pixels and upscales; the page UI stays sharp), anti-aliasing (SMAA default; TAA available), upscaling filter.
+- **Reflections** (in Look): environment/probe reflection strength.
+- **Selection → roughness**: per-object roughness multiplier (1 = as authored, 2 = twice as rough). Saved as `rough` on the item.
 - **Fidelity**: 0 clay (no materials, no shadows, flat light) for blocking out; 1 adds shadows; 2 materials; 3 the grade; 4 haze and rain.
 
 ## Point and prompt (live)

@@ -7,13 +7,13 @@ import { NextResponse } from "next/server";
 const SOURCE = path.join(process.cwd(), "esper-unity", "Live", "scene.json");
 const SERVED = path.join(process.cwd(), "public", "esper", "live", "scene.json");
 
-type Item = { id: string; p?: number[]; r?: number[]; s?: number[]; [k: string]: unknown };
+type Item = { id: string; p?: number[]; r?: number[]; s?: number[]; rough?: number; [k: string]: unknown };
 type Light = { id: string; intensity?: number; [k: string]: unknown };
 type View = { id: string; p?: number[]; target?: number[]; fov?: number };
 type Scene = { items: Item[]; lights: Light[]; views: View[]; stations: unknown[]; look?: Record<string, number> };
 
 type Op =
-  | { op: "item"; id: string; p?: number[]; ry?: number; s?: number }
+  | { op: "item"; id: string; p?: number[]; ry?: number; s?: number; rough?: number }
   | { op: "light"; id: string; intensity: number }
   | { op: "view"; id: string; p: number[]; target: number[]; fov: number }
   | { op: "look"; values: Record<string, number> };
@@ -41,6 +41,8 @@ export async function PATCH(req: Request) {
         item.r = [r[0], r4(o.ry), r[2]];
       }
       if (o.s !== undefined) item.s = Math.abs(o.s - 1) < 1e-4 ? undefined : [r4(o.s)];
+      // Roughness multiplier; 1 is as authored, so it's left out of the file.
+      if (o.rough !== undefined) item.rough = Math.abs(o.rough - 1) < 1e-3 ? undefined : r4(o.rough);
     } else if (o.op === "light") {
       const light = scene.lights.find((l) => l.id === o.id);
       if (light) light.intensity = r4(o.intensity);

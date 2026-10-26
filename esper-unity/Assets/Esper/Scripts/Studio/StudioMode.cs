@@ -277,6 +277,7 @@ namespace Esper.Studio
             WebBridge.Emit(evt, JsonUtility.ToJson(new ObjectOverride
             {
                 path = selected.GetComponent<Esper.Live.LiveItem>().id,
+                rough = selected.GetComponent<Esper.Live.LiveItem>().rough > 0f ? selected.GetComponent<Esper.Live.LiveItem>().rough : 1f,
                 p = new[] { p.x, p.y, p.z },
                 ry = selected.eulerAngles.y,
                 s = selected.localScale.x,

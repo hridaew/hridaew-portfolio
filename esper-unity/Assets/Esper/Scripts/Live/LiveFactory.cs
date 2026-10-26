@@ -129,11 +129,60 @@ namespace Esper.Live
             Decorate(go, spec, svc);
         }
 
+        /// Copies made for tint or roughness, mapped back to the material they came from.
+        static readonly Dictionary<Material, Material> Originals = new();
+        static Material Source(Material m) => m != null && Originals.TryGetValue(m, out var o) && o != null ? o : m;
+        static readonly int RoughnessFactor = Shader.PropertyToID("roughnessFactor");
+        static readonly int Smoothness = Shader.PropertyToID("_Smoothness");
+
+        /// Scales surface roughness by spec.rough (1 = as authored, 2 = twice as rough). glTF materials carry a
+        /// roughness factor over their texture; URP Lit ones a smoothness value.
+        static void ApplyRough(GameObject go, LiveItem li, ItemSpec spec, ILiveServices svc)
+        {
+            float k = spec.rough;
+            foreach (var r in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (r.GetComponentInParent<LiveItem>() != li) continue;
+                var mats = r.sharedMaterials;
+                bool changed = false;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    var m0 = mats[i];
+                    if (!m0) continue;
+                    bool gltf = m0.HasProperty(RoughnessFactor), lit = m0.HasProperty(Smoothness);
+                    if (!gltf && !lit) continue;
+                    var m = new Material(m0) { name = $"Rough_{spec.id?.Replace('/', '_')}_{r.name}_{i}" };
+                    if (gltf) m.SetFloat(RoughnessFactor, m0.GetFloat(RoughnessFactor) * k);
+                    if (lit) m.SetFloat(Smoothness, Mathf.Clamp01(1f - (1f - m0.GetFloat(Smoothness)) * k));
+                    var original = Source(m0);
+                    mats[i] = svc.Persist(m, m.name);
+                    Originals[mats[i]] = original;
+                    changed = true;
+                }
+                if (changed) r.sharedMaterials = mats;
+            }
+        }
+
         static void Decorate(GameObject go, ItemSpec spec, ILiveServices svc)
         {
             var li = go.GetComponent<LiveItem>() ?? go.AddComponent<LiveItem>();
             li.id = spec.id;
             li.spec = LiveJson.Item(spec);
+            li.rough = spec.rough;
+
+            // Re-dressing starts from the authored materials, so tint and roughness never compound.
+            foreach (var r in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (r.GetComponentInParent<LiveItem>() != li) continue;
+                var mats = r.sharedMaterials;
+                bool changed = false;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    var src = Source(mats[i]);
+                    if (src != mats[i]) { mats[i] = src; changed = true; }
+                }
+                if (changed) r.sharedMaterials = mats;
+            }
 
             if (spec.tint != null)
             {
@@ -147,11 +196,15 @@ namespace Esper.Live
                         var m = new Material(mats[i]) { name = $"Tint_{spec.id?.Replace('/', '_')}_{r.name}_{i}" };
                         if (m.HasProperty("baseColorFactor")) m.SetColor("baseColorFactor", c);
                         if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+                        var original = Source(mats[i]);
                         mats[i] = svc.Persist(m, m.name);
+                        Originals[mats[i]] = original;
                     }
                     r.sharedMaterials = mats;
                 }
             }
+
+            if (spec.rough > 0f && Mathf.Abs(spec.rough - 1f) > 1e-3f) ApplyRough(go, li, spec, svc);
 
             foreach (var r in go.GetComponentsInChildren<MeshRenderer>())
             {

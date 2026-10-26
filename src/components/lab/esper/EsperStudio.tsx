@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
  */
 
 type Send = (method: string, value?: string) => void;
-type ObjectOverride = { path: string; p: number[]; ry: number; s: number };
+type ObjectOverride = { path: string; p: number[]; ry: number; s: number; rough?: number };
 type ViewOverride = { id: string; pos: number[]; target: number[]; fov: number };
 type KV = { key: string; value: number };
 type Op = Record<string, unknown> & { op: string };
@@ -56,7 +56,26 @@ const LOOK_KEYS: Record<string, string> = {
   vignette: "vignette",
   contrast: "contrast",
   saturation: "saturation",
+  reflections: "reflections",
 };
+const LOOK_DEFAULTS: Record<string, number> = {
+  exposure: 0.9,
+  ambient: 1,
+  "vol._Density": 0.06,
+  "vol._VolIntensity": 1,
+  bloom: 0.75,
+  grain: 0.38,
+  vignette: 0.34,
+  contrast: 14,
+  saturation: -6,
+  reflections: 1,
+};
+// Render styles, in StylizeFeature.Styles order; each opens at a size that suits it.
+const STYLES = ["None", "Pixel", "Voxel", "Obra Dinn", "Pixar", "Cyberspace", "Cel", "Noir"];
+const STYLE_SIZE: Record<string, number> = { Pixel: 6, Voxel: 6, "Obra Dinn": 2, Pixar: 4, Cyberspace: 1, Cel: 2, Noir: 1, None: 4 };
+const CAPS: Record<string, number> = { "720p": 720, "1080p": 1080, "1440p": 1440, Native: 0 };
+const AA = ["Off", "FXAA", "SMAA", "TAA"];
+const UPSCALE = ["Linear", "Point"];
 const geist = "font-[family-name:var(--font-geist)]";
 
 export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasElement | null }) {
@@ -90,7 +109,7 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       else if (event === "studio-select") setSelection(payload ? JSON.parse(payload) : null);
       else if (event === "studio-moved") {
         const o = JSON.parse(payload) as ObjectOverride;
-        setSelection(o);
+        setSelection((cur) => ({ ...o, rough: cur?.path === o.path ? cur.rough : o.rough }));
         patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s });
       } else if (event === "studio-view") {
         const v = JSON.parse(payload) as ViewOverride;
@@ -163,39 +182,14 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
   useEffect(() => send("SetFly", studio.flyCamera ? "1" : "0"), [studio.flyCamera, send]);
 
-  // ---- Look panel ----
-  const look = useDialKit("Look", {
-    exposure: [0.9, -1, 3, 0.05],
-    ambient: [1, 0, 4, 0.05],
-    haze: [0.06, 0, 0.3, 0.005],
-    hazeGlow: [1, 0, 3, 0.05],
-    bloom: [0.75, 0, 3, 0.05],
-    grain: [0.38, 0, 1, 0.01],
-    vignette: [0.34, 0, 1, 0.01],
-    contrast: [14, -50, 50, 1],
-    saturation: [-6, -100, 50, 1],
-    lightsOn: false,
-  });
-  const lastLook = useRef<Record<string, number>>({});
-  const lookValues = useRef<Record<string, number>>({});
-  const lookReady = useRef(false);
+  // ---- Look, style and render panels start from what's saved in the scene ----
+  const [savedLook, setSavedLook] = useState<Record<string, number> | null>(null);
   useEffect(() => {
-    const parts: string[] = [];
-    const changed: Record<string, number> = {};
-    for (const [k, key] of Object.entries(LOOK_KEYS)) {
-      const v = look[k as keyof typeof look] as number;
-      if (lastLook.current[k] === v) continue;
-      lastLook.current[k] = v;
-      parts.push(`${key}=${v}`);
-      changed[key] = v;
-    }
-    if (parts.length) send("Look", parts.join(";"));
-    // The first pass only syncs Unity to the dials; persist real edits after that.
-    if (parts.length && lookReady.current) patch("look", { op: "look", values: { ...lookValues.current, ...changed } });
-    lookValues.current = { ...lookValues.current, ...changed };
-    lookReady.current = true;
-  }, [look, send, patch]);
-  useEffect(() => send("SetLights", look.lightsOn ? "1" : "0"), [look.lightsOn, send]);
+    fetch("/api/esper-live", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((sc: { look?: Record<string, number> }) => setSavedLook(sc.look ?? {}))
+      .catch(() => setSavedLook({}));
+  }, []);
 
   // ---- Camera panel ----
   const camera = useDialKit(
@@ -225,9 +219,10 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   return (
     <>
       <DialRoot position="top-right" theme="dark" />
+      {savedLook && <LookPanels saved={savedLook} send={send} patch={patch} />}
       {scene && <LightsPanel key={scene.lights.map((l) => l.key).join()} lights={scene.lights} send={send} patch={patch} />}
       {selection && (
-        <SelectionPanel selection={selection} send={send} onChange={(o) => patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s })} />
+        <SelectionPanel selection={selection} send={send} onChange={(o) => patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s, rough: o.rough })} />
       )}
 
       {point && <PromptComposer point={point} onCancel={() => setPoint(null)} onSubmit={(text) => runPrompt(text, point)} />}
@@ -303,6 +298,7 @@ function SelectionPanel({ selection, send, onChange }: { selection: ObjectOverri
       z: [0, -3.75, 3.75, 0.01],
       rotation: [0, 0, 360, 1],
       scale: [1, 0.2, 3, 0.01],
+      roughness: [1, 0.5, 4, 0.05],
       drop: { type: "action", label: "Drop onto surface" },
     },
     { onAction: (a) => a === "drop" && send("DropSelected", "") },
@@ -310,20 +306,20 @@ function SelectionPanel({ selection, send, onChange }: { selection: ObjectOverri
   const echo = useRef("");
   // Selection changed in the room: load it into the dials without echoing back.
   useEffect(() => {
-    const v = { x: r2(selection.p[0]), y: r2(selection.p[1]), z: r2(selection.p[2]), rotation: Math.round(selection.ry), scale: r2(selection.s) };
+    const v = { x: r2(selection.p[0]), y: r2(selection.p[1]), z: r2(selection.p[2]), rotation: Math.round(selection.ry), scale: r2(selection.s), roughness: r2(selection.rough ?? 1) };
     echo.current = JSON.stringify(v);
     dial.setValues(v);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selection.path, selection.p[0], selection.p[1], selection.p[2], selection.ry, selection.s]);
-  const { x, y, z, rotation, scale } = dial.values;
+  }, [selection.path, selection.p[0], selection.p[1], selection.p[2], selection.ry, selection.s, selection.rough]);
+  const { x, y, z, rotation, scale, roughness } = dial.values;
   useEffect(() => {
-    const v = JSON.stringify({ x, y, z, rotation, scale });
+    const v = JSON.stringify({ x, y, z, rotation, scale, roughness });
     if (v === echo.current) return;
     echo.current = v;
-    const o = { path: selection.path, p: [x, y, z], ry: rotation, s: scale };
+    const o = { path: selection.path, p: [x, y, z], ry: rotation, s: scale, rough: roughness };
     send("SetSelected", JSON.stringify(o));
     onChange(o);
-  }, [x, y, z, rotation, scale, selection.path, send, onChange]);
+  }, [x, y, z, rotation, scale, roughness, selection.path, send, onChange]);
   return null;
 }
 
@@ -389,6 +385,71 @@ const anchor = (sx: number, sy: number) => ({
   left: `clamp(16px, calc(${sx * 100}% + 14px), calc(100% - 660px))`,
   top: `clamp(16px, calc(${sy * 100}% - 20px), calc(100% - 200px))`,
 });
+
+function LookPanels({ saved, send, patch }: { saved: Record<string, number>; send: Send; patch: (key: string, op: Op) => void }) {
+  const v = (key: string) => saved[key] ?? LOOK_DEFAULTS[key];
+  const look = useDialKit("Look", {
+    exposure: [v("exposure"), -1, 3, 0.05],
+    ambient: [v("ambient"), 0, 4, 0.05],
+    reflections: [v("reflections"), 0, 2, 0.05],
+    haze: [v("vol._Density"), 0, 0.3, 0.005],
+    hazeGlow: [v("vol._VolIntensity"), 0, 3, 0.05],
+    bloom: [v("bloom"), 0, 3, 0.05],
+    grain: [v("grain"), 0, 1, 0.01],
+    vignette: [v("vignette"), 0, 1, 0.01],
+    contrast: [v("contrast"), -50, 50, 1],
+    saturation: [v("saturation"), -100, 50, 1],
+    lightsOn: false,
+  });
+  const styleDial = useDialKitController("Style", {
+    style: { type: "select", options: STYLES, default: STYLES[saved.style ?? 0] ?? "None" },
+    size: [saved["style.size"] ?? 4, 1, 24, 0.5],
+  });
+  const style = styleDial.values as { style: string; size: number };
+  const render = useDialKit(
+    "Render",
+    {
+      resolution: { type: "select", options: Object.keys(CAPS), default: Object.keys(CAPS).find((k) => CAPS[k] === (saved["pipe.cap"] ?? 1080)) ?? "1080p" },
+      antialiasing: { type: "select", options: AA, default: AA[saved["pipe.aa"] ?? 2] ?? "SMAA" },
+      upscaling: { type: "select", options: UPSCALE, default: UPSCALE[saved["pipe.upscale"] ?? 0] ?? "Linear" },
+    },
+    { defaultCollapsed: true },
+  );
+
+  // Every dial maps to one look key; push changes to the room and autosave them to the scene.
+  const values: Record<string, number> = {
+    ...Object.fromEntries(Object.entries(LOOK_KEYS).map(([k, key]) => [key, look[k as keyof typeof look] as number])),
+    style: Math.max(0, STYLES.indexOf(style.style)),
+    "style.size": style.size,
+    "pipe.cap": CAPS[render.resolution] ?? 1080,
+    "pipe.aa": Math.max(0, AA.indexOf(render.antialiasing)),
+    "pipe.upscale": Math.max(0, UPSCALE.indexOf(render.upscaling)),
+  };
+  const last = useRef<Record<string, number> | null>(null);
+  const key = JSON.stringify(values);
+  useEffect(() => {
+    const prev = last.current;
+    last.current = values;
+    const changed = Object.fromEntries(Object.entries(values).filter(([k, val]) => !prev || prev[k] !== val));
+    if (!Object.keys(changed).length) return;
+    send("Look", Object.entries(changed).map(([k, val]) => `${k}=${val}`).join(";"));
+    // The first pass only syncs the room to the saved values; persist real edits after that.
+    if (prev) patch("look", { op: "look", values });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, send, patch]);
+
+  // A new style opens at the size that suits it.
+  const lastStyle = useRef(style.style);
+  useEffect(() => {
+    if (lastStyle.current === style.style) return;
+    lastStyle.current = style.style;
+    styleDial.setValues({ size: STYLE_SIZE[style.style] ?? 4 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [style.style]);
+
+  useEffect(() => send("SetLights", look.lightsOn ? "1" : "0"), [look.lightsOn, send]);
+  return null;
+}
 
 const round = (v: number) => Math.round(v * 100) / 100;
 const r2 = round;

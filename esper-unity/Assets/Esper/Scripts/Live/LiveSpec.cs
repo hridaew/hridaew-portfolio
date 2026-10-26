@@ -39,6 +39,8 @@ namespace Esper.Live
         public PhotoSpec photo;
         public SpinSpec spin;
         public float[] tint;
+        /// Roughness multiplier: 1 (or 0/absent) = as authored, 2 = twice as rough. Everything reads less glossy above 1.
+        public float rough;
         public List<ItemSpec> children;
     }
 

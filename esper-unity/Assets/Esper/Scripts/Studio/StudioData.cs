@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Esper.Studio
 {
     /// Studio <-> page payloads. Edits are written to Live/scene.json by the page; Unity only reports them.
-    [Serializable] public class ObjectOverride { public string path; public float[] p; public float ry; public float s = 1f; }
+    [Serializable] public class ObjectOverride { public string path; public float[] p; public float ry; public float s = 1f; public float rough = 1f; }
     [Serializable] public class ValueOverride { public string key; public float value; }
     [Serializable] public class ViewOverride { public string id; public float[] pos; public float[] target; public float fov; }
 
