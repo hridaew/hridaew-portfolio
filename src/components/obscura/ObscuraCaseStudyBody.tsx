@@ -14,6 +14,7 @@ import { ExhibitionMosaic } from "@/components/obscura/ExhibitionMosaic";
 import { StoryboardCarousel } from "@/components/obscura/StoryboardCarousel";
 import { cn } from "@/lib/utils";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
+import { POTREROVIEW_URL } from "@/lib/press";
 import { HelpCircle, Smartphone, UsersRound, type LucideIcon } from "lucide-react";
 
 /** Geist body — home / site benchmark */
@@ -1038,6 +1039,47 @@ export function ObscuraCaseStudyBody() {
                         <ExhibitionMosaic className="py-16 md:py-24" />
                     </div>
                 </Reveal>
+
+                {/* Clipping scan omitted until public/press/potrero-view-2026-11.jpg is added. */}
+                <section id="press" className={cn(obscuraSectionShell, "case-study-section-y-b")}>
+                    <Reveal>
+                        <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
+                            <h2 className="site-label text-amber-800/70 text-left">
+                                Press
+                            </h2>
+                            <p className={cn(obBody, "m-0 text-left text-ink-muted")}>
+                                The Potrero View, November 2026
+                            </p>
+                            <p className="m-0 text-left">
+                                <a
+                                    href={POTREROVIEW_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="site-chapter-heading text-ink underline underline-offset-2 decoration-ink/30 transition-colors hover:text-amber-900 hover:decoration-amber-800/50"
+                                >
+                                    Obscura Asks Viewers to Look Again
+                                </a>
+                            </p>
+                            <p className={cn(obBody, "m-0 text-left text-ink-subtle")}>
+                                By Danny Pham
+                            </p>
+                        </div>
+                    </Reveal>
+                    <Reveal delay={0.05} className="case-study-media-caption-mt">
+                        <blockquote className="w-full min-w-0 border-l-2 border-amber-800/25 py-2 pl-6">
+                            <p className="type-body-lg m-0 text-left text-ink">
+                                &ldquo;an interactive installation led by designer Hridae Walia that asks viewers not only to examine an unusual photographic archive, but to consider how distinctly people can experience the same images.&rdquo;
+                            </p>
+                        </blockquote>
+                    </Reveal>
+                    <Reveal delay={0.1} className="case-study-media-caption-mt">
+                        <blockquote className="w-full min-w-0 border-l-2 border-amber-800/25 py-2 pl-6">
+                            <p className={cn(obBody, "m-0 text-left text-ink-secondary")}>
+                                &ldquo;The project relies on virtual reality, eye tracking and personalization, but its designers are attempting to generate something decidedly human: conversation.&rdquo;
+                            </p>
+                        </blockquote>
+                    </Reveal>
+                </section>
 
                 {/* Bottom spacer */}
                 <div className="h-20" />

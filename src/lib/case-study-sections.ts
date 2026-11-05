@@ -32,6 +32,7 @@ export const OBSCURA_SECTIONS: CaseStudySection[] = [
   { id: "prototyping", label: "Prototyping", number: "04" },
   { id: "exhibition", label: "Exhibition", number: "05" },
   { id: "reflection", label: "Reflection", number: "06" },
+  { id: "press", label: "Press", number: "07" },
 ];
 
 export const MEMORY_CARE_SECTIONS: CaseStudySection[] = [
