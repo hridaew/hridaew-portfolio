@@ -275,11 +275,11 @@ export function ObscuraCaseStudyBody() {
                             <div className={cn("flex flex-wrap justify-start gap-x-10 gap-y-6", obBody, "text-ink-muted")}>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Role</span>
-                                    Lead Interaction Designer, Prototyper, &amp; Developer
+                                    Lead Designer and Developer
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Team</span>
-                                    Asa Symons, Caiya Wiltshire, Nick Hallin
+                                    With Nicholas Hallin, Caiya Wiltshire, and Asa Symons
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Client</span>
@@ -295,6 +295,13 @@ export function ObscuraCaseStudyBody() {
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Date</span>
                                     September 13, 2025
+                                </div>
+                                <div className="basis-full">
+                                    <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Exhibitions</span>
+                                    <ul className="m-0 list-none p-0">
+                                        <li>Museum of History &amp; Industry, Seattle, 2025 (sold-out run)</li>
+                                        <li>Potrero Hill Neighborhood House Art Showcase, San Francisco, 2026</li>
+                                    </ul>
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Key Tech</span>

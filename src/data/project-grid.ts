@@ -90,7 +90,7 @@ export const gridProjects: GridProjectData[] = [
   {
     slug: "obscura",
     title: "Obscura",
-    role: "Lead Designer & Developer",
+    role: "Lead Designer and Developer",
     description:
       "Researching, designing, and developing an immersive museum exhibit in collaboration with the Museum of History and Industry. Exhibited on 09/13/2025",
     timeline: "2024 — 2025",

@@ -85,7 +85,7 @@ Role: Product Designer (2021–2022). Platforms: iOS, Android, Web, TV.
 
 Immersive exhibit at the Museum of History & Industry (MOHAI) in Seattle, built around 300+ unseen photographs of post-WWII life in Japan. Solitary VR and a public exhibition share a spatial computing environment: the viewer's gaze dynamically curates which images they see, so the path through the archive is personal rather than a fixed timeline.
 
-Role: interaction design, prototyping, and Unity development. Exhibition: 13 September 2025. Visitor notes: ${absoluteUrl("/obscura/thoughts")}
+Role: Lead Designer and Developer. With Nicholas Hallin, Caiya Wiltshire, and Asa Symons. Exhibitions: Museum of History & Industry, Seattle, 2025 (sold-out run); Potrero Hill Neighborhood House Art Showcase, San Francisco, 2026. Visitor notes: ${absoluteUrl("/obscura/thoughts")}
 
 ### Memory Care Experience Station — ${absoluteUrl("/memory-care")}
 
