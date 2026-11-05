@@ -76,6 +76,9 @@ function BioProjectAnchor({
   );
 }
 
+/** Project-link paragraph under the bio. Hidden until the line is ready to show again. */
+const SHOW_WORK_BIO = true;
+
 export function BioSection() {
   const choom = useChoomLingo();
   return (
@@ -93,17 +96,19 @@ export function BioSection() {
             focus on the user and learn by making, whether on the canvas, in
             code, or the physical world.
           </p>
-          <p className="m-0">
-            I&apos;ve designed features that help people understand their homes at{" "}
-            <BioProjectAnchor slug="domis">Domis</BioProjectAnchor>, AR fitness
-            for any space at{" "}
-            <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, an
-            interactive exhibition at{" "}
-            <BioProjectAnchor slug="obscura">MOHAI</BioProjectAnchor>, and
-            tangible, accessible experiences for people living with
-            Alzheimer&apos;s at the{" "}
-            <BioProjectAnchor slug="memory-care">SFCJL</BioProjectAnchor>.
-          </p>
+          {SHOW_WORK_BIO ? (
+            <p className="m-0">
+              I&apos;ve designed features that help people understand their homes at{" "}
+              <BioProjectAnchor slug="domis">Domis</BioProjectAnchor>, AR fitness
+              for any space at{" "}
+              <BioProjectAnchor slug="virdio">Virdio</BioProjectAnchor>, an
+              interactive exhibition at{" "}
+              <BioProjectAnchor slug="obscura">MOHAI</BioProjectAnchor>, and
+              tangible, accessible experiences for people living with
+              Alzheimer&apos;s at the{" "}
+              <BioProjectAnchor slug="memory-care">SFCJL</BioProjectAnchor>.
+            </p>
+          ) : null}
         </>
       )}
     </div>

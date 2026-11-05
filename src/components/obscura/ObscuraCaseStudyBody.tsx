@@ -954,6 +954,53 @@ export function ObscuraCaseStudyBody() {
                     </Reveal>
                 </section>
 
+                <section id="press" className={cn(obscuraSectionShell, "case-study-section-y-b")}>
+                    <Reveal>
+                        <div>
+                            <h2 className="site-chapter-heading case-study-heading-trail-mb text-ink">
+                                Press
+                            </h2>
+                            <div className="flex items-center gap-6">
+                                <div className="case-study-prose-stack flex min-w-0 flex-1 flex-col">
+                                    <p className={cn(obBody, "m-0 text-left text-ink-muted")}>
+                                        <a
+                                            href={POTREROVIEW_URL}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline underline-offset-2 decoration-neutral-500/60 transition-colors hover:text-amber-900 hover:decoration-amber-800/50"
+                                        >
+                                            Obscura Asks Viewers to Look Again
+                                        </a>
+                                        , The Potrero View, November 2026, by Danny Pham.
+                                    </p>
+                                    <blockquote className="m-0 w-full min-w-0 border-l-2 border-amber-800/25 py-1 pl-6">
+                                        <p className={cn(obBody, "m-0 text-left text-ink")}>
+                                            &ldquo;An interactive installation led by designer Hridae Walia that asks viewers not only to examine an unusual photographic archive, but to consider how distinctly people can experience the same images.&rdquo;
+                                        </p>
+                                    </blockquote>
+                                    <blockquote className="m-0 w-full min-w-0 border-l-2 border-amber-800/20 py-1 pl-6">
+                                        <p className={cn(obBody, "m-0 text-left text-ink-secondary")}>
+                                            &ldquo;The project relies on virtual reality, eye tracking and personalization, but its designers are attempting to generate something decidedly human: conversation.&rdquo;
+                                        </p>
+                                    </blockquote>
+                                </div>
+                                <div
+                                    className="w-28 shrink-0 rounded-xl shadow-[0_1px_1px_rgba(0,0,0,0.06),0_10px_18px_rgba(0,0,0,0.08),0_22px_40px_rgba(0,0,0,0.14),0_40px_64px_rgba(0,0,0,0.08)] sm:w-40"
+                                    style={{ transform: "rotate(-2.5deg)" }}
+                                >
+                                    <LightboxImage
+                                        src="/press/potrero-view-2026-11.jpg"
+                                        alt='The Potrero View, November 2026, page 7: "Obscura Asks Viewers to Look Again"'
+                                        hoverScale={1}
+                                        className="block h-auto w-full rounded-xl"
+                                        draggable={false}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </Reveal>
+                </section>
+
                 {/* ═══════════════════════════════════════════════
                     REFLECTION
                 ═══════════════════════════════════════════════ */}
@@ -1046,47 +1093,6 @@ export function ObscuraCaseStudyBody() {
                         <ExhibitionMosaic className="py-16 md:py-24" />
                     </div>
                 </Reveal>
-
-                {/* Clipping scan omitted until public/press/potrero-view-2026-11.jpg is added. */}
-                <section id="press" className={cn(obscuraSectionShell, "case-study-section-y-b")}>
-                    <Reveal>
-                        <div className="case-study-prose-stack flex w-full min-w-0 flex-col">
-                            <h2 className="site-label text-amber-800/70 text-left">
-                                Press
-                            </h2>
-                            <p className={cn(obBody, "m-0 text-left text-ink-muted")}>
-                                The Potrero View, November 2026
-                            </p>
-                            <p className="m-0 text-left">
-                                <a
-                                    href={POTREROVIEW_URL}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="site-chapter-heading text-ink underline underline-offset-2 decoration-ink/30 transition-colors hover:text-amber-900 hover:decoration-amber-800/50"
-                                >
-                                    Obscura Asks Viewers to Look Again
-                                </a>
-                            </p>
-                            <p className={cn(obBody, "m-0 text-left text-ink-subtle")}>
-                                By Danny Pham
-                            </p>
-                        </div>
-                    </Reveal>
-                    <Reveal delay={0.05} className="case-study-media-caption-mt">
-                        <blockquote className="w-full min-w-0 border-l-2 border-amber-800/25 py-2 pl-6">
-                            <p className="type-body-lg m-0 text-left text-ink">
-                                &ldquo;an interactive installation led by designer Hridae Walia that asks viewers not only to examine an unusual photographic archive, but to consider how distinctly people can experience the same images.&rdquo;
-                            </p>
-                        </blockquote>
-                    </Reveal>
-                    <Reveal delay={0.1} className="case-study-media-caption-mt">
-                        <blockquote className="w-full min-w-0 border-l-2 border-amber-800/25 py-2 pl-6">
-                            <p className={cn(obBody, "m-0 text-left text-ink-secondary")}>
-                                &ldquo;The project relies on virtual reality, eye tracking and personalization, but its designers are attempting to generate something decidedly human: conversation.&rdquo;
-                            </p>
-                        </blockquote>
-                    </Reveal>
-                </section>
 
                 {/* Bottom spacer */}
                 <div className="h-20" />
