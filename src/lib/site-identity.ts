@@ -79,7 +79,7 @@ export const CASE_STUDIES: PublicPage[] = [
     path: "/obscura",
     title: "OBSCURA",
     description:
-      "Immersive photographic documentary at MOHAI (Museum of History & Industry, Seattle). A spatial computing exhibit where the viewer's gaze dynamically curates unseen post-WWII photographs from Japan. Interaction design, prototyping, and Unity development.",
+      "Immersive photographic documentary at MOHAI (Museum of History & Industry, Seattle). A spatial computing exhibit where the viewer's gaze dynamically curates unseen post-WWII photographs from Japan. Interaction design, prototyping, and Unity development, featured in The Potrero View (2026).",
     sitemap: true,
   },
   {
