@@ -6,7 +6,7 @@
 export const SITE_ORIGIN = "https://hridaew.com";
 
 export const CV_HREF =
-  "https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing";
+  "https://drive.google.com/file/d/1BJqjdsuCzyHiUc6RlF13tBW6UjLOYe9Z/view?usp=sharing";
 
 export const LINKEDIN_HREF = "https://www.linkedin.com/in/hridae";
 export const GITHUB_HREF = "https://github.com/hridaew";

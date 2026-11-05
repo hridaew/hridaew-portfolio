@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "./Reveal";
+import { CV_HREF } from "@/lib/site-identity";
 
 export function AboutMeSection() {
     const [imageExpanded, setImageExpanded] = useState(false);
@@ -194,7 +195,7 @@ export function AboutMeSection() {
                                     transition={{ duration: 0.18, ease: "easeOut" }}
                                 >
                                     <Link
-                                        href="https://drive.google.com/file/d/1f11tgSCoo4GY0DuVhdmOVG17lPRpGb3Z/view?usp=sharing"
+                                        href={CV_HREF}
                                         target="_blank"
                                         className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full overflow-hidden "
                                         style={{
