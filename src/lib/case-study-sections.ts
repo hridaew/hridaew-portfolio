@@ -2,18 +2,17 @@ export type CaseStudySection = {
   id: string;
   label: string;
   number: string;
+  /** Longer chapter title for in-page indexes; the rail uses `label`. */
+  title?: string;
 };
 
 export const DOMIS_SECTIONS: CaseStudySection[] = [
   { id: "hero", label: "Intro", number: "00" },
-  { id: "overview", label: "Overview", number: "01" },
-  { id: "user-problem", label: "User problem", number: "02" },
-  { id: "challenge", label: "Challenge", number: "03" },
-  { id: "known", label: "The home", number: "04" },
-  { id: "address", label: "Address", number: "05" },
-  { id: "appliance", label: "Appliance", number: "06" },
-  { id: "report", label: "Report", number: "07" },
-  { id: "insights", label: "Insights", number: "08" },
+  { id: "tension", label: "The tension", number: "01", title: "The tension" },
+  { id: "learn", label: "Learn the home", number: "02", title: "Learn the home without asking" },
+  { id: "verdict", label: "The verdict", number: "03", title: "Turn it into a verdict" },
+  { id: "domis-plus", label: "Domis+", number: "04", title: "The same problem, times ten" },
+  { id: "impact", label: "Impact", number: "05", title: "What it added up to" },
 ];
 
 export const VIRDIO_SECTIONS: CaseStudySection[] = [

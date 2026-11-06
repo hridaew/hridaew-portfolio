@@ -1,0 +1,701 @@
+/* Domis case study v2: chapter structure, glance strip, principle band,
+   comparison and tables. Builds on the .domis-cs tokens in domis-case-study.css. */
+
+.domis-cs {
+  /* Deep Domis red: brand #ff5a5b fails AA under small white text; this passes (≥4.5:1). */
+  --dcs-red-deep: #c4343b;
+  --dcs-red-ink: #b42f36;
+  --dcs-amber: #b4690e;
+  --dcs-pass: #1f6b43;
+  --dcs-pass-bg: rgba(31, 107, 67, 0.1);
+  --dcs-miss: #8a5a12;
+  --dcs-miss-bg: rgba(180, 105, 14, 0.12);
+}
+
+/* ─── Glance strip ─── */
+.domis-cs .dcs-glance {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--dcs-line);
+  background: var(--dcs-line);
+}
+
+@media (min-width: 640px) {
+  .domis-cs .dcs-glance {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.domis-cs .dcs-glance-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+  background: var(--paper, #f4f4f3);
+}
+
+.domis-cs .dcs-glance-cell dd {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── Chapter index ─── */
+.domis-cs .dcs-chapter-index {
+  margin-top: 2.5rem;
+}
+
+.domis-cs .dcs-chapter-index ol {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-chapter-index li {
+  border-bottom: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-chapter-index button {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 0.25rem;
+  text-align: left;
+  color: var(--dcs-text);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    padding-left 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.domis-cs .dcs-chapter-index button:hover {
+  padding-left: 0.6rem;
+}
+
+.domis-cs .dcs-chapter-index button:focus-visible {
+  outline: 2px solid var(--dcs-red-deep);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.domis-cs .dcs-ci-num {
+  flex: none;
+  width: 1.75rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--dcs-red-ink);
+}
+
+.domis-cs .dcs-ci-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* ─── Chapter head ─── */
+.domis-cs .dcs-chapter {
+  scroll-margin-top: 24px;
+}
+
+.domis-cs .dcs-chapter-head {
+  margin-bottom: 3rem;
+}
+
+.domis-cs .dcs-col p.dcs-chapter-num {
+  margin: 0 0 0.75rem;
+  color: var(--dcs-red-ink);
+}
+
+.domis-cs .dcs-chapter-num span {
+  color: var(--dcs-faint);
+}
+
+.domis-cs .dcs-chapter-head h2 {
+  margin: 0;
+  text-wrap: balance;
+}
+
+.domis-cs .dcs-col .dcs-chapter-head p.dcs-chapter-lede {
+  margin: 1.25rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.55;
+}
+
+.domis-cs .dcs-sub {
+  scroll-margin-top: 24px;
+  padding-top: 1.5rem;
+}
+
+.domis-cs .dcs-col p.dcs-eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--dcs-faint);
+}
+
+.domis-cs h3.dcs-heading {
+  margin-top: 0;
+  text-wrap: balance;
+}
+
+.domis-cs .dcs-col p.dcs-role-lede {
+  margin-bottom: 1rem;
+}
+
+/* ─── Wide figures (comparison, attempt strip, principle band) ───
+   Centered breakout past the text column, clamped to the viewport gutter. */
+.domis-cs figure.dcs-wide,
+.domis-cs .dcs-principle {
+  --dcs-wide: 100%;
+  width: var(--dcs-wide);
+  max-width: none;
+  margin-left: calc((100% - var(--dcs-wide)) / 2);
+  margin-right: calc((100% - var(--dcs-wide)) / 2);
+}
+
+.domis-cs figure.dcs-wide {
+  margin-top: 0;
+  margin-bottom: 4.25rem;
+}
+
+@media (min-width: 768px) {
+  .domis-cs figure.dcs-wide,
+  .domis-cs .dcs-principle {
+    --dcs-wide: min(calc(var(--dcs-col-text) + 11rem), calc(100vw - 3rem));
+  }
+}
+
+@media (min-width: 1100px) {
+  .domis-cs figure.dcs-wide {
+    --dcs-wide: min(calc(var(--dcs-col-text) + 20rem), calc(100vw - 3rem));
+  }
+}
+
+/* Wider still on large screens, but clear of the fixed section rail (~11rem). */
+@media (min-width: 1440px) {
+  .domis-cs figure.dcs-wide.dcs-compare {
+    --dcs-wide: min(calc(var(--dcs-col-text) + 30rem), calc(100vw - 26rem));
+  }
+}
+
+.domis-cs .dcs-shot {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--dcs-line);
+  background: #fff;
+}
+
+.domis-cs .dcs-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.domis-cs .dcs-shot.dcs-shot-framed {
+  border-radius: 18px;
+  box-shadow: var(--shadow-e2, 0 12px 32px rgba(0, 0, 0, 0.08));
+}
+
+/* First attempt: three dropped directions, then the kept one */
+.domis-cs .dcs-attempt-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+@media (min-width: 768px) {
+  .domis-cs .dcs-attempt-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+.domis-cs .dcs-attempt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.domis-cs .dcs-attempt .dcs-shot {
+  border-radius: 18px;
+  aspect-ratio: 9 / 19.5;
+}
+
+.domis-cs .dcs-attempt .dcs-shot img {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.domis-cs .dcs-attempt.is-dropped .dcs-shot {
+  opacity: 0.72;
+  filter: saturate(0.6);
+}
+
+.domis-cs .dcs-attempt.is-kept .dcs-shot {
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px var(--dcs-red-deep),
+    0 16px 40px rgb(var(--ink-rgb) / 0.12);
+}
+
+.domis-cs .dcs-attempt-label {
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--dcs-muted);
+}
+
+.domis-cs .dcs-attempt-label s {
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgb(var(--ink-rgb) / 0.45);
+}
+
+.domis-cs .dcs-attempt.is-kept .dcs-attempt-label {
+  color: var(--dcs-text);
+  font-weight: 600;
+}
+
+/* ─── Principle band ─── */
+.domis-cs .dcs-principle {
+  margin-top: 0;
+  margin-bottom: 3rem;
+  padding: 2.25rem 1.5rem 2.5rem;
+  border-radius: 20px;
+  background: var(--dcs-red-deep);
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .domis-cs .dcs-principle {
+    padding: 3.5rem 5.5rem 3.75rem;
+  }
+}
+
+.domis-cs .dcs-principle p.dcs-principle-eyebrow {
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.domis-cs .dcs-principle p.dcs-principle-text {
+  margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  .domis-cs .dcs-principle p.dcs-principle-text {
+    font-size: 2.6rem;
+  }
+}
+
+.domis-cs .dcs-principle p.dcs-principle-note {
+  margin: 1.25rem 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ─── Four inputs ─── */
+.domis-cs .dcs-inputs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.domis-cs .dcs-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border-radius: 14px;
+  border: 1px solid var(--dcs-line);
+  background: rgb(var(--ink-rgb) / 0.03);
+}
+
+.domis-cs .dcs-input-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-input-copy {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--dcs-muted);
+}
+
+/* ─── Under the hood ─── */
+.domis-cs .dcs-hood {
+  border-radius: 14px;
+  border: 1px solid var(--dcs-line);
+  background: rgb(var(--ink-rgb) / 0.025);
+}
+
+.domis-cs .dcs-hood summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  padding: 1rem 3rem 1rem 1.1rem;
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+}
+
+.domis-cs .dcs-hood summary::-webkit-details-marker {
+  display: none;
+}
+
+.domis-cs .dcs-hood summary:focus-visible {
+  outline: 2px solid var(--dcs-red-deep);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+.domis-cs .dcs-hood-label {
+  color: var(--dcs-faint);
+}
+
+.domis-cs .dcs-hood-title {
+  font-weight: 600;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-hood-caret {
+  position: absolute;
+  right: 1.15rem;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  color: var(--dcs-muted);
+  transform: rotate(45deg);
+  transition: transform 200ms ease;
+}
+
+.domis-cs .dcs-hood[open] .dcs-hood-caret {
+  transform: rotate(225deg);
+  margin-top: -2px;
+}
+
+.domis-cs .dcs-hood-body {
+  padding: 0 1.1rem 1.1rem;
+}
+
+.domis-cs .dcs-hood-body > * {
+  margin-bottom: 0;
+}
+
+/* ─── Tables ─── */
+.domis-cs .dcs-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-table {
+  width: 100%;
+  min-width: 460px;
+  border-collapse: collapse;
+  font-size: 0.925rem;
+  line-height: 1.4;
+}
+
+.domis-cs .dcs-table th,
+.domis-cs .dcs-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-table tbody tr:last-child th,
+.domis-cs .dcs-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.domis-cs .dcs-table thead th {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--dcs-faint);
+  background: rgb(var(--ink-rgb) / 0.03);
+}
+
+.domis-cs .dcs-table tbody th {
+  font-weight: 500;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-table td {
+  color: var(--dcs-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.domis-cs .dcs-gate {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.domis-cs .dcs-gate.is-pass {
+  color: var(--dcs-pass);
+  background: var(--dcs-pass-bg);
+}
+
+.domis-cs .dcs-gate.is-miss {
+  color: var(--dcs-miss);
+  background: var(--dcs-miss-bg);
+}
+
+.domis-cs .dcs-col p.dcs-after-table {
+  margin-top: 1.25rem;
+}
+
+/* ─── Bridge line ─── */
+.domis-cs .dcs-col p.dcs-bridge {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  margin: 2.5rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-bridge-mark {
+  flex: none;
+  width: 1.5rem;
+  height: 1px;
+  margin-top: 0.8rem;
+  background: var(--dcs-red-deep);
+}
+
+/* ─── Before / after ─── */
+.domis-cs .dcs-compare {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .domis-cs .dcs-compare {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+}
+
+.domis-cs .dcs-compare-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.domis-cs .dcs-compare-item p {
+  margin: 0;
+}
+
+.domis-cs .dcs-compare-item.is-before .dcs-shot {
+  opacity: 0.85;
+}
+
+.domis-cs .dcs-compare-item.is-after .dcs-shot {
+  box-shadow: 0 20px 56px rgb(var(--ink-rgb) / 0.14);
+}
+
+/* ─── Section rules ─── */
+.domis-cs .dcs-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.domis-cs .dcs-rule-card {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--dcs-line);
+  border-left: 3px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-rule-card.is-now {
+  border-left-color: var(--dcs-red-deep);
+}
+
+.domis-cs .dcs-rule-card.is-soon {
+  border-left-color: var(--dcs-amber);
+}
+
+.domis-cs .dcs-rule-card.is-quiet {
+  border-left-color: rgb(var(--ink-rgb) / 0.3);
+}
+
+.domis-cs .dcs-rule-name {
+  font-weight: 600;
+  color: var(--dcs-text);
+}
+
+@media (max-width: 479px) {
+  .domis-cs .dcs-rule-card {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
+/* ─── Domis+ ─── */
+.domis-cs .dcs-col p.dcs-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -1.5rem 0 1.75rem;
+  padding: 0.3rem 0.8rem 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--dcs-line);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--dcs-pass);
+  box-shadow: 0 0 0 3px var(--dcs-pass-bg);
+}
+
+.domis-cs .dcs-worklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-worklist li {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--dcs-line);
+}
+
+.domis-cs .dcs-worklist-numbered li {
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+}
+
+.domis-cs .dcs-worklist-title {
+  font-weight: 600;
+  color: var(--dcs-text);
+}
+
+@media (max-width: 479px) {
+  .domis-cs .dcs-worklist li {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
+/* ─── Impact ─── */
+.domis-cs .dcs-impact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .domis-cs .dcs-impact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.domis-cs .dcs-impact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.1rem 1.1rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--dcs-line);
+  background: rgb(var(--ink-rgb) / 0.03);
+}
+
+.domis-cs .dcs-impact-title {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 1.3rem;
+  line-height: 1.15;
+  color: var(--dcs-text);
+}
+
+.domis-cs .dcs-impact-card .site-body {
+  font-size: 0.925rem;
+  line-height: 1.5;
+}
+
+.domis-cs .dcs-principles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: dcs-p;
+}
+
+.domis-cs .dcs-principles li {
+  counter-increment: dcs-p;
+  display: flex;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--dcs-line);
+  font-weight: 500;
+}
+
+.domis-cs .dcs-principles li::before {
+  content: counter(dcs-p, decimal-leading-zero);
+  flex: none;
+  width: 1.75rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6rem;
+  color: var(--dcs-red-ink);
+}
+
+/* Diagrams inside a disclosure sit flush in the panel instead of breaking out. */
+.domis-cs .dcs-hood-body figure.dcs-ux-figure,
+.domis-cs .dcs-hood-body figure.dcs-ux-figure.dcs-ux-figure-wide {
+  width: 100%;
+  margin: 0;
+}
+
+.domis-cs .dcs-hood-body figure.dcs-ux-figure .dud-board {
+  box-shadow: none;
+}
