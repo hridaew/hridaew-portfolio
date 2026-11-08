@@ -149,7 +149,7 @@ export const caseStudies: CaseStudy[] = [
     subtitle: "Immersive photographic documentary",
     description: "A boundary-pushing immersive installation at MOHAI",
     image: "/images/obscura.png",
-    role: "Lead Product Designer",
+    role: "Lead Designer and Developer",
     timeline: "8 months, 2024",
     team: "2 Designers, 4 Engineers, 1 PM",
     rotation: -1.8,

@@ -14,14 +14,14 @@ namespace Esper.EditorTools
 
         static void BuildLights()
         {
-            // The city: one cold key through the blinds. Everything else is practical.
-            cityLight = NewLight("CityLight", LightType.Directional, new Color(0.52f, 0.76f, 0.92f), 1.7f);
-            cityLight.transform.rotation = Quaternion.LookRotation(new Vector3(0.34f, -0.52f, -0.78f));
+            // The sun, coming in through the window. It stays put: scene.json sets its colour, direction and level.
+            cityLight = NewLight("CityLight", LightType.Directional, new Color(1f, 0.94f, 0.84f), 3f);
+            cityLight.transform.rotation = Quaternion.LookRotation(new Vector3(0.25f, -0.62f, -0.74f));
             cityLight.shadows = LightShadows.Soft;
             cityLight.shadowStrength = 1f;
             cityLight.shadowBias = 0.02f;
             cityLight.shadowNormalBias = 0.1f;
-            cityLight.gameObject.AddComponent<SlowSweep>();
+            cityLight.lightmapBakeType = LightmapBakeType.Realtime;
 
             // Spill from the street: a cool wash on the window wall and ceiling.
             var spill = streetSpill = NewLight("StreetSpill", LightType.Spot, new Color(0.3f, 0.55f, 0.75f), 0.35f);
@@ -32,10 +32,17 @@ namespace Esper.EditorTools
             spill.shadows = LightShadows.Soft;
 
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.016f, 0.018f, 0.026f);
-            RenderSettings.ambientEquatorColor = new Color(0.018f, 0.014f, 0.016f);
-            RenderSettings.ambientGroundColor = new Color(0.007f, 0.006f, 0.006f);
-            RenderSettings.skybox = Custom("NightSky", "Esper/NightSky");
+            RenderSettings.ambientSkyColor = new Color(0.95f, 0.98f, 1.03f);
+            RenderSettings.ambientEquatorColor = new Color(0.86f, 0.86f, 0.84f);
+            RenderSettings.ambientGroundColor = new Color(0.72f, 0.7f, 0.67f);
+            RenderSettings.skybox = Custom("DaySky", "Esper/DaySky", m =>
+            {
+                var paper = new Color(0.93f, 0.92f, 0.9f);
+                m.SetColor("_Zenith", paper);
+                m.SetColor("_Horizon", paper);
+                m.SetColor("_Ground", paper);
+                m.SetVector("_SunDir", new Vector4(0f, -1f, 0f, 0f));
+            });
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
 
             var probe = new GameObject("RoomProbe").AddComponent<ReflectionProbe>();
@@ -63,63 +70,21 @@ namespace Esper.EditorTools
 
         static void BuildAtmosphere()
         {
-            // Rain falling past the glass.
-            var rain = new GameObject("Rain").AddComponent<ParticleSystem>();
-            rain.transform.SetParent(outside, false);
-            rain.transform.position = new Vector3(-0.2f, 9f, BackZ + 7f);
-            var main = rain.main;
-            main.loop = true;
-            main.prewarm = true;
-            main.startLifetime = 2.4f;
-            main.startSpeed = 0f;
-            main.startSize = 0.012f;
-            main.startColor = new Color(0.65f, 0.78f, 0.95f, 0.35f);
-            main.maxParticles = 12000;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            var vel = rain.velocityOverLifetime;
-            vel.enabled = true;
-            vel.space = ParticleSystemSimulationSpace.World;
-            vel.x = new ParticleSystem.MinMaxCurve(-1.6f, -1.2f);
-            vel.y = new ParticleSystem.MinMaxCurve(-11f, -9f);
-            vel.z = new ParticleSystem.MinMaxCurve(0f, 0f);
-            var em = rain.emission;
-            em.rateOverTime = 4200f;
-            var shape = rain.shape;
-            shape.shapeType = ParticleSystemShapeType.Box;
-            shape.scale = new Vector3(24f, 0.1f, 12f);
-            var pr = rain.GetComponent<ParticleSystemRenderer>();
-            pr.renderMode = ParticleSystemRenderMode.Stretch;
-            pr.velocityScale = 0.045f;
-            pr.lengthScale = 1f;
-            pr.sharedMaterial = Custom("RainStreak", "Universal Render Pipeline/Particles/Unlit", m =>
-            {
-                m.SetTexture("_BaseMap", StreakTexture());
-                m.SetFloat("_Surface", 1f);
-                m.SetFloat("_Blend", 2f); // additive
-                m.SetOverrideTag("RenderType", "Transparent");
-                m.renderQueue = (int)RenderQueue.Transparent;
-                m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                m.SetFloat("_DstBlend", (float)BlendMode.One);
-                m.SetFloat("_ZWrite", 0f);
-                m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                m.EnableKeyword("_BLENDMODE_ADD");
-            });
-
             // Post: filmic, grainy, a little imperfect glass.
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            var tone = profile.Add<Tonemapping>(); tone.mode.Override(TonemappingMode.ACES);
+            var tone = profile.Add<Tonemapping>(); tone.mode.Override(TonemappingMode.Neutral);
             var bloom = profile.Add<Bloom>();
-            bloom.threshold.Override(0.85f); bloom.intensity.Override(0.75f); bloom.scatter.Override(0.72f);
+            bloom.threshold.Override(1.1f); bloom.intensity.Override(0.25f); bloom.scatter.Override(0.72f);
             bloom.tint.Override(new Color(1f, 0.92f, 0.85f));
-            var ca = profile.Add<ChromaticAberration>(); ca.intensity.Override(0.14f);
-            var vig = profile.Add<Vignette>(); vig.intensity.Override(0.34f); vig.smoothness.Override(0.45f);
-            var grain = profile.Add<FilmGrain>(); grain.type.Override(FilmGrainLookup.Medium3); grain.intensity.Override(0.38f); grain.response.Override(0.75f);
-            var lens = profile.Add<LensDistortion>(); lens.intensity.Override(-0.08f);
-            var adj = profile.Add<ColorAdjustments>(); adj.postExposure.Override(0.9f); adj.contrast.Override(14f); adj.saturation.Override(-6f);
+            var ca = profile.Add<ChromaticAberration>(); ca.intensity.Override(0f);
+            var vig = profile.Add<Vignette>(); vig.intensity.Override(0.05f); vig.smoothness.Override(0.45f);
+            var grain = profile.Add<FilmGrain>(); grain.type.Override(FilmGrainLookup.Medium3); grain.intensity.Override(0f); grain.response.Override(0.75f);
+            var lens = profile.Add<LensDistortion>(); lens.intensity.Override(0f);
+            var adj = profile.Add<ColorAdjustments>(); adj.postExposure.Override(0f); adj.contrast.Override(6f); adj.saturation.Override(6f);
             var smh = profile.Add<ShadowsMidtonesHighlights>();
-            smh.shadows.Override(new Vector4(0.92f, 1.0f, 1.08f, 0f));
-            smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0f));
-            var wb = profile.Add<WhiteBalance>(); wb.temperature.Override(6f);
+            smh.shadows.Override(new Vector4(1f, 1f, 1f, 0f));
+            smh.highlights.Override(new Vector4(1f, 1f, 1f, 0f));
+            var wb = profile.Add<WhiteBalance>(); wb.temperature.Override(0f);
             Directory.CreateDirectory("Assets/Esper/Generated");
             AssetDatabase.DeleteAsset("Assets/Esper/Generated/EsperPost.asset");
             AssetDatabase.CreateAsset(profile, "Assets/Esper/Generated/EsperPost.asset");
@@ -204,8 +169,8 @@ namespace Esper.EditorTools
             camGo.tag = "MainCamera";
             camGo.transform.SetParent(cams, false);
             var cam = camGo.AddComponent<Camera>();
-            cam.nearClipPlane = 0.03f;
-            cam.farClipPlane = 4000f;
+            cam.nearClipPlane = 0.1f;
+            cam.farClipPlane = 500f;
             cam.allowHDR = true;
             var data = camGo.AddComponent<UniversalAdditionalCameraData>();
             data.renderPostProcessing = true;

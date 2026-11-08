@@ -26,7 +26,7 @@ namespace Esper.Rendering
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (material == null) return;
+            if (material == null || material.GetFloat("_Density") <= 0f) return;
             var type = renderingData.cameraData.cameraType;
             if (type != CameraType.Game && type != CameraType.SceneView) return;
             pass.material = material;

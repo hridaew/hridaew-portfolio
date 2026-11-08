@@ -1,0 +1,7 @@
+<!-- LookDev tunes URP's ambient occlusion by reflection; keep its settings type whole in WebGL builds. -->
+<linker>
+  <assembly fullname="Unity.RenderPipelines.Universal.Runtime">
+    <type fullname="UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion" preserve="all" />
+    <type fullname="UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusionSettings" preserve="all" />
+  </assembly>
+</linker>

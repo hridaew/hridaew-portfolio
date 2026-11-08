@@ -12,14 +12,84 @@ namespace Esper
     {
         public Material volumetric;
         public VolumeProfile post;
-        Color ambSky, ambEq, ambGround;
+
+        // Bounce light. Nothing is baked yet, so this stands in for light coming back off the white floor and
+        // walls: a soft sky from above, a warmer floor bounce from below. ambient = level, ambient.warm = 0..1.
+        float ambientLevel = 1f, ambientWarm = 0.4f;
+        static readonly Color Sky = new(0.97f, 0.985f, 1f), Horizon = new(0.95f, 0.95f, 0.94f);
+        static readonly Color GroundCool = new(0.86f, 0.86f, 0.86f), GroundWarm = new(0.97f, 0.88f, 0.76f);
+        float sunYaw = float.NaN, sunHeight = float.NaN, sunWarm = float.NaN;
 
         void Awake()
         {
             if (!GetComponent<Esper.Rendering.RenderBudget>()) gameObject.AddComponent<Esper.Rendering.RenderBudget>();
-            ambSky = RenderSettings.ambientSkyColor;
-            ambEq = RenderSettings.ambientEquatorColor;
-            ambGround = RenderSettings.ambientGroundColor;
+            ApplyAmbient();
+        }
+
+        void ApplyAmbient()
+        {
+            var ground = Color.Lerp(GroundCool, GroundWarm, ambientWarm);
+            Color sky = Sky * ambientLevel, eq = Horizon * ambientLevel, gr = ground * ambientLevel;
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = sky;
+            RenderSettings.ambientEquatorColor = eq;
+            RenderSettings.ambientGroundColor = gr;
+            // Players keep whatever probe was saved with the scene, so build it from the three colours.
+            var sh = new SphericalHarmonicsL2();
+            sh.AddAmbientLight(eq);
+            sh.AddDirectionalLight(Vector3.up, sky - eq, 1f);
+            sh.AddDirectionalLight(Vector3.down, gr - eq, 1f);
+            RenderSettings.ambientProbe = sh;
+        }
+
+        static Light Sun()
+        {
+            var go = GameObject.Find("CityLight");
+            return go ? go.GetComponent<Light>() : null;
+        }
+
+        void ApplySun()
+        {
+            var sun = Sun();
+            if (!sun) return;
+            var e = sun.transform.eulerAngles;
+            float yaw = float.IsNaN(sunYaw) ? e.y : sunYaw, height = float.IsNaN(sunHeight) ? e.x : sunHeight;
+            sun.transform.rotation = Quaternion.Euler(height, yaw, 0f);
+            if (!float.IsNaN(sunWarm)) sun.color = Color.Lerp(new Color(1f, 0.99f, 0.97f), new Color(1f, 0.86f, 0.68f), sunWarm);
+        }
+
+        // Contact shadows: URP's screen-space ambient occlusion, reached by reflection (its settings are internal).
+        static object aoSettings;
+        static System.Type aoType;
+        static void SetAo(string field, float v)
+        {
+            if (aoSettings == null)
+            {
+                if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset urp)) return;
+                foreach (var data in urp.rendererDataList)
+                {
+                    if (!data) continue;
+                    foreach (var f in data.rendererFeatures)
+                    {
+                        if (!(f is ScreenSpaceAmbientOcclusion ssao)) continue;
+                        var fi = typeof(ScreenSpaceAmbientOcclusion).GetField("m_Settings", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        aoSettings = fi?.GetValue(ssao);
+                        aoType = aoSettings?.GetType();
+                    }
+                }
+                if (aoSettings == null) return;
+            }
+            var target = aoType.GetField(field, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+            if (target != null && target.FieldType == typeof(float)) target.SetValue(aoSettings, v);
+        }
+
+        static void SetAoActive(bool on)
+        {
+            if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset urp)) return;
+            foreach (var data in urp.rendererDataList)
+                if (data)
+                    foreach (var f in data.rendererFeatures)
+                        if (f is ScreenSpaceAmbientOcclusion ssao && ssao.isActive != on) ssao.SetActive(on);
         }
 
         public void Look(string commands)
@@ -94,13 +164,22 @@ namespace Esper
                 }
                 return;
             }
-            if (key == "ambient")
-            {
-                RenderSettings.ambientSkyColor = ambSky * v;
-                RenderSettings.ambientEquatorColor = ambEq * v;
-                RenderSettings.ambientGroundColor = ambGround * v;
-                return;
-            }
+            if (key == "ambient") { ambientLevel = v; ApplyAmbient(); return; }
+            if (key == "ambient.warm") { ambientWarm = Mathf.Clamp01(v); ApplyAmbient(); return; }
+            // The sun: sun.yaw / sun.height in degrees, sun.warm 0..1, sun.shadow (shadow strength 0..1).
+            if (key == "sun.yaw") { sunYaw = v; ApplySun(); return; }
+            if (key == "sun.height") { sunHeight = v; ApplySun(); return; }
+            if (key == "sun.warm") { sunWarm = Mathf.Clamp01(v); ApplySun(); return; }
+            if (key == "sun.shadow") { var s = Sun(); if (s) s.shadowStrength = Mathf.Clamp01(v); return; }
+            // Contact shadows: ao (strength, 0 = off), ao.radius (metres), ao.direct (how much they darken sunlight).
+            if (key == "ao") { SetAoActive(v > 0.001f); SetAo("Intensity", v); return; }
+            if (key == "ao.radius") { SetAo("Radius", v); return; }
+            if (key == "ao.direct") { SetAo("DirectLightingStrength", v); return; }
+            // Camera: lens (one field of view for every view, 0 = as authored), orbit (drag range in degrees).
+            if (key == "lens") { EsperDirector.LensOverride = v; return; }
+            if (key == "orbit") { EsperDirector.OrbitRange = v; return; }
+            // The figure outside: seconds on each activity (0 = only move on when clicked).
+            if (key == "cycle") { foreach (var c in FindObjectsByType<Esper.Live.LiveCycle>(FindObjectsSortMode.None)) c.seconds = v; return; }
             if (!post) return;
             if (post.TryGet(out ColorAdjustments adj))
             {

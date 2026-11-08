@@ -840,6 +840,16 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
             project.description
           )}
         </p>
+        {project.slug === "obscura" ? (
+          <p className="type-caption m-0 text-ink-muted">
+            <a
+              href="/obscura#press"
+              className="underline decoration-solid text-inherit hover:text-ink"
+            >
+              Featured in The Potrero View
+            </a>
+          </p>
+        ) : null}
       </div>
 
       {/* Mobile: first card only (no Embla). Desktop: original Embla row + breakout. */}

@@ -22,6 +22,8 @@ namespace Esper.Studio
         bool dragging;
         Plane dragPlane;
         Vector3 dragOffset;
+        Vector2 dragPress;
+        bool dragMoved;
         float flySpeed = 2.2f;
         Vector2 flyAngles;
         EsperDirector director;
@@ -188,7 +190,7 @@ namespace Esper.Studio
                     else
                     {
                         var s = StudioPaths.SelectableFor(hit.transform, transform);
-                        if (s) { Select(s.transform); BeginDrag(ray); }
+                        if (s) { Select(s.transform); BeginDrag(ray); dragPress = pointer; dragMoved = false; }
                         else Deselect();
                     }
                 }
@@ -200,15 +202,20 @@ namespace Esper.Studio
                     var ray = cam.ScreenPointToRay(pointer);
                     if (dragPlane.Raycast(ray, out float d))
                     {
-                        var p = ray.GetPoint(d) + dragOffset;
-                        selected.position = new Vector3(p.x, selected.position.y, p.z);
-                        UpdateOutline();
+                        // A click isn't a drag; and a drag can't carry anything out of the room.
+                        if (!dragMoved && (pointer - dragPress).magnitude > 6f) dragMoved = true;
+                        if (dragMoved)
+                        {
+                            var p = ray.GetPoint(d) + dragOffset;
+                            selected.position = new Vector3(Mathf.Clamp(p.x, -9f, 9f), selected.position.y, Mathf.Clamp(p.z, -7f, 7f));
+                            UpdateOutline();
+                        }
                     }
                 }
                 else
                 {
                     dragging = false;
-                    EmitSelected("studio-moved");
+                    if (dragMoved) EmitSelected("studio-moved");
                 }
             }
             // Rotate the selection with the wheel while held, or with [ and ].

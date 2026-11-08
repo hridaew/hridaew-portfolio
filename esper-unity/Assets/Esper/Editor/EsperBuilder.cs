@@ -42,16 +42,12 @@ namespace Esper.EditorTools
             lightsRoot = Group("Lights");
             cams = Group("Cameras");
 
-            BuildShell();
-            BuildWindow();
-            BuildBlinds();
-            BuildCity();
+            BuildGround();
             BuildLights();
-            BuildRoomLights();
-            BuildCityLife();
             BuildAtmosphere();
             BuildCameras();
             BuildInteraction();
+            BuildLivePalette();
             BuildLiveScene();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -225,7 +221,7 @@ namespace Esper.EditorTools
             Set("m_MainLightShadowmapResolution", p => p.intValue = 4096);
             Set("m_AdditionalLightShadowsSupported", p => p.boolValue = true);
             Set("m_AdditionalLightsShadowmapResolution", p => p.intValue = 4096);
-            Set("m_ShadowDistance", p => p.floatValue = 14f);
+            Set("m_ShadowDistance", p => p.floatValue = 90f);
             Set("m_ShadowCascadeCount", p => p.intValue = 1);
             Set("m_SoftShadowsSupported", p => p.boolValue = true);
             Set("m_SoftShadowQuality", p => p.intValue = 3);
@@ -246,8 +242,10 @@ namespace Esper.EditorTools
                 m.SetVector("_BoxMin", new Vector4(-RoomW / 2, 0, -RoomD / 2, 0));
                 m.SetVector("_BoxMax", new Vector4(RoomW / 2, RoomH, RoomD / 2, 0));
                 // Art-directed in the browser: a trace of haze that only reads inside the shafts.
-                m.SetFloat("_Density", 0.06f);
-                m.SetFloat("_VolIntensity", 1.0f);
+                m.SetFloat("_Density", 0f);
+                m.SetFloat("_VolIntensity", 0.6f);
+                m.SetColor("_VolColor", new Color(1f, 0.93f, 0.8f));
+                m.SetColor("_AmbientFog", new Color(0.012f, 0.012f, 0.012f));
                 m.SetFloat("_NoiseStrength", 0.85f);
             });
             var feature = rendererData.rendererFeatures.OfType<VolumetricFeature>().FirstOrDefault();

@@ -2,7 +2,7 @@
 
 import { DialRoot, useDialKit, useDialKitController } from "dialkit";
 import "dialkit/styles.css";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -46,29 +46,57 @@ type Status = "queued" | "running" | "done" | "failed" | "undone";
 type Note = { id: string; text: string; point: number[]; path?: string; image?: string; status?: Status; reply?: string };
 type Job = { id: string; text: string; sx: number; sy: number; status: Status; step: string; reply: string };
 
-const LOOK_KEYS: Record<string, string> = {
-  exposure: "exposure",
-  ambient: "ambient",
-  haze: "vol._Density",
-  hazeGlow: "vol._VolIntensity",
-  bloom: "bloom",
-  grain: "grain",
-  vignette: "vignette",
-  contrast: "contrast",
-  saturation: "saturation",
-  reflections: "reflections",
+// Each dial is one look key in scene.json (see LookDev.cs). Panel -> dial -> [key, min, max, step].
+type Dial = [key: string, min: number, max: number, step: number];
+const PANELS: Record<string, Record<string, Dial>> = {
+  Light: {
+    sun: ["light.CityLight", 0, 4, 0.05],
+    sunDirection: ["sun.yaw", 0, 360, 1],
+    sunHeight: ["sun.height", 10, 85, 1],
+    sunWarmth: ["sun.warm", 0, 1, 0.01],
+    shadows: ["sun.shadow", 0, 1, 0.01],
+    bounce: ["ambient", 0, 2.5, 0.01],
+    bounceWarmth: ["ambient.warm", 0, 1, 0.01],
+    contactShadows: ["ao", 0, 3, 0.05],
+    contactSize: ["ao.radius", 0.05, 1.5, 0.01],
+  },
+  Look: {
+    exposure: ["exposure", -2, 2, 0.05],
+    contrast: ["contrast", -50, 50, 1],
+    saturation: ["saturation", -100, 50, 1],
+    bloom: ["bloom", 0, 2, 0.01],
+    vignette: ["vignette", 0, 1, 0.01],
+    grain: ["grain", 0, 1, 0.01],
+    reflections: ["reflections", 0, 1.5, 0.01],
+  },
+  Camera: {
+    lens: ["lens", 2, 40, 0.5],
+    orbit: ["orbit", 0, 90, 1],
+  },
+  Figure: {
+    secondsEach: ["cycle", 0, 20, 0.5],
+  },
 };
 const LOOK_DEFAULTS: Record<string, number> = {
-  exposure: 0.9,
-  ambient: 1,
-  "vol._Density": 0.06,
-  "vol._VolIntensity": 1,
-  bloom: 0.75,
-  grain: 0.38,
-  vignette: 0.34,
-  contrast: 14,
-  saturation: -6,
-  reflections: 1,
+  "light.CityLight": 1.6,
+  "sun.yaw": 125,
+  "sun.height": 55,
+  "sun.warm": 0.25,
+  "sun.shadow": 0.55,
+  ambient: 1.15,
+  "ambient.warm": 0.35,
+  ao: 1.1,
+  "ao.radius": 0.45,
+  exposure: 0.2,
+  contrast: -6,
+  saturation: 0,
+  bloom: 0.05,
+  vignette: 0,
+  grain: 0,
+  reflections: 0.2,
+  lens: 6,
+  orbit: 40,
+  cycle: 6.5,
 };
 // Render styles, in StylizeFeature.Styles order; each opens at a size that suits it.
 const STYLES = ["None", "Pixel", "Voxel", "Obra Dinn", "Pixar", "Cyberspace", "Cel", "Noir"];
@@ -182,18 +210,9 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
   useEffect(() => send("SetFly", studio.flyCamera ? "1" : "0"), [studio.flyCamera, send]);
 
-  // ---- Look, style and render panels start from what's saved in the scene ----
-  const [savedLook, setSavedLook] = useState<Record<string, number> | null>(null);
-  useEffect(() => {
-    fetch("/api/esper-live", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((sc: { look?: Record<string, number> }) => setSavedLook(sc.look ?? {}))
-      .catch(() => setSavedLook({}));
-  }, []);
-
-  // ---- Camera panel ----
+  // ---- Views panel: go to a view, or save the flying camera into one ----
   const camera = useDialKit(
-    "Camera",
+    "Views",
     {
       view: { type: "select", options: scene?.views ?? ["overview"], default: "overview" },
       fov: [46, 20, 90, 1],
@@ -218,9 +237,6 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
 
   return (
     <>
-      <DialRoot position="top-right" theme="dark" />
-      {savedLook && <LookPanels saved={savedLook} send={send} patch={patch} />}
-      {scene && <LightsPanel key={scene.lights.map((l) => l.key).join()} lights={scene.lights} send={send} patch={patch} />}
       {selection && (
         <SelectionPanel selection={selection} send={send} onChange={(o) => patch(`item:${o.path}`, { op: "item", id: o.path, p: o.p, ry: o.ry, s: o.s, rough: o.rough })} />
       )}
@@ -262,31 +278,6 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       </div>
     </>
   );
-}
-
-function LightsPanel({ lights, send, patch }: { lights: KV[]; send: Send; patch: (key: string, op: Op) => void }) {
-  // Screen glows and ceiling tubes are driven by their own components; leave them out.
-  const editable = useMemo(() => lights.filter((l) => !/Glow$|TubeLight/.test(l.key)), [lights]);
-  const config = useMemo(
-    () => Object.fromEntries(editable.map((l) => [l.key, [round(l.value), 0, Math.max(4, round(l.value * 4)), 0.05]])) as Record<string, [number, number, number, number]>,
-    [editable],
-  );
-  const values = useDialKit("Lights", config, { defaultCollapsed: true });
-  const last = useRef<Record<string, number>>({});
-  useEffect(() => {
-    const parts: string[] = [];
-    for (const l of editable) {
-      const v = (values as Record<string, number>)[l.key];
-      if (v === undefined || last.current[l.key] === v) continue;
-      if (last.current[l.key] !== undefined) {
-        parts.push(`light.${l.key}=${v}`);
-        patch(`light:${l.key}`, { op: "light", id: l.key, intensity: v });
-      }
-      last.current[l.key] = v;
-    }
-    if (parts.length) send("Look", parts.join(";"));
-  });
-  return null;
 }
 
 function SelectionPanel({ selection, send, onChange }: { selection: ObjectOverride; send: Send; onChange: (o: ObjectOverride) => void }) {
@@ -386,21 +377,41 @@ const anchor = (sx: number, sy: number) => ({
   top: `clamp(16px, calc(${sy * 100}% - 20px), calc(100% - 200px))`,
 });
 
+/**
+ * The dials worth reaching for while looking at the house: light, look, lens, the figure outside, style and
+ * render. Shown in Play and Edit (?studio); every change applies at once and autosaves to scene.json.
+ */
+export function EsperDials({ send }: { send: Send }) {
+  const [saved, setSaved] = useState<Record<string, number> | null>(null);
+  const noop = useCallback(() => {}, []);
+  const patch = usePatchQueue(noop);
+  useEffect(() => {
+    fetch("/api/esper-live", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((sc: { look?: Record<string, number> }) => setSaved(sc.look ?? {}))
+      .catch(() => setSaved({}));
+  }, []);
+  return (
+    <>
+      <DialRoot position="top-right" theme="dark" />
+      {saved && <LookPanels saved={saved} send={send} patch={patch} />}
+    </>
+  );
+}
+
+function usePanel(name: string, dials: Record<string, Dial>, v: (key: string) => number, collapsed: boolean, extra: Record<string, unknown> = {}, onAction?: (a: string) => void) {
+  const config = Object.fromEntries(Object.entries(dials).map(([label, [key, min, max, step]]) => [label, [v(key), min, max, step]]));
+  return useDialKit(name, { ...config, ...extra } as Record<string, [number, number, number, number]>, { defaultCollapsed: collapsed, onAction }) as Record<string, number>;
+}
+
 function LookPanels({ saved, send, patch }: { saved: Record<string, number>; send: Send; patch: (key: string, op: Op) => void }) {
-  const v = (key: string) => saved[key] ?? LOOK_DEFAULTS[key];
-  const look = useDialKit("Look", {
-    exposure: [v("exposure"), -1, 3, 0.05],
-    ambient: [v("ambient"), 0, 4, 0.05],
-    reflections: [v("reflections"), 0, 2, 0.05],
-    haze: [v("vol._Density"), 0, 0.3, 0.005],
-    hazeGlow: [v("vol._VolIntensity"), 0, 3, 0.05],
-    bloom: [v("bloom"), 0, 3, 0.05],
-    grain: [v("grain"), 0, 1, 0.01],
-    vignette: [v("vignette"), 0, 1, 0.01],
-    contrast: [v("contrast"), -50, 50, 1],
-    saturation: [v("saturation"), -100, 50, 1],
-    lightsOn: false,
-  });
+  // "lens" 0 means as authored; the dial starts from the authored lens instead.
+  const v = (key: string) => (key === "lens" && !saved.lens ? LOOK_DEFAULTS.lens : saved[key] ?? LOOK_DEFAULTS[key]);
+  const light = usePanel("Light", PANELS.Light, v, false);
+  const lookPanel = usePanel("Look", PANELS.Look, v, true);
+  const cameraPanel = usePanel("Camera", PANELS.Camera, v, true);
+  const figurePanel = usePanel("Figure", PANELS.Figure, v, true, { next: { type: "action", label: "Next activity" } }, (a) => a === "next" && send("NextActivity"));
+  const panelValues = { Light: light, Look: lookPanel, Camera: cameraPanel, Figure: figurePanel } as Record<string, Record<string, number>>;
   const styleDial = useDialKitController("Style", {
     style: { type: "select", options: STYLES, default: STYLES[saved.style ?? 0] ?? "None" },
     size: [saved["style.size"] ?? 4, 1, 24, 0.5],
@@ -418,7 +429,7 @@ function LookPanels({ saved, send, patch }: { saved: Record<string, number>; sen
 
   // Every dial maps to one look key; push changes to the room and autosave them to the scene.
   const values: Record<string, number> = {
-    ...Object.fromEntries(Object.entries(LOOK_KEYS).map(([k, key]) => [key, look[k as keyof typeof look] as number])),
+    ...Object.fromEntries(Object.entries(PANELS).flatMap(([panel, dials]) => Object.entries(dials).map(([label, [key]]) => [key, panelValues[panel][label]]))),
     style: Math.max(0, STYLES.indexOf(style.style)),
     "style.size": style.size,
     "pipe.cap": CAPS[render.resolution] ?? 1080,
@@ -446,8 +457,6 @@ function LookPanels({ saved, send, patch }: { saved: Record<string, number>; sen
     styleDial.setValues({ size: STYLE_SIZE[style.style] ?? 4 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [style.style]);
-
-  useEffect(() => send("SetLights", look.lightsOn ? "1" : "0"), [look.lightsOn, send]);
   return null;
 }
 

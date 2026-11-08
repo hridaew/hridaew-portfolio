@@ -46,9 +46,33 @@ namespace Esper.Live
                 {
                     var go = new GameObject();
                     var size = V(spec.size, Vector3.one * 0.1f);
-                    string key = $"box_{size.x:0.###}_{size.y:0.###}_{size.z:0.###}".Replace('.', 'p');
-                    go.AddComponent<MeshFilter>().sharedMesh = svc.PersistMesh(LiveMeshes.Box(size), key);
+                    Mesh mesh;
+                    if (spec.radius > 0f)
+                    {
+                        float corner = spec.corner > 0f ? spec.corner : spec.radius;
+                        string rk = $"rbox_{size.x:0.###}_{size.y:0.###}_{size.z:0.###}_{spec.radius:0.###}_{corner:0.###}".Replace('.', 'p');
+                        mesh = svc.PersistMesh(LiveMeshes.Rounded(size, corner, spec.radius), rk);
+                    }
+                    else
+                    {
+                        string key = $"box_{size.x:0.###}_{size.y:0.###}_{size.z:0.###}".Replace('.', 'p');
+                        mesh = svc.PersistMesh(LiveMeshes.Box(size), key);
+                    }
+                    go.AddComponent<MeshFilter>().sharedMesh = mesh;
                     go.AddComponent<MeshRenderer>().sharedMaterial = svc.MaterialByName(spec.material);
+                    Finish(go);
+                    break;
+                }
+                case "wall":
+                {
+                    var go = new GameObject();
+                    var path = spec.path ?? new float[] { 0, 0, 1, 0 };
+                    float thick = spec.t > 0f ? spec.t : 0.16f, height = spec.h > 0f ? spec.h : 1f;
+                    int hash = 17;
+                    foreach (var f in path) hash = hash * 31 + Mathf.RoundToInt(f * 1000f);
+                    string key = $"wall_{hash:x}_{height:0.###}_{thick:0.###}".Replace('.', 'p');
+                    go.AddComponent<MeshFilter>().sharedMesh = svc.PersistMesh(LiveMeshes.Wall(path, height, thick), key);
+                    go.AddComponent<MeshRenderer>().sharedMaterial = svc.MaterialByName(spec.material ?? "WallWhite");
                     Finish(go);
                     break;
                 }
@@ -82,6 +106,24 @@ namespace Esper.Live
                     m.name = "Print_" + Key(spec.src);
                     r.sharedMaterial = svc.Persist(m, m.name);
                     svc.LoadTexture(spec.src, t => { if (r) r.sharedMaterial.SetTexture(BaseMap, t); });
+                    Finish(go);
+                    break;
+                }
+                case "screen":
+                {
+                    // A flat panel: the image on a child called Screen (facing local -Z), a thin bezel behind it.
+                    var go = new GameObject();
+                    var face = new GameObject("Screen");
+                    face.transform.SetParent(go.transform, false);
+                    face.transform.localScale = new Vector3(spec.w, spec.h, 1f);
+                    face.AddComponent<MeshFilter>().sharedMesh = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
+                    face.AddComponent<MeshRenderer>();
+                    var bezel = new GameObject("Bezel");
+                    bezel.transform.SetParent(go.transform, false);
+                    bezel.transform.localPosition = new Vector3(0f, 0f, 0.014f);
+                    var bs = new Vector3(spec.w + 0.03f, spec.h + 0.03f, 0.024f);
+                    bezel.AddComponent<MeshFilter>().sharedMesh = svc.PersistMesh(LiveMeshes.Box(bs), $"box_{bs.x:0.###}_{bs.y:0.###}_{bs.z:0.###}".Replace('.', 'p'));
+                    bezel.AddComponent<MeshRenderer>().sharedMaterial = svc.MaterialByName(spec.material ?? "Bezel");
                     Finish(go);
                     break;
                 }
@@ -169,6 +211,8 @@ namespace Esper.Live
             li.id = spec.id;
             li.spec = LiveJson.Item(spec);
             li.rough = spec.rough;
+            li.station = spec.station;
+            li.when = spec.when;
 
             // Re-dressing starts from the authored materials, so tint and roughness never compound.
             foreach (var r in go.GetComponentsInChildren<MeshRenderer>())
@@ -235,7 +279,13 @@ namespace Esper.Live
             if (spec.children != null)
                 foreach (var c in spec.children)
                     Build(c, go.transform, svc, null);
-            go.SetActive(!spec.hidden);
+            var flip = go.GetComponent<LiveFlip>();
+            if (spec.flip > 0f) (flip ? flip : go.AddComponent<LiveFlip>()).seconds = spec.flip;
+            else if (flip) flip.seconds = 0f;
+            var cycle = go.GetComponent<LiveCycle>();
+            if (spec.cycle > 0f) (cycle ? cycle : go.AddComponent<LiveCycle>()).seconds = spec.cycle;
+            else if (cycle) cycle.seconds = 0f;
+            go.SetActive(!spec.hidden && StationStates.Visible(spec.station, spec.when));
         }
 
         static void ApplyDisplay(GameObject go, ItemSpec spec, ILiveServices svc)
@@ -266,6 +316,25 @@ namespace Esper.Live
             r.sharedMaterial = svc.Persist(m, m.name);
             r.shadowCastingMode = ShadowCastingMode.Off;
             svc.LoadTexture(d.src, tex => { if (r) r.sharedMaterial.SetTexture(MainTex, tex); });
+            if (spec.kind == "screen" || (d.active != null && d.active.Length > 0))
+            {
+                var state = screen.GetComponent<LiveDisplayState>();
+                if (!state) state = screen.AddComponent<LiveDisplayState>();
+                state.station = spec.station;
+                state.target = r;
+                state.aspect = spec.kind == "screen" && spec.h > 0f ? spec.w / spec.h : 0f;
+                state.seconds = d.seconds > 0f ? d.seconds : 2.5f;
+                state.idleBrightness = d.floats != null && d.floats.TryGetValue("_Brightness", out var b) ? b : 1f;
+                state.activeBrightness = d.activeBrightness > 0f ? d.activeBrightness : state.idleBrightness;
+                int n = d.active?.Length ?? 0;
+                state.frames = new Texture2D[n];
+                svc.LoadTexture(d.src, tex => { if (state) { state.idle = tex; state.Refresh(); } });
+                for (int i = 0; i < n; i++)
+                {
+                    int slot = i;
+                    svc.LoadTexture(d.active[i], tex => { if (state) { state.frames[slot] = tex; state.Refresh(); } });
+                }
+            }
             var crt = screen.GetComponent<CrtScreen>() ?? screen.AddComponent<CrtScreen>();
             if (d.glow > 0)
             {

@@ -11,10 +11,10 @@ namespace Esper.EditorTools
         static void BuildShell()
         {
             // Nicotine-stained plaster, tired oak boards, a ceiling that hasn't been painted in decades.
-            wallMat = Surface("Wall", "painted_plaster_wall", 0.55f, new Color(0.62f, 0.55f, 0.46f), 0.55f);
-            floorMat = Surface("Floor", "old_wood_floor", 0.45f, new Color(0.58f, 0.5f, 0.44f), 0.9f);
-            ceilMat = Surface("Ceiling", "grey_plaster", 0.5f, new Color(0.5f, 0.47f, 0.43f), 0.4f);
-            trimMat = Surface("Trim", "wood_floor_worn", 1f, new Color(0.3f, 0.24f, 0.2f), 0.7f);
+            wallMat = Surface("Wall", "painted_plaster_wall", 0.55f, new Color(0.95f, 0.93f, 0.89f), 0.45f);
+            floorMat = Surface("Floor", "old_wood_floor", 0.45f, new Color(0.92f, 0.8f, 0.66f), 0.7f);
+            ceilMat = Surface("Ceiling", "grey_plaster", 0.5f, new Color(0.96f, 0.96f, 0.94f), 0.3f);
+            trimMat = Surface("Trim", "wood_floor_worn", 1f, new Color(0.92f, 0.9f, 0.86f), 0.5f);
 
             float hw = RoomW / 2, hd = RoomD / 2;
             Block("Floor", shell, new Vector3(0, -0.05f, 0), new Vector3(RoomW + 2 * WallT, 0.1f, RoomD + 2 * WallT), floorMat);
@@ -46,7 +46,7 @@ namespace Esper.EditorTools
 
         static void BuildWindow()
         {
-            frameMat = Surface("WindowFrame", "painted_metal_shutter", 1.5f, new Color(0.2f, 0.21f, 0.2f), 0.7f);
+            frameMat = Surface("WindowFrame", "painted_metal_shutter", 1.5f, new Color(0.1f, 0.1f, 0.11f), 0.6f);
             var win = Group("Window", shell);
             float z = BackZ + 0.16f;
             float cx = (WinX.x + WinX.y) / 2, cy = (WinY.x + WinY.y) / 2;
@@ -73,14 +73,8 @@ namespace Esper.EditorTools
                 Block($"Bar_{i}", win, new Vector3(x, (transom + WinY.y) / 2, z + 0.01f), new Vector3(0.018f, WinY.y - transom, 0.03f), frameMat);
             }
 
-            var glassMat = Custom("RainGlass", "Esper/RainGlass");
-            var glass = Block("Glass", win, new Vector3(cx, cy, z + 0.02f), new Vector3(ww, wh, 0.004f), glassMat, isStatic: false);
-            var gr = glass.GetComponent<MeshRenderer>();
-            gr.shadowCastingMode = ShadowCastingMode.Off;
-            // Use a quad-friendly UV: the box UVs are in metres already.
-
             // Deep sill with a lip; stained where pots have stood.
-            var sillMat = Surface("Sill", "wood_floor_worn", 1.2f, new Color(0.36f, 0.3f, 0.25f), 0.8f);
+            var sillMat = Surface("Sill", "wood_floor_worn", 1.2f, new Color(0.86f, 0.76f, 0.62f), 0.6f);
             Block("Sill", win, new Vector3(cx, WinY.x - 0.02f, BackZ - 0.02f), new Vector3(ww + 0.16f, 0.04f, 0.36f), sillMat);
             Block("SillApron", win, new Vector3(cx, WinY.x - 0.09f, BackZ - 0.185f), new Vector3(ww + 0.08f, 0.1f, 0.02f), sillMat);
             // Reveals.

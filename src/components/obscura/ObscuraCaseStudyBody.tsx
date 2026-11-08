@@ -14,6 +14,7 @@ import { ExhibitionMosaic } from "@/components/obscura/ExhibitionMosaic";
 import { StoryboardCarousel } from "@/components/obscura/StoryboardCarousel";
 import { cn } from "@/lib/utils";
 import { SITE_COLUMN } from "@/components/home/homeGrid";
+import { POTREROVIEW_URL } from "@/lib/press";
 import { HelpCircle, Smartphone, UsersRound, type LucideIcon } from "lucide-react";
 
 /** Geist body — home / site benchmark */
@@ -274,11 +275,11 @@ export function ObscuraCaseStudyBody() {
                             <div className={cn("flex flex-wrap justify-start gap-x-10 gap-y-6", obBody, "text-ink-muted")}>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Role</span>
-                                    Lead Interaction Designer, Prototyper, &amp; Developer
+                                    Lead Designer and Developer
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Team</span>
-                                    Asa Symons, Caiya Wiltshire, Nick Hallin
+                                    With Nicholas Hallin, Caiya Wiltshire, and Asa Symons
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Client</span>
@@ -294,6 +295,13 @@ export function ObscuraCaseStudyBody() {
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Date</span>
                                     September 13, 2025
+                                </div>
+                                <div className="basis-full">
+                                    <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Exhibitions</span>
+                                    <ul className="m-0 list-none p-0">
+                                        <li>Museum of History &amp; Industry, Seattle, 2025 (sold-out run)</li>
+                                        <li>Potrero Hill Neighborhood House Art Showcase, San Francisco, 2026</li>
+                                    </ul>
                                 </div>
                                 <div>
                                     <span className="site-label text-ink-subtle case-study-meta-line-mb block text-left">Key Tech</span>
@@ -941,6 +949,53 @@ export function ObscuraCaseStudyBody() {
                                     className="block h-auto w-full object-contain"
                                     draggable={false}
                                 />
+                            </div>
+                        </div>
+                    </Reveal>
+                </section>
+
+                <section id="press" className={cn(obscuraSectionShell, "case-study-section-y-b")}>
+                    <Reveal>
+                        <div>
+                            <h2 className="site-chapter-heading case-study-heading-trail-mb text-ink">
+                                Press
+                            </h2>
+                            <div className="flex items-center gap-6">
+                                <div className="case-study-prose-stack flex min-w-0 flex-1 flex-col">
+                                    <p className={cn(obBody, "m-0 text-left text-ink-muted")}>
+                                        <a
+                                            href={POTREROVIEW_URL}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline underline-offset-2 decoration-neutral-500/60 transition-colors hover:text-amber-900 hover:decoration-amber-800/50"
+                                        >
+                                            Obscura Asks Viewers to Look Again
+                                        </a>
+                                        , The Potrero View, November 2026, by Danny Pham.
+                                    </p>
+                                    <blockquote className="m-0 w-full min-w-0 border-l-2 border-amber-800/25 py-1 pl-6">
+                                        <p className={cn(obBody, "m-0 text-left text-ink")}>
+                                            &ldquo;An interactive installation led by designer Hridae Walia that asks viewers not only to examine an unusual photographic archive, but to consider how distinctly people can experience the same images.&rdquo;
+                                        </p>
+                                    </blockquote>
+                                    <blockquote className="m-0 w-full min-w-0 border-l-2 border-amber-800/20 py-1 pl-6">
+                                        <p className={cn(obBody, "m-0 text-left text-ink-secondary")}>
+                                            &ldquo;The project relies on virtual reality, eye tracking and personalization, but its designers are attempting to generate something decidedly human: conversation.&rdquo;
+                                        </p>
+                                    </blockquote>
+                                </div>
+                                <div
+                                    className="w-28 shrink-0 rounded-xl shadow-[0_1px_1px_rgba(0,0,0,0.06),0_10px_18px_rgba(0,0,0,0.08),0_22px_40px_rgba(0,0,0,0.14),0_40px_64px_rgba(0,0,0,0.08)] sm:w-40"
+                                    style={{ transform: "rotate(-2.5deg)" }}
+                                >
+                                    <LightboxImage
+                                        src="/press/potrero-view-2026-11.jpg"
+                                        alt='The Potrero View, November 2026, page 7: "Obscura Asks Viewers to Look Again"'
+                                        hoverScale={1}
+                                        className="block h-auto w-full rounded-xl"
+                                        draggable={false}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </Reveal>

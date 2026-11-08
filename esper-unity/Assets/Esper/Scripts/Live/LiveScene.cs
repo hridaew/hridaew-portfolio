@@ -120,7 +120,9 @@ namespace Esper.Live
             try { cur = Newtonsoft.Json.JsonConvert.DeserializeObject<ItemSpec>(currentJson); }
             catch { return false; }
             if (cur == null || cur.kind != next.kind || cur.src != next.src || cur.material != next.material) return false;
-            if (next.kind == "print" || next.kind == "quad") return false;
+            if (next.kind == "screen" && (cur.w != next.w || cur.h != next.h)) return false;
+            if (next.kind == "print" || next.kind == "quad" || next.kind == "wall") return false;
+            if (cur.radius != next.radius || cur.corner != next.corner) return false;
             return Newtonsoft.Json.JsonConvert.SerializeObject(cur.size) == Newtonsoft.Json.JsonConvert.SerializeObject(next.size);
         }
 
@@ -191,7 +193,9 @@ namespace Esper.Live
                 h.accentBoost = st.boost > 0 ? st.boost : 1.8f;
                 if (st.rect != null && st.rect.Length == 4) h.enhanceRect = new Vector4(st.rect[0], st.rect[1], st.rect[2], st.rect[3]);
                 if (!string.IsNullOrEmpty(st.accent) && lights.TryGetValue(st.accent, out var acc)) h.accent = acc;
-                if (!string.IsNullOrEmpty(st.screen) && items.TryGetValue(st.screen, out var scr)) h.screen = scr.GetComponentInChildren<CrtScreen>();
+                if (!string.IsNullOrEmpty(st.screen) && items.TryGetValue(st.screen, out var scr)) h.screen = scr.GetComponentInChildren<CrtScreen>(true);
+                h.hasEnter = st.enter != null && st.enter.Length == 3;
+                if (h.hasEnter) h.enter = LiveFactory.V(st.enter, Vector3.zero);
 
                 // The click target wraps the station's items.
                 Bounds? b = null;
@@ -210,6 +214,12 @@ namespace Esper.Live
                     h.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
                     col.center = b.Value.center;
                     col.size = b.Value.size + Vector3.one * 0.04f;
+                }
+                if (col && st.bounds != null && st.bounds.Length == 6)
+                {
+                    h.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                    col.center = new Vector3(st.bounds[0], st.bounds[1], st.bounds[2]);
+                    col.size = new Vector3(st.bounds[3], st.bounds[4], st.bounds[5]);
                 }
             }
             director.hotspots = list.ToArray();

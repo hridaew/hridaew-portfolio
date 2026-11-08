@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSheetNav } from "@/components/sheet/SheetNav";
 import { EsperInterface } from "./EsperInterface";
-import { EsperStudio } from "./EsperStudio";
+import { STATIONS } from "./stations";
+import { EsperDials, EsperStudio } from "./EsperStudio";
+import { HoverTag } from "./HoverTag";
 
 type UnityInstance = {
   SendMessage: (object: string, method: string, value?: string | number) => void;
@@ -23,9 +26,9 @@ declare global {
 
 type EsperEvent = CustomEvent<{ event: string; payload: string }>;
 
-const BUILD = "/esper/Build";
 export function EsperRoom() {
   const router = useRouter();
+  const { openSheet } = useSheetNav();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const unityRef = useRef<UnityInstance | null>(null);
   const [progress, setProgress] = useState(0);
@@ -34,7 +37,6 @@ export function EsperRoom() {
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-  const [lightsOn, setLightsOn] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [studio, setStudio] = useState(false);
 
@@ -48,45 +50,30 @@ export function EsperRoom() {
     const studioMode = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("studio");
     setStudio(studioMode);
 
-    const script = document.createElement("script");
-    script.src = `${BUILD}/esper.loader.js`;
-    script.async = true;
-    script.onload = () => {
-      if (cancelled || !window.createUnityInstance) return;
-      window
-        .createUnityInstance(
-          canvas,
-          {
-            dataUrl: `${BUILD}/esper.data.unityweb`,
-            frameworkUrl: `${BUILD}/esper.framework.js.unityweb`,
-            codeUrl: `${BUILD}/esper.wasm.unityweb`,
-            companyName: "Hridae Walia",
-            productName: "ESPER",
-            productVersion: "0.1",
-            devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-            matchWebGLToCanvasSize: true,
-            // Studio notes capture a screenshot of the canvas.
-            webglContextAttributes: { preserveDrawingBuffer: studioMode },
-          },
-          (p) => !cancelled && setProgress(p),
-        )
-        .then((instance) => {
-          if (cancelled) {
-            instance.Quit();
-            return;
-          }
-          unityRef.current = instance;
-          // Look development hook (dev only): esperLook("exposure=0.8;vol._Density=0.2")
-          if (process.env.NODE_ENV !== "production") {
-            const w = window as unknown as { esperLook?: (s: string) => void; esperSend?: (m: string, v?: string) => void };
-            w.esperLook = (s: string) => instance.SendMessage("ESPER", "Look", s);
-            w.esperSend = (m: string, v?: string) => instance.SendMessage("ESPER", m, v);
-          }
-        })
-        .catch(() => setFailed(true));
-    };
-    script.onerror = () => setFailed(true);
-    document.body.appendChild(script);
+    // The room is three.js now (EsperEngine). It answers the messages the Unity player did, so everything
+    // below talks to it the same way.
+    import("./three/EsperEngine")
+      .then(({ EsperEngine }) => {
+        if (cancelled) return;
+        const engine = new EsperEngine(canvas, { preserveDrawingBuffer: studioMode });
+        unityRef.current = {
+          SendMessage: (_o: string, method: string, value?: string | number) => engine.send(method, value === undefined ? "" : String(value)),
+          Quit: async () => engine.dispose(),
+        };
+        setProgress(0.12);
+        if (process.env.NODE_ENV !== "production") {
+          const w = window as unknown as { esperLook?: (s: string) => void; esperSend?: (m: string, v?: string) => void };
+          w.esperLook = (s: string) => engine.send("Look", s);
+          w.esperSend = (m: string, v?: string) => engine.send(m, v ?? "");
+        }
+        // The scene itself: live from esper-unity/Live/scene.json in dev, the published copy otherwise.
+        const source = process.env.NODE_ENV !== "production" ? "/api/esper-live" : "/esper/live/scene.json";
+        fetch(source, { cache: "no-store" })
+          .then((r) => r.text())
+          .then((json) => !cancelled && engine.send("ApplyScene", json))
+          .catch(() => setFailed(true));
+      })
+      .catch(() => setFailed(true));
 
     const onEsper = (e: Event) => {
       const { event, payload } = (e as EsperEvent).detail;
@@ -96,14 +83,11 @@ export function EsperRoom() {
         // Live scene (dev): the room follows esper-unity/Live/scene.json as it changes — from Studio, an
         // editor, or Claude. Production runs the baked build, which already is that file.
         if (process.env.NODE_ENV !== "production") {
-          // Absolute: glTFast treats relative URLs as local file paths.
-          u?.SendMessage("ESPER", "SetAssetBase", `${window.location.origin}/api/esper-asset/`);
           const applyLive = () =>
             fetch("/api/esper-live", { cache: "no-store" })
               .then((r) => r.text())
               .then((json) => unityRef.current?.SendMessage("ESPER", "ApplyScene", json))
               .catch(() => {});
-          applyLive().then(() => studioMode && unityRef.current?.SendMessage("ESPER", "Enable", "1"));
           liveEvents?.close();
           liveEvents = new EventSource("/api/esper-live/events");
           liveEvents.addEventListener("change", applyLive);
@@ -123,6 +107,8 @@ export function EsperRoom() {
           u?.SendMessage("ESPER", "PlayIntro", "4.2");
           window.setTimeout(() => setShowTitle(false), 4500);
         }
+      } else if (event === "progress") {
+        setProgress(0.12 + 0.88 * Number(payload));
       } else if (event === "focus") {
         setActive(payload);
       } else if (event === "overview") {
@@ -131,7 +117,7 @@ export function EsperRoom() {
         setHovering(payload);
       } else if (event === "enhance" && payload) {
         setLeaving(true);
-        window.setTimeout(() => router.push(payload), 260);
+        window.setTimeout(() => router.push(payload), 800);
       }
     };
     window.addEventListener("esper", onEsper);
@@ -165,11 +151,18 @@ export function EsperRoom() {
       window.removeEventListener("pointerdown", gate, true);
       unityRef.current?.Quit().catch(() => {});
       unityRef.current = null;
-      script.remove();
     };
   }, [router]);
 
   const send = useCallback((method: string, value?: string) => unityRef.current?.SendMessage("ESPER", method, value), []);
+  // Studio: Play is the experience as visitors get it; Edit hands the room to the tools.
+  const [editing, setEditingState] = useState(false);
+  const setEditing = (on: boolean) => {
+    setEditingState(on);
+    setActive(null);
+    send("Back");
+    send("Enable", on ? "1" : "0");
+  };
   const goto = (id: string) => {
     setActive(id);
     send("Goto", id);
@@ -178,22 +171,17 @@ export function EsperRoom() {
     setActive(null);
     send("Back");
   };
-  const lights = (on: boolean) => {
-    setLightsOn(on);
-    send("SetLights", on ? "1" : "0");
-  };
-
   return (
-    <main className="fixed inset-0 overflow-hidden bg-[#040506]">
+    <main className="fixed inset-0 overflow-hidden bg-[#ece9e4]">
       <canvas
         ref={canvasRef}
         id="esper-canvas"
         tabIndex={-1}
-        aria-label="An apartment above the city at night. Each object in the room is a piece of work."
-        className="absolute inset-0 h-full w-full outline-none transition-opacity duration-[900ms] ease-out"
+        aria-label="A roofless model house seen from above. Each room is a project."
+        className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity duration-[900ms] ease-out active:cursor-grabbing"
         style={{
           opacity: ready && !leaving ? 1 : 0,
-          cursor: hovering ? "pointer" : "default",
+          cursor: hovering ? "pointer" : undefined,
           touchAction: "none",
         }}
       />
@@ -205,29 +193,50 @@ export function EsperRoom() {
         style={{ width: "min(36vw, 420px)", opacity: ready || failed ? 0 : 1 }}
       >
         <div
-          className="h-full origin-left bg-[#cfe8ff] shadow-[0_0_12px_2px_rgba(160,210,255,0.55)] transition-transform duration-300 ease-out"
+          className="h-full origin-left bg-[#1d1d1f] transition-transform duration-300 ease-out"
           style={{ transform: `scaleX(${Math.max(0.02, progress)})` }}
         />
       </div>
 
-      {studio && ready && <EsperStudio send={send} canvas={canvasRef.current} />}
-      {!leaving && !studio && (
+      {studio && ready && <EsperDials send={send} />}
+      {editing && ready && <EsperStudio send={send} canvas={canvasRef.current} />}
+      {studio && ready && (
+        <button
+          type="button"
+          onClick={() => setEditing(!editing)}
+          className="fixed left-5 top-16 z-[2147483001] rounded-full bg-[rgba(30,30,34,0.72)] px-4 py-2 font-[family-name:var(--font-geist)] text-[13px] font-medium text-white shadow-lg backdrop-blur-2xl transition-colors duration-200 hover:bg-[rgba(50,50,56,0.8)]"
+        >
+          {editing ? "Play" : "Edit"}
+        </button>
+      )}
+      {!leaving && !editing && <HoverTag id={active ? "" : hovering} />}
+      {!leaving && !editing && (
         <EsperInterface
           ready={ready}
           active={active}
-          lightsOn={lightsOn}
           showTitle={showTitle}
           hovered={hovering}
           onSelect={goto}
           onBack={back}
-          onLights={lights}
+          onOpen={(id) => {
+            // The case study slides in over the room (the site's own sheet); narrow screens go to the page.
+            const href = STATIONS.find((st) => st.id === id)?.href;
+            if (href && !openSheet(href)) router.push(href);
+          }}
         />
       )}
 
       {failed && (
-        <nav className="absolute inset-0 flex items-center justify-center gap-8 font-[family-name:var(--font-display)] text-2xl font-bold text-[#e8eef5]">
-          <Link href="/">Home</Link>
-          <Link href="/obscura">OBSCURA</Link>
+        // No 3D (no WebGL, or the scene didn't load): the work is still one click away.
+        <nav aria-label="Work" className="absolute inset-0 flex flex-col items-center justify-center gap-5 font-[family-name:var(--font-display)] text-2xl font-bold text-[#1d1d1f]">
+          {STATIONS.filter((st) => st.href).map((st) => (
+            <Link key={st.id} href={st.href!} className="hover:opacity-60">
+              {st.title}
+            </Link>
+          ))}
+          <Link href="/" className="mt-4 text-base font-medium text-black/60 hover:text-black">
+            Home
+          </Link>
         </nav>
       )}
     </main>

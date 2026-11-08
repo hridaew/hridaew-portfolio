@@ -16,3 +16,7 @@ Virdio Process/
 Live Classes with filter.png
 New Case Study Writings.txt
 socialpreview.png
+
+# ESPER: the Unity project and its downloads stay local; the site ships public/esper (publish_web.py)
+/esper-unity/
+/.playwright-mcp/

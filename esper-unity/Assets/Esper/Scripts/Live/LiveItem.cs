@@ -9,5 +9,7 @@ namespace Esper.Live
         [TextArea] public string spec;
         /// Roughness multiplier from the spec (0 = as authored), reported to Studio's Selection panel.
         public float rough;
+        public string station;
+        public string when;
     }
 }

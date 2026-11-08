@@ -9,6 +9,7 @@ const TYPES: Record<string, string> = {
   ".gltf": "model/gltf+json",
   ".glb": "model/gltf-binary",
   ".bin": "application/octet-stream",
+  ".splat": "application/octet-stream",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",

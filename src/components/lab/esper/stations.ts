@@ -8,11 +8,19 @@ export type Station = {
   note?: string;
   href?: string;
   links?: { title: string; line: string; href: string }[];
+  /** A few real photographs, people in them where there are any. Shown under the title. */
+  images?: { src: string; alt: string }[];
 };
 
 export const STATIONS: Station[] = [
   {
     id: "domis",
+    images: [
+      { src: "/assets/domis/live/gemini-appliance-label.jpg", alt: "An appliance label, photographed for setup" },
+      { src: "/assets/domis/scanner.png", alt: "Scanning an appliance into the home" },
+      { src: "/assets/domis/2.png", alt: "An inspection report turned into tasks" },
+      { src: "/assets/domis/hero-product.png", alt: "The home profile on web and phone" },
+    ],
     title: "Domis",
     role: "Founding Product Designer",
     period: "2024 to now",
@@ -23,6 +31,12 @@ export const STATIONS: Station[] = [
   },
   {
     id: "virdio",
+    images: [
+      { src: "/assets/virdio/promo-stills/living-room-squat.webp", alt: "A squat in a living room, tracked by the camera" },
+      { src: "/assets/virdio/promo-stills/punching-combinations-living-room.webp", alt: "Punching combinations with live rep counts" },
+      { src: "/assets/virdio/promo-stills/goblet-squat-rep-counter.webp", alt: "A goblet squat with the rep counter" },
+      { src: "/assets/virdio/phone_setup_end.png", alt: "Room setup complete" },
+    ],
     title: "Virdio",
     role: "Product Designer",
     period: "2021 to 2022",
@@ -32,15 +46,28 @@ export const STATIONS: Station[] = [
   },
   {
     id: "obscura",
+    images: [
+      { src: "/assets/obscura/exhibition_lah07hiyl9glxe2jbec80zastu.webp", alt: "A visitor looking through the viewer at MOHAI" },
+      { src: "/assets/obscura/exhibition_xrzfa3phi0b8csowvt4ovbrjbi.webp", alt: "The audience watching the projection" },
+      { src: "/assets/obscura/exhibition_lmwbwqiof2i79hqbywhhidrto1o.webp", alt: "Visitors around the projection screen" },
+      { src: "/assets/obscura/exhibition_zfpsnuur6vt2yepotybrqfuwcia.webp", alt: "The opening talk" },
+    ],
     title: "OBSCURA",
-    role: "Interaction design, prototyping, Unity",
-    period: "MOHAI, Seattle, 2025",
+    role: "Lead Designer and Developer",
+    period: "MOHAI, Seattle, 2025 · Potrero Hill Neighborhood House, San Francisco, 2026",
     summary:
       "An immersive exhibit built around more than 300 unseen photographs of post-war life in Japan. The viewer’s gaze curates which images appear, so every path through the archive is personal.",
+    note: "Featured in The Potrero View, November 2026.",
     href: "/obscura",
   },
   {
     id: "memory-care",
+    images: [
+      { src: "/assets/memory-care/station_full.jpg", alt: "A resident driving at the station, plush cats beside him" },
+      { src: "/assets/memory-care/resident_driving.png", alt: "A resident at the wheel from her wheelchair, feet on the footrest" },
+      { src: "/assets/memory-care/context_wide.jpg", alt: "Holding one of the haptic plush cats" },
+      { src: "/assets/memory-care/station_side.jpg", alt: "The station in the community room" },
+    ],
     title: "Memory Care",
     role: "Interaction Designer",
     period: "With Maria Mortati Experience Design",
@@ -51,6 +78,11 @@ export const STATIONS: Station[] = [
   },
   {
     id: "wafflings",
+    images: [
+      { src: "/assets/orca/throw-test.jpg", alt: "Throwing an orca plush at the screen" },
+      { src: "/assets/orca/final-booth.jpg", alt: "The Saving Baby J booth" },
+      { src: "/assets/savor/mighty-hand-visit.png", alt: "Capturing a sculpture for Savor" },
+    ],
     title: "Wafflings",
     summary: "Smaller builds, made to find out how something feels.",
     links: [
@@ -62,8 +94,8 @@ export const STATIONS: Station[] = [
   },
   {
     id: "taste",
-    title: "Off hours",
+    // Off hours and About are one room: the bio card opens here (EsperInterface's AboutCard).
+    title: "About",
     summary: "When I’m not designing, I’m painting, playing basketball, playing video games or watching Arsenal.",
-    note: "On the wall: Man on the Moon II, Let God Sort Em Out, Reanimation, Cyberpunk 2077, Half-Life 2, Dishonored.",
   },
 ];

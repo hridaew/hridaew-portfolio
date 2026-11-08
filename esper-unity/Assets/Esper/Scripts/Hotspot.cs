@@ -18,6 +18,10 @@ namespace Esper
         [Tooltip("How far the camera narrows during enhance.")]
         public float enhanceFov = 9f;
 
+        [Tooltip("Where the camera travels to when going into the project.")]
+        public bool hasEnter;
+        public Vector3 enter;
+
         [HideInInspector] public float hover;
         float accentBase, lastSet = -1f;
         Light tracked;

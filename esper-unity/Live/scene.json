@@ -1,1377 +1,1513 @@
 {
   "items": [
     {
-      "id": "esper_desk/metal-office-desk",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:metal_office_desk",
+      "id": "house/floor",
+      "kind": "box",
+      "material": "Floor",
       "p": [
-        4.5,
         0,
-        2.55
-      ],
-      "r": [
-        0,
-        270,
+        -0.062,
         0
-      ]
+      ],
+      "size": [
+        9.14,
+        0.12,
+        9.14
+      ],
+      "radius": 0.04,
+      "group": "House",
+      "corner": 0.67
     },
     {
-      "id": "esper_desk/television-02",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:television_02",
-      "p": [
-        4.7,
-        0.7875,
-        2.7
-      ],
-      "r": [
-        0,
-        270,
-        0
-      ],
-      "display": {
-        "crt": [
-          0.002,
-          0.257,
-          0.1,
-          0.305,
-          0.248,
-          0.023
-        ],
-        "src": "Content/Obscura/wayne_archive_dsc05127asoldierportrait.jpg",
-        "floats": {
-          "_Brightness": 2.6,
-          "_Curvature": 0.05,
-          "_Scanlines": 420,
-          "_ScanAmount": 0.35,
-          "_Mask": 0.35,
-          "_Noise": 0.06,
-          "_Mono": 0.85,
-          "_Glass": 0.18,
-          "_Vignette": 1
-        },
-        "tint": [
-          0.78,
-          0.95,
-          1,
-          1
-        ],
-        "glow": 0.25,
-        "glowColor": [
-          0.62,
-          0.86,
-          1
-        ],
-        "glowOffset": [
-          0,
-          0.05,
-          0.45
-        ]
-      }
-    },
-    {
-      "id": "esper_desk/vintage-spacecraft-instrument",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:vintage_spacecraft_instrument",
-      "p": [
-        4.62,
-        0.9221,
-        2.13
-      ],
-      "r": [
-        0,
-        248,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/retro-multimeter",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:retro_multimeter",
-      "p": [
-        4.78,
-        0.7876,
-        3.27
-      ],
-      "r": [
-        0,
-        298,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/camera-01",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:Camera_01",
-      "p": [
-        4.22,
-        0.7872,
-        2.27
-      ],
-      "r": [
-        0,
-        24,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/magnifying-glass-01",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:magnifying_glass_01",
-      "p": [
-        4.28,
-        0.8009,
-        2.87
-      ],
-      "r": [
-        90,
-        322,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/round-spectacles",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:round_spectacles",
-      "p": [
-        4.14,
-        0.8106,
-        3.11
-      ],
-      "r": [
-        0,
-        150,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/desk-lamp-arm-01",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:desk_lamp_arm_01",
-      "p": [
-        4.76,
-        0.8755,
-        3.37
-      ],
-      "r": [
-        0,
-        38,
-        0
-      ],
-      "noShadows": true,
-      "tint": [
-        0.16,
-        0.17,
-        0.17
-      ]
-    },
-    {
-      "id": "esper_desk/modern-arm-chair-01",
-      "group": "ESPER_Desk",
-      "kind": "model",
-      "src": "ph:modern_arm_chair_01",
-      "p": [
-        3.55,
-        -0.0004,
-        2.67
-      ],
-      "r": [
-        0,
-        78,
-        0
-      ]
-    },
-    {
-      "id": "esper_desk/prints",
-      "group": "ESPER_Desk",
-      "kind": "group",
-      "p": [
-        0,
-        0,
-        1.25
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "children": [
-        {
-          "id": "print-0",
-          "kind": "print",
-          "src": "Content/Obscura/wayne_archive_0dsc06003awaynemarketplace.jpg",
-          "p": [
-            4.38,
-            0.7895,
-            1.28
-          ],
-          "r": [
-            90,
-            259,
-            0
-          ],
-          "w": 0.13,
-          "h": 0.13,
-          "curl": 0.002
-        },
-        {
-          "id": "print-1",
-          "kind": "print",
-          "src": "Content/Obscura/wayne_archive_dsc05135a.jpg",
-          "p": [
-            4.42,
-            0.7915,
-            1.38
-          ],
-          "r": [
-            90,
-            276,
-            0
-          ],
-          "w": 0.13,
-          "h": 0.13,
-          "curl": 0.002
-        },
-        {
-          "id": "print-2",
-          "kind": "print",
-          "src": "Content/Obscura/wayne_archive_dsc05232awayne2soldiers.jpg",
-          "p": [
-            4.1,
-            0.7905,
-            1.15
-          ],
-          "r": [
-            90,
-            243,
-            0
-          ],
-          "w": 0.1,
-          "h": 0.2,
-          "curl": 0.002
-        }
-      ]
-    },
-    {
-      "id": "room/radiator",
-      "group": "Room",
-      "kind": "group",
+      "id": "house/far",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
       "p": [
         0,
         0,
         0
       ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "children": [
-        {
-          "id": "fin-0",
-          "kind": "box",
-          "p": [
-            -0.8,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-1",
-          "kind": "box",
-          "p": [
-            -0.738,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-2",
-          "kind": "box",
-          "p": [
-            -0.676,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-3",
-          "kind": "box",
-          "p": [
-            -0.614,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-4",
-          "kind": "box",
-          "p": [
-            -0.552,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-5",
-          "kind": "box",
-          "p": [
-            -0.49,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-6",
-          "kind": "box",
-          "p": [
-            -0.428,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-7",
-          "kind": "box",
-          "p": [
-            -0.366,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-8",
-          "kind": "box",
-          "p": [
-            -0.304,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-9",
-          "kind": "box",
-          "p": [
-            -0.242,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-10",
-          "kind": "box",
-          "p": [
-            -0.18,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-11",
-          "kind": "box",
-          "p": [
-            -0.118,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-12",
-          "kind": "box",
-          "p": [
-            -0.056,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-13",
-          "kind": "box",
-          "p": [
-            0.006,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-14",
-          "kind": "box",
-          "p": [
-            0.068,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-15",
-          "kind": "box",
-          "p": [
-            0.13,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-16",
-          "kind": "box",
-          "p": [
-            0.192,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-17",
-          "kind": "box",
-          "p": [
-            0.254,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-18",
-          "kind": "box",
-          "p": [
-            0.316,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-19",
-          "kind": "box",
-          "p": [
-            0.378,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-20",
-          "kind": "box",
-          "p": [
-            0.44,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-21",
-          "kind": "box",
-          "p": [
-            0.502,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-22",
-          "kind": "box",
-          "p": [
-            0.564,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-23",
-          "kind": "box",
-          "p": [
-            0.626,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-24",
-          "kind": "box",
-          "p": [
-            0.688,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "fin-25",
-          "kind": "box",
-          "p": [
-            0.75,
-            0.4,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.04,
-            0.52,
-            0.15
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "radtop-26",
-          "kind": "box",
-          "p": [
-            0,
-            0.67,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            1.65,
-            0.025,
-            0.08
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "radbottom-27",
-          "kind": "box",
-          "p": [
-            0,
-            0.15,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            1.65,
-            0.025,
-            0.08
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "radfoot-28",
-          "kind": "box",
-          "p": [
-            -0.76,
-            0.07,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.05,
-            0.14,
-            0.05
-          ],
-          "material": "RadiatorPaint"
-        },
-        {
-          "id": "radfoot-29",
-          "kind": "box",
-          "p": [
-            0.76,
-            0.07,
-            3.62
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.05,
-            0.14,
-            0.05
-          ],
-          "material": "RadiatorPaint"
-        }
-      ]
-    },
-    {
-      "id": "room/door",
-      "group": "Room",
-      "kind": "group",
-      "p": [
-        0,
-        0,
-        0
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "children": [
-        {
-          "id": "slab-0",
-          "kind": "box",
-          "p": [
-            2.7,
-            1.05,
-            -3.72
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.92,
-            2.1,
-            0.05
-          ],
-          "material": "DoorSlab"
-        },
-        {
-          "id": "framel-1",
-          "kind": "box",
-          "p": [
-            2.2,
-            1.1,
-            -3.72
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.08,
-            2.2,
-            0.07
-          ],
-          "material": "DoorFrame"
-        },
-        {
-          "id": "framer-2",
-          "kind": "box",
-          "p": [
-            3.2,
-            1.1,
-            -3.72
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.08,
-            2.2,
-            0.07
-          ],
-          "material": "DoorFrame"
-        },
-        {
-          "id": "framet-3",
-          "kind": "box",
-          "p": [
-            2.7,
-            2.17,
-            -3.72
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            1.08,
-            0.08,
-            0.07
-          ],
-          "material": "DoorFrame"
-        },
-        {
-          "id": "handle-4",
-          "kind": "box",
-          "p": [
-            2.34,
-            1.02,
-            -3.67
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.12,
-            0.02,
-            0.03
-          ],
-          "material": "Brass"
-        }
-      ]
-    },
-    {
-      "id": "virdio/classicnightstand-01",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "ph:ClassicNightstand_01",
-      "p": [
-        4.76,
-        0,
-        -1.45
-      ],
-      "r": [
-        0,
-        270,
-        0
-      ]
-    },
-    {
-      "id": "virdio/television-01",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "ph:Television_01",
-      "p": [
-        4.7,
-        0.7,
-        -1.45
-      ],
-      "r": [
-        0,
-        270,
-        0
-      ],
-      "display": {
-        "crt": [
-          0.0625,
-          0.257,
-          0.172,
-          0.355,
-          0.268,
-          0.02
-        ],
-        "src": "Content/Virdio/tv_class.jpg",
-        "floats": {
-          "_Brightness": 2,
-          "_Curvature": 0.05,
-          "_Scanlines": 420,
-          "_ScanAmount": 0.35,
-          "_Mask": 0.35,
-          "_Noise": 0.06,
-          "_Mono": 0,
-          "_Glass": 0.18,
-          "_Vignette": 1
-        },
-        "tint": [
-          1,
-          0.95,
-          0.92,
-          1
-        ]
-      }
-    },
-    {
-      "id": "virdio/exercise-mat",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "esper:exercise_mat",
-      "p": [
+      "path": [
+        -4.5,
         3.3,
-        0,
-        -1.45
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ]
-    },
-    {
-      "id": "virdio/kettlebells",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "esper:kettlebells",
-      "p": [
-        3.4,
-        0,
-        -0.7
-      ],
-      "r": [
-        0,
-        340,
-        0
-      ]
-    },
-    {
-      "id": "virdio/phone-stand",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "esper:phone_stand",
-      "p": [
-        4.38,
-        0.58,
-        -0.86
-      ],
-      "r": [
-        0,
-        255,
-        0
-      ]
-    },
-    {
-      "id": "virdio/phone",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "esper:phone",
-      "p": [
-        4.37,
-        0.632,
-        -0.86
-      ],
-      "r": [
-        0,
-        345,
-        65
-      ],
-      "display": {
-        "surface": "Screen",
-        "src": "Content/Virdio/phone_rot.jpg",
-        "floats": {
-          "_Brightness": 1.4,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0,
-          "_Glass": 0.08,
-          "_Vignette": 0
-        },
-        "tint": [
-          1,
-          1,
-          1,
-          1
-        ]
-      }
-    },
-    {
-      "id": "virdio/side-table-01",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "ph:side_table_01",
-      "p": [
-        4.45,
-        0,
-        -0.62
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "virdio/laptop",
-      "group": "Virdio",
-      "kind": "model",
-      "src": "esper:laptop",
-      "p": [
+        -4.5,
+        3.9,
+        -4.488,
+        4.017,
+        -4.454,
+        4.13,
+        -4.399,
+        4.233,
+        -4.324,
+        4.324,
+        -4.233,
+        4.399,
+        -4.13,
+        4.454,
+        -4.017,
+        4.488,
+        -3.9,
         4.5,
-        0.58,
-        -0.55
+        3.9,
+        4.5,
+        4.017,
+        4.488,
+        4.13,
+        4.454,
+        4.233,
+        4.399,
+        4.324,
+        4.324,
+        4.399,
+        4.233,
+        4.454,
+        4.13,
+        4.488,
+        4.017,
+        4.5,
+        3.9,
+        4.5,
+        -3.9,
+        4.488,
+        -4.017,
+        4.454,
+        -4.13,
+        4.399,
+        -4.233,
+        4.324,
+        -4.324,
+        4.233,
+        -4.399,
+        4.13,
+        -4.454,
+        4.017,
+        -4.488,
+        3.9,
+        -4.5,
+        3.3,
+        -4.5
       ],
-      "r": [
-        0,
-        95,
-        0
-      ],
-      "display": {
-        "surface": "Screen",
-        "src": "Content/Virdio/laptop.jpg",
-        "floats": {
-          "_Brightness": 1.5,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0,
-          "_Glass": 0.08,
-          "_Vignette": 0
-        },
-        "tint": [
-          1,
-          1,
-          1,
-          1
-        ]
-      }
+      "h": 2.5,
+      "t": 0.14
     },
     {
-      "id": "domis/drafting-table",
+      "id": "house/south-east",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        3.3,
+        -4.5,
+        0.35,
+        -4.5
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/south-west",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -0.55,
+        -4.5,
+        -3.9,
+        -4.5,
+        -4.017,
+        -4.488,
+        -4.13,
+        -4.454,
+        -4.233,
+        -4.399,
+        -4.324,
+        -4.324,
+        -4.399,
+        -4.233,
+        -4.454,
+        -4.13,
+        -4.488,
+        -4.017,
+        -4.5,
+        -3.9,
+        -4.5,
+        3.3
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/row-0",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -4.5,
+        0.4,
+        -3.4,
+        0.4
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/row-1",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -2.5,
+        0.4,
+        0.0,
+        0.4
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/row-2",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        0.9,
+        0.4,
+        2.9,
+        0.4
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/row-3",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        3.8,
+        0.4,
+        4.5,
+        0.4
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/domis-offhours",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -0.7,
+        0.4,
+        -0.7,
+        4.5
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/offhours-mces",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        1.7,
+        0.4,
+        1.7,
+        4.5
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/virdio-east",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -1.1,
+        -4.5,
+        -1.1,
+        0.4
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/wafflings-north",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        -1.1,
+        -1.3,
+        0.8,
+        -1.3
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "house/wafflings-east",
+      "group": "House",
+      "kind": "wall",
+      "material": "WallWhite",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        0.8,
+        -4.5,
+        0.8,
+        -1.3
+      ],
+      "h": 1.0,
+      "t": 0.14
+    },
+    {
+      "id": "domis/fridge",
       "group": "Domis",
       "kind": "model",
-      "src": "esper:drafting_table",
+      "src": "kenney:kitchenFridgeLarge",
       "p": [
-        -2.35,
+        -3.75,
+        0,
+        4.03
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 1.9,
+      "nodes": {
+        "doorLeft": [
+          0,
+          -105,
+          0
+        ],
+        "doorRight": [
+          0,
+          105,
+          0
+        ]
+      },
+      "shake": 0.004
+    },
+    {
+      "id": "domis/fridge-liner",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -3.75,
+        0.98,
+        3.694
+      ],
+      "size": [
+        0.96,
+        1.62,
+        0.012
+      ],
+      "radius": 0.004,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-shelf-0",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.75,
+        0.55,
+        3.63
+      ],
+      "size": [
+        0.94,
+        0.018,
+        0.14
+      ],
+      "radius": 0.004,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-shelf-1",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.75,
+        0.95,
+        3.63
+      ],
+      "size": [
+        0.94,
+        0.018,
+        0.14
+      ],
+      "radius": 0.004,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-shelf-2",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.75,
+        1.33,
+        3.63
+      ],
+      "size": [
+        0.94,
+        0.018,
+        0.14
+      ],
+      "radius": 0.004,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-freezer",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.75,
+        1.55,
+        3.625
+      ],
+      "size": [
+        0.96,
+        0.045,
+        0.15
+      ],
+      "radius": 0.006,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-crisper",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -3.75,
+        0.3,
+        3.62
+      ],
+      "size": [
+        0.88,
+        0.22,
+        0.16
+      ],
+      "radius": 0.012,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-bottle-0",
+      "kind": "lathe",
+      "material": "Clay",
+      "p": [
+        -4.09,
+        0.96,
+        3.64
+      ],
+      "profile": [
+        0,
+        0,
+        0.032,
+        0,
+        0.032,
+        0.17,
+        0.014,
+        0.21,
+        0.014,
+        0.25,
+        0,
+        0.25
+      ],
+      "group": "Domis",
+      "tint": [
+        0.78,
+        0.2,
+        0.22
+      ]
+    },
+    {
+      "id": "domis/fridge-bottle-1",
+      "kind": "lathe",
+      "material": "Clay",
+      "p": [
+        -4.01,
+        0.96,
+        3.63
+      ],
+      "profile": [
+        0,
+        0,
+        0.032,
+        0,
+        0.032,
+        0.17,
+        0.014,
+        0.21,
+        0.014,
+        0.25,
+        0,
+        0.25
+      ],
+      "group": "Domis",
+      "tint": [
+        1.0,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "id": "domis/fridge-carton",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.5,
+        0.66,
+        3.64
+      ],
+      "size": [
+        0.09,
+        0.2,
+        0.09
+      ],
+      "radius": 0.006,
+      "group": "Domis",
+      "tint": [
+        1.0,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "id": "domis/fridge-jar",
+      "kind": "lathe",
+      "material": "Clay",
+      "p": [
+        -3.7,
+        1.34,
+        3.64
+      ],
+      "profile": [
+        0,
+        0,
+        0.045,
+        0,
+        0.045,
+        0.1,
+        0.035,
+        0.11,
+        0.035,
+        0.125,
+        0,
+        0.125
+      ],
+      "group": "Domis",
+      "tint": [
+        1.0,
+        0.353,
+        0.357
+      ]
+    },
+    {
+      "id": "domis/fridge-tub",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.95,
+        1.39,
+        3.635
+      ],
+      "size": [
+        0.22,
+        0.1,
+        0.12
+      ],
+      "radius": 0.012,
+      "group": "Domis",
+      "tint": [
+        1.0,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "id": "domis/fridge-panel",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -3.75,
+        1.72,
+        3.688
+      ],
+      "size": [
+        0.34,
+        0.07,
+        0.02
+      ],
+      "radius": 0.006,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/fridge-fault",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -3.64,
+        1.72,
+        3.676
+      ],
+      "size": [
+        0.022,
+        0.006,
+        0.022
+      ],
+      "radius": 0.003,
+      "r": [
+        90,
+        0,
+        0
+      ],
+      "corner": 0.011,
+      "group": "Domis",
+      "tint": [
+        1.0,
+        0.353,
+        0.357
+      ]
+    },
+    {
+      "id": "domis/leak-0",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -3.67,
+        0.003,
+        3.15
+      ],
+      "size": [
+        0.62,
+        0.005,
+        0.42
+      ],
+      "radius": 0.003,
+      "group": "Domis",
+      "corner": 0.2,
+      "tint": [
+        1.0,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "id": "domis/leak-1",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -3.37,
+        0.004,
+        2.88
+      ],
+      "size": [
+        0.3,
+        0.005,
+        0.22
+      ],
+      "radius": 0.003,
+      "group": "Domis",
+      "corner": 0.1,
+      "tint": [
+        1.0,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "id": "domis/cabinet-0",
+      "group": "Domis",
+      "kind": "model",
+      "src": "kenney:kitchenCabinet",
+      "p": [
+        -2.85,
+        0,
+        4.1
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.92
+    },
+    {
+      "id": "domis/sink",
+      "group": "Domis",
+      "kind": "model",
+      "src": "kenney:kitchenSink",
+      "p": [
+        -2.0,
+        0,
+        4.1
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.92
+    },
+    {
+      "id": "domis/cabinet-1",
+      "group": "Domis",
+      "kind": "model",
+      "src": "kenney:kitchenCabinetDrawer",
+      "p": [
+        -1.15,
+        0,
+        4.1
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.92
+    },
+    {
+      "id": "domis/phone-rest",
+      "group": "Domis",
+      "kind": "screen",
+      "w": 0.075,
+      "h": 0.155,
+      "border": 0.005,
+      "t": 0.009,
+      "p": [
+        -2.85,
+        0.95,
+        3.98
+      ],
+      "r": [
+        90,
+        20,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Domis/phone_tasks.png",
+        "floats": {
+          "_Brightness": 1.35
+        }
+      },
+      "station": "domis",
+      "when": "idle",
+      "on": "domis/cabinet-0"
+    },
+    {
+      "id": "domis/phone-held",
+      "group": "Domis",
+      "kind": "screen",
+      "w": 0.09,
+      "h": 0.185,
+      "border": 0.005,
+      "t": 0.009,
+      "p": [
+        -3.79,
+        1.47,
+        3.53
+      ],
+      "r": [
+        12,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Domis/phone_home.png",
+        "floats": {
+          "_Brightness": 1.35
+        }
+      },
+      "station": "domis",
+      "when": "active"
+    },
+    {
+      "id": "domis/person",
+      "group": "Domis",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            -3.75,
+            0.95,
+            3.0
+          ],
+          "neck": [
+            -3.75,
+            1.44,
+            3.05
+          ],
+          "headBase": [
+            -3.75,
+            1.52,
+            3.09
+          ],
+          "headTop": [
+            -3.75,
+            1.7,
+            3.16
+          ],
+          "shl": [
+            -3.95,
+            1.4,
+            3.05
+          ],
+          "shr": [
+            -3.55,
+            1.4,
+            3.05
+          ],
+          "hipl": [
+            -3.85,
+            0.92,
+            3.0
+          ],
+          "hipr": [
+            -3.65,
+            0.92,
+            3.0
+          ],
+          "knl": [
+            -3.9,
+            0.48,
+            3.02
+          ],
+          "knr": [
+            -3.6,
+            0.48,
+            3.02
+          ],
+          "anl": [
+            -3.91,
+            0.05,
+            3.0
+          ],
+          "anr": [
+            -3.59,
+            0.05,
+            3.0
+          ],
+          "ell": [
+            -3.95,
+            1.12,
+            2.98
+          ],
+          "wrl": [
+            -3.98,
+            0.86,
+            3.05
+          ],
+          "elr": [
+            -3.53,
+            1.14,
+            3.22
+          ],
+          "wrr": [
+            -3.74,
+            1.29,
+            3.46
+          ]
+        }
+      ],
+      "station": "domis",
+      "when": "active",
+      "grip": {
+        "kind": "phone",
+        "object": "domis/phone-held"
+      },
+      "hands": [
+        "relaxed",
+        "hold"
+      ]
+    },
+    {
+      "id": "taste/sideboard",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        0.5,
+        0.3,
+        4.15
+      ],
+      "size": [
+        1.6,
+        0.6,
+        0.46
+      ],
+      "radius": 0.008,
+      "group": "Taste"
+    },
+    {
+      "id": "taste/record-player",
+      "group": "Taste",
+      "kind": "group",
+      "p": [
+        0.08,
+        0.6,
+        4.15
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "id": "plinth",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.04,
+            0
+          ],
+          "size": [
+            0.45,
+            0.08,
+            0.35
+          ],
+          "radius": 0.004
+        },
+        {
+          "id": "platter",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            -0.04,
+            0.087,
+            0
+          ],
+          "size": [
+            0.29,
+            0.015,
+            0.29
+          ],
+          "radius": 0.007,
+          "corner": 0.145
+        },
+        {
+          "id": "record",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            -0.04,
+            0.097,
+            0
+          ],
+          "size": [
+            0.28,
+            0.004,
+            0.28
+          ],
+          "radius": 0.002,
+          "corner": 0.14
+        },
+        {
+          "id": "pivot",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.17,
+            0.095,
+            0.11
+          ],
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "radius": 0.004
+        },
+        {
+          "id": "tonearm",
+          "kind": "tube",
+          "material": "Satin",
+          "p": [
+            0,
+            0,
+            0
+          ],
+          "path": [
+            0.17,
+            0.115,
+            0.11,
+            0.15,
+            0.115,
+            -0.03,
+            0.08,
+            0.108,
+            -0.09
+          ],
+          "t": 0.008
+        }
+      ],
+      "tint": [
+        0.3,
+        0.3,
+        0.32
+      ]
+    },
+    {
+      "id": "taste/monitor",
+      "group": "Taste",
+      "kind": "model",
+      "src": "kenney:computerScreen",
+      "p": [
+        0.88,
+        0.6,
+        4.23
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.45,
+      "on": "taste/sideboard"
+    },
+    {
+      "id": "taste/keyboard",
+      "group": "Taste",
+      "kind": "model",
+      "src": "kenney:computerKeyboard",
+      "p": [
+        0.84,
+        0.6,
+        4.01
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.04,
+      "on": "taste/sideboard"
+    },
+    {
+      "id": "taste/mouse",
+      "group": "Taste",
+      "kind": "model",
+      "src": "kenney:computerMouse",
+      "p": [
+        1.12,
+        0.6,
+        4.01
+      ],
+      "r": [
+        0,
+        180,
+        0
+      ],
+      "height": 0.035,
+      "on": "taste/sideboard"
+    },
+    {
+      "id": "taste/ledge-records",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        0.5,
+        1.22,
+        4.38
+      ],
+      "size": [
+        1.25,
+        0.03,
+        0.1
+      ],
+      "radius": 0.004,
+      "group": "Taste"
+    },
+    {
+      "id": "taste/ledge-games",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        0.5,
+        1.68,
+        4.38
+      ],
+      "size": [
+        1.0,
+        0.03,
+        0.1
+      ],
+      "radius": 0.004,
+      "group": "Taste"
+    },
+    {
+      "id": "taste/album-0",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.3,
+      "h": 0.3,
+      "border": 0.008,
+      "t": 0.006,
+      "p": [
+        0.13,
+        1.39,
+        4.36
+      ],
+      "r": [
+        8,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Albums/lgseo_front.jpg",
+        "lit": true
+      },
+      "corner": 0.01
+    },
+    {
+      "id": "taste/album-1",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.3,
+      "h": 0.3,
+      "border": 0.008,
+      "t": 0.006,
+      "p": [
+        0.5,
+        1.39,
+        4.36
+      ],
+      "r": [
+        8,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Albums/motm2_front.jpg",
+        "lit": true
+      },
+      "corner": 0.01
+    },
+    {
+      "id": "taste/album-2",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.3,
+      "h": 0.3,
+      "border": 0.008,
+      "t": 0.006,
+      "p": [
+        0.87,
+        1.39,
+        4.36
+      ],
+      "r": [
+        8,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Albums/reanimation_front.jpg",
+        "lit": true
+      },
+      "corner": 0.01
+    },
+    {
+      "id": "taste/game-0",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.13,
+      "h": 0.18,
+      "border": 0.007,
+      "t": 0.014,
+      "p": [
+        0.3,
+        1.79,
+        4.36
+      ],
+      "r": [
+        6,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Games/game_1.jpg",
+        "lit": true
+      },
+      "corner": 0.009
+    },
+    {
+      "id": "taste/game-1",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.13,
+      "h": 0.18,
+      "border": 0.007,
+      "t": 0.014,
+      "p": [
+        0.5,
+        1.79,
+        4.36
+      ],
+      "r": [
+        6,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Games/game_2.jpg",
+        "lit": true
+      },
+      "corner": 0.009
+    },
+    {
+      "id": "taste/game-2",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.13,
+      "h": 0.18,
+      "border": 0.007,
+      "t": 0.014,
+      "p": [
+        0.7,
+        1.79,
+        4.36
+      ],
+      "r": [
+        6,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Games/game_3.jpg",
+        "lit": true
+      },
+      "corner": 0.009
+    },
+    {
+      "id": "taste/lounge-chair",
+      "group": "Taste",
+      "kind": "group",
+      "p": [
+        0.5,
+        0,
+        2.3
+      ],
+      "r": [
+        0,
+        335,
+        0
+      ],
+      "children": [
+        {
+          "id": "foot",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.015,
+            0
+          ],
+          "size": [
+            0.56,
+            0.03,
+            0.56
+          ],
+          "radius": 0.015,
+          "corner": 0.28
+        },
+        {
+          "id": "column",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.17,
+            0.02
+          ],
+          "size": [
+            0.06,
+            0.3,
+            0.06
+          ],
+          "radius": 0.03
+        },
+        {
+          "id": "seat",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0,
+            0.37,
+            -0.05
+          ],
+          "size": [
+            0.72,
+            0.11,
+            0.62
+          ],
+          "radius": 0.045,
+          "r": [
+            7,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "back",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0,
+            0.7,
+            0.33
+          ],
+          "size": [
+            0.74,
+            0.86,
+            0.11
+          ],
+          "radius": 0.045,
+          "r": [
+            31,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "arm-l",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            -0.39,
+            0.6,
+            -0.03
+          ],
+          "size": [
+            0.08,
+            0.05,
+            0.52
+          ],
+          "radius": 0.02
+        },
+        {
+          "id": "arm-r",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.39,
+            0.6,
+            -0.03
+          ],
+          "size": [
+            0.08,
+            0.05,
+            0.52
+          ],
+          "radius": 0.02
+        },
+        {
+          "id": "post-l",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            -0.39,
+            0.49,
+            0.1
+          ],
+          "size": [
+            0.05,
+            0.22,
+            0.05
+          ],
+          "radius": 0.02
+        },
+        {
+          "id": "post-r",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.39,
+            0.49,
+            0.1
+          ],
+          "size": [
+            0.05,
+            0.22,
+            0.05
+          ],
+          "radius": 0.02
+        }
+      ],
+      "tint": [
+        0.45,
+        0.29,
+        0.19
+      ]
+    },
+    {
+      "id": "memorycare/alcove",
+      "group": "MemoryCare",
+      "kind": "group",
+      "p": [
+        4.03,
         0,
         2.55
       ],
       "r": [
         0,
-        180,
-        0
-      ]
-    },
-    {
-      "id": "domis/print",
-      "group": "Domis",
-      "kind": "print",
-      "src": "Content/Domis/hero.jpg",
-      "p": [
-        -2.37,
-        0.876,
-        2.545
-      ],
-      "r": [
-        72,
-        0,
-        0
-      ],
-      "w": 0.62,
-      "h": 0.31,
-      "curl": 0.003
-    },
-    {
-      "id": "domis/phone",
-      "group": "Domis",
-      "kind": "model",
-      "src": "esper:phone",
-      "p": [
-        -1.95,
-        0.797,
-        2.312
-      ],
-      "r": [
-        18,
-        180,
-        0
-      ],
-      "display": {
-        "surface": "Screen",
-        "src": "Content/Domis/phone.jpg",
-        "floats": {
-          "_Brightness": 1.3,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0,
-          "_Glass": 0.08,
-          "_Vignette": 0
-        },
-        "tint": [
-          1,
-          1,
-          1,
-          1
-        ]
-      }
-    },
-    {
-      "id": "domis/side-table-tall-01",
-      "group": "Domis",
-      "kind": "model",
-      "src": "ph:side_table_tall_01",
-      "p": [
-        -1.3,
-        0,
-        2.6
-      ],
-      "r": [
-        0,
-        350,
-        0
-      ]
-    },
-    {
-      "id": "domis/domis-house",
-      "group": "Domis",
-      "kind": "model",
-      "src": "esper:domis_house",
-      "p": [
-        -1.3,
-        0.7612,
-        2.6
-      ],
-      "r": [
-        0,
-        200,
-        0
-      ],
-      "s": [
-        0.95
-      ]
-    },
-    {
-      "id": "memorycare/monitor",
-      "group": "MemoryCare",
-      "kind": "model",
-      "src": "esper:monitor",
-      "p": [
-        -4.73,
-        1.42,
-        -1.45
-      ],
-      "r": [
-        0,
         90,
         0
       ],
-      "s": [
-        2
-      ],
-      "display": {
-        "surface": "Screen",
-        "src": "Content/MemoryCare/kitten.jpg",
-        "floats": {
-          "_Brightness": 1.6,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0,
-          "_Glass": 0.08,
-          "_Vignette": 0
+      "children": [
+        {
+          "id": "side-l",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            -0.97,
+            1.02,
+            0
+          ],
+          "size": [
+            0.1,
+            2.04,
+            0.84
+          ],
+          "radius": 0.008
         },
-        "tint": [
-          1,
-          1,
-          1,
-          1
-        ]
-      }
-    },
-    {
-      "id": "memorycare/mid-century-lounge-chair",
-      "group": "MemoryCare",
-      "kind": "model",
-      "src": "ph:mid_century_lounge_chair",
-      "p": [
-        -3.25,
-        0,
-        -1.45
-      ],
-      "r": [
-        0,
-        270,
-        0
-      ]
-    },
-    {
-      "id": "memorycare/side-table-01",
-      "group": "MemoryCare",
-      "kind": "model",
-      "src": "ph:side_table_01",
-      "p": [
-        -4.3,
-        0.0022,
-        -1.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "s": [
-        0.95
+        {
+          "id": "side-r",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.97,
+            1.02,
+            0
+          ],
+          "size": [
+            0.1,
+            2.04,
+            0.84
+          ],
+          "radius": 0.008
+        },
+        {
+          "id": "top",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            2.0,
+            0
+          ],
+          "size": [
+            2.04,
+            0.1,
+            0.84
+          ],
+          "radius": 0.008
+        },
+        {
+          "id": "back",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            1.02,
+            0.39
+          ],
+          "size": [
+            2.0,
+            2.04,
+            0.08
+          ],
+          "radius": 0.006
+        },
+        {
+          "id": "counter",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.74,
+            0.0
+          ],
+          "size": [
+            1.88,
+            0.06,
+            0.72
+          ],
+          "radius": 0.006
+        }
       ]
     },
     {
@@ -1380,13 +1516,13 @@
       "kind": "model",
       "src": "esper:steering_wheel",
       "p": [
-        -4.26,
-        0.5784,
-        -1.45
+        3.73,
+        0.765,
+        2.55
       ],
       "r": [
         0,
-        90,
+        270,
         0
       ],
       "s": [
@@ -1394,980 +1530,1851 @@
       ]
     },
     {
-      "id": "memorycare/haptic-pucks",
+      "id": "memorycare/tv",
+      "group": "MemoryCare",
+      "kind": "screen",
+      "w": 1.5,
+      "h": 0.85,
+      "border": 0.02,
+      "t": 0.035,
+      "p": [
+        4.36,
+        1.38,
+        2.55
+      ],
+      "r": [
+        0,
+        90,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/MemoryCare/station.jpg",
+        "floats": {
+          "_Brightness": 0.9
+        },
+        "active": [
+          "Content/MemoryCare/resident_wheel.jpg",
+          "Content/MemoryCare/kitten.jpg"
+        ],
+        "seconds": 3.5,
+        "activeBrightness": 1.35
+      },
+      "station": "memory-care"
+    },
+    {
+      "id": "memorycare/footrest",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        3.59,
+        0.045,
+        2.55
+      ],
+      "size": [
+        0.48,
+        0.09,
+        0.34
+      ],
+      "radius": 0.03,
+      "group": "MemoryCare",
+      "r": [
+        0,
+        90,
+        0
+      ],
+      "tint": [
+        1.0,
+        0.82,
+        0.7
+      ]
+    },
+    {
+      "id": "memorycare/stool",
       "group": "MemoryCare",
       "kind": "model",
-      "src": "esper:haptic_pucks",
+      "src": "ph:folding_wooden_stool",
       "p": [
-        -3.75,
+        2.35,
         0,
-        -1.45
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ],
-      "s": [
-        0.85
-      ]
-    },
-    {
-      "id": "memorycare/frame-wall",
-      "group": "MemoryCare",
-      "kind": "model",
-      "src": "esper:frame_wall",
-      "p": [
-        -4.98,
-        1.12,
-        -0.1
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ],
-      "s": [
-        1.15
-      ],
-      "photo": {
-        "surface": "Photo",
-        "src": "Content/MemoryCare/station.jpg"
-      }
-    },
-    {
-      "id": "wafflings/wooden-bookshelf-worn",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "ph:wooden_bookshelf_worn",
-      "p": [
-        -2.4,
-        0,
-        -3.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "wafflings/frame-landscape",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "esper:frame_landscape",
-      "p": [
-        -2.7,
-        1.2765,
-        -3.45
-      ],
-      "r": [
-        0,
-        5,
-        0
-      ],
-      "photo": {
-        "surface": "Photo",
-        "src": "Content/Wafflings/orca_booth.jpg"
-      }
-    },
-    {
-      "id": "wafflings/frame-portrait",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "esper:frame_portrait",
-      "p": [
-        -2.1,
-        1.2765,
-        -3.45
-      ],
-      "r": [
-        0,
-        355,
-        0
-      ],
-      "photo": {
-        "surface": "Photo",
-        "src": "Content/Wafflings/mighty_hand.jpg"
-      }
-    },
-    {
-      "id": "wafflings/portable-cassette-player",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "ph:portable_cassette_player",
-      "p": [
-        -2.6,
-        1.0167,
-        -3.43
-      ],
-      "r": [
-        0,
-        20,
-        0
-      ]
-    },
-    {
-      "id": "wafflings/brass-pot-01",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "ph:brass_pot_01",
-      "p": [
-        -2.12,
-        0.9611,
-        -3.45
-      ],
-      "r": [
-        0,
-        330,
-        0
-      ],
-      "s": [
-        0.75
-      ]
-    },
-    {
-      "id": "wafflings/book-encyclopedia-set-01",
-      "group": "Wafflings",
-      "kind": "model",
-      "src": "ph:book_encyclopedia_set_01",
-      "p": [
-        -2.55,
-        0.6715,
-        -3.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "s": [
-        0.9
-      ]
-    },
-    {
-      "id": "taste/credenza",
-      "group": "Taste",
-      "kind": "model",
-      "src": "esper:credenza",
-      "p": [
-        -4.75,
-        0,
-        1.45
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ]
-    },
-    {
-      "id": "taste/turntable",
-      "group": "Taste",
-      "kind": "model",
-      "src": "esper:turntable",
-      "p": [
-        -4.73,
-        0.595,
-        1
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ],
-      "spin": {
-        "child": "Platter",
-        "dps": 200
-      }
-    },
-    {
-      "id": "taste/gaming-console",
-      "group": "Taste",
-      "kind": "model",
-      "src": "ph:gaming_console",
-      "p": [
-        -4.74,
-        0.5803,
-        1.9
-      ],
-      "r": [
-        0,
-        90,
-        0
-      ],
-      "s": [
-        0.9
-      ]
-    },
-    {
-      "id": "taste/ledgerecords",
-      "group": "Taste",
-      "kind": "box",
-      "p": [
-        -4.95,
-        1.22,
-        1.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "size": [
-        0.09,
-        0.02,
-        1.2
-      ],
-      "material": "Ledge"
-    },
-    {
-      "id": "taste/ledgerecordslip",
-      "group": "Taste",
-      "kind": "box",
-      "p": [
-        -4.907,
-        1.245,
-        1.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "size": [
-        0.012,
-        0.05,
-        1.2
-      ],
-      "material": "Ledge"
-    },
-    {
-      "id": "taste/ledgegames",
-      "group": "Taste",
-      "kind": "box",
-      "p": [
-        -4.95,
-        1.72,
-        1.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "size": [
-        0.09,
-        0.02,
-        1
-      ],
-      "material": "Ledge"
-    },
-    {
-      "id": "taste/ledgegameslip",
-      "group": "Taste",
-      "kind": "box",
-      "p": [
-        -4.907,
-        1.74,
-        1.45
-      ],
-      "r": [
-        0,
-        0,
-        0
-      ],
-      "size": [
-        0.012,
-        0.04,
-        1
-      ],
-      "material": "Ledge"
-    },
-    {
-      "id": "taste/album",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.945,
-        1.385,
-        1.05
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0025
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.31,
-            0.31,
-            1
-          ],
-          "material": "Album_motm2_front"
-        },
-        {
-          "id": "board-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.31,
-            0.31,
-            0.004
-          ],
-          "material": "Sleeve"
-        }
-      ]
-    },
-    {
-      "id": "taste/album-2",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.945,
-        1.385,
-        1.45
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0025
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.31,
-            0.31,
-            1
-          ],
-          "material": "Album_lgseo_front"
-        },
-        {
-          "id": "board-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.31,
-            0.31,
-            0.004
-          ],
-          "material": "Sleeve"
-        }
-      ]
-    },
-    {
-      "id": "taste/album-3",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.945,
-        1.385,
-        1.85
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0025
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.31,
-            0.31,
-            1
-          ],
-          "material": "Album_reanimation_front"
-        },
-        {
-          "id": "board-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.31,
-            0.31,
-            0.004
-          ],
-          "material": "Sleeve"
-        }
-      ]
-    },
-    {
-      "id": "taste/gamecase",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.948,
-        1.825,
-        1.15
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0076
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.135,
-            0.19,
-            1
-          ],
-          "material": "Game_game_1"
-        },
-        {
-          "id": "case-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.137,
-            0.192,
-            0.014
-          ],
-          "material": "GameCaseShell"
-        }
-      ]
-    },
-    {
-      "id": "taste/gamecase-2",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.948,
-        1.825,
-        1.45
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0076
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.135,
-            0.19,
-            1
-          ],
-          "material": "Game_game_2"
-        },
-        {
-          "id": "case-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.137,
-            0.192,
-            0.014
-          ],
-          "material": "GameCaseShell"
-        }
-      ]
-    },
-    {
-      "id": "taste/gamecase-3",
-      "group": "Taste",
-      "kind": "group",
-      "p": [
-        -4.948,
-        1.825,
-        1.75
-      ],
-      "r": [
-        8,
-        270,
-        0
-      ],
-      "children": [
-        {
-          "id": "cover-0",
-          "kind": "quad",
-          "p": [
-            0,
-            0,
-            -0.0076
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "s": [
-            0.135,
-            0.19,
-            1
-          ],
-          "material": "Game_game_3"
-        },
-        {
-          "id": "case-1",
-          "kind": "box",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "r": [
-            0,
-            0,
-            0
-          ],
-          "size": [
-            0.137,
-            0.192,
-            0.014
-          ],
-          "material": "GameCaseShell"
-        }
-      ]
-    },
-    {
-      "id": "taste/scarf",
-      "group": "Taste",
-      "kind": "model",
-      "src": "esper:scarf",
-      "p": [
-        -5,
-        2.05,
-        2.45
-      ],
-      "r": [
-        0,
-        270,
-        0
-      ]
-    },
-    {
-      "id": "taste/potted-plant-02",
-      "group": "Taste",
-      "kind": "model",
-      "src": "ph:potted_plant_02",
-      "p": [
-        -4.55,
-        0,
-        3.3
+        1.3
       ],
       "r": [
         0,
         30,
         0
       ],
-      "s": [
-        0.85
+      "height": 0.46,
+      "tint": [
+        1.0,
+        0.82,
+        0.7
       ]
     },
     {
-      "id": "esper_bank/monitor",
-      "group": "ESPER_Bank",
+      "id": "memorycare/cat-0",
+      "group": "MemoryCare",
       "kind": "model",
-      "src": "esper:monitor",
+      "src": "ph:concrete_cat_statue",
       "p": [
-        4.84,
-        1.72,
-        2.17
+        2.3,
+        0.46,
+        1.27
       ],
       "r": [
         0,
-        270,
+        120,
         0
       ],
-      "s": [
-        0.95
-      ],
-      "display": {
-        "surface": "Screen",
-        "src": "Content/Obscura/wayne_archive_dsc05232awayne2soldiers.jpg",
-        "floats": {
-          "_Brightness": 1.5,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0.9,
-          "_Glass": 0.08,
-          "_Vignette": 0
-        },
-        "tint": [
-          0.8,
-          0.95,
-          1,
-          1
-        ],
-        "st": [
-          3.2,
-          1,
-          -1.1,
-          0
-        ]
-      }
+      "height": 0.2,
+      "on": "memorycare/stool",
+      "tint": [
+        1.0,
+        0.506,
+        0.227
+      ]
     },
     {
-      "id": "esper_bank/monitor-2",
-      "group": "ESPER_Bank",
+      "id": "memorycare/cat-1",
+      "group": "MemoryCare",
       "kind": "model",
-      "src": "esper:monitor",
+      "src": "ph:concrete_cat_statue",
       "p": [
-        4.84,
-        1.72,
-        2.85
+        2.12,
+        0.0,
+        0.85
+      ],
+      "r": [
+        0,
+        200,
+        0
+      ],
+      "height": 0.22,
+      "tint": [
+        1.0,
+        0.624,
+        0.451
+      ]
+    },
+    {
+      "id": "memorycare/wheelchair",
+      "group": "MemoryCare",
+      "kind": "model",
+      "src": "ph:wheelchair_01",
+      "p": [
+        3.04,
+        0,
+        2.55
+      ],
+      "r": [
+        0,
+        90,
+        0
+      ],
+      "height": 0.95,
+      "station": "memory-care",
+      "when": "active"
+    },
+    {
+      "id": "memorycare/resident",
+      "group": "MemoryCare",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            3.09,
+            0.5,
+            2.55
+          ],
+          "neck": [
+            3.17,
+            0.96,
+            2.55
+          ],
+          "headBase": [
+            3.19,
+            1.03,
+            2.55
+          ],
+          "headTop": [
+            3.23,
+            1.2,
+            2.55
+          ],
+          "shl": [
+            3.17,
+            0.92,
+            2.75
+          ],
+          "shr": [
+            3.17,
+            0.92,
+            2.35
+          ],
+          "hipl": [
+            3.11,
+            0.48,
+            2.65
+          ],
+          "hipr": [
+            3.11,
+            0.48,
+            2.45
+          ],
+          "knl": [
+            3.51,
+            0.46,
+            2.69
+          ],
+          "knr": [
+            3.51,
+            0.46,
+            2.41
+          ],
+          "anl": [
+            3.61,
+            0.05,
+            2.71
+          ],
+          "anr": [
+            3.61,
+            0.05,
+            2.39
+          ],
+          "ell": [
+            3.43,
+            0.74,
+            2.75
+          ],
+          "wrl": [
+            3.71,
+            0.9,
+            2.69
+          ],
+          "elr": [
+            3.43,
+            0.74,
+            2.35
+          ],
+          "wrr": [
+            3.71,
+            0.9,
+            2.41
+          ]
+        }
+      ],
+      "station": "memory-care",
+      "when": "active",
+      "grip": {
+        "kind": "wheel",
+        "object": "memorycare/steering-wheel"
+      },
+      "hands": [
+        "grip",
+        "grip"
+      ]
+    },
+    {
+      "id": "virdio/console",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -1.43,
+        0.275,
+        -2.0
+      ],
+      "size": [
+        0.44,
+        0.55,
+        1.5
+      ],
+      "radius": 0.008,
+      "group": "Virdio"
+    },
+    {
+      "id": "virdio/tv",
+      "group": "Virdio",
+      "kind": "screen",
+      "w": 1.3,
+      "h": 0.73,
+      "border": 0.014,
+      "t": 0.03,
+      "p": [
+        -1.47,
+        1.01,
+        -2.0
+      ],
+      "r": [
+        0,
+        90,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Virdio/tv_idle.png",
+        "floats": {
+          "_Brightness": 1.1
+        },
+        "active": [
+          "Content/Virdio/tv_class.jpg"
+        ],
+        "activeBrightness": 1.3
+      },
+      "station": "virdio"
+    },
+    {
+      "id": "virdio/tv-foot",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -1.47,
+        0.565,
+        -2.0
+      ],
+      "size": [
+        0.24,
+        0.02,
+        0.16
+      ],
+      "radius": 0.008,
+      "group": "Virdio"
+    },
+    {
+      "id": "virdio/sofa",
+      "group": "Virdio",
+      "kind": "group",
+      "p": [
+        -3.96,
+        0,
+        -2.0
       ],
       "r": [
         0,
         270,
         0
       ],
-      "s": [
+      "children": [
+        {
+          "id": "base",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0,
+            0.2,
+            0.02
+          ],
+          "size": [
+            1.58,
+            0.3,
+            0.82
+          ],
+          "radius": 0.04
+        },
+        {
+          "id": "cushion-l",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            -0.395,
+            0.405,
+            -0.06
+          ],
+          "size": [
+            0.78,
+            0.12,
+            0.64
+          ],
+          "radius": 0.05
+        },
+        {
+          "id": "cushion-r",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0.395,
+            0.405,
+            -0.06
+          ],
+          "size": [
+            0.78,
+            0.12,
+            0.64
+          ],
+          "radius": 0.05
+        },
+        {
+          "id": "back",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0,
+            0.6,
+            0.31
+          ],
+          "size": [
+            1.6,
+            0.44,
+            0.2
+          ],
+          "radius": 0.06
+        },
+        {
+          "id": "arm-l",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            -0.87,
+            0.335,
+            0.02
+          ],
+          "size": [
+            0.16,
+            0.57,
+            0.84
+          ],
+          "radius": 0.05
+        },
+        {
+          "id": "arm-r",
+          "kind": "box",
+          "material": "Fabric",
+          "p": [
+            0.87,
+            0.335,
+            0.02
+          ],
+          "size": [
+            0.16,
+            0.57,
+            0.84
+          ],
+          "radius": 0.05
+        }
+      ],
+      "tint": [
+        0.8,
+        0.73,
+        1.0
+      ]
+    },
+    {
+      "id": "virdio/coffee-table",
+      "group": "Virdio",
+      "kind": "model",
+      "src": "ph:modern_coffee_table_01",
+      "p": [
+        -3.4,
+        0,
+        -0.6
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "height": 0.4,
+      "tint": [
+        0.55,
+        0.45,
         0.95
+      ]
+    },
+    {
+      "id": "virdio/phone",
+      "group": "Virdio",
+      "kind": "screen",
+      "w": 0.075,
+      "h": 0.155,
+      "border": 0.005,
+      "t": 0.009,
+      "p": [
+        -1.59,
+        0.6,
+        -1.45
+      ],
+      "r": [
+        90,
+        250,
+        0
       ],
       "display": {
         "surface": "Screen",
-        "src": "Content/Obscura/wayne_archive_dsc05218ac_waynewong.jpg",
+        "src": "Content/Virdio/phone.jpg",
         "floats": {
-          "_Brightness": 1.5,
-          "_Curvature": 0,
-          "_Scanlines": 1600,
-          "_ScanAmount": 0.04,
-          "_Mask": 0.06,
-          "_Noise": 0.008,
-          "_Mono": 0.9,
-          "_Glass": 0.08,
-          "_Vignette": 0
+          "_Brightness": 1.35
+        }
+      },
+      "on": "virdio/console"
+    },
+    {
+      "id": "virdio/person",
+      "group": "Virdio",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            -2.75,
+            0.95,
+            -2.0
+          ],
+          "neck": [
+            -2.75,
+            1.44,
+            -2.0
+          ],
+          "headBase": [
+            -2.75,
+            1.52,
+            -2.0
+          ],
+          "headTop": [
+            -2.75,
+            1.7,
+            -2.0
+          ],
+          "shl": [
+            -2.75,
+            1.4,
+            -1.8
+          ],
+          "shr": [
+            -2.75,
+            1.4,
+            -2.2
+          ],
+          "hipl": [
+            -2.75,
+            0.92,
+            -1.9
+          ],
+          "hipr": [
+            -2.75,
+            0.92,
+            -2.1
+          ],
+          "knl": [
+            -2.73,
+            0.48,
+            -1.8
+          ],
+          "knr": [
+            -2.73,
+            0.48,
+            -2.2
+          ],
+          "anl": [
+            -2.75,
+            0.05,
+            -1.79
+          ],
+          "anr": [
+            -2.75,
+            0.05,
+            -2.21
+          ],
+          "ell": [
+            -2.69,
+            1.16,
+            -1.7
+          ],
+          "wrl": [
+            -2.45,
+            1.22,
+            -1.8
+          ],
+          "elr": [
+            -2.69,
+            1.16,
+            -2.3
+          ],
+          "wrr": [
+            -2.45,
+            1.22,
+            -2.2
+          ]
         },
-        "tint": [
-          0.8,
-          0.95,
-          1,
-          1
-        ],
-        "st": [
-          1.6,
-          1,
-          -0.3,
-          0
-        ]
-      }
+        {
+          "pelvis": [
+            -2.75,
+            0.63,
+            -2.0
+          ],
+          "neck": [
+            -2.59,
+            1.12,
+            -2.0
+          ],
+          "headBase": [
+            -2.558,
+            1.2,
+            -2.0
+          ],
+          "headTop": [
+            -2.43,
+            1.38,
+            -2.0
+          ],
+          "shl": [
+            -2.59,
+            1.08,
+            -1.8
+          ],
+          "shr": [
+            -2.59,
+            1.08,
+            -2.2
+          ],
+          "hipl": [
+            -2.75,
+            0.6,
+            -1.9
+          ],
+          "hipr": [
+            -2.75,
+            0.6,
+            -2.1
+          ],
+          "knl": [
+            -2.39,
+            0.352,
+            -1.76
+          ],
+          "knr": [
+            -2.39,
+            0.352,
+            -2.24
+          ],
+          "anl": [
+            -2.75,
+            0.05,
+            -1.75
+          ],
+          "anr": [
+            -2.75,
+            0.05,
+            -2.25
+          ],
+          "ell": [
+            -2.45,
+            0.92,
+            -1.74
+          ],
+          "wrl": [
+            -2.2,
+            0.94,
+            -1.88
+          ],
+          "elr": [
+            -2.45,
+            0.92,
+            -2.26
+          ],
+          "wrr": [
+            -2.2,
+            0.94,
+            -2.12
+          ]
+        }
+      ],
+      "flip": 1.8,
+      "station": "virdio",
+      "when": "active",
+      "hands": [
+        "relaxed",
+        "relaxed"
+      ]
+    },
+    {
+      "id": "wafflings/plinth",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -0.2,
+        0.5,
+        -2.0
+      ],
+      "size": [
+        0.38,
+        1.0,
+        0.38
+      ],
+      "radius": 0.03,
+      "group": "Wafflings"
+    },
+    {
+      "id": "wafflings/mighty-hand",
+      "group": "Wafflings",
+      "kind": "splat",
+      "src": "Content/Savor/mighty_hand.splat",
+      "p": [
+        -0.2,
+        1.0,
+        -2.0
+      ],
+      "r": [
+        0,
+        160,
+        0
+      ],
+      "s": [
+        0.62
+      ]
+    },
+    {
+      "id": "wafflings/savor-phone",
+      "group": "Wafflings",
+      "kind": "screen",
+      "w": 0.075,
+      "h": 0.155,
+      "border": 0.005,
+      "t": 0.009,
+      "p": [
+        0.121,
+        1.36,
+        -2.754
+      ],
+      "r": [
+        4,
+        -26.56505117707799,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Billboards/savor.jpg",
+        "floats": {
+          "_Brightness": 1.35
+        }
+      },
+      "station": "wafflings",
+      "when": "active"
+    },
+    {
+      "id": "wafflings/filmer",
+      "group": "Wafflings",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            0.3,
+            0.95,
+            -3.0
+          ],
+          "neck": [
+            0.287,
+            1.44,
+            -2.973
+          ],
+          "headBase": [
+            0.284,
+            1.52,
+            -2.968
+          ],
+          "headTop": [
+            0.273,
+            1.7,
+            -2.946
+          ],
+          "shl": [
+            0.108,
+            1.4,
+            -3.063
+          ],
+          "shr": [
+            0.465,
+            1.4,
+            -2.884
+          ],
+          "hipl": [
+            0.211,
+            0.92,
+            -3.045
+          ],
+          "hipr": [
+            0.389,
+            0.92,
+            -2.955
+          ],
+          "knl": [
+            0.175,
+            0.48,
+            -3.04
+          ],
+          "knr": [
+            0.407,
+            0.48,
+            -2.924
+          ],
+          "anl": [
+            0.175,
+            0.05,
+            -3.063
+          ],
+          "anr": [
+            0.425,
+            0.05,
+            -2.937
+          ],
+          "ell": [
+            0.13,
+            1.12,
+            -3.107
+          ],
+          "wrl": [
+            0.072,
+            0.86,
+            -3.058
+          ],
+          "elr": [
+            0.434,
+            1.16,
+            -2.776
+          ],
+          "wrr": [
+            0.175,
+            1.34,
+            -2.75
+          ]
+        }
+      ],
+      "station": "wafflings",
+      "when": "active",
+      "grip": {
+        "kind": "phone",
+        "object": "wafflings/savor-phone"
+      },
+      "hands": [
+        "relaxed",
+        "hold"
+      ]
+    },
+    {
+      "id": "wafflings/stool",
+      "group": "Wafflings",
+      "kind": "model",
+      "src": "ph:folding_wooden_stool",
+      "p": [
+        -0.7,
+        0,
+        -4.0
+      ],
+      "r": [
+        0,
+        15,
+        0
+      ],
+      "height": 0.46,
+      "tint": [
+        0.78,
+        0.6,
+        0.42
+      ]
+    },
+    {
+      "id": "wafflings/whale",
+      "group": "Wafflings",
+      "kind": "model",
+      "src": "ph:bronze_whale_statue",
+      "p": [
+        -0.7,
+        0.46,
+        -4.0
+      ],
+      "r": [
+        0,
+        120,
+        0
+      ],
+      "height": 0.18,
+      "on": "wafflings/stool",
+      "tint": [
+        0.22,
+        0.24,
+        0.28
+      ]
+    },
+    {
+      "id": "obscura/curtain-s",
+      "group": "Obscura",
+      "kind": "wall",
+      "material": "Fabric",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        3.0,
+        -4.35,
+        3.031,
+        -4.321,
+        3.061,
+        -4.317,
+        3.092,
+        -4.341,
+        3.123,
+        -4.373,
+        3.153,
+        -4.385,
+        3.184,
+        -4.367,
+        3.215,
+        -4.334,
+        3.245,
+        -4.315,
+        3.276,
+        -4.326,
+        3.307,
+        -4.357,
+        3.337,
+        -4.382,
+        3.368,
+        -4.379,
+        3.399,
+        -4.351,
+        3.43,
+        -4.322,
+        3.46,
+        -4.317,
+        3.491,
+        -4.34,
+        3.522,
+        -4.372,
+        3.552,
+        -4.385,
+        3.583,
+        -4.368,
+        3.614,
+        -4.335,
+        3.644,
+        -4.316,
+        3.675,
+        -4.325,
+        3.706,
+        -4.356,
+        3.736,
+        -4.382,
+        3.767,
+        -4.38,
+        3.798,
+        -4.352,
+        3.828,
+        -4.323,
+        3.859,
+        -4.316,
+        3.89,
+        -4.339,
+        3.92,
+        -4.371,
+        3.951,
+        -4.385,
+        3.982,
+        -4.369,
+        4.012,
+        -4.337,
+        4.043,
+        -4.316,
+        4.074,
+        -4.324,
+        4.105,
+        -4.355,
+        4.135,
+        -4.381,
+        4.166,
+        -4.381,
+        4.197,
+        -4.354,
+        4.227,
+        -4.324,
+        4.258,
+        -4.316,
+        4.289,
+        -4.338,
+        4.319,
+        -4.37,
+        4.35,
+        -4.385
+      ],
+      "h": 2.05,
+      "t": 0.045,
+      "tint": [
+        0.2,
+        0.2,
+        0.21
+      ]
+    },
+    {
+      "id": "obscura/curtain-e",
+      "group": "Obscura",
+      "kind": "wall",
+      "material": "Fabric",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        4.35,
+        -4.35,
+        4.321,
+        -4.32,
+        4.317,
+        -4.289,
+        4.341,
+        -4.259,
+        4.372,
+        -4.228,
+        4.385,
+        -4.198,
+        4.368,
+        -4.167,
+        4.336,
+        -4.137,
+        4.316,
+        -4.107,
+        4.324,
+        -4.076,
+        4.355,
+        -4.046,
+        4.381,
+        -4.015,
+        4.381,
+        -3.985,
+        4.355,
+        -3.954,
+        4.324,
+        -3.924,
+        4.316,
+        -3.893,
+        4.336,
+        -3.863,
+        4.368,
+        -3.833,
+        4.385,
+        -3.802,
+        4.372,
+        -3.772,
+        4.341,
+        -3.741,
+        4.317,
+        -3.711,
+        4.321,
+        -3.68,
+        4.35,
+        -3.65,
+        4.379,
+        -3.62,
+        4.383,
+        -3.589,
+        4.359,
+        -3.559,
+        4.328,
+        -3.528,
+        4.315,
+        -3.498,
+        4.332,
+        -3.467,
+        4.364,
+        -3.437,
+        4.384,
+        -3.407,
+        4.376,
+        -3.376,
+        4.345,
+        -3.346,
+        4.319,
+        -3.315,
+        4.319,
+        -3.285,
+        4.345,
+        -3.254,
+        4.376,
+        -3.224,
+        4.384,
+        -3.193,
+        4.364,
+        -3.163,
+        4.332,
+        -3.133,
+        4.315,
+        -3.102,
+        4.328,
+        -3.072,
+        4.359,
+        -3.041,
+        4.383,
+        -3.011,
+        4.379,
+        -2.98,
+        4.35,
+        -2.95
+      ],
+      "h": 2.05,
+      "t": 0.045,
+      "tint": [
+        0.2,
+        0.2,
+        0.21
+      ]
+    },
+    {
+      "id": "obscura/curtain-n",
+      "group": "Obscura",
+      "kind": "wall",
+      "material": "Fabric",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        4.35,
+        -2.95,
+        4.319,
+        -2.979,
+        4.289,
+        -2.983,
+        4.258,
+        -2.959,
+        4.227,
+        -2.927,
+        4.197,
+        -2.915,
+        4.166,
+        -2.933,
+        4.135,
+        -2.966,
+        4.105,
+        -2.985,
+        4.074,
+        -2.974,
+        4.043,
+        -2.943,
+        4.012,
+        -2.918,
+        3.982,
+        -2.921,
+        3.951,
+        -2.949,
+        3.92,
+        -2.978,
+        3.89,
+        -2.983,
+        3.859,
+        -2.96,
+        3.828,
+        -2.928,
+        3.798,
+        -2.915,
+        3.767,
+        -2.932,
+        3.736,
+        -2.965,
+        3.706,
+        -2.984,
+        3.675,
+        -2.975,
+        3.644,
+        -2.944,
+        3.614,
+        -2.918,
+        3.583,
+        -2.92,
+        3.552,
+        -2.948,
+        3.522,
+        -2.977,
+        3.491,
+        -2.984,
+        3.46,
+        -2.961,
+        3.43,
+        -2.929,
+        3.399,
+        -2.915,
+        3.368,
+        -2.931,
+        3.337,
+        -2.963,
+        3.307,
+        -2.984,
+        3.276,
+        -2.976,
+        3.245,
+        -2.945,
+        3.215,
+        -2.919,
+        3.184,
+        -2.919,
+        3.153,
+        -2.946,
+        3.123,
+        -2.976,
+        3.092,
+        -2.984,
+        3.061,
+        -2.962,
+        3.031,
+        -2.93,
+        3.0,
+        -2.915
+      ],
+      "h": 2.05,
+      "t": 0.045,
+      "tint": [
+        0.2,
+        0.2,
+        0.21
+      ]
+    },
+    {
+      "id": "obscura/rail",
+      "kind": "tube",
+      "material": "Satin",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "path": [
+        3.0,
+        2.1,
+        -4.35,
+        4.35,
+        2.1,
+        -4.35,
+        4.35,
+        2.1,
+        -2.95,
+        3.0,
+        2.1,
+        -2.95
+      ],
+      "t": 0.025,
+      "group": "Obscura"
+    },
+    {
+      "id": "obscura/visitor",
+      "group": "Obscura",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            3.75,
+            0.95,
+            -3.65
+          ],
+          "neck": [
+            3.77,
+            1.44,
+            -3.65
+          ],
+          "headBase": [
+            3.774,
+            1.52,
+            -3.65
+          ],
+          "headTop": [
+            3.79,
+            1.7,
+            -3.65
+          ],
+          "shl": [
+            3.77,
+            1.4,
+            -3.45
+          ],
+          "shr": [
+            3.77,
+            1.4,
+            -3.85
+          ],
+          "hipl": [
+            3.75,
+            0.92,
+            -3.55
+          ],
+          "hipr": [
+            3.75,
+            0.92,
+            -3.75
+          ],
+          "knl": [
+            3.77,
+            0.48,
+            -3.53
+          ],
+          "knr": [
+            3.77,
+            0.48,
+            -3.77
+          ],
+          "anl": [
+            3.75,
+            0.05,
+            -3.52
+          ],
+          "anr": [
+            3.75,
+            0.05,
+            -3.78
+          ],
+          "ell": [
+            3.87,
+            1.33,
+            -3.41
+          ],
+          "wrl": [
+            3.87,
+            1.55,
+            -3.54
+          ],
+          "elr": [
+            3.87,
+            1.33,
+            -3.89
+          ],
+          "wrr": [
+            3.87,
+            1.55,
+            -3.76
+          ]
+        }
+      ],
+      "station": "obscura",
+      "when": "active",
+      "look": 38,
+      "children": [
+        {
+          "id": "headset",
+          "kind": "group",
+          "p": [
+            3.86,
+            1.58,
+            -3.65
+          ],
+          "r": [
+            4,
+            270,
+            0
+          ],
+          "children": [
+            {
+              "id": "shell",
+              "kind": "box",
+              "material": "Clay",
+              "p": [
+                0,
+                0,
+                0
+              ],
+              "size": [
+                0.19,
+                0.105,
+                0.095
+              ],
+              "radius": 0.04
+            },
+            {
+              "id": "foam",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0,
+                -0.005,
+                0.055
+              ],
+              "size": [
+                0.165,
+                0.08,
+                0.025
+              ],
+              "radius": 0.02
+            }
+          ],
+          "attach": "chest"
+        }
+      ],
+      "grip": {
+        "kind": "viewer"
+      },
+      "hands": [
+        "grip",
+        "grip"
+      ]
+    },
+    {
+      "id": "obscura/screen",
+      "group": "Obscura",
+      "kind": "model",
+      "src": "ph:projector_screen",
+      "p": [
+        2.15,
+        0,
+        -0.35
+      ],
+      "r": [
+        0,
+        215,
+        0
+      ]
+    },
+    {
+      "id": "obscura/projection",
+      "group": "Obscura",
+      "kind": "screen",
+      "w": 1.02,
+      "h": 1.01,
+      "border": 0.0,
+      "t": 0.002,
+      "p": [
+        2.108,
+        1.235,
+        -0.411
+      ],
+      "r": [
+        0,
+        395,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "video": "/assets/obscura/spectator.mp4"
+      },
+      "corner": 0.001,
+      "station": "obscura"
+    },
+    {
+      "id": "obscura/chair-0",
+      "group": "Obscura",
+      "kind": "model",
+      "src": "ph:plastic_monobloc_chair_01",
+      "p": [
+        1.15,
+        0,
+        -1.85
+      ],
+      "r": [
+        0,
+        33.690067525979785,
+        0
+      ],
+      "height": 0.8,
+      "tint": [
+        0.46,
+        0.46,
+        0.46
+      ]
+    },
+    {
+      "id": "obscura/spectator-0",
+      "group": "Obscura",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            1.15,
+            0.5,
+            -1.85
+          ],
+          "neck": [
+            1.194,
+            0.96,
+            -1.783
+          ],
+          "headBase": [
+            1.205,
+            1.03,
+            -1.767
+          ],
+          "headTop": [
+            1.228,
+            1.2,
+            -1.734
+          ],
+          "shl": [
+            1.028,
+            0.92,
+            -1.672
+          ],
+          "shr": [
+            1.361,
+            0.92,
+            -1.894
+          ],
+          "hipl": [
+            1.078,
+            0.48,
+            -1.778
+          ],
+          "hipr": [
+            1.244,
+            0.48,
+            -1.889
+          ],
+          "knl": [
+            1.266,
+            0.46,
+            -1.423
+          ],
+          "knr": [
+            1.499,
+            0.46,
+            -1.578
+          ],
+          "anl": [
+            1.305,
+            0.05,
+            -1.329
+          ],
+          "anr": [
+            1.572,
+            0.05,
+            -1.506
+          ],
+          "ell": [
+            1.034,
+            0.72,
+            -1.628
+          ],
+          "wrl": [
+            1.194,
+            0.6,
+            -1.495
+          ],
+          "elr": [
+            1.4,
+            0.72,
+            -1.872
+          ],
+          "wrr": [
+            1.461,
+            0.6,
+            -1.672
+          ]
+        }
+      ],
+      "station": "obscura",
+      "when": "active",
+      "hands": [
+        "rest",
+        "rest"
+      ]
+    },
+    {
+      "id": "obscura/chair-1",
+      "group": "Obscura",
+      "kind": "model",
+      "src": "ph:plastic_monobloc_chair_01",
+      "p": [
+        1.85,
+        0,
+        -2.2
+      ],
+      "r": [
+        0,
+        9.211026540816663,
+        0
+      ],
+      "height": 0.8,
+      "tint": [
+        0.46,
+        0.46,
+        0.46
+      ]
+    },
+    {
+      "id": "obscura/spectator-1",
+      "group": "Obscura",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            1.85,
+            0.5,
+            -2.2
+          ],
+          "neck": [
+            1.863,
+            0.96,
+            -2.121
+          ],
+          "headBase": [
+            1.866,
+            1.03,
+            -2.101
+          ],
+          "headTop": [
+            1.872,
+            1.2,
+            -2.062
+          ],
+          "shl": [
+            1.665,
+            0.92,
+            -2.089
+          ],
+          "shr": [
+            2.06,
+            0.92,
+            -2.153
+          ],
+          "hipl": [
+            1.754,
+            0.48,
+            -2.164
+          ],
+          "hipr": [
+            1.952,
+            0.48,
+            -2.196
+          ],
+          "knl": [
+            1.779,
+            0.46,
+            -1.763
+          ],
+          "knr": [
+            2.055,
+            0.46,
+            -1.808
+          ],
+          "anl": [
+            1.775,
+            0.05,
+            -1.661
+          ],
+          "anr": [
+            2.091,
+            0.05,
+            -1.712
+          ],
+          "ell": [
+            1.652,
+            0.72,
+            -2.046
+          ],
+          "wrl": [
+            1.743,
+            0.6,
+            -1.859
+          ],
+          "elr": [
+            2.086,
+            0.72,
+            -2.117
+          ],
+          "wrr": [
+            2.059,
+            0.6,
+            -1.91
+          ]
+        }
+      ],
+      "station": "obscura",
+      "when": "active",
+      "hands": [
+        "rest",
+        "relaxed"
+      ]
+    },
+    {
+      "id": "me/resting",
+      "group": "Taste",
+      "kind": "person",
+      "p": [
+        0,
+        0,
+        0
+      ],
+      "poses": [
+        {
+          "pelvis": [
+            0.483,
+            0.45,
+            2.336
+          ],
+          "neck": [
+            0.369,
+            0.89,
+            2.581
+          ],
+          "headBase": [
+            0.361,
+            0.96,
+            2.599
+          ],
+          "headTop": [
+            0.344,
+            1.15,
+            2.635
+          ],
+          "shl": [
+            0.558,
+            0.84,
+            2.625
+          ],
+          "shr": [
+            0.214,
+            0.84,
+            2.464
+          ],
+          "ell": [
+            0.774,
+            0.7,
+            2.516
+          ],
+          "wrl": [
+            0.884,
+            0.73,
+            2.281
+          ],
+          "elr": [
+            0.158,
+            0.7,
+            2.229
+          ],
+          "wrr": [
+            0.268,
+            0.73,
+            1.993
+          ],
+          "hipl": [
+            0.582,
+            0.44,
+            2.36
+          ],
+          "hipr": [
+            0.401,
+            0.44,
+            2.276
+          ],
+          "knl": [
+            0.769,
+            0.55,
+            2.006
+          ],
+          "knr": [
+            0.543,
+            0.55,
+            1.901
+          ],
+          "anl": [
+            0.898,
+            0.09,
+            1.801
+          ],
+          "anr": [
+            0.599,
+            0.09,
+            1.684
+          ]
+        }
+      ],
+      "station": "taste",
+      "when": "active",
+      "children": [
+        {
+          "id": "headphones-l",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.452,
+            1.055,
+            2.664
+          ],
+          "size": [
+            0.035,
+            0.085,
+            0.085
+          ],
+          "radius": 0.03,
+          "r": [
+            0,
+            155,
+            0
+          ]
+        },
+        {
+          "id": "headphones-r",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.252,
+            1.055,
+            2.571
+          ],
+          "size": [
+            0.035,
+            0.085,
+            0.085
+          ],
+          "radius": 0.03,
+          "r": [
+            0,
+            155,
+            0
+          ]
+        },
+        {
+          "id": "headphones-band",
+          "kind": "tube",
+          "material": "ClayMid",
+          "p": [
+            0,
+            0,
+            0
+          ],
+          "path": [
+            0.452,
+            1.085,
+            2.664,
+            0.348,
+            1.185,
+            2.626,
+            0.252,
+            1.085,
+            2.571
+          ],
+          "t": 0.018
+        }
+      ],
+      "hands": [
+        "rest",
+        "relaxed"
+      ]
     }
   ],
   "lights": [
-    {
-      "id": "Virdio_TVGlow",
-      "type": "point",
-      "p": [
-        4.0265,
-        0.957,
-        -1.3875
-      ],
-      "color": [
-        0.82,
-        0.86,
-        1
-      ],
-      "intensity": 0.6,
-      "range": 2.6,
-      "group": "Virdio"
-    },
-    {
-      "id": "Virdio_Pool",
-      "type": "spot",
-      "p": [
-        3.7,
-        3.15,
-        -1.6
-      ],
-      "dir": [
-        0,
-        -0.9989,
-        0.0476
-      ],
-      "color": [
-        1,
-        0.72,
-        0.48
-      ],
-      "intensity": 2.3,
-      "range": 4.5,
-      "angle": 55,
-      "shadows": true,
-      "group": "Virdio"
-    },
-    {
-      "id": "Domis_HouseLamp",
-      "type": "spot",
-      "p": [
-        -1.4,
-        1.5612,
-        2.35
-      ],
-      "dir": [
-        0.1358,
-        -0.9308,
-        0.3394
-      ],
-      "color": [
-        1,
-        0.66,
-        0.38
-      ],
-      "intensity": 2.65,
-      "range": 2.2,
-      "angle": 46,
-      "shadows": true,
-      "group": "Domis"
-    },
-    {
-      "id": "Domis_Pool",
-      "type": "spot",
-      "p": [
-        -2.3,
-        3.15,
-        2.15
-      ],
-      "dir": [
-        0,
-        -0.9978,
-        0.0665
-      ],
-      "color": [
-        1,
-        0.72,
-        0.48
-      ],
-      "intensity": 3.35,
-      "range": 4.5,
-      "angle": 55,
-      "shadows": true,
-      "group": "Domis"
-    },
-    {
-      "id": "Memory_Glow",
-      "type": "point",
-      "p": [
-        -4.13,
-        1.42,
-        -1.45
-      ],
-      "color": [
-        0.85,
-        0.8,
-        1
-      ],
-      "intensity": 0.7,
-      "range": 3,
-      "group": "MemoryCare"
-    },
-    {
-      "id": "Memory_Pool",
-      "type": "spot",
-      "p": [
-        -3.4,
-        3.15,
-        -1.6
-      ],
-      "dir": [
-        0,
-        -0.9983,
-        0.0587
-      ],
-      "color": [
-        1,
-        0.72,
-        0.48
-      ],
-      "intensity": 3.85,
-      "range": 4.5,
-      "angle": 48,
-      "shadows": true,
-      "group": "MemoryCare"
-    },
-    {
-      "id": "Wafflings_Light",
-      "type": "point",
-      "p": [
-        -2.4,
-        1.5965,
-        -3.35
-      ],
-      "color": [
-        1,
-        0.62,
-        0.34
-      ],
-      "intensity": 0.45,
-      "range": 1.2,
-      "shadows": true,
-      "group": "Wafflings"
-    },
-    {
-      "id": "Wafflings_Pool",
-      "type": "spot",
-      "p": [
-        -2.4,
-        3.15,
-        -3.5
-      ],
-      "dir": [
-        0,
-        -0.9971,
-        0.0767
-      ],
-      "color": [
-        1,
-        0.72,
-        0.48
-      ],
-      "intensity": 1.3,
-      "range": 4.5,
-      "angle": 50,
-      "shadows": true,
-      "group": "Wafflings"
-    },
-    {
-      "id": "Taste_Wash",
-      "type": "spot",
-      "p": [
-        -4,
-        3.15,
-        1.45
-      ],
-      "dir": [
-        -0.4856,
-        -0.8742,
-        0
-      ],
-      "color": [
-        1,
-        0.7,
-        0.46
-      ],
-      "intensity": 4,
-      "range": 3,
-      "angle": 62,
-      "shadows": true,
-      "group": "Taste"
-    },
-    {
-      "id": "BankGlow",
-      "type": "point",
-      "p": [
-        4.4,
-        1.8,
-        2.51
-      ],
-      "color": [
-        0.65,
-        0.9,
-        1
-      ],
-      "intensity": 0.6,
-      "range": 2.2,
-      "group": "ESPER_Bank"
-    },
     {
       "id": "CityLight",
       "type": "directional",
@@ -2377,42 +3384,17 @@
         0
       ],
       "dir": [
-        0.341,
-        -0.5215,
-        -0.7822
-      ],
-      "color": [
-        0.52,
-        0.76,
-        0.92
-      ],
-      "intensity": 1.95,
-      "shadows": true,
-      "group": "Lights"
-    },
-    {
-      "id": "DeskLamp",
-      "type": "spot",
-      "p": [
-        4.654,
-        1.5684,
-        3.2315
-      ],
-      "dir": [
-        -0.2543,
-        -0.796,
-        -0.5492
+        0.47,
+        -0.819,
+        -0.329
       ],
       "color": [
         1,
-        0.5,
-        0.2
+        1,
+        1
       ],
-      "intensity": 17.3,
-      "range": 4,
-      "angle": 78,
+      "intensity": 1.6,
       "shadows": true,
-      "flicker": true,
       "group": "Lights"
     },
     {
@@ -2444,100 +3426,100 @@
     {
       "id": "overview",
       "p": [
-        0.25,
-        1.45,
-        -0.35
+        -96.394,
+        96.394,
+        -96.394
       ],
       "target": [
-        2.2961,
-        1.186,
-        1.8281
+        0.0,
+        0.0,
+        0.0
       ],
-      "fov": 46
+      "fov": 6.0
     },
     {
       "id": "domis",
       "p": [
-        -0.9,
-        1.45,
-        0.75
+        -4.9,
+        2.2,
+        1.65
       ],
       "target": [
-        -2.314,
-        0.7766,
-        3.3087
+        -3.523,
+        1.25,
+        3.694
       ],
-      "fov": 46
+      "fov": 58
     },
     {
       "id": "virdio",
       "p": [
-        2.8,
-        1.25,
-        -0.15
+        -4.75,
+        2.3,
+        -1.4
       ],
       "target": [
-        4.55,
-        0.66,
-        -1.42
+        -1.507,
+        0.8,
+        -2.643
       ],
-      "fov": 52
+      "fov": 60
     },
     {
       "id": "obscura",
       "p": [
-        2.75,
-        1.62,
-        1.6
+        0.0,
+        3.1,
+        -5.6
       ],
       "target": [
-        5.4139,
-        1.2604,
-        2.932
+        3.4,
+        0.9,
+        -3.5
       ],
-      "fov": 50
+      "fov": 64
     },
     {
       "id": "memory-care",
       "p": [
-        -2,
-        1.5,
-        -0.25
+        1.34,
+        2.3,
+        3.15
       ],
       "target": [
-        -4.7291,
-        1.2647,
-        -1.4734
+        4.088,
+        1.15,
+        1.865
       ],
-      "fov": 50
+      "fov": 60
     },
     {
       "id": "wafflings",
       "p": [
-        -1.45,
-        1.55,
-        -1.05
+        0.568,
+        2.25,
+        -4.766
       ],
       "target": [
-        -2.6195,
-        1.2449,
-        -3.7958
+        0.185,
+        1.2,
+        -1.893
       ],
-      "fov": 50
+      "fov": 58
     },
     {
       "id": "taste",
       "p": [
-        -2.85,
-        1.38,
-        1.08
+        1.95,
+        2.75,
+        -1.0
       ],
       "target": [
-        -4.95,
-        1.18,
-        1.72
+        1.05,
+        0.7,
+        2.6
       ],
-      "fov": 54
+      "fov": 58
     }
   ],
   "stations": [
@@ -2546,20 +3528,49 @@
       "url": "/domis",
       "view": "domis",
       "items": [
-        "domis/drafting-table",
-        "domis/print",
-        "domis/phone",
-        "domis/side-table-tall-01",
-        "domis/domis-house"
+        "domis/fridge",
+        "domis/fridge-liner",
+        "domis/fridge-shelf-0",
+        "domis/fridge-shelf-1",
+        "domis/fridge-shelf-2",
+        "domis/fridge-freezer",
+        "domis/fridge-crisper",
+        "domis/fridge-bottle-0",
+        "domis/fridge-bottle-1",
+        "domis/fridge-carton",
+        "domis/fridge-jar",
+        "domis/fridge-tub",
+        "domis/fridge-panel",
+        "domis/fridge-fault",
+        "domis/leak-0",
+        "domis/leak-1",
+        "domis/cabinet-0",
+        "domis/sink",
+        "domis/cabinet-1",
+        "domis/phone-rest",
+        "domis/phone-held",
+        "domis/person"
       ],
-      "accent": "Domis_HouseLamp",
-      "screen": "domis/phone",
       "boost": 1.8,
       "rect": [
         0.5,
         0.5,
         0.45,
         0.45
+      ],
+      "bounds": [
+        -2.6,
+        0.7,
+        2.45,
+        3.7,
+        1.4,
+        4.0
+      ],
+      "screen": "domis/phone-held",
+      "enter": [
+        -3.8,
+        1.42,
+        3.12
       ]
     },
     {
@@ -2567,23 +3578,34 @@
       "url": "/virdio",
       "view": "virdio",
       "items": [
-        "virdio/classicnightstand-01",
-        "virdio/television-01",
-        "virdio/exercise-mat",
-        "virdio/kettlebells",
-        "virdio/phone-stand",
+        "virdio/console",
+        "virdio/tv",
+        "virdio/tv-foot",
+        "virdio/sofa",
+        "virdio/coffee-table",
         "virdio/phone",
-        "virdio/laptop",
-        "virdio/side-table-01"
+        "virdio/person"
       ],
-      "accent": "Virdio_TVGlow",
-      "screen": "virdio/television-01",
       "boost": 1.8,
       "rect": [
         0.5,
         0.5,
         0.45,
         0.45
+      ],
+      "bounds": [
+        -2.8,
+        0.7,
+        -2.05,
+        3.3,
+        1.4,
+        4.8
+      ],
+      "screen": "virdio/tv",
+      "enter": [
+        -2.3,
+        1.45,
+        -2.0
       ]
     },
     {
@@ -2591,27 +3613,38 @@
       "url": "/obscura",
       "view": "obscura",
       "items": [
-        "esper_desk/metal-office-desk",
-        "esper_desk/television-02",
-        "esper_desk/vintage-spacecraft-instrument",
-        "esper_desk/retro-multimeter",
-        "esper_desk/camera-01",
-        "esper_desk/magnifying-glass-01",
-        "esper_desk/round-spectacles",
-        "esper_desk/desk-lamp-arm-01",
-        "esper_desk/modern-arm-chair-01",
-        "esper_desk/prints",
-        "esper_bank/monitor",
-        "esper_bank/monitor-2"
+        "obscura/curtain-s",
+        "obscura/curtain-e",
+        "obscura/curtain-n",
+        "obscura/rail",
+        "obscura/visitor",
+        "obscura/screen",
+        "obscura/projection",
+        "obscura/chair-0",
+        "obscura/spectator-0",
+        "obscura/chair-1",
+        "obscura/spectator-1"
       ],
-      "accent": "DeskLamp",
-      "screen": "esper_desk/television-02",
       "boost": 1.8,
       "rect": [
         0.47,
         0.6,
         0.34,
         0.34
+      ],
+      "bounds": [
+        2.65,
+        0.7,
+        -2.05,
+        3.6,
+        1.4,
+        4.8
+      ],
+      "screen": "obscura/projection",
+      "enter": [
+        1.634,
+        1.3,
+        -1.087
       ]
     },
     {
@@ -2619,21 +3652,36 @@
       "url": "/memory-care",
       "view": "memory-care",
       "items": [
-        "memorycare/monitor",
-        "memorycare/mid-century-lounge-chair",
-        "memorycare/side-table-01",
+        "memorycare/alcove",
         "memorycare/steering-wheel",
-        "memorycare/haptic-pucks",
-        "memorycare/frame-wall"
+        "memorycare/tv",
+        "memorycare/footrest",
+        "memorycare/stool",
+        "memorycare/cat-0",
+        "memorycare/cat-1",
+        "memorycare/wheelchair",
+        "memorycare/resident"
       ],
-      "accent": "Memory_Glow",
-      "screen": "memorycare/monitor",
       "boost": 1.8,
       "rect": [
         0.5,
         0.5,
         0.45,
         0.45
+      ],
+      "bounds": [
+        3.1,
+        0.7,
+        2.45,
+        2.7,
+        1.4,
+        4.0
+      ],
+      "screen": "memorycare/tv",
+      "enter": [
+        3.54,
+        1.12,
+        2.55
       ]
     },
     {
@@ -2641,20 +3689,27 @@
       "url": "",
       "view": "wafflings",
       "items": [
-        "wafflings/wooden-bookshelf-worn",
-        "wafflings/frame-landscape",
-        "wafflings/frame-portrait",
-        "wafflings/portable-cassette-player",
-        "wafflings/brass-pot-01",
-        "wafflings/book-encyclopedia-set-01"
+        "wafflings/plinth",
+        "wafflings/mighty-hand",
+        "wafflings/savor-phone",
+        "wafflings/filmer",
+        "wafflings/stool",
+        "wafflings/whale"
       ],
-      "accent": "Wafflings_Light",
       "boost": 1.8,
       "rect": [
         0.5,
         0.5,
         0.45,
         0.45
+      ],
+      "bounds": [
+        -0.15,
+        0.7,
+        -2.9,
+        1.8,
+        1.4,
+        3.1
       ]
     },
     {
@@ -2662,41 +3717,66 @@
       "url": "",
       "view": "taste",
       "items": [
-        "taste/credenza",
-        "taste/turntable",
-        "taste/gaming-console",
-        "taste/ledgerecords",
-        "taste/ledgerecordslip",
-        "taste/ledgegames",
-        "taste/ledgegameslip",
-        "taste/album",
+        "taste/sideboard",
+        "taste/record-player",
+        "taste/monitor",
+        "taste/keyboard",
+        "taste/mouse",
+        "taste/ledge-records",
+        "taste/ledge-games",
+        "taste/album-0",
+        "taste/album-1",
         "taste/album-2",
-        "taste/album-3",
-        "taste/gamecase",
-        "taste/gamecase-2",
-        "taste/gamecase-3",
-        "taste/scarf",
-        "taste/potted-plant-02"
+        "taste/game-0",
+        "taste/game-1",
+        "taste/game-2",
+        "taste/lounge-chair",
+        "me/resting"
       ],
-      "accent": "Taste_Wash",
       "boost": 1.4,
       "rect": [
         0.5,
         0.5,
         0.45,
         0.45
+      ],
+      "bounds": [
+        0.5,
+        0.7,
+        2.45,
+        2.3,
+        1.4,
+        4.0
       ]
     }
   ],
   "look": {
-    "exposure": 1.65,
-    "ambient": 1.6,
-    "vol._Density": 0.04,
-    "vol._VolIntensity": 0.45,
-    "bloom": 0,
-    "grain": 0.73,
+    "exposure": 0,
+    "ambient": 0.4,
+    "ambient.warm": 0.52,
+    "reflections": 0.48,
+    "sun.yaw": 47,
+    "sun.height": 36,
+    "sun.warm": 0.14,
+    "sun.shadow": 0.25,
+    "ao": 0.2,
+    "ao.radius": 0.13,
+    "ao.direct": 0.2,
+    "lens": 2,
+    "orbit": 25,
+    "vol._Density": 0,
+    "vol._VolIntensity": 0.6,
+    "bloom": 0.66,
+    "grain": 0,
     "vignette": 0,
-    "contrast": 13,
-    "saturation": -25
+    "contrast": -6,
+    "saturation": -39,
+    "style": 0,
+    "style.size": 7,
+    "pipe.cap": 0,
+    "pipe.aa": 3,
+    "pipe.upscale": 1,
+    "light.CityLight": 1.45,
+    "cycle": 4
   }
 }
