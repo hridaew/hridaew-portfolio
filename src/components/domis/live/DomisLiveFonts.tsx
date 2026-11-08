@@ -1,22 +1,22 @@
-import { Inter, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "material-symbols/rounded.css";
 
 /**
- * Self-hosted via next/font (no fonts.googleapis.com).
+ * Bundled via next/font/local from Fontsource (OFL); nothing is fetched at build time.
  * Material Symbols Rounded ships with the `material-symbols` package.
  * CSS variables are consumed by domis-live*.css --*-font tokens.
  */
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const outfit = localFont({
+  src: "../../../../node_modules/@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2",
+  weight: "100 900",
   display: "swap",
   variable: "--font-domis-outfit",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["700"],
+const inter = localFont({
+  src: "../../../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   display: "swap",
   variable: "--font-domis-inter",
 });

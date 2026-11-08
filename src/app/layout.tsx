@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Permanent_Marker } from "next/font/google";
+import localFont from "next/font/local";
 import { GeistSerifRegular } from "geist/font/serif/regular";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
@@ -12,25 +12,27 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { rootGraphJsonLd } from "@/lib/seo";
 import { PERSON, SITE_ORIGIN } from "@/lib/site-identity";
 
-const geistSans = Geist({
+// Every font is bundled, nothing is fetched from Google at build time (its font URLs broke the production build).
+// Geist and Geist Mono come from the `geist` package as one variable file each, covering every weight in use.
+const geistSans = localFont({
+  src: "../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2",
   variable: "--font-geist",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "100 900",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-  // 700 unused on mono in practice; extrabold covers emphasis.
-  weight: ["400", "500", "800"],
+  weight: "100 900",
   display: "swap",
 });
 
-// Handwriting on the Visitor Board's post-its. Loaded when a note is drawn, not preloaded with the page.
-const marker = Permanent_Marker({
+// Handwriting on the Visitor Board's post-its (Permanent Marker, OFL, via Fontsource). Loaded when a note is
+// drawn, not preloaded with the page.
+const marker = localFont({
+  src: "../../node_modules/@fontsource/permanent-marker/files/permanent-marker-latin-400-normal.woff2",
   variable: "--font-marker",
-  subsets: ["latin"],
   weight: "400",
   display: "swap",
   preload: false,
