@@ -19,8 +19,11 @@ type Props = {
   ready: boolean;
   active: string | null;
   hovered?: string;
+  dark?: boolean;
   onSelect: (id: string) => void;
   onBack: () => void;
+  onHover?: (id: string) => void;
+  onToggleTheme?: () => void;
   /** Opens the case study with the camera move into the room; without it the button is a plain link. */
   onOpen?: (id: string) => void;
   guestbook: { notes: GuestNote[]; highlight: string | null; onDelete: (id: string) => void; onCompose: () => void };
@@ -36,7 +39,7 @@ const ABOUT_ID = "taste";
  */
 const geist = "font-[family-name:var(--font-geist)]";
 
-export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpen, guestbook }: Props) {
+export function EsperInterface({ ready, active, hovered, dark = true, onSelect, onBack, onHover, onToggleTheme, onOpen, guestbook }: Props) {
   const { openSheet, prefetchSheet } = useSheetNav();
   // Warm the case study (route and sheet content) as soon as a room is hovered or its card shows, so "Read the
   // case study" opens at once instead of waiting on the download.
@@ -66,16 +69,17 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
       {/* Name */}
       <div
         className={cn(
-          "absolute left-6 top-6 transition-opacity duration-700 md:left-8 md:top-7",
+          "absolute left-6 top-6 transition-opacity duration-500 md:left-8 md:top-7",
           !ready && "opacity-0",
           // On a phone the card needs the height: the bio steps aside while a room is open.
-          station && "max-md:pointer-events-none max-md:opacity-0",
+          // On desktop, it dims back while a room is focused so the 3D vignette and dossier own the hierarchy, rising on hover.
+          station && "max-md:pointer-events-none max-md:opacity-0 md:pointer-events-auto md:opacity-35 md:hover:opacity-100 md:focus-within:opacity-100",
         )}
       >
         <h1 className="site-chapter-heading">Hridae Walia</h1>
         <p className="site-body mt-2 max-w-[min(420px,calc(100vw-48px))] text-ink-secondary">
-          I’m a Product Designer obsessed with making, and I have 6 years of experience designing for interaction
-          models that barely exist yet. I focus on the user and learn by making, whether on the canvas, in code, or
+          I’m a Product Designer obsessed with making, and I have 6 years of experience designing for novel
+          interaction models. I focus on the user and learn by making, whether on the canvas, in code, or
           the physical world.
         </p>
         {/* The same strip as the home page's bio card. */}
@@ -100,24 +104,53 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
         </div>
       </div>
 
+      {/* Subtle light/dark room toggle in the top right */}
+      {onToggleTheme && (
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          title={dark ? "Switch to light mode" : "Switch to dark mode"}
+          className={cn(
+            "pointer-events-auto absolute right-6 top-6 flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] text-[#1d1d1f] opacity-40 transition-[opacity,background-color,transform] duration-300 hover:bg-[#1c1c1c]/[0.08] hover:opacity-95 focus-visible:opacity-100 active:scale-[0.96] md:right-8 md:top-7",
+            !ready && "pointer-events-none opacity-0",
+            focusRing,
+          )}
+        >
+          {dark ? <SunIcon /> : <MoonIcon />}
+        </button>
+      )}
+
       {/* The one ornament: places in the room, About, and the light */}
       <nav aria-label="Work" className="pointer-events-auto absolute inset-x-0 bottom-[max(36px,env(safe-area-inset-bottom))] flex justify-center px-2 md:bottom-7 md:px-4">
-        <div className={cn("esper-pill scrollbar-hide flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full p-1 min-[385px]:p-1.5 transition-opacity duration-700 ease-out", ready ? "opacity-100" : "opacity-0", glass)}>
+        <div
+          onPointerLeave={(e) => {
+            if (e.pointerType !== "touch") onHover?.("");
+          }}
+          className={cn("esper-pill scrollbar-hide flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full p-1 min-[385px]:p-1.5 transition-opacity duration-700 ease-out", ready ? "opacity-100" : "opacity-0", glass)}
+        >
           {STATIONS.map((s) => {
             // The guestbook is a corner of About.
             const isActive = s.id === active || (s.id === ABOUT_ID && active === BOARD.id);
+            const isHovered = hovered === s.id || (s.id === ABOUT_ID && hovered === BOARD.id);
             return (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => (isActive ? onBack() : onSelect(s.id))}
+                onPointerEnter={(e) => {
+                  if (e.pointerType !== "touch") onHover?.(s.id);
+                }}
+                onPointerLeave={(e) => {
+                  if (e.pointerType !== "touch") onHover?.("");
+                }}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
                   "type-body-medium shrink-0 rounded-full px-[7px] py-2 min-[385px]:px-[8px] min-[400px]:px-3 md:px-4",
                   press,
                   isActive
                     ? "bg-black/[0.22] text-[#1d1d1f] "
-                    : hovered === s.id
+                    : isHovered
                       ? "bg-black/[0.1] text-[#1d1d1f]"
                       : "text-black/75 hover:bg-black/[0.1] hover:text-[#1d1d1f]",
                   focusRing,
@@ -142,7 +175,7 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
         aria-label={shown ? shown.title : undefined}
         aria-live="polite"
         className={cn(
-          "pointer-events-auto absolute inset-x-3 top-3 flex max-h-[calc(100dvh-118px)] flex-col md:inset-x-auto md:bottom-auto md:right-8 md:top-1/2 md:max-h-[calc(100vh-200px)] md:-translate-y-1/2",
+          "pointer-events-auto absolute inset-x-3 bottom-[calc(max(36px,env(safe-area-inset-bottom))+54px)] flex max-h-[52dvh] flex-col md:inset-x-auto md:bottom-auto md:right-8 md:top-1/2 md:max-h-[calc(100vh-200px)] md:-translate-y-1/2",
           about ? "md:w-[min(656px,calc(100vw-64px))]" : "md:w-[min(500px,calc(100vw-64px))]",
           !station && "pointer-events-none",
         )}
@@ -314,6 +347,23 @@ function ArrowIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden className="shrink-0 text-black/45 transition-colors group-hover:text-[#1d1d1f]">
       <path d="M4 10L10 4M5 4h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5v2.2M12 19.3v2.2M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2.5 12h2.2M19.3 12h2.2M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
     </svg>
   );
 }

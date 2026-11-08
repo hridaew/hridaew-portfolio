@@ -760,7 +760,7 @@ export function HomeProjectCard({
       hideCaption={hideCaption}
       virdioIridescent={project.slug === "virdio"}
       domisDotMatrix={project.slug === "domis"}
-      obscuraLiquidLens={project.slug === "obscura"}
+      obscuraLiquidLens={false}
       mcesFog={project.slug === "memory-care"}
     />
   );
@@ -870,7 +870,7 @@ function ProjectGroup({ project }: { project: HomepageProject }) {
           }
           virdioIridescent={project.slug === "virdio"}
           domisDotMatrix={project.slug === "domis"}
-          obscuraLiquidLens={project.slug === "obscura"}
+          obscuraLiquidLens={false}
           mcesFog={project.slug === "memory-care"}
         />
       </div>

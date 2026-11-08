@@ -1170,6 +1170,21 @@ html[data-home-layout] .home-project-embla {
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 
+/* ESPER theme transitions: smooth 500ms crossfade for glass chrome, pills, and text when toggling dark/light mode. */
+[data-esper-theme] .esper-liquid,
+[data-esper-theme] .esper-pill,
+[data-esper-theme] h1,
+[data-esper-theme] h2,
+[data-esper-theme] p,
+[data-esper-theme] a,
+[data-esper-theme] button,
+[data-esper-theme] span,
+[data-esper-theme] path {
+  transition-property: color, background-color, border-color, box-shadow, opacity, scale, transform, stroke;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ESPER, dark variant (/lab/esper?theme=dark): the page's ink and paper tokens turn over, and the interface's light
    utility colours are remapped in place, so the same markup serves both. */
 [data-esper-theme="dark"] {

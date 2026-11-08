@@ -27,6 +27,7 @@ export function EsperRoom() {
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [hovering, setHovering] = useState<string>("");
+  const [menuHovering, setMenuHovering] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -51,6 +52,7 @@ export function EsperRoom() {
     let liveEvents: EventSource | null = null;
     const darkMode = new URLSearchParams(window.location.search).get("theme") !== "light"; // dark unless asked for light
     setDark(darkMode);
+    document.documentElement.classList.toggle("dark", darkMode);
 
     import("./three/EsperEngine")
       .then(({ EsperEngine }) => {
@@ -124,6 +126,10 @@ export function EsperRoom() {
       }
     };
     window.addEventListener("esper", onEsper);
+    const onResize = () => {
+      roomRef.current?.send("SetFrameOffset", window.innerWidth >= 768 ? "7" : "0");
+    };
+    window.addEventListener("resize", onResize);
     const onKey = (e: KeyboardEvent) => {
       // With a case study open, Escape belongs to the sheet (it closes it); the room stays where it is.
       if (e.key === "Escape" && !document.querySelector('[role="dialog"]')) roomRef.current?.send("Back");
@@ -156,6 +162,7 @@ export function EsperRoom() {
       cancelled = true;
       liveEvents?.close();
       window.removeEventListener("esper", onEsper);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointermove", gate, true);
       window.removeEventListener("pointerdown", gate, true);
@@ -173,8 +180,12 @@ export function EsperRoom() {
     return () => document.documentElement.removeAttribute("data-esper");
   }, []);
   useEffect(() => {
-    if (!dark) return;
-    document.documentElement.setAttribute("data-esper-dark", "");
+    document.documentElement.classList.toggle("dark", dark);
+    if (dark) {
+      document.documentElement.setAttribute("data-esper-dark", "");
+    } else {
+      document.documentElement.removeAttribute("data-esper-dark");
+    }
     return () => document.documentElement.removeAttribute("data-esper-dark");
   }, [dark]);
 
@@ -263,6 +274,7 @@ export function EsperRoom() {
 
   const send = useCallback((method: string, value?: string) => roomRef.current?.send(method, value), []);
   const goto = (id: string) => {
+    setMenuHovering(false);
     setActive(id);
     send("Goto", id);
   };
@@ -271,8 +283,24 @@ export function EsperRoom() {
     if (active !== "guestbook") setActive(null);
     send("Back");
   };
+  const onMenuHover = useCallback(
+    (id: string) => {
+      setMenuHovering(!!id);
+      send("Hover", id);
+    },
+    [send],
+  );
+  const toggleTheme = useCallback(() => {
+    setDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle("dark", next);
+      document.documentElement.toggleAttribute("data-esper-dark", next);
+      roomRef.current?.send("SetTheme", next ? "dark" : "light");
+      return next;
+    });
+  }, []);
   return (
-    <main data-esper-theme={dark ? "dark" : "light"} className={cn("fixed inset-0 overflow-hidden", dark ? "bg-[#0e0e0f]" : "bg-[#ece9e4]")}>
+    <main data-esper-theme={dark ? "dark" : "light"} className={cn("fixed inset-0 overflow-hidden transition-colors duration-500 ease-out", dark ? "bg-[#0e0e0f]" : "bg-[#ece9e4]")}>
       <canvas
         ref={canvasRef}
         id="esper-canvas"
@@ -281,7 +309,7 @@ export function EsperRoom() {
         className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity duration-[900ms] ease-out active:cursor-grabbing"
         style={{
           opacity: ready && !leaving && !failed ? 1 : 0,
-          cursor: hovering || overBoard ? "pointer" : undefined,
+          cursor: (hovering && !menuHovering) || overBoard ? "pointer" : undefined,
           touchAction: "none",
         }}
       />
@@ -293,14 +321,17 @@ export function EsperRoom() {
         </div>
       )}
 
-      {!leaving && !failed && <HoverTag id={active ? "" : hovering} />}
+      {!leaving && !failed && <HoverTag id={active || menuHovering ? "" : hovering} />}
       {!leaving && !failed && (
         <EsperInterface
           ready={ready}
           active={pinning && active === "guestbook" ? null : active}
           hovered={hovering}
+          dark={dark}
           onSelect={goto}
           onBack={back}
+          onHover={onMenuHover}
+          onToggleTheme={toggleTheme}
           guestbook={{ notes, highlight, onDelete: deleteNote, onCompose: () => setComposing(true) }}
           onOpen={(id) => {
             // The case study slides in over the room (the site's own sheet); narrow screens go to the page.

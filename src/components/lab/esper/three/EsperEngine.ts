@@ -293,7 +293,7 @@ export class EsperEngine {
   private current: Pose | null = null;
   private moving: Pose | null = null;
   private intro = false;
-  private reducedMotion = false;
+  private reducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   private dark = false;
   private groundMat = new THREE.ShadowMaterial({ opacity: 0.16 });
   private paused = false;
@@ -301,6 +301,7 @@ export class EsperEngine {
   private lens = 0;
   private orbit = 40;
   private hovered = "";
+  private uiHover = "";
   // input
   private pressing = false;
   private dragged = false;
@@ -412,7 +413,7 @@ export class EsperEngine {
   }
 
   private updateTints(dt: number) {
-    const lit = this.state !== "overview" ? this.focused : null;
+    const lit = this.activeStation;
     for (const t of this.tinted) {
       const to = lit && this.roomOf(t.obj) === lit ? 1 : 0;
       if (t.k === to) continue;
@@ -474,39 +475,32 @@ export class EsperEngine {
    * silhouette (a fresnel rim), so a figure reads as a gesture rather than a particular person.
    */
   private ghostMat: THREE.MeshStandardMaterial | null = null;
+  private ghostUniform = { value: 0 };
+  private themeMix = 0;
+  private themeTarget = 0;
   private ghost() {
     if (this.ghostMat) return this.ghostMat;
-    if (this.dark) {
-      // The dark room: people are solid, a soft graphite, the rim lifting their outline off the charcoal.
-      const d = new THREE.MeshStandardMaterial({ color: srgb([0.4, 0.405, 0.42]), roughness: 1, metalness: 0 });
-      d.userData.baseOpacity = 1;
-      d.onBeforeCompile = (shader) => {
-        shader.fragmentShader = shader.fragmentShader.replace(
-          "#include <dithering_fragment>",
-          `#include <dithering_fragment>
-          float rim = pow(1.0 - clamp(abs(dot(normalize(vNormal), normalize(vViewPosition))), 0.0, 1.0), 2.2);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.36, 0.365, 0.38), 0.45);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.62, 0.63, 0.66), rim * 0.55);`,
-        );
-      };
-      d.customProgramCacheKey = () => "esper-ghost-dark";
-      this.ghostMat = d;
-      return d;
-    }
-    const m = new THREE.MeshStandardMaterial({ color: srgb([0.93, 0.925, 0.915]), roughness: 1, metalness: 0, transparent: true, opacity: 0.8 });
-    m.userData.baseOpacity = 0.8;
+    this.ghostUniform.value = this.themeMix;
+    const uDark = this.ghostUniform;
+    const m = new THREE.MeshStandardMaterial({
+      color: srgb([0.86, 0.86, 0.85]).lerp(srgb([0.4, 0.405, 0.42]), this.themeMix),
+      roughness: 1,
+      metalness: 0,
+    });
+    m.userData.baseOpacity = 1;
     m.onBeforeCompile = (shader) => {
-      shader.fragmentShader = shader.fragmentShader.replace(
+      shader.uniforms.uDark = uDark;
+      shader.fragmentShader = "uniform float uDark;\n" + shader.fragmentShader.replace(
         "#include <dithering_fragment>",
         `#include <dithering_fragment>
-        // Half the lighting is flattened away, so folds and faces dissolve and only the form and its gesture read.
-        float rim = pow(1.0 - clamp(abs(dot(normalize(vNormal), normalize(vViewPosition))), 0.0, 1.0), 2.0);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.83, 0.845, 0.87), 0.55);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1.0), rim * 0.6);
-        gl_FragColor.a *= mix(0.92, 0.4, rim);`,
+        float rim = pow(1.0 - clamp(abs(dot(normalize(vNormal), normalize(vViewPosition))), 0.0, 1.0), 2.2);
+        vec3 flatCol = mix(vec3(0.8, 0.81, 0.83), vec3(0.36, 0.365, 0.38), uDark);
+        vec3 rimCol = mix(vec3(0.98, 0.98, 0.99), vec3(0.62, 0.63, 0.66), uDark);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, flatCol, 0.45);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, rimCol, rim * 0.55);`,
       );
     };
-    m.customProgramCacheKey = () => "esper-ghost";
+    m.customProgramCacheKey = () => "esper-ghost-blend";
     this.ghostMat = m;
     return m;
   }
@@ -580,14 +574,12 @@ export class EsperEngine {
       case "SetReducedMotion": this.reducedMotion = value === "1"; return;
       // A case study sheet covers the room: stop drawing it until the sheet closes.
       case "SetPaused": this.paused = value === "1"; return;
-      // The dark variant. Sent before the scene is built: materials take their colours as they're made.
+      case "Hover":
+        this.uiHover = value;
+        if (this.state === "overview") this.setHover(value);
+        return;
       case "SetTheme":
-        this.dark = value === "dark";
-        this.scene.background = new THREE.Color(this.dark ? "#232325" : "#ece9e4"); // tone mapping darkens it to the page colour
-        this.groundMat.opacity = this.dark ? 0.45 : 0.16;
-        this.materials.clear();
-        this.clays.clear();
-        this.ghostMat = null;
+        this.setTheme(value === "dark");
         return;
       case "SetAssetBase": this.assetBase = value; return;
       case "PlayIntro": return this.playIntro(parseFloat(value) || 4.5);
@@ -603,6 +595,107 @@ export class EsperEngine {
         return this.board?.unpin(value);
       case "GuestbookFinish": return this.board?.finish();
       default: return; // Studio's move and fly tools are Unity-only for now.
+    }
+  }
+
+  private setTheme(dark: boolean) {
+    this.dark = dark;
+    this.themeTarget = dark ? 1 : 0;
+    if (!this.materials.size && !this.clays.size && !this.persons.length) {
+      this.themeMix = this.themeTarget;
+      this.ghostUniform.value = this.themeMix;
+      this.scene.background = new THREE.Color(this.dark ? "#232325" : "#ece9e4"); // tone mapping darkens it to the page colour
+      this.groundMat.opacity = this.dark ? 0.45 : 0.16;
+      this.ghostMat = null;
+      return;
+    }
+    if (this.reducedMotion) {
+      const prev = this.themeMix * this.themeMix * (3 - 2 * this.themeMix);
+      this.themeMix = this.themeTarget;
+      this.applyThemeMix(prev, this.themeTarget);
+    }
+  }
+
+  private updateTheme(dt: number) {
+    if (this.themeMix === this.themeTarget) return;
+    const prev = this.themeMix;
+    const duration = 0.5;
+    this.themeMix = this.themeTarget > prev
+      ? Math.min(this.themeTarget, prev + dt / duration)
+      : Math.max(this.themeTarget, prev - dt / duration);
+    const prevE = prev * prev * (3 - 2 * prev);
+    const nextE = this.themeMix * this.themeMix * (3 - 2 * this.themeMix);
+    this.applyThemeMix(prevE, nextE);
+  }
+
+  private applyThemeMix(prevK: number, k: number) {
+    if (!(this.scene.background instanceof THREE.Color)) this.scene.background = new THREE.Color();
+    this.scene.background.set("#ece9e4").lerp(new THREE.Color("#232325"), k);
+    this.groundMat.opacity = 0.16 + (0.45 - 0.16) * k;
+    for (const [key, m] of this.materials) {
+      const name = key.split(":")[0];
+      const glow = GLOW[name];
+      if (glow) {
+        m.color.copy(srgb(glow.color)).lerp(srgb([0.82, 0.83, 0.86]), k);
+        m.emissive.copy(srgb(glow.color));
+        m.emissiveIntensity = glow.light + (glow.dark - glow.light) * k;
+      } else {
+        m.color.copy(srgb(PALETTE[name] ?? PALETTE.Clay)).lerp(srgb(PALETTE_DARK[name] ?? PALETTE_DARK.Clay), k);
+      }
+    }
+    for (const m of this.clays.values()) {
+      const name = (m.userData.matName as string) || "Clay";
+      m.color.copy(srgb(PALETTE[name] ?? PALETTE.Clay)).lerp(srgb(PALETTE_DARK[name] ?? PALETTE_DARK.Clay), k);
+    }
+    for (const t of this.tinted) {
+      const e = t.k * t.k * (3 - 2 * t.k);
+      t.mats.forEach((m, i) => {
+        const name = (m.userData.matName as string) || "Clay";
+        t.base[i].copy(srgb(PALETTE[name] ?? PALETTE.Clay)).lerp(srgb(PALETTE_DARK[name] ?? PALETTE_DARK.Clay), k);
+        m.color.copy(t.base[i]).lerp(t.tint, e);
+      });
+    }
+    this.world.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const orig = (mesh.userData.orig ?? mesh.material) as THREE.MeshStandardMaterial;
+      const ghost = mesh.userData.ghost as THREE.MeshStandardMaterial | undefined;
+      if (ghost && orig?.color && ghost.color) {
+        ghost.color.copy(orig.color);
+        if (orig.emissive && ghost.emissive) {
+          ghost.emissive.copy(orig.emissive);
+          ghost.emissiveIntensity = orig.emissiveIntensity;
+        }
+      }
+    });
+    for (const l of this.lamps) {
+      l.light0 = LAMP_LIGHT.light + (LAMP_LIGHT.dark - LAMP_LIGHT.light) * k;
+      l.glow0 = GLOW.Lamp.light + (GLOW.Lamp.dark - GLOW.Lamp.light) * k;
+    }
+    const prevScreen = SCREEN_LIGHT.light + (SCREEN_LIGHT.dark - SCREEN_LIGHT.light) * prevK;
+    const nextScreen = SCREEN_LIGHT.light + (SCREEN_LIGHT.dark - SCREEN_LIGHT.light) * k;
+    if (prevScreen > 0 && nextScreen !== prevScreen) {
+      const scale = nextScreen / prevScreen;
+      for (const g of this.videoGlows) {
+        g.base *= scale;
+        g.to *= scale;
+      }
+      for (const d of this.displays) {
+        if (d.glow) {
+          d.glow.base *= scale;
+          d.glow.to *= scale;
+        }
+      }
+    }
+    this.ghostUniform.value = k;
+    if (this.ghostMat) {
+      this.ghostMat.color.copy(srgb([0.86, 0.86, 0.85])).lerp(srgb([0.4, 0.405, 0.42]), k);
+      for (const p of this.persons) {
+        p.group.traverse((o) => {
+          const see = (o as THREE.Mesh).userData?.see as THREE.MeshStandardMaterial[] | undefined;
+          if (see) for (const x of see) if (x.color) x.color.copy(this.ghostMat!.color);
+        });
+      }
     }
   }
 
@@ -910,6 +1003,9 @@ export class EsperEngine {
       } catch {}
       for (const st of hidden) st.obj.visible = false;
       if (build !== this.built) return;
+      if (!this.ready && this.state === "overview") {
+        this.playIntro(2.2);
+      }
       // Two frames on screen behind the cover, so the first thing seen is a finished picture.
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       if (!this.ready) {
@@ -952,6 +1048,7 @@ export class EsperEngine {
     if (!m) {
       const base = this.material(name ?? "Clay");
       m = base.clone();
+      m.userData.matName = name ?? "Clay";
       if (orig?.normalMap) {
         m.normalMap = orig.normalMap;
         m.normalScale = orig.normalScale?.clone() ?? new THREE.Vector2(1, 1);
@@ -995,6 +1092,7 @@ export class EsperEngine {
       const fin = FINISH[name] ?? { roughness: 0.9, metalness: 0 };
       const pal = this.dark ? PALETTE_DARK : PALETTE;
       m = new THREE.MeshStandardMaterial({ color: srgb(tint ?? pal[name] ?? pal.Clay), ...fin });
+      m.userData.matName = name;
       const glow = GLOW[name];
       if (glow) {
         m.color = srgb(this.dark ? [0.82, 0.83, 0.86] : glow.color);
@@ -1425,7 +1523,17 @@ export class EsperEngine {
     // Close views are composed with room for the card already; only long-lens views slide.
     const slide = id === "overview" || fov > 15 ? 0 : (dist * Math.tan((fov / 2) * D2R) * Math.tan(this.frameOffset * D2R)) / Math.tan(18 * D2R);
     const target = r.pivot.clone().addScaledVector(right, slide);
-    return { pos: target.clone().addScaledVector(fwd, -dist), target, fov };
+    const pos = target.clone().addScaledVector(fwd, -dist);
+    // On narrow portrait screens, the dossier card sits in the lower half of the viewport; tilt the aim point down while keeping the camera's elevated position so the 3D subject sits in the open upper half without walls occluding it.
+    if (id !== "overview" && this.camera.aspect < 0.85) {
+      const camUp = new THREE.Vector3().crossVectors(fwd, right).normalize();
+      if (camUp.y < 0) camUp.negate();
+      const framedFor = fov < 15 ? 0.82 : 1.3;
+      const effFov = this.camera.aspect >= framedFor ? fov : Math.min(100, (2 * Math.atan(Math.tan((fov / 2) * D2R) * (framedFor / this.camera.aspect))) / D2R);
+      const halfH = dist * Math.tan((effFov / 2) * D2R);
+      target.addScaledVector(camUp, -0.28 * halfH);
+    }
+    return { pos, target, fov };
   }
 
   private liveId() {
@@ -1484,6 +1592,11 @@ export class EsperEngine {
   }
 
   private focus(id: string, duration?: number) {
+    if (this.intro) {
+      this.intro = false;
+      this.stepper = null;
+    }
+    this.uiHover = "";
     this.startBlend(duration);
     this.focused = id;
     this.state = "focus";
@@ -1561,7 +1674,8 @@ export class EsperEngine {
     if (this.reducedMotion) return;
     this.intro = true;
     let t = 0;
-    const start = new THREE.Vector2(-22, 6);
+    const start = new THREE.Vector2(-12, 3.5);
+    this.look.copy(start);
     this.stepper = (dt) => {
       t = Math.min(1, t + dt / seconds);
       const e = 1 - Math.pow(1 - t, 3);
@@ -1626,7 +1740,12 @@ export class EsperEngine {
     this.pointer = e.pointerType === "mouse" && e.target === this.canvas ? { x: e.clientX, y: e.clientY } : null;
     if (this.pressing) {
       if (!this.dragged && this.pressAt.distanceTo(new THREE.Vector2(e.clientX, e.clientY)) > 6) this.dragged = true;
-      if (this.dragged && this.state !== "enhance" && !this.intro) {
+      if (this.dragged && this.state !== "enhance") {
+        if (this.intro) {
+          this.intro = false;
+          this.stepper = null;
+          this.lookTarget.copy(this.look);
+        }
         const k = 220 / Math.max(400, this.canvas.clientWidth);
         const range = this.state === "overview" ? this.orbit : this.orbit / 2;
         this.lookTarget.x = Math.max(-range, Math.min(range, this.lookTarget.x - (e.clientX - this.last.x) * k));
@@ -1638,7 +1757,10 @@ export class EsperEngine {
     if (this.state === "focus" && this.focused === "taste" && this.board) {
       this.setBoardHover(e.target === this.canvas && !this.overUi && this.board.hit(this.ray(e.clientX, e.clientY)));
     }
-    if (e.target !== this.canvas || this.state !== "overview" || !this.enabled || this.overUi) return this.setHover("");
+    if (e.target !== this.canvas || this.state !== "overview" || !this.enabled || this.overUi) {
+      return this.setHover(this.state === "overview" ? this.uiHover : "");
+    }
+    this.uiHover = "";
     this.setHover(this.stationAt(e.clientX, e.clientY));
   };
 
@@ -1746,6 +1868,7 @@ export class EsperEngine {
     for (const t of this.turntables) t.deck.update(dt, !!here && here === t.station, this.reducedMotion);
     for (const c of this.cycles) c.update(dt);
     this.updateDisplays(dt);
+    this.updateTheme(dt);
     this.updateCamera(dt);
     this.updateFade(dt);
     this.updateTints(dt);
