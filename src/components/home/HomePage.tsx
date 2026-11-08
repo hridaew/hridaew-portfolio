@@ -17,13 +17,15 @@ import { ObscuraLiquidGlassFilterSvg } from "./ObscuraLiquidGlassFilterSvg";
 import { HOME_COLUMN, HOME_HERO_BLEED, HOME_RIGHT_COLUMN } from "./homeGrid";
 import {
   ENABLE_HOME_CHEAT_CODES,
+  ENABLE_SITE_VERSION_LINE,
+  ENABLE_TOOLKIT_SECTION,
   ENABLE_WAFFLINGS_SECTION,
 } from "@/lib/site-toggles";
 import { RevealOnLoad } from "./RevealOnLoad";
 import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
 import type { HomeLayoutMode } from "@/lib/home-layout";
 
-export const SITE_VERSION = "v3.11.0";
+export const SITE_VERSION = "v3.12.0";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
@@ -45,9 +47,11 @@ function HomeFooter() {
       className={`${HOME_COLUMN} flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-5 gap-y-3 pb-8 pt-10`}
     >
       {ENABLE_HOME_CHEAT_CODES ? <HomeCheatEasterEggs /> : null}
-      <p className="shrink-0 font-mono text-[11px] leading-snug tabular-nums text-ink/40 md:text-xs">
-        Hridae Walia - {new Date().getFullYear()} - {SITE_VERSION}
-      </p>
+      {ENABLE_SITE_VERSION_LINE ? (
+        <p className="shrink-0 font-mono text-[11px] leading-snug tabular-nums text-ink/40 md:text-xs">
+          Hridae Walia - {new Date().getFullYear()} - {SITE_VERSION}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -196,9 +200,11 @@ function SplitHome({ revealMotion }: { revealMotion: boolean }) {
                 </div>
               </HomeReveal>
 
-              <HomeReveal delay={0.35} enableMotion={revealMotion}>
-                <ToolkitSection />
-              </HomeReveal>
+              {ENABLE_TOOLKIT_SECTION && (
+                <HomeReveal delay={0.35} enableMotion={revealMotion}>
+                  <ToolkitSection />
+                </HomeReveal>
+              )}
             </div>
 
             <HomeFooter />
@@ -295,9 +301,11 @@ function StackHome({
               <WorkSection />
             </HomeReveal>
 
-            <HomeReveal delay={0.5} enableMotion={revealMotion}>
-              <ToolkitSection />
-            </HomeReveal>
+            {ENABLE_TOOLKIT_SECTION && (
+              <HomeReveal delay={0.5} enableMotion={revealMotion}>
+                <ToolkitSection />
+              </HomeReveal>
+            )}
 
             {ENABLE_WAFFLINGS_SECTION && (
               <HomeReveal delay={0.65} enableMotion={revealMotion}>
