@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
+import { GeistSerifRegular } from "geist/font/serif/regular";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
 import { SheetNavProvider } from "@/components/sheet/SheetNav";
@@ -10,13 +11,6 @@ import { BrowserEngineScript } from "@/components/BrowserEngineScript";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { rootGraphJsonLd } from "@/lib/seo";
 import { PERSON, SITE_ORIGIN } from "@/lib/site-identity";
-
-const displayFont = Bricolage_Grotesque({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  display: "swap",
-});
 
 const geistSans = Geist({
   variable: "--font-geist",
@@ -79,7 +73,7 @@ export default function RootLayout({
         <BrowserEngineScript />
       </head>
       <body
-        className={`${displayFont.variable} ${geistSans.variable} ${geistMono.variable} type-body antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistSerifRegular.variable} type-body antialiased`}
       >
         {/* SVG defs for `html.theme-2004` home CRT (`filter: url(#…)` in globals.css). */}
         <svg

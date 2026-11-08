@@ -125,10 +125,10 @@ function IngredientRow({
             draggable={false}
           />
         </div>
-        <p className="min-w-0 flex-1 truncate font-[family-name:var(--font-geist)] text-[15px] font-normal leading-[1.4] text-ink-secondary">
+        <p className="site-body min-w-0 flex-1 truncate text-ink-secondary">
           {name}
         </p>
-        <p className="shrink-0 font-[family-name:var(--font-geist-mono)] text-sm font-normal leading-[1.4] text-ink-muted">
+        <p className="type-caption shrink-0 tabular-nums text-ink-muted">
           {amount}
         </p>
       </div>
@@ -207,7 +207,7 @@ function Instruction({
       <span className="mt-[2px] flex size-6 shrink-0 items-center justify-center rounded-full border border-ink/[0.12] font-[family-name:var(--font-geist-mono)] text-[11px] text-ink-muted">
         {n}
       </span>
-      <p className="min-w-0 flex-1 font-[family-name:var(--font-geist)] text-base leading-[1.5] text-ink-secondary">
+      <p className="site-body min-w-0 flex-1 text-ink-secondary">
         {children}
       </p>
     </div>
@@ -511,7 +511,7 @@ export function ButterChickenRecipeBody() {
       <div className="flex w-full flex-col gap-3">
         <h3
           id="butter-chicken-modal-title"
-          className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-ink-secondary"
+          className="type-h1 w-full min-w-0 text-ink"
         >
           Butter Chicken Recipe
         </h3>
@@ -536,7 +536,7 @@ export function ButterChickenRecipeBody() {
       </div>
 
       {/* Intro */}
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
+      <p className="site-body text-ink-secondary">
         {BUTTER_CHICKEN_INTRO_P1}
       </p>
 
@@ -579,20 +579,20 @@ export function ButterChickenRecipeBody() {
       </div>
 
       {/* Second intro paragraph */}
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
+      <p className="site-body text-ink-secondary">
         {BUTTER_CHICKEN_INTRO_P2}
       </p>
 
-      <p className="font-[family-name:var(--font-geist)] text-base font-normal leading-[1.4] text-ink-secondary">
+      <p className="site-body text-ink-secondary">
         Email me a photo if you make this, please:{" "}
         <CopyEmailPill />
       </p>
 
       {/* ─── Ingredients ─────────────────────────────────────────── */}
       <div className="flex w-full flex-col gap-6">
-        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
+        <h2 className="site-chapter-heading text-ink">
           Ingredients
-        </h4>
+        </h2>
 
         <IngredientCard label="Chicken Marinade">
           <IngredientRow icon={ING.chicken} name="Chicken, thighs ideally." amount="2 lb" />
@@ -642,9 +642,9 @@ export function ButterChickenRecipeBody() {
 
       {/* ─── Instructions ────────────────────────────────────────── */}
       <div className="flex w-full flex-col gap-10">
-        <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
+        <h2 className="site-chapter-heading text-ink">
           Instructions
-        </h4>
+        </h2>
 
         {/* Step 1 */}
         <div className="flex w-full flex-col gap-5">

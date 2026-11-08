@@ -7,7 +7,6 @@ import { useSheetNav } from "@/components/sheet/SheetNav";
 import { cn } from "@/lib/utils";
 import { EsperInterface } from "./EsperInterface";
 import { STATIONS } from "./stations";
-import { EsperDials, EsperStudio } from "./EsperStudio";
 import { HoverTag } from "./HoverTag";
 import { EsperLogo } from "./EsperLogo";
 import dynamic from "next/dynamic";
@@ -31,8 +30,6 @@ export function EsperRoom() {
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-  const [showTitle, setShowTitle] = useState(false);
-  const [studio, setStudio] = useState(false);
   // Dark by default; ?theme=light for the light room.
   const [dark, setDark] = useState(true);
 
@@ -42,16 +39,13 @@ export function EsperRoom() {
     if (!canvas) return;
     let cancelled = false;
     let liveEvents: EventSource | null = null;
-    // Studio: internal tooling, dev only (/?studio).
-    const studioMode = process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("studio");
-    setStudio(studioMode);
     const darkMode = new URLSearchParams(window.location.search).get("theme") !== "light"; // dark unless asked for light
     setDark(darkMode);
 
     import("./three/EsperEngine")
       .then(({ EsperEngine }) => {
         if (cancelled) return;
-        const engine = new EsperEngine(canvas, { preserveDrawingBuffer: studioMode });
+        const engine = new EsperEngine(canvas);
         roomRef.current = { send: (method, value) => engine.send(method, value ?? ""), dispose: () => engine.dispose() };
         setProgress(0.12);
         if (process.env.NODE_ENV !== "production") {
@@ -93,17 +87,6 @@ export function EsperRoom() {
         if (reduced) u?.send("SetReducedMotion", "1");
         // Up close, subjects sit left of the dossier on wide screens.
         u?.send("SetFrameOffset", window.innerWidth >= 768 ? "7" : "0");
-        // The opening: once per visit, the title holds while the camera eases in from the doorway.
-        let seen = false;
-        try {
-          seen = sessionStorage.getItem("esper-intro") === "1";
-          sessionStorage.setItem("esper-intro", "1");
-        } catch {}
-        if (!seen && !studioMode) {
-          setShowTitle(true);
-          u?.send("PlayIntro", "4.2");
-          window.setTimeout(() => setShowTitle(false), 4500);
-        }
       } else if (event === "progress") {
         setProgress(0.12 + 0.88 * Number(payload));
       } else if (event === "focus") {
@@ -118,13 +101,10 @@ export function EsperRoom() {
       }
     };
     window.addEventListener("esper", onEsper);
-    const dismissTitle = () => setShowTitle(false);
     const onKey = (e: KeyboardEvent) => {
-      dismissTitle();
       // With a case study open, Escape belongs to the sheet (it closes it); the room stays where it is.
       if (e.key === "Escape" && !document.querySelector('[role="dialog"]')) roomRef.current?.send("Back");
     };
-    window.addEventListener("pointerdown", dismissTitle);
     window.addEventListener("keydown", onKey);
     // The room reads the mouse for the whole page, so a click on the interface would also land on whatever sits
     // behind it. Tell it when the pointer is over anything but the canvas. Capture phase, so this arrives before
@@ -153,7 +133,6 @@ export function EsperRoom() {
       cancelled = true;
       liveEvents?.close();
       window.removeEventListener("esper", onEsper);
-      window.removeEventListener("pointerdown", dismissTitle);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointermove", gate, true);
       window.removeEventListener("pointerdown", gate, true);
@@ -182,14 +161,6 @@ export function EsperRoom() {
   }, [activeKey]);
 
   const send = useCallback((method: string, value?: string) => roomRef.current?.send(method, value), []);
-  // Studio: Play is the experience as visitors get it; Edit hands the room to the tools.
-  const [editing, setEditingState] = useState(false);
-  const setEditing = (on: boolean) => {
-    setEditingState(on);
-    setActive(null);
-    send("Back");
-    send("Enable", on ? "1" : "0");
-  };
   const goto = (id: string) => {
     setActive(id);
     send("Goto", id);
@@ -220,23 +191,11 @@ export function EsperRoom() {
         </div>
       )}
 
-      {studio && ready && <EsperDials send={send} />}
-      {editing && ready && <EsperStudio send={send} canvas={canvasRef.current} />}
-      {studio && ready && (
-        <button
-          type="button"
-          onClick={() => setEditing(!editing)}
-          className="fixed left-5 top-16 z-[2147483001] rounded-full bg-[rgba(30,30,34,0.72)] px-4 py-2 font-[family-name:var(--font-geist)] text-[13px] font-medium text-white shadow-lg backdrop-blur-2xl transition-colors duration-200 hover:bg-[rgba(50,50,56,0.8)]"
-        >
-          {editing ? "Play" : "Edit"}
-        </button>
-      )}
-      {!leaving && !editing && !failed && <HoverTag id={active ? "" : hovering} />}
-      {!leaving && !editing && !failed && (
+      {!leaving && !failed && <HoverTag id={active ? "" : hovering} />}
+      {!leaving && !failed && (
         <EsperInterface
           ready={ready}
           active={active}
-          showTitle={showTitle}
           hovered={hovering}
           onSelect={goto}
           onBack={back}
@@ -248,19 +207,16 @@ export function EsperRoom() {
         />
       )}
 
-      {ready && !failed && !editing && !leaving && <StickyNotes page="room" glass dockClassName="fixed bottom-7 right-8 z-[110]" />}
+      {ready && !failed && !leaving && <StickyNotes page="room" glass dockClassName="fixed bottom-7 right-8 z-[110]" />}
 
       {failed && (
         // No 3D (no WebGL, or the scene didn't load): the work is still one click away.
-        <nav aria-label="Work" className="absolute inset-0 flex flex-col items-center justify-center gap-5 font-[family-name:var(--font-geist)] text-2xl font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+        <nav aria-label="Work" className="absolute inset-0 flex flex-col items-center justify-center gap-5 text-[#1d1d1f]">
           {STATIONS.filter((st) => st.href).map((st) => (
-            <Link key={st.id} href={st.href!} className="hover:opacity-60">
+            <Link key={st.id} href={st.href!} className="site-chapter-heading hover:opacity-60">
               {st.title}
             </Link>
           ))}
-          <Link href="/classic" className="mt-4 text-base font-medium text-black/60 hover:text-black">
-            The site without 3D
-          </Link>
         </nav>
       )}
     </main>

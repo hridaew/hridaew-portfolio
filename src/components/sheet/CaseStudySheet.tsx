@@ -262,7 +262,7 @@ export function CaseStudySheet({
         <div
           ref={setScrollEl}
           onScroll={onScroll}
-          className="relative flex-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]"
+          className="scrollbar-hide relative flex-1 overflow-y-auto overscroll-contain"
         >
           <ScrollerProvider scroller={scroller}>
             {/* Wait for the scroll element so pin/scrub never bind to the window first */}

@@ -16,7 +16,6 @@ import { STATIONS, type Station } from "./stations";
 type Props = {
   ready: boolean;
   active: string | null;
-  showTitle: boolean;
   hovered?: string;
   onSelect: (id: string) => void;
   onBack: () => void;
@@ -37,7 +36,7 @@ const glass =
 const press = "transition-[background-color,color,transform] duration-200 ease-out active:scale-[0.97]";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50";
 
-export function EsperInterface({ ready, active, showTitle, hovered, onSelect, onBack, onOpen }: Props) {
+export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpen }: Props) {
   const { openSheet, prefetchSheet } = useSheetNav();
   // Warm the case study (route and sheet content) as soon as a room is hovered or its card shows, so "Read the
   // case study" opens at once instead of waiting on the download.
@@ -64,42 +63,18 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
         !ready && "invisible",
       )}
     >
-      {/* Opening credit, lower left */}
-      <div
-        aria-hidden
-        className={cn(
-          "absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-[#ece9e4]/70 to-transparent transition-opacity duration-1000",
-          showTitle ? "opacity-100" : "opacity-0",
-        )}
-      />
-      <div
-        aria-hidden={!showTitle}
-        className={cn(
-          "absolute bottom-28 left-6 transition-[opacity,transform] duration-1000 ease-out md:bottom-32 md:left-10",
-          showTitle ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0",
-        )}
-      >
-        <h1 className="text-[clamp(34px,4vw,48px)] font-semibold leading-none tracking-[-0.035em]">Hridae Walia</h1>
-        <p className="mt-3 max-w-[34ch] text-[16px] leading-[1.45] text-black/75">
-          Product designer, designing for novel interaction models.
-        </p>
-      </div>
-
       {/* Name */}
       <div
         className={cn(
-          "absolute left-6 top-6 text-[14px] leading-tight tracking-[-0.01em] transition-opacity duration-700 md:left-8 md:top-7",
-          showTitle || !ready ? "opacity-0" : "opacity-100",
+          "absolute left-6 top-6 transition-opacity duration-700 md:left-8 md:top-7",
+          !ready && "opacity-0",
           // On a phone the card needs the height: the bio steps aside while a room is open.
           station && "max-md:pointer-events-none max-md:opacity-0",
         )}
       >
-        <p>
-          <span className="font-semibold">Hridae Walia</span>
-          <span className="ml-2 text-black/60">Product designer</span>
-        </p>
-        <p className="mt-2 max-w-[min(400px,calc(100vw-48px))] text-[13px] leading-[1.5] text-black/60">
-          I am obsessed with making, and I have 6 years of experience designing for novel
+        <h1 className="site-subheading esper-name">Hridae Walia</h1>
+        <p className="site-body mt-2 max-w-[min(420px,calc(100vw-48px))] text-ink-secondary">
+          I am a Product Designer obsessed with making, and I have 6 years of experience designing for novel
           interaction models. I focus on the user and learn by making, whether on the canvas, in code, or the
           physical world.
         </p>
@@ -137,7 +112,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                 onClick={() => (isActive ? onBack() : onSelect(s.id))}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "shrink-0 rounded-full px-[7px] py-2 text-[12.5px] min-[385px]:px-[8px] font-medium tracking-[-0.01em] min-[400px]:px-3 min-[400px]:text-[13px] md:px-4 md:text-[13.5px]",
+                  "type-body-medium shrink-0 rounded-full px-[7px] py-2 min-[385px]:px-[8px] min-[400px]:px-3 md:px-4",
                   press,
                   isActive
                     ? "bg-black/[0.22] text-[#1d1d1f] "
@@ -183,18 +158,18 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
           {shown && !about && (
             <div key={shown.id} className="esper-dossier-in">
               <div className="flex items-center justify-between gap-4">
-                <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.03em]">{shown.title}</h2>
+                <h2 className="site-chapter-heading">{shown.title}</h2>
                 <CloseButton onClick={onBack} />
               </div>
               <ProjectMedia station={shown} onOpen={onOpen} />
               {(shown.role || shown.period) && (
-                <p className={cn("text-[14px] leading-snug", shown.images ? "mt-4" : "mt-1.5")}>
+                <p className={cn("type-body-medium", shown.images ? "mt-4" : "mt-1.5")}>
                   {shown.role && <span className="font-medium text-black/90">{shown.role}</span>}
-                  {shown.period && <span className="block text-black/60">{shown.period}</span>}
+                  {shown.period && <span className="block font-normal text-black/60">{shown.period}</span>}
                 </p>
               )}
-              {shown.summary && <p className="mt-4 text-[15px] leading-[1.55] tracking-[-0.005em] text-black/90">{shown.summary}</p>}
-              {shown.note && <p className="mt-3 text-[13.5px] leading-[1.5] text-black/60">{shown.note}</p>}
+              {shown.summary && <p className="site-body mt-4 text-black/90">{shown.summary}</p>}
+              {shown.note && <p className="type-caption mt-3 text-black/60">{shown.note}</p>}
               {shown.links && (
                 <ul className="-mx-3 mt-4 flex flex-col">
                   {shown.links.map((l) => (
@@ -207,8 +182,8 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                         }}
                         className={cn("group flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 hover:bg-black/[0.08]", press, focusRing)}>
                         <span>
-                          <span className="block text-[14.5px] font-medium">{l.title}</span>
-                          <span className="block text-[13px] text-black/60">{l.line}</span>
+                          <span className="site-subheading block">{l.title}</span>
+                          <span className="type-caption block text-black/60">{l.line}</span>
                         </span>
                         <ArrowIcon />
                       </Link>
@@ -224,7 +199,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                     e.preventDefault();
                     onOpen(shown.id);
                   }}
-                  className={cn("mt-6 inline-flex items-center rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-black/80", press, focusRing)}
+                  className={cn("type-body-medium mt-6 inline-flex items-center rounded-full bg-[#1d1d1f] px-5 py-2.5 font-semibold text-white hover:bg-black/80", press, focusRing)}
                 >
                   Read the case study
                 </Link>

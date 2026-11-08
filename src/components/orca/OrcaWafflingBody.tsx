@@ -29,9 +29,9 @@ const ORCA_COLUMN =
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
+    <h2 className="site-chapter-heading text-ink">
       {children}
-    </h4>
+    </h2>
   );
 }
 
@@ -45,7 +45,7 @@ function Body({
   return (
     <p
       className={cn(
-        "font-[family-name:var(--font-geist)] text-base font-normal leading-[1.5] text-ink-secondary",
+        "site-body text-ink-secondary",
         className,
       )}
     >
@@ -56,7 +56,7 @@ function Body({
 
 function Caption({ children }: { children: ReactNode }) {
   return (
-    <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
+    <p className="site-gallery-caption text-ink-muted">
       {children}
     </p>
   );
@@ -126,7 +126,7 @@ export function OrcaWafflingBody() {
         "flex flex-col gap-12 pt-16 pb-24 md:pt-24 md:pb-28",
       )}
     >
-      <h1 className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-ink-secondary">
+      <h1 className="type-h1 w-full min-w-0 text-ink">
         {ORCA_TITLE}
       </h1>
 

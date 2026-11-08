@@ -16,13 +16,13 @@ export function DomisCaseStudyContent() {
                     <div className="relative w-full min-w-0 text-left flex flex-col gap-10">
                         <HeroTextAnimation
                             variant="wave"
-                            className="type-h1 text-left text-ink"
+                            className="type-display text-left text-ink"
                         >
                             Domis
                         </HeroTextAnimation>
 
                         <Reveal delay={0.2}>
-                            <p className="site-body max-w-[560px] text-ink-secondary">
+                            <p className="type-body-lg max-w-[560px] text-ink-secondary">
                                 I&rsquo;m the Product Designer at Domis, a home
                                 maintenance platform that helps people understand
                                 their house and take care of it without the

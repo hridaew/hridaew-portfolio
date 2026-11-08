@@ -1,9 +1,6 @@
-import { DomisFlowReference } from "@/components/domis/flow-reference/DomisFlowReference";
+import { redirect } from "next/navigation";
 
-/**
- * Full-page Domis flow reference (Owner + Backend/AI lanes).
- * Open /domis/flow-reference — not linked from the case study nav.
- */
+/** Internal diagram. Not part of the site. */
 export default function DomisFlowReferencePage() {
-  return <DomisFlowReference />;
+  redirect("/domis");
 }

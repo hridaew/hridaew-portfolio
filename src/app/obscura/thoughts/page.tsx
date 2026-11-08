@@ -265,12 +265,12 @@ export default function ObscuraThoughtsPage() {
   // The page runs inverted — ink as ground, paper as type — to match the
   // negative strip the visitor is holding.
   const field =
-    "font-[family-name:var(--font-geist)] text-base rounded-xl px-3.5 py-3 bg-transparent " +
+    "site-body rounded-xl px-3.5 py-3 bg-transparent " +
     "border border-[rgba(244,244,243,0.28)] text-[var(--paper)] " +
     "placeholder:text-[rgba(244,244,243,0.4)] focus-visible:outline-2 focus-visible:outline-offset-2 " +
     "focus-visible:outline-[var(--paper)]";
   const pill =
-    "font-[family-name:var(--font-geist)] text-base rounded-full px-7 py-3.5 disabled:opacity-40 transition-opacity";
+    "site-body rounded-full px-7 py-3.5 disabled:opacity-40 transition-opacity";
 
   return (
     <main className="min-h-dvh bg-black text-[var(--paper)]">
@@ -286,7 +286,7 @@ export default function ObscuraThoughtsPage() {
             priority
             className="w-56 h-auto mx-auto"
           />
-          <p className="font-[family-name:var(--font-geist)] text-base opacity-70 mt-4">
+          <p className="site-body opacity-70 mt-4">
             Thank you for experiencing the Obscura.
           </p>
         </header>
@@ -325,7 +325,7 @@ export default function ObscuraThoughtsPage() {
                   {cam === "starting" ? "Opening…" : cam === "denied" ? "Try camera again" : "Start camera"}
                 </button>
                 {(cam === "denied" || cam === "unsupported") && (
-                  <p className="font-[family-name:var(--font-geist)] text-sm opacity-70 max-w-[24ch]">
+                  <p className="type-body-medium opacity-70 max-w-[24ch]">
                     No camera here — upload a photo of your strip instead.
                   </p>
                 )}
@@ -341,7 +341,7 @@ export default function ObscuraThoughtsPage() {
             )}
           </div>
 
-          <p className="font-[family-name:var(--font-geist)] text-sm text-center mt-3 opacity-70">
+          <p className="type-body-medium text-center mt-3 opacity-70">
             ↑ Develop your photos
           </p>
 
@@ -363,7 +363,7 @@ export default function ObscuraThoughtsPage() {
               <button
                 onClick={() => fileRef.current?.click()}
                 disabled={working}
-                className="font-[family-name:var(--font-geist)] text-sm underline underline-offset-4 opacity-60 disabled:opacity-40"
+                className="type-body-medium underline underline-offset-4 opacity-60 disabled:opacity-40"
               >
                 {working ? "Developing…" : "or upload a photo instead"}
               </button>
@@ -377,10 +377,10 @@ export default function ObscuraThoughtsPage() {
         <section className="pt-12">
           {status === "sent" ? (
             <div className="text-center py-6">
-              <h2 className="font-[family-name:var(--font-display)] font-bold text-2xl mb-2">
+              <h2 className="site-chapter-heading mb-2">
                 Thank you
               </h2>
-              <p className="font-[family-name:var(--font-geist)] text-base opacity-70">
+              <p className="site-body opacity-70">
                 That means a great deal.
               </p>
             </div>
@@ -388,7 +388,7 @@ export default function ObscuraThoughtsPage() {
             <form onSubmit={submit} className="flex flex-col gap-3">
               <label
                 htmlFor="obscura-thoughts"
-                className="font-[family-name:var(--font-geist)] text-base leading-relaxed"
+                className="site-body leading-relaxed"
               >
                 What did you think of the experience? What did it make you
                 think about? Anything at all!
@@ -440,7 +440,7 @@ export default function ObscuraThoughtsPage() {
                      className="absolute left-[-9999px] w-px h-px opacity-0" />
 
               {error && (
-                <p role="alert" className="font-[family-name:var(--font-geist)] text-sm text-[var(--destructive,#b00020)]">
+                <p role="alert" className="type-body-medium text-[var(--destructive,#b00020)]">
                   {error}
                 </p>
               )}
@@ -456,10 +456,10 @@ export default function ObscuraThoughtsPage() {
           <dl className="mt-4 flex flex-col gap-2.5">
             {CREDITS.map(([who, what]) => (
               <div key={who} className="flex gap-3 items-baseline">
-                <dt className="font-[family-name:var(--font-geist)] text-sm font-medium min-w-[9.5rem] shrink-0">
+                <dt className="type-body-medium font-medium min-w-[9.5rem] shrink-0">
                   {who}
                 </dt>
-                <dd className="font-[family-name:var(--font-geist)] text-sm opacity-60">
+                <dd className="type-body-medium opacity-60">
                   {what}
                 </dd>
               </div>
@@ -471,7 +471,7 @@ export default function ObscuraThoughtsPage() {
         <section className="pt-10">
           <a
             href="/obscura"
-            className="font-[family-name:var(--font-geist)] text-base underline underline-offset-4 decoration-[rgba(244,244,243,0.35)] hover:decoration-[var(--paper)]"
+            className="site-body underline underline-offset-4 decoration-[rgba(244,244,243,0.35)] hover:decoration-[var(--paper)]"
           >
             Learn about the project →
           </a>

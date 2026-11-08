@@ -207,7 +207,7 @@ export function ObscuraCaseStudyBody() {
                                 href="https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="site-label text-amber-800/80 hover:text-amber-900 transition-colors duration-150 inline-flex items-center gap-1.5 text-left"
+                                className="site-label text-ink-muted hover:text-ink transition-colors duration-150 inline-flex items-center gap-1.5 text-left"
                             >
                                 MOHAI &mdash; Museum of History &amp; Industry, Seattle
                                 <svg
@@ -246,17 +246,12 @@ export function ObscuraCaseStudyBody() {
                             </a>
                         </Reveal>
 
-                        <HeroTextAnimation variant="split-chars" className="type-display-black text-ink text-left mix-blend-multiply">
+                        <HeroTextAnimation variant="split-chars" className="type-display-black text-ink text-left">
                             OBSCURA
                         </HeroTextAnimation>
 
                         <Reveal delay={0.3}>
-                            <p
-                                className={cn(
-                                    obBody,
-                                    "text-ink-secondary text-balance"
-                                )}
-                            >
+                            <p className="type-body-lg text-ink-secondary text-balance">
                                 Obscura is an immersive experience that bridges solitary Virtual Reality and public exhibition &mdash; a spatial computing environment where the viewer&apos;s gaze dynamically curates the images they see.
                             </p>
                         </Reveal>
@@ -287,7 +282,7 @@ export function ObscuraCaseStudyBody() {
                                         href="https://mohai.org/event/transpacific-photography-and-the-obscura-project-post-world-war-ii-life-in-japan/"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-ink-muted underline underline-offset-2 decoration-neutral-500/60 hover:text-amber-900 hover:decoration-amber-800/50 transition-colors"
+                                        className="text-ink-muted underline underline-offset-2 decoration-neutral-500/60 hover:text-ink hover:decoration-ink/40 transition-colors"
                                     >
                                         MOHAI
                                     </a>
@@ -412,7 +407,7 @@ export function ObscuraCaseStudyBody() {
                             imageSrc="/assets/obscura/intent_speak_to_audience.png"
                             imageAlt="Wayne Wong smiling in a square portrait; his name appears as text on the image"
                         >
-                            <h3 className="site-label text-amber-800/80 text-left">
+                            <h3 className="site-label text-ink-muted text-left">
                                 Speak to the Audience While Respecting the Artist
                             </h3>
                             <p className={cn(obBody, "text-ink-muted")}>
@@ -424,7 +419,7 @@ export function ObscuraCaseStudyBody() {
                             imageSrc="/assets/obscura/exhibition_lmwbwqiof2i79hqbywhhidrto1o.webp"
                             imageAlt="Visitors in the gallery watching the projected audience view, with a historic photograph on screen"
                         >
-                            <h3 className="site-label text-amber-800/80 text-left">
+                            <h3 className="site-label text-ink-muted text-left">
                                 Build Anticipation
                             </h3>
                             <p className={cn(obBody, "text-ink-muted")}>
@@ -436,7 +431,7 @@ export function ObscuraCaseStudyBody() {
                             imageSrc="/assets/obscura/intent_give_people_something.png"
                             imageAlt="Visitor holding a vertical Obscura photo-strip souvenir, examining the black-and-white frames"
                         >
-                            <h3 className="site-label text-amber-800/80 text-left">
+                            <h3 className="site-label text-ink-muted text-left">
                                 Give People Something to Talk About
                             </h3>
                             <p className={cn(obBody, "text-ink-muted")}>
@@ -448,7 +443,7 @@ export function ObscuraCaseStudyBody() {
                             imageSrc="/assets/obscura/intent_create_space.png"
                             imageAlt="Black-and-white archival photograph: a soldier in uniform stands in a crowded outdoor market in post-war Japan, surrounded by children and adults"
                         >
-                            <h3 className="site-label text-amber-800/80 text-left">
+                            <h3 className="site-label text-ink-muted text-left">
                                 Create Space for Meaningful Engagement
                             </h3>
                             <p className={cn(obBody, "text-ink-muted")}>
@@ -476,7 +471,7 @@ export function ObscuraCaseStudyBody() {
                     <Reveal>
                         <div className="case-study-block-gap w-full border border-ink/[0.1] bg-ink/[0.04] px-6 py-10 text-center md:px-10 md:py-12">
                             <p className={obBody}>
-                                <span className="text-amber-800">How might we</span>{" "}
+                                <span className="text-ink-muted">How might we</span>{" "}
                                 <span className="text-ink">
                                     give an audience a meaningful encounter with photographs whose meaning was never meant for them?
                                 </span>
@@ -487,7 +482,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Research intro */}
                     <Reveal>
                         <div className="case-study-block-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Research: Finding the Human Narrative
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0 text-left")}>
@@ -564,13 +559,13 @@ export function ObscuraCaseStudyBody() {
                                     className="case-study-grid-gap-tight flex items-center border border-ink/[0.1] bg-ink/[0.04] p-5 md:p-6"
                                 >
                                     <div
-                                        className="flex size-11 shrink-0 items-center justify-center border border-amber-800/20 bg-amber-900/[0.06] text-amber-800 md:size-12"
+                                        className="flex size-11 shrink-0 items-center justify-center border border-ink/15 bg-ink/[0.04] text-ink-muted md:size-12"
                                         aria-hidden
                                     >
                                         <Icon className="size-[1.35rem] md:size-6" strokeWidth={1.65} />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h3 className="site-label case-study-tight-trail-mb text-left text-amber-800/70">
+                                        <h3 className="site-label case-study-tight-trail-mb text-left text-ink-muted">
                                             {title}
                                         </h3>
                                         <p className={cn(obBody, "m-0 text-left text-ink-secondary")}>{body}</p>
@@ -609,7 +604,7 @@ export function ObscuraCaseStudyBody() {
                     {/* North Star adjectives */}
                     <Reveal>
                         <div className="case-study-block-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 North Star adjectives
                             </span>
                             <div className="case-study-grid-gap-dense grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
@@ -641,7 +636,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Sketches — Click to expand */}
                     <Reveal className="case-study-block-gap">
                         <div>
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Early Sketches
                             </span>
                             <div className="case-study-grid-gap-dense grid grid-cols-2 md:grid-cols-3">
@@ -672,7 +667,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Storyboarding */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Storyboarding the Invisible
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -728,7 +723,7 @@ export function ObscuraCaseStudyBody() {
 
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 The Original Vision: Eye Tracking
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -740,7 +735,7 @@ export function ObscuraCaseStudyBody() {
                     <Reveal>
                         <div className="case-study-block-gap case-study-intra-stack flex w-full min-w-0 flex-col">
                             <div className="w-full min-w-0 border border-ink/[0.1] bg-ink/[0.04] p-8 md:p-10">
-                                <span className="site-label text-red-400/70 case-study-heading-trail-mb block text-left">
+                                <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                     The Problem
                                 </span>
                                 <p className={cn(obBody, "text-ink-muted")}>
@@ -769,7 +764,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Eye Tracking Demo */}
                     <Reveal>
                         <div className="case-study-block-gap w-full min-w-0">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 The Gaze Challenge
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full")}>
@@ -782,7 +777,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Process: physical prototyping */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Process: Testing in Physical Space
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -813,7 +808,7 @@ export function ObscuraCaseStudyBody() {
                     {/* Technical diagrams — before Unity implementation (next section) */}
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Building the Obscura Engine
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -866,7 +861,7 @@ export function ObscuraCaseStudyBody() {
                                     draggable={false}
                                 />
                             </div>
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 From Concept to Unity
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -877,7 +872,7 @@ export function ObscuraCaseStudyBody() {
 
                     <Reveal>
                         <div className="case-study-subsection-gap">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Interactive Demo
                             </span>
                             <h2 className="site-chapter-heading case-study-heading-trail-mb text-ink">
@@ -967,7 +962,7 @@ export function ObscuraCaseStudyBody() {
                                             href={POTREROVIEW_URL}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="underline underline-offset-2 decoration-neutral-500/60 transition-colors hover:text-amber-900 hover:decoration-amber-800/50"
+                                            className="underline underline-offset-2 decoration-neutral-500/60 transition-colors hover:text-ink hover:decoration-ink/40"
                                         >
                                             Obscura Asks Viewers to Look Again
                                         </a>
@@ -1023,7 +1018,7 @@ export function ObscuraCaseStudyBody() {
                             </div>
                         </Reveal>
                         <Reveal delay={0.1} className="case-study-media-caption-mt">
-                            <span className="site-label text-amber-800/70 case-study-heading-trail-mb block text-left">
+                            <span className="site-label text-ink-muted case-study-heading-trail-mb block text-left">
                                 Outcome
                             </span>
                             <p className={cn(obBody, "text-ink-muted w-full min-w-0")}>
@@ -1047,36 +1042,36 @@ export function ObscuraCaseStudyBody() {
                         </Reveal>
                         <Reveal delay={0.3} className="case-study-media-caption-mt">
                             <div className="w-full text-left">
-                                <p className="site-label mb-6 text-amber-800/70">
+                                <p className="site-label mb-6 text-ink-muted">
                                     Gratitude
                                 </p>
                                 <div className="flex flex-col gap-5 md:gap-6">
                                     <div>
-                                        <p className="mb-1.5 text-sm font-medium text-ink-secondary">Wong Family</p>
+                                        <p className="site-subheading mb-1.5 text-ink-secondary">Wong Family</p>
                                         <p className={cn(obBody, "text-ink-muted")}>
                                             Wayne Wong, Curtis Wong, Anne Rudden
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="mb-1.5 text-sm font-medium text-ink-secondary">Teammates</p>
+                                        <p className="site-subheading mb-1.5 text-ink-secondary">Teammates</p>
                                         <p className={cn(obBody, "text-ink-muted")}>
                                             Asa Symons, Caiya Wiltshire, Nick Hallin
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="mb-1.5 text-sm font-medium text-ink-secondary">MOHAI</p>
+                                        <p className="site-subheading mb-1.5 text-ink-secondary">MOHAI</p>
                                         <p className={cn(obBody, "text-ink-muted")}>
                                             Leonard Garfield, Devorah Romanek, Sorana Nance, Rachel Spence
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="mb-1.5 text-sm font-medium text-ink-secondary">UW</p>
+                                        <p className="site-subheading mb-1.5 text-ink-secondary">UW</p>
                                         <p className={cn(obBody, "text-ink-muted")}>
                                             Ana Pinto Da Silva, Matt Bartels, Dukes Wooters, Axel Roesler, Kristin N Dew, John Zošák
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="mb-1.5 text-sm font-medium text-ink-secondary">External Advisors</p>
+                                        <p className="site-subheading mb-1.5 text-ink-secondary">External Advisors</p>
                                         <p className={cn(obBody, "text-ink-muted")}>
                                             Saransh Solanki (Meta), Sam Stubblefield, Harri Lin, Maria Mortati
                                         </p>

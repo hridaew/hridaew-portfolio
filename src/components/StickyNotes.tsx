@@ -441,7 +441,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
     const composer = (
         <>
                                     <div className="flex items-start justify-between gap-3">
-                                        <p className={cn("text-left text-ink-muted", glass ? "text-[13.5px] leading-[1.45]" : "leading-relaxed type-caption")}>
+                                        <p className={cn("text-left text-ink-muted", glass ? "type-body-medium" : "leading-relaxed type-caption")}>
                                             Leave a note. Only you and Hridae can see
                                             yours.
                                         </p>
@@ -584,7 +584,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
                             onClick={openComposer}
                             aria-label="Leave a sticky note"
                             aria-expanded={panelExpanded}
-                            className="flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium tracking-[-0.01em] text-black/75 transition-[background-color,color,transform] duration-200 ease-out hover:bg-black/[0.1] hover:text-[#1d1d1f] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50"
+                            className="type-body-medium flex items-center gap-2 rounded-full px-4 py-2 text-black/75 transition-[background-color,color,transform] duration-200 ease-out hover:bg-black/[0.1] hover:text-[#1d1d1f] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50"
                         >
                             Leave me a note
                             <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>

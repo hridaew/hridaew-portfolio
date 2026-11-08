@@ -47,7 +47,7 @@ export function MemoryCareCaseStudyBody() {
                         </HeroTextAnimation>
 
                         <Reveal delay={0.2}>
-                            <p className="site-body case-study-hero-lead-mb text-left text-ink-muted">
+                            <p className="type-body-lg case-study-hero-lead-mb text-left text-ink-muted">
                                 A multi-sensory pilot program enabling immersive engagement for residents with sensory deprivation.
                             </p>
                         </Reveal>

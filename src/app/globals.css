@@ -110,120 +110,114 @@
   --font-instrument: var(--font-display);
 }
 
-/* ===== Semantic typography (Perfect Fourth @ md+, Major Third mobile) ===== */
+/* ===== Type. Geist Sans for UI and body. Geist Serif Regular for display, H1, and H2. Geist Mono for labels. =====
+   Display 48–80 · Title 32–44 · Section 22/26 · Subhead 18/20 · Lede 18/20 · Body 16 · Chrome 13 · Caption/label 12
+*/
 
 @layer utilities {
-  .type-display {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 3.81rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-  }
-  @media (min-width: 48rem) {
-    .type-display {
-      font-size: 6.85rem;
-    }
-  }
-
+  .type-display,
   .type-display-black {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 3.81rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-  }
-  @media (min-width: 48rem) {
-    .type-display-black {
-      font-size: 6.85rem;
-    }
+    font-family: var(--font-geist-serif-regular), "Times New Roman", Times, serif;
+    font-size: clamp(3rem, 6.5vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
   }
 
   .type-h1 {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 2.44rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.05;
+    font-family: var(--font-geist-serif-regular), "Times New Roman", Times, serif;
+    font-size: clamp(2rem, 3.2vw, 2.75rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  .type-h2,
+  .site-chapter-heading {
+    font-family: var(--font-geist-serif-regular), "Times New Roman", Times, serif;
+    font-size: 1.375rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
   }
   @media (min-width: 48rem) {
-    .type-h1 {
-      font-size: 4.2rem;
+    .type-h2,
+    .site-chapter-heading {
+      font-size: 1.625rem;
     }
   }
 
-  .type-h2 {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 1.95rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    line-height: 1.05;
-  }
-  @media (min-width: 48rem) {
-    .type-h2 {
-      font-size: 3.15rem;
-    }
-  }
-
-  /* H3-level type stays Geist (sans), never Bricolage / --font-display */
-  .type-h3 {
+  .type-h3,
+  .type-h4,
+  .site-subheading {
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.56rem;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 1.2;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
   }
   @media (min-width: 48rem) {
-    .type-h3 {
-      font-size: 1.77rem;
+    .type-h3,
+    .type-h4,
+    .site-subheading {
+      font-size: 1.25rem;
     }
+  }
+
+  .esper-name {
+    font-family: var(--font-geist-serif-regular), "Times New Roman", Times, serif;
+    font-weight: 400;
   }
 
   .type-body-lg {
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1.55;
   }
   @media (min-width: 48rem) {
     .type-body-lg {
-      font-size: 1.33rem;
+      font-size: 1.25rem;
     }
   }
 
-  .type-body {
+  .type-body,
+  .site-body {
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     font-weight: 400;
-    letter-spacing: 0.01em;
-    line-height: 1.55;
+    letter-spacing: 0;
+    line-height: 1.5rem;
+  }
+
+  .type-body.font-bold,
+  .site-body.font-bold {
+    font-weight: 700;
+  }
+
+  .type-body-medium {
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
   }
 
   .type-caption {
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 400;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     line-height: 1.45;
-  }
-  @media (min-width: 48rem) {
-    .type-caption {
-      font-size: 0.75rem;
-    }
   }
 
   .type-caption-medium {
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     line-height: 1.45;
-  }
-  @media (min-width: 48rem) {
-    .type-caption-medium {
-      font-size: 0.75rem;
-    }
   }
 
   /*
@@ -430,34 +424,22 @@
     margin-bottom: 2.5rem;
   }
 
-  /*
-   * Site-wide copy primitives — match home Bio / Work project rows (Geist 16px / leading-6).
-   * Use inside pages wrapped with .site-editorial for consistent rhythm vs. legacy type-* scale.
-   */
-  .site-body {
-    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 400;
-    letter-spacing: 0;
-  }
-
   .site-label {
     font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-size: 0.75rem;
     line-height: 1.5rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.05em;
   }
 
-  /* Home Work gallery card caption (mono xs / leading-6 / uppercase) — set color on the element */
   .site-gallery-caption {
     font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-size: 0.75rem;
     line-height: 1.5rem;
     font-weight: 400;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   /*
@@ -466,24 +448,6 @@
    */
   .cursor-mces-gallery-card {
     cursor: url("/assets/memory-care/mces-card-hover-cursor-32.png") 16 16, pointer;
-  }
-
-  /* Home Work row project title */
-  .site-chapter-heading {
-    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.5rem;
-    letter-spacing: 0;
-  }
-
-  /* Home hero role line */
-  .site-subheading {
-    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5rem;
-    letter-spacing: 0;
   }
 }
 
@@ -551,6 +515,7 @@
   }
 
   body {
+    --font-display: var(--font-geist);
     @apply bg-background text-foreground;
   }
 
@@ -1819,6 +1784,26 @@ html[data-home-layout] .home-project-embla {
   --paper-raised: #1c1c1f;
   --paper-sunken: #111113;
   --paper-rgb: 21 21 23;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-sunken);
+  --muted-foreground: var(--ink-muted);
+  --accent: #2a2a2e;
+  --accent-foreground: var(--ink);
+  --border: rgb(var(--ink-rgb) / 0.1);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-secondary);
+  --text-muted: var(--ink-muted);
+  --text-subtle: var(--ink-subtle);
+  --surface-modal: var(--paper-raised);
+  --surface-card: var(--paper-raised);
+  --border-card: rgb(var(--ink-rgb) / 0.12);
 }
 [data-esper-theme="dark"] .text-\[\#1d1d1f\],
 [data-esper-theme="dark"] .hover\:text-\[\#1d1d1f\]:hover,
@@ -1880,15 +1865,7 @@ html[data-esper-dark] [style*="ach-pill-fill"] {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
-/* ESPER: the case study sheet over the room. Headings in the room's own face (Geist, semibold, tight) rather than
-   Bricolage, and the panel floats with a margin like the room's cards instead of sitting flush to the edge. */
-html[data-esper] [data-case-sheet] {
-  --font-display: var(--font-geist);
-}
-html[data-esper] [data-case-sheet] :is(.type-display, .type-display-black, .type-h1, .type-h2, h1, h2) {
-  font-weight: 600;
-  letter-spacing: -0.035em;
-}
+/* ESPER: the case study sheet floats with a margin like the room's cards instead of sitting flush to the edge. */
 html[data-esper] [data-case-sheet-panel] {
   top: 16px;
   bottom: 16px;
@@ -1915,6 +1892,27 @@ html[data-esper-dark] [data-case-sheet] {
   --paper-raised: #1c1c1f;
   --paper-sunken: #111113;
   --paper-rgb: 21 21 23;
+  /* Semantic aliases are resolved on :root. Reset them here or bg-background / bg-card stay the light paper. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-sunken);
+  --muted-foreground: var(--ink-muted);
+  --accent: #2a2a2e;
+  --accent-foreground: var(--ink);
+  --border: rgb(var(--ink-rgb) / 0.1);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-secondary);
+  --text-muted: var(--ink-muted);
+  --text-subtle: var(--ink-subtle);
+  --surface-modal: var(--paper-raised);
+  --surface-card: var(--paper-raised);
+  --border-card: rgb(var(--ink-rgb) / 0.12);
 }
 html[data-esper-dark] [data-case-sheet-panel] {
   border-color: rgba(255, 255, 255, 0.1);

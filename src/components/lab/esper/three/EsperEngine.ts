@@ -15,8 +15,7 @@ import { clone as cloneRig } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 /**
  * ESPER in three.js. Reads Live/scene.json (the same spec the Unity build used) and answers the same messages
- * the page sends (Goto, Back, Look, ApplyScene...), emitting the same "esper" window events back. So the page,
- * the dials and live editing work unchanged, and a scene edit shows the moment it's saved.
+ * the page sends (Goto, Back, Look, ApplyScene...), emitting the same "esper" window events back. A scene edit shows the moment it's saved.
  *
  * scene.json is authored in Unity's left-handed space (+Z north). Everything is built in those numbers under a
  * root mirrored in Z, so positions, rotations and the generated meshes carry over exactly.

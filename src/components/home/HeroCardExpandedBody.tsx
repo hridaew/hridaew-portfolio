@@ -28,11 +28,11 @@ function AboutSection() {
             />
           </div>
         </div>
-        <p className="w-full min-w-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-[18px] text-ink-muted">
+        <p className="site-gallery-caption w-full min-w-0 text-ink-muted">
           This is me at valve software :D
         </p>
       </div>
-      <div className="min-w-0 max-w-[432px] flex-1 font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-secondary whitespace-pre-wrap">
+      <div className="site-body min-w-0 max-w-[432px] flex-1 text-ink-secondary whitespace-pre-wrap">
         <p className="mb-0 leading-6">
           {`Being the son of an engineer and an artist it would be easy to guess where my interests would lie, I'm an Interaction/Product/Experience/Everything Designer because I love making things that work and get a response out of people — whether it be from sensory stimuli or something as simple as getting a task done. `}
         </p>
@@ -52,7 +52,7 @@ function ExperienceSection() {
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
+            <p className="site-label relative min-h-px min-w-px flex-[1_0_0] text-ink-muted">
               Experience
             </p>
           </div>
@@ -131,10 +131,10 @@ function ExpBlock({
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-ink-secondary">
+            <p className="site-subheading relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
               {title}
             </p>
-            <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-ink-muted">
+            <p className="type-caption relative shrink-0 whitespace-nowrap text-ink-muted">
               {date}
             </p>
           </div>
@@ -143,7 +143,7 @@ function ExpBlock({
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-muted">
+            <p className="site-body relative min-h-px min-w-px flex-[1_0_0] text-ink-muted">
               {body}
             </p>
           </div>
@@ -159,7 +159,7 @@ function EducationSection() {
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center px-4">
-            <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
+            <p className="site-label relative min-h-px min-w-px flex-[1_0_0] text-ink-muted">
               Education
             </p>
           </div>
@@ -190,10 +190,10 @@ function EducationSection() {
               <div className="relative w-full shrink-0">
                 <div className="flex size-full flex-row items-center justify-center">
                   <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-semibold text-ink-secondary">
+                    <p className="site-subheading relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
                       {block.school}
                     </p>
-                    <p className="relative shrink-0 whitespace-nowrap font-[family-name:var(--font-geist)] text-xs font-normal text-ink-muted">
+                    <p className="type-caption relative shrink-0 whitespace-nowrap text-ink-muted">
                       {block.year}
                     </p>
                   </div>
@@ -202,7 +202,7 @@ function EducationSection() {
               <div className="relative w-full shrink-0">
                 <div className="flex size-full flex-row items-center justify-center">
                   <div className="relative flex size-full items-center justify-center px-4">
-                    <p className="relative min-h-px min-w-px flex-[1_0_0] font-[family-name:var(--font-geist)] text-base font-normal leading-6 text-ink-muted">
+                    <p className="site-body relative min-h-px min-w-px flex-[1_0_0] text-ink-muted">
                       {block.degree}
                     </p>
                   </div>
@@ -302,12 +302,12 @@ function Top3Section() {
   const { unlock } = useAchievements();
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col items-start justify-center gap-8">
-      <div className="relative w-full shrink-0 font-[family-name:var(--font-geist)] text-base font-semibold leading-none text-ink-muted">
-        <p className="leading-normal">Top 3</p>
+      <div className="relative w-full shrink-0 text-ink-muted">
+        <p className="site-chapter-heading">Top 3</p>
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
+        <p className="relative w-full shrink-0 site-label text-ink-muted">
           Games
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
@@ -390,7 +390,7 @@ function Top3Section() {
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
+        <p className="relative w-full shrink-0 site-label text-ink-muted">
           Albums
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2 overflow-visible">
@@ -428,7 +428,7 @@ function Top3Section() {
       </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
-        <p className="relative w-full shrink-0 font-[family-name:var(--font-geist-mono)] text-xs font-normal uppercase leading-6 text-ink-muted">
+        <p className="relative w-full shrink-0 site-label text-ink-muted">
           Movies:
         </p>
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">

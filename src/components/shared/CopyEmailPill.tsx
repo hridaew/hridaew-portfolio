@@ -59,7 +59,7 @@ export function CopyEmailPill({ className }: CopyEmailPillProps) {
         className="flex h-8 cursor-pointer items-center gap-1 rounded-[38px] bg-[#1c1c1c]/[0.045] pl-2 pr-1 transition-colors hover:bg-[#1c1c1c]/[0.08]"
       >
         <span
-          className="font-[family-name:var(--font-geist)] text-xs leading-normal"
+          className="type-body-medium"
           style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}
         >
           {CONTACT_EMAIL}

@@ -55,7 +55,7 @@ function ParallaxHeroView({
                             transition={{ duration: 0.8, delay: 0.5 }}
                             className="relative z-30 space-y-10"
                         >
-                            <p className="site-body w-full text-left text-ink-secondary">
+                            <p className="type-body-lg w-full text-left text-ink-secondary">
                                 Designing an AR Fitness Platform Across Every
                                 Screen
                             </p>

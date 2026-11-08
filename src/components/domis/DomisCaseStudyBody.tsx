@@ -37,7 +37,7 @@ export function DomisCaseStudyBody() {
         <Reveal>
           <div className="dcs-overview-stack">
             <div>
-              <p className="dcs-heading site-subheading text-ink">
+              <p className="dcs-heading site-chapter-heading text-ink">
                 What is Domis
               </p>
               <figure className="dcs-img-block">
@@ -62,7 +62,7 @@ export function DomisCaseStudyBody() {
             </div>
 
             <div>
-              <p className="dcs-heading site-subheading text-ink">
+              <p className="dcs-heading site-chapter-heading text-ink">
                 My role
               </p>
               <p className="site-body text-ink-muted">
@@ -72,7 +72,7 @@ export function DomisCaseStudyBody() {
             </div>
 
             <div id="role">
-              <p className="dcs-heading site-subheading text-ink">
+              <p className="dcs-heading site-chapter-heading text-ink">
                 My responsibilities
               </p>
               <ul className="dcs-roles">
@@ -248,7 +248,7 @@ export function DomisCaseStudyBody() {
 
       <section id="user-problem" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             User problem
           </p>
           <div className="site-body text-ink-muted">
@@ -273,7 +273,7 @@ export function DomisCaseStudyBody() {
 
       <section id="challenge" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             Key challenge
           </p>
           <div className="site-body text-ink-muted">
@@ -313,7 +313,7 @@ export function DomisCaseStudyBody() {
 
       <section id="known" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             The home, known
           </p>
           <figure className="dcs-img-block dcs-known-breakout">
@@ -335,7 +335,7 @@ export function DomisCaseStudyBody() {
 
       <section id="address" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             Address Intelligence
           </p>
           <figure className="dcs-img-block">
@@ -369,7 +369,7 @@ export function DomisCaseStudyBody() {
 
       <section className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             The challenge
           </p>
           <div className="site-body text-ink-muted">
@@ -452,7 +452,7 @@ export function DomisCaseStudyBody() {
 
       <section id="appliance" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             Appliance Intelligence
           </p>
           <figure className="dcs-img-block">
@@ -558,7 +558,7 @@ export function DomisCaseStudyBody() {
 
       <section id="report" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             Report Processor
           </p>
           <figure className="dcs-img-block">
@@ -624,7 +624,7 @@ export function DomisCaseStudyBody() {
 
       <section id="insights" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             Insights
           </p>
           <div className="site-body text-ink-muted">
@@ -655,7 +655,7 @@ export function DomisCaseStudyBody() {
 
       <section id="more" className="dcs-col dcs-block">
         <Reveal>
-          <p className="dcs-heading site-subheading text-ink">
+          <p className="dcs-heading site-chapter-heading text-ink">
             And more!
           </p>
           <div className="site-body text-ink-muted">

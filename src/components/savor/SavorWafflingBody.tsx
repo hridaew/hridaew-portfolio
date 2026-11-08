@@ -23,9 +23,9 @@ const SAVOR_COLUMN =
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h4 className="font-[family-name:var(--font-geist)] text-2xl font-bold leading-normal text-ink-secondary">
+    <h2 className="site-chapter-heading text-ink">
       {children}
-    </h4>
+    </h2>
   );
 }
 
@@ -33,7 +33,7 @@ function Body({ children, className }: { children: ReactNode; className?: string
   return (
     <p
       className={cn(
-        "font-[family-name:var(--font-geist)] text-base font-normal leading-[1.5] text-ink-secondary",
+        "site-body text-ink-secondary",
         className,
       )}
     >
@@ -44,9 +44,9 @@ function Body({ children, className }: { children: ReactNode; className?: string
 
 function Subhead({ children }: { children: ReactNode }) {
   return (
-    <h5 className="font-[family-name:var(--font-geist)] text-lg font-bold leading-snug text-ink-secondary">
+    <h3 className="site-subheading text-ink">
       {children}
-    </h5>
+    </h3>
   );
 }
 
@@ -78,7 +78,7 @@ function TechTerm({ term, blurb }: { term: string; blurb: string }) {
     <span className="group/tech relative inline-block">
       <button
         type="button"
-        className="cursor-help font-[family-name:var(--font-geist)] text-base font-semibold leading-[1.5] text-ink underline decoration-ink/[0.55] underline-offset-[3px] transition-colors hover:text-ink hover:decoration-ink/[0.88] focus:outline-none focus-visible:text-ink focus-visible:decoration-ink"
+        className="site-body cursor-help font-semibold text-ink underline decoration-ink/[0.55] underline-offset-[3px] transition-colors hover:text-ink hover:decoration-ink/[0.88] focus:outline-none focus-visible:text-ink focus-visible:decoration-ink"
         aria-describedby={`tech-${term.replace(/\s+/g, "-").toLowerCase()}`}
       >
         {term}
@@ -88,10 +88,10 @@ function TechTerm({ term, blurb }: { term: string; blurb: string }) {
         role="tooltip"
         className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 w-[min(240px,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-ink/[0.08] bg-paper-raised px-3 py-2.5 text-left opacity-0 shadow-e2 transition-opacity duration-150 group-hover/tech:opacity-100 group-focus-within/tech:opacity-100"
       >
-        <span className="block font-[family-name:var(--font-geist-mono)] text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+        <span className="site-label block text-ink-muted">
           {term}
         </span>
-        <span className="mt-1 block font-[family-name:var(--font-geist)] text-[12px] leading-snug text-ink-secondary">
+        <span className="type-caption mt-1 block text-ink-secondary">
           {blurb}
         </span>
       </span>
@@ -102,7 +102,7 @@ function TechTerm({ term, blurb }: { term: string; blurb: string }) {
 export function SavorWafflingBody() {
   return (
     <div className={cn(SAVOR_COLUMN, "flex flex-col gap-12 pt-16 pb-24 md:pt-24 md:pb-28")}>
-      <h1 className="w-full min-w-0 font-[family-name:var(--font-geist)] text-[40px] font-bold leading-normal text-ink-secondary">
+      <h1 className="type-h1 w-full min-w-0 text-ink">
         {SAVOR_TITLE}
       </h1>
 
@@ -119,7 +119,7 @@ export function SavorWafflingBody() {
             aria-label="Savor trailer: phone video of Rodin's Mighty Hand becomes a 3D Gaussian splat"
           />
         </div>
-        <p className="font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
+        <p className="site-gallery-caption text-ink-muted">
           Demo video
         </p>
       </div>
@@ -244,7 +244,7 @@ export function SavorWafflingBody() {
 
         <div className="flex flex-col gap-3">
           <Subhead>What you need first</Subhead>
-          <ul className="list-disc space-y-2 pl-5 font-[family-name:var(--font-geist)] text-base leading-[1.5] text-ink-secondary">
+          <ul className="site-body list-disc space-y-2 pl-5 text-ink-secondary">
             <li>A Mac with Apple Silicon (M1 or later).</li>
             <li>A recent version of macOS.</li>
             <li>Xcode from the App Store.</li>
@@ -287,7 +287,7 @@ export function SavorWafflingBody() {
 
         <div className="flex flex-col gap-3">
           <Subhead>Using it</Subhead>
-          <ul className="list-disc space-y-2 pl-5 font-[family-name:var(--font-geist)] text-base leading-[1.5] text-ink-secondary">
+          <ul className="site-body list-disc space-y-2 pl-5 text-ink-secondary">
             <li>
               Drag a video onto the window, or click New capture to pick one.
             </li>
@@ -334,7 +334,7 @@ export function SavorWafflingBody() {
             className="object-cover"
           />
         </div>
-        <p className="text-center font-[family-name:var(--font-geist-mono)] text-xs font-normal leading-[1.4] text-ink-muted">
+        <p className="site-gallery-caption text-center text-ink-muted">
           Acrylic painting of Rodin&apos;s <em>Mighty Hand</em>, by me.
         </p>
       </section>

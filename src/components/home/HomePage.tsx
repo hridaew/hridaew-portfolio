@@ -25,7 +25,7 @@ import { RevealOnLoad } from "./RevealOnLoad";
 import { useHomeLayoutMode } from "@/hooks/useHomeLayoutMode";
 import type { HomeLayoutMode } from "@/lib/home-layout";
 
-export const SITE_VERSION = "v3.12.1";
+export const SITE_VERSION = "v3.13.0";
 
 const WafflingsSection = dynamic(
   () => import("./WafflingsSection").then((m) => m.WafflingsSection),
