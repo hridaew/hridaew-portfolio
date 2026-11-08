@@ -4,7 +4,7 @@ import { MemoryCareCaseStudyBody } from "@/components/memory-care/MemoryCareCase
 
 export default function MemoryCareSheet() {
   return (
-    <div className="site-editorial relative w-full overflow-x-hidden bg-background font-sans text-foreground antialiased selection:bg-ink/[0.05] selection:text-ink">
+    <div className="site-editorial relative w-full overflow-x-hidden bg-paper font-sans text-ink antialiased selection:bg-ink/[0.05] selection:text-ink">
       <MemoryCareCaseStudyBody />
     </div>
   );

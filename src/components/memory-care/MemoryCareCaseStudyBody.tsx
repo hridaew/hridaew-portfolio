@@ -215,7 +215,7 @@ export function MemoryCareCaseStudyBody() {
 
                     {/* Validation */}
                     <Reveal>
-                        <div className="bg-card rounded-2xl border border-ink/[0.08] p-8 md:p-10">
+                        <div className="bg-paper-raised rounded-2xl border border-ink/[0.08] p-8 md:p-10">
                             <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                 The Validation
                             </span>
@@ -335,7 +335,7 @@ export function MemoryCareCaseStudyBody() {
                     {/* Pivot / Fix / Result — stacked cards */}
                     <Reveal>
                         <div className="case-study-grid-gap flex flex-col">
-                            <div className="bg-card rounded-xl border border-ink/[0.08] p-6">
+                            <div className="bg-paper-raised rounded-xl border border-ink/[0.08] p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     The Pivot
                                 </span>
@@ -343,7 +343,7 @@ export function MemoryCareCaseStudyBody() {
                                     Initial tests with a video game (Assetto Corsa) failed because it was fundamentally a commercial title, not something purpose-built for our audience. It had no guardrails, which led to confusion, and it was cumbersome to set up.
                                 </p>
                             </div>
-                            <div className="bg-card rounded-xl border border-ink/[0.08] p-6">
+                            <div className="bg-paper-raised rounded-xl border border-ink/[0.08] p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     The Fix
                                 </span>
@@ -351,7 +351,7 @@ export function MemoryCareCaseStudyBody() {
                                     I pivoted to &ldquo;Simulated Agency.&rdquo; We synced high-quality POV driving footage with the Logitech force-feedback wheel and my haptic footrest.
                                 </p>
                             </div>
-                            <div className="bg-card rounded-xl border border-ink/[0.08] p-6">
+                            <div className="bg-paper-raised rounded-xl border border-ink/[0.08] p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     The Result
                                 </span>
@@ -413,7 +413,7 @@ export function MemoryCareCaseStudyBody() {
                     {/* Detail cards — stacked */}
                     <Reveal>
                         <div className="case-study-grid-gap case-study-block-gap flex w-full min-w-0 flex-col">
-                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-card p-6">
+                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-paper-raised p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     Reducing Cognitive Load
                                 </span>
@@ -429,7 +429,7 @@ export function MemoryCareCaseStudyBody() {
                                     I removed extraneous widgets and filtered the Information Architecture to prioritize &ldquo;Engagement Tips&rdquo; and simple session controls.
                                 </p>
                             </div>
-                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-card p-6">
+                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-paper-raised p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     Personalization
                                 </span>
@@ -445,7 +445,7 @@ export function MemoryCareCaseStudyBody() {
                                     I introduced &ldquo;Quick Add&rdquo; features for improvised content (e.g., specific YouTube requests) and recommended playlists based on resident history.
                                 </p>
                             </div>
-                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-card p-6">
+                            <div className="w-full min-w-0 rounded-xl border border-ink/[0.08] bg-paper-raised p-6">
                                 <span className="site-label text-ink-subtle case-study-heading-trail-mb block text-left">
                                     Contextual Notes
                                 </span>
@@ -524,7 +524,7 @@ export function MemoryCareCaseStudyBody() {
                 <section className={cn(mcesShell, "case-study-section-y-b")}>
                     <Reveal>
                         <div className="case-study-grid-gap-wide flex w-full min-w-0 flex-col">
-                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-ink/[0.08] bg-card p-8 md:p-10">
+                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-ink/[0.08] bg-paper-raised p-8 md:p-10">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-ink-subtle">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
@@ -535,7 +535,7 @@ export function MemoryCareCaseStudyBody() {
                                     Manager of Life Enrichment, SFCJL
                                 </p>
                             </div>
-                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-ink/[0.08] bg-card p-8 md:p-10">
+                            <div className="case-study-prose-stack flex w-full min-w-0 flex-col rounded-2xl border border-ink/[0.08] bg-paper-raised p-8 md:p-10">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-ink-subtle">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
@@ -555,7 +555,7 @@ export function MemoryCareCaseStudyBody() {
                 ═══════════════════════════════════════════════ */}
                 <section className={cn(mcesShell, "pb-20 md:pb-28")}>
                     <Reveal>
-                        <div className="bg-card rounded-2xl border border-ink/[0.08] p-8 md:p-10">
+                        <div className="bg-paper-raised rounded-2xl border border-ink/[0.08] p-8 md:p-10">
                             <h3 className="site-label case-study-panel-heading-mb text-left text-ink-subtle">
                                 Recognition
                             </h3>
@@ -614,7 +614,7 @@ export function MemoryCareCaseStudyBody() {
                 ═══════════════════════════════════════════════ */}
                 <section className={cn(mcesShell, "pb-20 md:pb-28")}>
                     <Reveal>
-                        <div className="rounded-2xl border border-ink/[0.08] bg-card p-8 md:p-10">
+                        <div className="rounded-2xl border border-ink/[0.08] bg-paper-raised p-8 md:p-10">
                             <p className="site-body text-left text-ink-muted italic">
                                 Side Note: The haptic footrest prototype was so engaging to use for media consumption that I actually built a second unit to keep for myself.
                             </p>

@@ -11,7 +11,7 @@ export default function MemoryCarePage() {
     return (
         <>
             <CaseStudyAchievementMount id="memory-care" />
-            <div className="site-editorial relative min-h-screen w-full overflow-x-hidden bg-background text-foreground selection:bg-ink/[0.05] selection:text-ink font-sans antialiased">
+            <div className="site-editorial relative min-h-screen w-full overflow-x-hidden bg-paper text-ink selection:bg-ink/[0.05] selection:text-ink font-sans antialiased">
                 <StickySidebar sections={MEMORY_CARE_SECTIONS} />
 
                 <MemoryCareCaseStudyBody />

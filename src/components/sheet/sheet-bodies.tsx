@@ -72,7 +72,7 @@ const LOADERS: Record<string, () => Promise<SheetBody>> = {
     );
     return function MemoryCareSheetBody() {
       return (
-        <div className="site-editorial relative w-full overflow-x-clip bg-background font-sans text-foreground antialiased selection:bg-ink/[0.05] selection:text-ink">
+        <div className="site-editorial relative w-full overflow-x-clip bg-paper font-sans text-ink antialiased selection:bg-ink/[0.05] selection:text-ink">
           <MemoryCareCaseStudyBody />
         </div>
       );

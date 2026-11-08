@@ -18,7 +18,7 @@ const CAT_PROTOTYPE_IMAGES = [
 
 /** Dark editorial chrome — matches MCES case study + home tokens. */
 const SLIDE_SHELL =
-  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-ink/[0.08] bg-card shadow-e3";
+  "relative aspect-[4/3] w-[min(280px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-ink/[0.08] bg-paper-raised shadow-e3";
 
 interface CatPrototypeCarouselProps {
   className?: string;
