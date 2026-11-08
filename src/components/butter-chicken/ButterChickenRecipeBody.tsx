@@ -133,7 +133,7 @@ function IngredientRow({
         </p>
       </div>
       {note && (
-        <p className="px-4 pb-1 text-right font-[family-name:var(--font-geist-mono)] text-[11px] font-normal leading-[1.4] text-ink-subtle italic">
+        <p className="px-4 pb-1 text-right type-caption text-ink-subtle">
           {note}
         </p>
       )}
@@ -154,7 +154,7 @@ function IngredientCard({
 }) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <p className="font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-[0.1em] text-ink-subtle">
+      <p className="site-label text-ink-subtle">
         {label}
       </p>
       <div className="relative flex w-full flex-col rounded-xl bg-ink/[0.02] py-1.5">

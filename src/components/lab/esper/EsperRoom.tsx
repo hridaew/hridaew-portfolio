@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useAchievements } from "@/components/achievements/AchievementProvider";
 import { useSheetNav } from "@/components/sheet/SheetNav";
+import { getUserId } from "@/lib/notes-client";
 import { cn } from "@/lib/utils";
+import { GuestbookComposer, type Draft, type GuestNote, type PaperStart } from "./Guestbook";
 import { EsperInterface } from "./EsperInterface";
 import { STATIONS } from "./stations";
 import { HoverTag } from "./HoverTag";
 import { EsperLogo } from "./EsperLogo";
-import dynamic from "next/dynamic";
-
-// The guestbook from the old home: desktop only (it hides itself on phones), its own board for the room.
-const StickyNotes = dynamic(() => import("@/components/StickyNotes").then((m) => m.StickyNotes), { ssr: false });
 
 /** The room (three/EsperEngine): commands in by name, events out on window "esper". */
 type Room = { send: (method: string, value?: string) => void; dispose: () => void };
@@ -32,6 +32,16 @@ export function EsperRoom() {
   const [active, setActive] = useState<string | null>(null);
   // Dark by default; ?theme=light for the light room.
   const [dark, setDark] = useState(true);
+  // The guestbook: everyone's notes, the composer, and the note that just landed.
+  const { unlock } = useAchievements();
+  const [notes, setNotes] = useState<GuestNote[]>([]);
+  const [composing, setComposing] = useState(false);
+  const [launched, setLaunched] = useState(false);
+  const [highlight, setHighlight] = useState<string | null>(null);
+  const [overBoard, setOverBoard] = useState(false);
+  // While a note is on its way in, the window waits: the moment belongs to the board.
+  const [pinning, setPinning] = useState(false);
+  const pop = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -95,6 +105,19 @@ export function EsperRoom() {
         setActive(null);
       } else if (event === "hover") {
         setHovering(payload);
+      } else if (event === "guestbook-launch") {
+        setLaunched(true);
+      } else if (event === "guestbook-pop") {
+        const a = pop.current;
+        if (a) {
+          a.currentTime = 0;
+          a.play().catch(() => {});
+        }
+      } else if (event === "guestbook-pinned") {
+        setHighlight(payload);
+        setPinning(false);
+      } else if (event === "board-hover") {
+        setOverBoard(payload === "1");
       } else if (event === "enhance" && payload) {
         setLeaving(true);
         window.setTimeout(() => router.push(payload), 800);
@@ -155,6 +178,84 @@ export function EsperRoom() {
     return () => document.documentElement.removeAttribute("data-esper-dark");
   }, [dark]);
 
+  // The pin's pop: loaded now, so it can play the moment the note lands.
+  useEffect(() => {
+    const a = new Audio("/assets/home/hero-sketch-pop.mp3");
+    a.preload = "auto";
+    a.volume = 0.45;
+    a.load();
+    pop.current = a;
+    return () => {
+      pop.current = null;
+    };
+  }, []);
+
+  // Everyone's notes, once the room is up.
+  useEffect(() => {
+    if (!ready) return;
+    let gone = false;
+    fetch(`/api/sticky-notes?page=room&scope=public&userId=${encodeURIComponent(getUserId())}`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((list: GuestNote[]) => {
+        if (gone || !Array.isArray(list)) return;
+        setNotes(list);
+        roomRef.current?.send("GuestbookNotes", JSON.stringify(list));
+      })
+      .catch(() => {});
+    return () => {
+      gone = true;
+    };
+  }, [ready]);
+
+  const sendNote = useCallback(
+    (draft: Draft, start: PaperStart) => {
+      const userId = getUserId();
+      const temp: GuestNote = {
+        id: `pending-${Date.now().toString(36)}`,
+        message: draft.message,
+        ...(draft.name ? { name: draft.name } : {}),
+        color: draft.color,
+        rotation: Math.round((Math.random() - 0.5) * 10),
+        createdAt: new Date().toISOString(),
+        mine: true,
+      };
+      setLaunched(false);
+      setPinning(true);
+      setNotes((n) => [temp, ...n]);
+      roomRef.current?.send("GuestbookPin", JSON.stringify({ note: temp, start }));
+      fetch("/api/sticky-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: draft.message, name: draft.name || undefined, color: draft.color, rotation: temp.rotation, userId, page: "room" }),
+      })
+        .then(async (r) => {
+          if (!r.ok) throw new Error(r.status === 429 ? "Too many notes for now. Try again later." : "Your note didn’t save. Try again?");
+          const saved = (await r.json()) as GuestNote;
+          // The board keeps the pending id until the next full load; the list takes the real one (for deleting).
+          setNotes((n) => n.map((x) => (x.id === temp.id ? { ...saved, mine: true } : x)));
+          setHighlight((h) => (h === temp.id ? saved.id : h));
+          unlock("sticky-note");
+        })
+        .catch((err: Error) => {
+          setPinning(false);
+          setNotes((n) => n.filter((x) => x.id !== temp.id));
+          roomRef.current?.send("GuestbookUnpin", temp.id);
+          toast.error(err.message);
+        });
+    },
+    [unlock],
+  );
+
+  const deleteNote = useCallback((id: string) => {
+    if (id.startsWith("pending-")) return;
+    setNotes((all) => {
+      const next = all.filter((n) => n.id !== id);
+      roomRef.current?.send("GuestbookNotes", JSON.stringify(next));
+      return next;
+    });
+    fetch(`/api/sticky-notes?id=${encodeURIComponent(id)}&userId=${encodeURIComponent(getUserId())}`, { method: "DELETE" }).catch(() => {});
+  }, []);
+
   // The room rests while a case study sheet is over it.
   useEffect(() => {
     roomRef.current?.send("SetPaused", activeKey ? "1" : "0");
@@ -166,7 +267,8 @@ export function EsperRoom() {
     send("Goto", id);
   };
   const back = () => {
-    setActive(null);
+    // From the guestbook, Back steps out to About (the room says so when it gets there).
+    if (active !== "guestbook") setActive(null);
     send("Back");
   };
   return (
@@ -179,7 +281,7 @@ export function EsperRoom() {
         className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity duration-[900ms] ease-out active:cursor-grabbing"
         style={{
           opacity: ready && !leaving && !failed ? 1 : 0,
-          cursor: hovering ? "pointer" : undefined,
+          cursor: hovering || overBoard ? "pointer" : undefined,
           touchAction: "none",
         }}
       />
@@ -195,10 +297,11 @@ export function EsperRoom() {
       {!leaving && !failed && (
         <EsperInterface
           ready={ready}
-          active={active}
+          active={pinning && active === "guestbook" ? null : active}
           hovered={hovering}
           onSelect={goto}
           onBack={back}
+          guestbook={{ notes, highlight, onDelete: deleteNote, onCompose: () => setComposing(true) }}
           onOpen={(id) => {
             // The case study slides in over the room (the site's own sheet); narrow screens go to the page.
             const href = STATIONS.find((st) => st.id === id)?.href;
@@ -207,7 +310,7 @@ export function EsperRoom() {
         />
       )}
 
-      {ready && !failed && !leaving && <StickyNotes page="room" glass dockClassName="fixed bottom-7 right-8 z-[110]" />}
+      {ready && !failed && !leaving && <GuestbookComposer open={composing} onOpenChange={setComposing} onSend={sendNote} launched={launched} />}
 
       {failed && (
         // No 3D (no WebGL, or the scene didn't load): the work is still one click away.

@@ -81,6 +81,11 @@ def main():
             files.add(model_path(it["src"]))
         if it.get("kind") == "splat" and it.get("src"):
             files.add("Esper/" + it["src"])
+        # A person wearing their own head (Hridae), and a record's label art.
+        if it.get("kind") == "person" and (it.get("head") or {}).get("src"):
+            files.add(model_path(it["head"]["src"]))
+        if it.get("kind") == "turntable":
+            files.add("Esper/" + (it.get("src") or "Content/Albums/motm2_front.jpg"))
         d = it.get("display") or {}
         for src in [d.get("src")] + list(d.get("active") or []):
             if src:

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Permanent_Marker } from "next/font/google";
 import { GeistSerifRegular } from "geist/font/serif/regular";
 import "./globals.css";
 import { PageTransitionProvider } from "@/components/PageTransition";
@@ -25,6 +25,15 @@ const geistMono = Geist_Mono({
   // 700 unused on mono in practice; extrabold covers emphasis.
   weight: ["400", "500", "800"],
   display: "swap",
+});
+
+// Handwriting on the Visitor Board's post-its. Loaded when a note is drawn, not preloaded with the page.
+const marker = Permanent_Marker({
+  variable: "--font-marker",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -73,64 +82,8 @@ export default function RootLayout({
         <BrowserEngineScript />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${GeistSerifRegular.variable} type-body antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistSerifRegular.variable} ${marker.variable} type-body antialiased`}
       >
-        {/* SVG defs for `html.theme-2004` home CRT (`filter: url(#…)` in globals.css). */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={0}
-          height={0}
-          aria-hidden
-          style={{ position: "absolute", overflow: "hidden", clipPath: "inset(50%)" }}
-        >
-          <defs>
-            <filter
-              id="cheat-crt-2004"
-              x="-12%"
-              y="-12%"
-              width="124%"
-              height="124%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.004 0.01"
-                numOctaves={2}
-                stitchTiles="stitch"
-                result="noise"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="noise"
-                scale={5}
-                xChannelSelector="R"
-                yChannelSelector="G"
-                result="disp"
-              />
-              <feGaussianBlur in="disp" stdDeviation={0.15} result="blur" />
-              <feColorMatrix
-                in="blur"
-                type="matrix"
-                values="1.06 0 0 0 0  0 1.04 0 0 0  0 0 1.1 0 0  0 0 0 1 0"
-              />
-            </filter>
-            <filter
-              id="cheat-crt-2004-soft"
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur in="SourceGraphic" stdDeviation={0.12} result="b" />
-              <feColorMatrix
-                in="b"
-                type="matrix"
-                values="1.03 0 0 0 0  0 1.02 0 0 0  0 0 1.05 0 0  0 0 0 1 0"
-              />
-            </filter>
-          </defs>
-        </svg>
         <JsonLd data={rootGraphJsonLd()} />
         <AchievementProvider>
           <SheetNavProvider>

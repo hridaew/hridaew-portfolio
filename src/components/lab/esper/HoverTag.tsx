@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { STATIONS } from "./stations";
+import { BOARD, STATIONS } from "./stations";
 
 /**
  * The name of the room under the pointer, riding just below and right of the cursor. Position is written
@@ -20,7 +20,7 @@ export function HoverTag({ id }: { id: string }) {
     window.addEventListener("pointermove", move, { passive: true });
     return () => window.removeEventListener("pointermove", move);
   }, []);
-  const title = STATIONS.find((s) => s.id === shown)?.title ?? "";
+  const title = [...STATIONS, BOARD].find((s) => s.id === shown)?.title ?? "";
   return (
     <div ref={ref} aria-hidden className="pointer-events-none fixed left-0 top-0 z-30 will-change-transform">
       <span

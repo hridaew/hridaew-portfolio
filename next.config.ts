@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/about", destination: "/", permanent: true },
       { source: "/classic", destination: "/", permanent: false },
+      { source: "/lab/esper", destination: "/", permanent: false },
       { source: "/lab/one-splat", destination: "/", permanent: false },
       { source: "/lab/one-splat-open", destination: "/", permanent: false },
       { source: "/domis/flow-reference", destination: "/domis", permanent: false },

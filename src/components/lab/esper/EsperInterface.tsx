@@ -11,7 +11,9 @@ import { useSheetNav } from "@/components/sheet/SheetNav";
 import { homepageProjects } from "@/data/homepage-projects";
 import { CV_HREF, LINKEDIN_HREF } from "@/lib/site-identity";
 import { cn } from "@/lib/utils";
-import { STATIONS, type Station } from "./stations";
+import { glass, press, focusRing } from "./chrome";
+import { GuestbookList, type GuestNote } from "./Guestbook";
+import { BOARD, STATIONS, type Station } from "./stations";
 
 type Props = {
   ready: boolean;
@@ -21,7 +23,9 @@ type Props = {
   onBack: () => void;
   /** Opens the case study with the camera move into the room; without it the button is a plain link. */
   onOpen?: (id: string) => void;
+  guestbook: { notes: GuestNote[]; highlight: string | null; onDelete: (id: string) => void; onCompose: () => void };
 };
+
 
 /** The room that is also About: the bio card lives here. */
 const ABOUT_ID = "taste";
@@ -31,12 +35,8 @@ const ABOUT_ID = "taste";
  * and a glass window for whatever the camera is looking at. Set in Geist.
  */
 const geist = "font-[family-name:var(--font-geist)]";
-const glass =
-  "bg-[rgba(255,255,255,0.62)] backdrop-blur-[40px] backdrop-saturate-[1.7] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(255,255,255,0.4),0_24px_60px_-24px_rgba(40,36,30,0.35)]";
-const press = "transition-[background-color,color,transform] duration-200 ease-out active:scale-[0.97]";
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50";
 
-export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpen }: Props) {
+export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpen, guestbook }: Props) {
   const { openSheet, prefetchSheet } = useSheetNav();
   // Warm the case study (route and sheet content) as soon as a room is hovered or its card shows, so "Read the
   // case study" opens at once instead of waiting on the download.
@@ -47,7 +47,7 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
       for (const l of st?.links ?? []) prefetchSheet(l.href);
     }
   }, [hovered, active, prefetchSheet]);
-  const station = STATIONS.find((s) => s.id === active) ?? null;
+  const station = STATIONS.find((s) => s.id === active) ?? (active === BOARD.id ? BOARD : null);
   // The last place stays on the card while it fades out.
   const [shown, setShown] = useState(station);
   if (station && station !== shown) setShown(station);
@@ -72,11 +72,11 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
           station && "max-md:pointer-events-none max-md:opacity-0",
         )}
       >
-        <h1 className="site-subheading esper-name">Hridae Walia</h1>
+        <h1 className="site-chapter-heading">Hridae Walia</h1>
         <p className="site-body mt-2 max-w-[min(420px,calc(100vw-48px))] text-ink-secondary">
-          I am a Product Designer obsessed with making, and I have 6 years of experience designing for novel
-          interaction models. I focus on the user and learn by making, whether on the canvas, in code, or the
-          physical world.
+          I’m a Product Designer obsessed with making, and I have 6 years of experience designing for interaction
+          models that barely exist yet. I focus on the user and learn by making, whether on the canvas, in code, or
+          the physical world.
         </p>
         {/* The same strip as the home page's bio card. */}
         <div className="pointer-events-auto mt-3 flex items-center gap-4">
@@ -104,7 +104,8 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
       <nav aria-label="Work" className="pointer-events-auto absolute inset-x-0 bottom-[max(36px,env(safe-area-inset-bottom))] flex justify-center px-2 md:bottom-7 md:px-4">
         <div className={cn("esper-pill scrollbar-hide flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full p-1 min-[385px]:p-1.5 transition-opacity duration-700 ease-out", ready ? "opacity-100" : "opacity-0", glass)}>
           {STATIONS.map((s) => {
-            const isActive = s.id === active;
+            // The guestbook is a corner of About.
+            const isActive = s.id === active || (s.id === ABOUT_ID && active === BOARD.id);
             return (
               <button
                 key={s.id}
@@ -153,9 +154,18 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
             station ? "scale-100 opacity-100" : "scale-[0.97] opacity-0",
           )}
         >
-        <div className={cn("scrollbar-hide min-h-0 overflow-y-auto overflow-x-hidden rounded-[32px] px-5 pb-6 pt-5 md:px-7 md:pb-7 md:pt-6", about && "p-6 md:p-8")}>
+        <div className={cn("scrollbar-hide min-h-0 overflow-y-auto overflow-x-hidden rounded-[32px] px-5 pb-6 pt-5 md:px-7 md:pb-7 md:pt-6")}>
           {shown && about && <AboutCard onClose={onBack} />}
-          {shown && !about && (
+          {shown && shown.id === BOARD.id && (
+            <div key="guestbook" className="esper-dossier-in">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="site-chapter-heading">{BOARD.title}</h2>
+                <CloseButton onClick={onBack} />
+              </div>
+              <GuestbookList {...guestbook} />
+            </div>
+          )}
+          {shown && !about && shown.id !== BOARD.id && (
             <div key={shown.id} className="esper-dossier-in">
               <div className="flex items-center justify-between gap-4">
                 <h2 className="site-chapter-heading">{shown.title}</h2>
@@ -182,8 +192,8 @@ export function EsperInterface({ ready, active, hovered, onSelect, onBack, onOpe
                         }}
                         className={cn("group flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 hover:bg-black/[0.08]", press, focusRing)}>
                         <span>
-                          <span className="site-subheading block">{l.title}</span>
-                          <span className="type-caption block text-black/60">{l.line}</span>
+                          <span className="type-headline block">{l.title}</span>
+                          <span className="type-caption mt-0.5 block text-black/60">{l.line}</span>
                         </span>
                         <ArrowIcon />
                       </Link>
@@ -272,7 +282,6 @@ function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: str
   );
 }
 
-/** Off hours is also About: the home page's bio card, larger, in the glass of the room's window. */
 /**
  * Off hours is also About: the home page's bio card, larger, in the room's glass window. The name, title and links
  * are already on the page (top left), so the card is just the story: bio, experience, education, the top threes.
@@ -280,11 +289,13 @@ function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: str
 function AboutCard({ onClose }: { onClose: () => void }) {
   return (
     <div className="esper-dossier-in">
-      <div className="mb-3 flex justify-end">
+      {/* Titled and closed like every other window. */}
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="site-chapter-heading">About me</h2>
         <CloseButton onClick={onClose} />
       </div>
-      {/* The body opens with a divider meant to sit under the name; with no name above, it goes. */}
-      <div className="[&>div>div:first-child]:hidden [&>div>div:nth-child(2)]:pt-0">
+      {/* The body opens with a divider meant to sit under the name; the title row stands in for it. */}
+      <div className="mt-5 [&>div>div:first-child]:hidden [&>div>div:nth-child(2)]:pt-0">
         <HeroCardExpandedBody />
       </div>
     </div>

@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAchievements } from "@/components/achievements/AchievementProvider";
+import { NOTE_COLORS, getUserId } from "@/lib/notes-client";
 
 interface StickyNote {
     id: string;
@@ -25,13 +26,7 @@ interface StickyNote {
     page: string;
 }
 
-const COLORS = [
-    "#FFF9C4",
-    "#F8BBD0",
-    "#C8E6C9",
-    "#BBDEFB",
-    "#E1BEE7",
-];
+const COLORS: readonly string[] = NOTE_COLORS;
 
 const NOTE_W = 168;
 const NOTE_H = 168;
@@ -116,35 +111,10 @@ const POSTIT_SPRING = {
     mass: 0.85,
 };
 
-/** UUID for anonymous user id. `randomUUID` is omitted on non-secure origins (e.g. http:// LAN). */
-function newAnonymousId(): string {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-        return crypto.randomUUID();
-    }
-    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-        const bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-        bytes[6] = (bytes[6] & 0x0f) | 0x40;
-        bytes[8] = (bytes[8] & 0x3f) | 0x80;
-        const h = [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
-        return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
-    }
-    return `u_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-}
-
 function newNoteId(): string {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-function getUserId(): string {
-    const key = "portfolio-user-id";
-    let id = localStorage.getItem(key);
-    if (!id) {
-        id = newAnonymousId();
-        localStorage.setItem(key, id);
-    }
-    return id;
-}
 
 type DraftNote = Omit<StickyNote, "x" | "y" | "createdAt">;
 
@@ -165,7 +135,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
     const [message, setMessage] = useState("");
     const [email, setEmail] = useState("");
     const [honeypot, setHoneypot] = useState("");
-    const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+    const [selectedColor, setSelectedColor] = useState<string>(COLORS[0]);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [placingNote, setPlacingNote] = useState<DraftNote | null>(null);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -178,7 +148,8 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
     const openContentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const phaseRef = useRef<PanelPhase>("closed");
     const userIdRef = useRef<string>("");
-    const isAdminRef = useRef(false);
+    // The owner's view: ?admin=<NOTES_ADMIN_TOKEN>. The server checks the secret; the page only passes it on.
+    const adminRef = useRef("");
     const followX = useMotionValue(0);
     const followY = useMotionValue(0);
     const reduceMotion = useReducedMotion();
@@ -220,10 +191,10 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
 
     useEffect(() => {
         userIdRef.current = getUserId();
-        isAdminRef.current = new URLSearchParams(window.location.search).get("admin") === "hridae";
+        adminRef.current = new URLSearchParams(window.location.search).get("admin") ?? "";
 
         const params = new URLSearchParams({ userId: userIdRef.current });
-        if (isAdminRef.current) params.set("admin", "hridae");
+        if (adminRef.current) params.set("admin", adminRef.current);
 
         fetch(`/api/sticky-notes?${params.toString()}`)
             .then((r) => r.json())
@@ -429,7 +400,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
         setNotes((prev) => prev.filter((n) => n.id !== noteId));
 
         const params = new URLSearchParams({ id: noteId, userId: userIdRef.current });
-        if (isAdminRef.current) params.set("admin", "hridae");
+        if (adminRef.current) params.set("admin", adminRef.current);
 
         fetch(`/api/sticky-notes?${params.toString()}`, {
             method: "DELETE",
@@ -556,7 +527,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
                                             className={cn(
                                                 "rounded-full transition-opacity disabled:cursor-not-allowed disabled:opacity-35",
                                                 glass
-                                                    ? "bg-ink px-4 py-2 text-[13.5px] font-semibold text-paper hover:opacity-85"
+                                                    ? "type-body-medium bg-ink px-4 py-2 font-semibold text-paper hover:opacity-85"
                                                     : "border border-ink/[0.12] bg-white/90 px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-wide text-[#141416] hover:bg-paper-raised"
                                             )}
                                         >
@@ -628,7 +599,7 @@ export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 ri
                     className="fixed inset-0 z-[150] cursor-none"
                     onClick={handlePlacement}
                 >
-                    <div className={cn("pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full px-4 py-2 text-left text-ink", glass ? cn("esper-pill font-[family-name:var(--font-geist)] text-[13.5px] font-medium", STRIP_GLASS) : "border border-ink/[0.08] bg-paper-raised/[0.85] shadow-e3 backdrop-blur-[54.45px] type-body")}>
+                    <div className={cn("pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full px-4 py-2 text-left text-ink", glass ? cn("esper-pill type-body-medium", STRIP_GLASS) : "border border-ink/[0.08] bg-paper-raised/[0.85] shadow-e3 backdrop-blur-[54.45px] type-body")}>
                         Click to stick · Esc to cancel
                     </div>
 

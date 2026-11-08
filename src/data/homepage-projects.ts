@@ -35,7 +35,7 @@ export const homepageProjects: HomepageProject[] = [
     slug: "domis",
     title: "Shipping Domis, a home maintenance app that learns your home as you use it",
     description:
-      "Building Domis from zero, including how it learns a house from an address, a photo, and an inspection report. Making the most of the smallest action a user will take.",
+      "Domis is a consumer app that helps people take care of their homes. I built it from zero, including how it learns a house from an address, a photo, and an inspection report, making the most of the smallest action a user will take.",
     bgColor: "#ff5a5b",
     orbColor1: "rgba(211,153,153,0.6)",
     orbColor2: "rgba(255,37,37,0.8)",
@@ -72,7 +72,7 @@ export const homepageProjects: HomepageProject[] = [
     slug: "virdio",
     title: "Designing an AR fitness platform across every screen",
     description:
-      "Turning Virdio\u2019s machine vision-based AR technology into a consumer facing fitness platform via lightweight mobile and desktop apps.",
+      "Turning Virdio\u2019s machine vision-based AR technology into an AR home fitness app for consumers, via lightweight mobile and desktop apps.",
     bgColor: "#171528",
     orbColor1: "rgba(204,186,255,0.6)",
     orbColor2: "rgba(27,25,33,0.8)",

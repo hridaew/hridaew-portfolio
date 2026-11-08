@@ -7,7 +7,7 @@
 - **3D**: Three.js (available, not yet deeply integrated)
 - **Styling**: Tailwind CSS v4 via @tailwindcss/postcss
 - **Scrolling**: Lenis for smooth scroll
-- **Fonts**: Bricolage Grotesque at 700 only (display/headings), DM Sans (body/UI)
+- **Fonts**: Geist Serif Regular (display, titles), Geist (body/UI), Geist Mono (labels)
 - **Utilities**: clsx + tailwind-merge via `cn()` helper in `src/lib/utils.ts`
 
 ## Architecture Guidelines
@@ -21,9 +21,8 @@
 ## Design System
 
 - **Color Tokens**: CSS custom properties defined in `globals.css` (light/dark mode)
-- **Typography**: `font-[family-name:var(--font-display)] font-bold` for display/H1/H2 and editorial headings (Bricolage is loaded at weight 700 only), `font-[family-name:var(--font-dm-sans)]` for body
+- **Typography**: Use the scale classes in `globals.css`, never ad-hoc sizes: `type-display`/`type-h1`/`site-chapter-heading` (serif titles; window and section titles are all `site-chapter-heading`), `site-subheading` (case-study subheads), `type-headline` (list-item titles in cards and windows), `site-body`/`type-body-lg` (text), `type-body-medium` (13px chrome: pills, buttons), `type-caption` and `site-label` (12px). Use curly apostrophes and en dashes for ranges (2024–now).
 - **Case Study Pages**: Each case study has a dedicated page in `src/app/{project}/page.tsx` with custom layouts and project-specific components
-- **Editorial Layouts**: Use `EditorialLayout` component with `width` prop ("text", "breakout", "full-width")
 
 ## Boris Guide Principles
 
@@ -54,7 +53,7 @@
 
 ## Deployment Checklist
 
-- **Build number (MANDATORY on push)**: Bump `SITE_VERSION` in `src/components/home/HomePage.tsx` only when preparing to push/deploy—not on every local edit or agent turn. Increment patch for fixes, minor for features. Never push without bumping.
+- **Build number (MANDATORY on push)**: Bump `SITE_VERSION` in `src/lib/site-identity.ts` only when preparing to push/deploy—not on every local edit or agent turn. Increment patch for fixes, minor for features. Never push without bumping.
 - **ESPER publish (MANDATORY on push)**: The home page is the ESPER room. Production reads `public/esper/`, so run `python esper-unity/Tools/publish_web.py` (copies, slims and Meshopt-compresses the room's assets) before pushing.
 - **Deploy command**: `vercel --prod --yes` from project root
 - **Always commit + push before deploying** so git and Vercel stay in sync

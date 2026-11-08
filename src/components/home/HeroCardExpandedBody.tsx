@@ -32,14 +32,14 @@ function AboutSection() {
           This is me at valve software :D
         </p>
       </div>
-      <div className="site-body min-w-0 max-w-[432px] flex-1 text-ink-secondary whitespace-pre-wrap">
-        <p className="mb-0 leading-6">
-          {`Being the son of an engineer and an artist it would be easy to guess where my interests would lie, I'm an Interaction/Product/Experience/Everything Designer because I love making things that work and get a response out of people — whether it be from sensory stimuli or something as simple as getting a task done. `}
+      <div className="site-body flex min-w-0 max-w-[432px] flex-1 flex-col gap-6 text-ink-secondary">
+        <p>
+          Being the son of an engineer and an artist it would be easy to guess where my interests would lie, I’m an
+          Interaction/Product/Experience/Everything Designer because I love making things that work and get a response
+          out of people — whether it be from sensory stimuli or something as simple as getting a task done.
         </p>
-        <p className="mb-0 leading-6">&nbsp;</p>
-        <p className="leading-6">
-          When I&apos;m not designing, I&apos;m painting, playing basketball,
-          video games, or watching Arsenal FC.
+        <p>
+          When I’m not designing, I’m painting, playing basketball, video games, or watching Arsenal FC.
         </p>
       </div>
     </div>
@@ -131,7 +131,7 @@ function ExpBlock({
       <div className="relative w-full shrink-0">
         <div className="flex size-full flex-row items-center justify-center">
           <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-            <p className="site-subheading relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
+            <p className="type-headline relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
               {title}
             </p>
             <p className="type-caption relative shrink-0 whitespace-nowrap text-ink-muted">
@@ -190,7 +190,7 @@ function EducationSection() {
               <div className="relative w-full shrink-0">
                 <div className="flex size-full flex-row items-center justify-center">
                   <div className="relative flex size-full items-center justify-center gap-2 px-4 leading-6">
-                    <p className="site-subheading relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
+                    <p className="type-headline relative min-h-px min-w-px flex-[1_0_0] text-ink-secondary">
                       {block.school}
                     </p>
                     <p className="type-caption relative shrink-0 whitespace-nowrap text-ink-muted">
@@ -302,13 +302,10 @@ function Top3Section() {
   const { unlock } = useAchievements();
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col items-start justify-center gap-8">
-      <div className="relative w-full shrink-0 text-ink-muted">
-        <p className="site-chapter-heading">Top 3</p>
-      </div>
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 site-label text-ink-muted">
-          Games
+          Top 3 games
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2">
           <div
@@ -391,7 +388,7 @@ function Top3Section() {
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 site-label text-ink-muted">
-          Albums
+          Top 3 albums
         </p>
         <div className="relative flex w-full min-w-0 flex-wrap content-start items-start gap-2 overflow-visible">
           {(
@@ -429,7 +426,7 @@ function Top3Section() {
 
       <div className="flex w-full min-w-0 flex-col items-start gap-4">
         <p className="relative w-full shrink-0 site-label text-ink-muted">
-          Movies:
+          Top 3 movies
         </p>
         <div className="relative mb-8 flex h-[278px] w-full min-w-0 flex-wrap items-start gap-2">
           <div className="relative h-full min-h-px min-w-px flex-[1_0_0] rounded-[2px] shadow-e3">

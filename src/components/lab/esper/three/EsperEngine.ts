@@ -7,7 +7,9 @@ import { GLTFLoader, type GLTF } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { roundedBox, roundedPanel, softWall } from "./geometry";
 import { lathe, tube, type Joints } from "./kit";
-import { BotPerson, type HandPose } from "./bot";
+import { BotPerson, type HandPose, type Talk } from "./bot";
+import { GuestbookBoard, type BoardNote, type PinStart } from "./guestbook";
+import { Turntable } from "./turntable";
 
 type Person = BotPerson;
 import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
@@ -51,6 +53,12 @@ type Item = {
   glance?: boolean;
   /** person: the head drifts slowly around what they're watching (the driver taking in the road on the screen). */
   scan?: boolean;
+  /** person: in conversation with someone beside them (see Talk in bot.ts). */
+  talk?: Talk;
+  /** person: wears this head instead of the rig's own (a model src), at this scale and offset (head frame, metres). */
+  head?: { src: string; scale?: number; offset?: number[] };
+  /** person: a print raised on the shirt ("hw": the HW mark). */
+  emboss?: string;
   /** Rattles in short bursts while its room is in use (metres of jitter); its swung parts twitch too. */
   shake?: number;
   /** person: what their hands hold. phone (right hand) and wheel name the object; viewer is the one they carry. */
@@ -73,13 +81,33 @@ type Spec = {
   items: Item[];
   lights: { id: string; type: string; dir?: number[]; color?: number[]; intensity: number }[];
   views: { id: string; p: number[]; target: number[]; fov: number }[];
-  stations: { id: string; url?: string; screen?: string; enter?: number[]; bounds?: number[] }[];
+  /** hover: false for a place reached from inside another room (the guestbook), not picked from the overview. */
+  stations: { id: string; url?: string; screen?: string; enter?: number[]; bounds?: number[]; hover?: boolean }[];
   look?: Record<string, number>;
 };
 type Rest = { pos: THREE.Vector3; fwd: THREE.Vector3; fov: number; pivot: THREE.Vector3 };
 type Pose = { pos: THREE.Vector3; target: THREE.Vector3; fov: number };
 
 const D2R = Math.PI / 180;
+
+/** The HW mark (the favicon's six bars, as in EsperLogo), raised 2.5 mm: a print on a shirt. 7 cm across, facing +z. */
+function hwMark(mat: THREE.Material) {
+  const bars = [
+    [[0, 0], [3, 0], [3, 16], [0, 16]],
+    [[4, 4.6], [7, 1.6], [7, 14.6], [4, 14.6]],
+    [[8, 0], [11, 0], [11, 16], [8, 16]],
+    [[12, 0], [15, 0], [15, 16], [12, 16]],
+    [[16, 4.6], [19, 1.6], [19, 16], [16, 16]],
+    [[20, 0], [23, 0], [23, 16], [20, 16]],
+  ];
+  const k = 0.07 / 23;
+  const shapes = bars.map((pts) => new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2((x - 11.5) * k, (8 - y) * k))));
+  const geo = new THREE.ExtrudeGeometry(shapes, { depth: 0.002, bevelEnabled: true, bevelThickness: 0.0005, bevelSize: 0.0004, bevelSegments: 2 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
 const UP = new THREE.Vector3(0, 1, 0);
 /** Unity space -> three world (the root mirror, for things that live outside it). */
 const toWorld = (v: THREE.Vector3) => new THREE.Vector3(v.x, v.y, -v.z);
@@ -92,6 +120,8 @@ const PALETTE: Record<string, number[]> = {
   DeskTop: [0.94, 0.94, 0.94], DeskLeg: [0.94, 0.94, 0.94],
   // Neutrals for a finished look without colour: a mid clay, soft fabric, dark graphite, satin metal.
   ClayMid: [0.84, 0.84, 0.84], Fabric: [0.9, 0.9, 0.9], Graphite: [0.16, 0.16, 0.17], Satin: [0.78, 0.78, 0.79],
+  // The guestbook's corkboard: the one warm surface in the clay, so the paper notes have something to sit on.
+  Cork: [0.8, 0.69, 0.53],
   // People.
   Skin: [0.86, 0.86, 0.85], Top: [0.7, 0.7, 0.7], Bottom: [0.42, 0.42, 0.43], Hair: [0.2, 0.2, 0.2], Shoes: [0.25, 0.25, 0.26],
 };
@@ -100,7 +130,7 @@ const DARK_CLAY = [0.34, 0.34, 0.36];
 const PALETTE_DARK: Record<string, number[]> = {
   ...PALETTE,
   WallWhite: [0.3, 0.3, 0.32], Floor: [0.24, 0.24, 0.26], Clay: DARK_CLAY, Bezel: DARK_CLAY, Console: DARK_CLAY, Plinth: DARK_CLAY,
-  DeskTop: DARK_CLAY, DeskLeg: DARK_CLAY, ClayMid: [0.26, 0.26, 0.28], Fabric: [0.3, 0.3, 0.32],
+  DeskTop: DARK_CLAY, DeskLeg: DARK_CLAY, ClayMid: [0.26, 0.26, 0.28], Fabric: [0.3, 0.3, 0.32], Cork: [0.42, 0.36, 0.28],
 };
 /** Things that give light (the fridge's lamp): emissive strength by theme, light and dark. */
 const GLOW: Record<string, { color: number[]; light: number; dark: number }> = {
@@ -239,6 +269,12 @@ export class EsperEngine {
   /** Focus fades everything outside the room: top-level objects, which room they belong to, walls by position. */
   private tops: { obj: THREE.Object3D; station: string; path?: number[] }[] = [];
   private stationBounds = new Map<string, number[]>();
+  // The guestbook: its board (rebuilt with the scene), everyone's notes, and whether the pointer is over it.
+  private board: GuestbookBoard | null = null;
+  private guestbookNotes: BoardNote[] = [];
+  private boardHover = false;
+  // Record players, and the room each one plays for.
+  private turntables: { deck: Turntable; station: string }[] = [];
   private faded = new Map<THREE.Material, THREE.Material>();
   private fade = { speed: 0.45 };
   /** People who come and go with a station fade in and out where they stand: opacity only, no movement. */
@@ -348,6 +384,8 @@ export class EsperEngine {
     document.removeEventListener("pointerout", this.onLeave);
     this.canvas.removeEventListener("contextmenu", this.onContext);
     this.stopVideos();
+    this.board?.dispose();
+    for (const t of this.turntables) t.deck.dispose();
     this.composer.dispose();
     this.renderer.dispose();
   }
@@ -555,6 +593,15 @@ export class EsperEngine {
       case "PlayIntro": return this.playIntro(parseFloat(value) || 4.5);
       case "Enable": this.enabled = value !== "1"; return;
       case "SetTool": this.tool = value === "note" ? "note" : "select"; return;
+      case "GuestbookNotes":
+        this.guestbookNotes = JSON.parse(value) as BoardNote[];
+        this.board?.setNotes(this.guestbookNotes);
+        return;
+      case "GuestbookPin": return this.guestbookPin(value);
+      case "GuestbookUnpin":
+        this.guestbookNotes = this.guestbookNotes.filter((n) => n.id !== value);
+        return this.board?.unpin(value);
+      case "GuestbookFinish": return this.board?.finish();
       default: return; // Studio's move and fly tools are Unity-only for now.
     }
   }
@@ -562,6 +609,8 @@ export class EsperEngine {
   // ---------------- scene ----------------
 
   private applyScene(spec: Spec) {
+    for (const t of this.turntables) t.deck.dispose();
+    this.turntables = [];
     const build = ++this.built;
     this.stopVideos();
     this.loads = [];
@@ -631,12 +680,15 @@ export class EsperEngine {
           const poses = it.poses ?? [];
           const secs = it.flip ?? 0;
           later.push(
-            this.model(it.body ? `rp:${it.body}` : personModel(it.id ?? "")).then((g) => {
+            // body: one of the Renderpeople by name, or a model of its own (Hridae's, in a plain top).
+            this.model(it.body ? (it.body.includes(":") ? it.body : `rp:${it.body}`) : personModel(it.id ?? "")).then((g) => {
               if (!g || build !== this.built) return;
               const rig = cloneRig(g.scene);
+              // Visitors are ghosts; a person given a material (Hridae, in his room) is solid.
+              const solid = it.material ? this.material(it.material) : null;
               rig.traverse((o) => {
                 const m = o as THREE.Mesh;
-                if (m.isMesh) m.material = this.ghost();
+                if (m.isMesh) m.material = solid ?? this.ghost();
               });
               const seed = [...(it.id ?? "")].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 1000, 5) / 1000;
               const hands = (it.hands ?? []) as HandPose[];
@@ -644,7 +696,24 @@ export class EsperEngine {
                 palmsDown: it.palms === "floor",
                 glance: !!it.glance,
                 scan: !!it.scan,
+                talk: it.talk,
               });
+              if (it.head) {
+                const hd = it.head;
+                later.push(
+                  this.model(hd.src).then((h) => {
+                    if (!h || build !== this.built) return;
+                    const head = h.scene.clone(true);
+                    head.traverse((c) => {
+                      if ((c as THREE.Mesh).isMesh) (c as THREE.Mesh).material = solid ?? this.ghost();
+                    });
+                    bot.wearHead(head, { scale: hd.scale, offset: hd.offset });
+                    this.refade(holder);
+                  }),
+                );
+              }
+              // The mark a shade darker than the clay, so it reads at the room's distance as well as up close.
+              if (it.emboss === "hw") bot.emboss(hwMark(this.material("ClayMid")), { left: 0.085, up: 0.035 });
               holder.add(bot.group);
               holder.updateMatrixWorld(true);
               for (const c of [...holder.children]) if (c.userData.attach) bot.carry(c);
@@ -723,6 +792,13 @@ export class EsperEngine {
           );
           break;
         }
+        case "turntable": {
+          // Modelled in code (three/turntable.ts); `src` is the record's label art.
+          const deck = new Turntable((name) => this.material(name), this.texture(it.src ?? "Content/Albums/motm2_front.jpg"));
+          this.turntables.push({ deck, station: stationOf.get(it.id) ?? it.station ?? "" });
+          obj = deck.object;
+          break;
+        }
         default:
           obj = new THREE.Group();
       }
@@ -773,6 +849,7 @@ export class EsperEngine {
       const hit = new THREE.Mesh(new THREE.BoxGeometry(b[3], b[4], b[5]), hitMat);
       hit.position.set(b[0], b[1], b[2]);
       hit.userData.station = st.id;
+      hit.userData.noHover = st.hover === false;
       next.add(hit);
       stations.set(st.id, { url: st.url ?? "", hit, enter: st.enter ? new THREE.Vector3(...(st.enter as [number, number, number])) : undefined, screen: st.screen });
     }
@@ -792,6 +869,23 @@ export class EsperEngine {
     this.screens = screens;
     this.tops = tops;
     this.stationBounds = new Map(spec.stations.map((st) => [st.id, st.bounds ?? [0, 0, 0, 0, 0, 0]]));
+    this.board?.dispose();
+    this.board = null;
+    let cork: THREE.Object3D | null = null;
+    next.traverse((o) => {
+      if (o.userData.id === "taste/guestbook") cork = o;
+    });
+    if (cork) {
+      this.board = new GuestbookBoard(cork, {
+        dark: this.dark,
+        anisotropy: Math.min(8, this.renderer.capabilities.getMaxAnisotropy()),
+        onLaunch: () => this.emit("guestbook-launch"),
+        onLand: () => this.emit("guestbook-land"),
+        onPop: () => this.emit("guestbook-pop"),
+      });
+      this.board.lastViewport = this.canvas.clientHeight || 900;
+      this.board.setNotes(this.guestbookNotes);
+    }
     this.appears.clear();
     this.applyStations();
     if (this.focused) this.setFade(this.focused);
@@ -1338,8 +1432,8 @@ export class EsperEngine {
     return this.state === "overview" || !this.focused ? "overview" : this.focused;
   }
 
-  private startBlend() {
-    if (this.current) this.blend = { from: { pos: this.current.pos.clone(), target: this.current.target.clone(), fov: this.current.fov }, t: 0, duration: 2.1 };
+  private startBlend(duration = 2.1) {
+    if (this.current) this.blend = { from: { pos: this.current.pos.clone(), target: this.current.target.clone(), fov: this.current.fov }, t: 0, duration };
   }
 
   private updateCamera(dt: number) {
@@ -1389,20 +1483,25 @@ export class EsperEngine {
     if (this.state !== "enhance") this.focus(id);
   }
 
-  private focus(id: string) {
-    this.startBlend();
+  private focus(id: string, duration?: number) {
+    this.startBlend(duration);
     this.focused = id;
     this.state = "focus";
     this.lookTarget.set(0, 0);
     this.setHover("");
-    this.activeStation = id;
+    this.setBoardHover(false);
+    // The guestbook is a corner of About: the room stays lit and peopled while you read it.
+    this.activeStation = id === "guestbook" ? "taste" : id;
     this.applyStations();
-    this.setFade(id);
+    this.setFade(id === "guestbook" ? "taste" : id);
     this.emit("focus", id);
   }
 
   private back() {
+    if (this.board?.busy) return this.board.finish();
     if (this.state !== "focus") return;
+    if (this.focused === "guestbook") return this.focus("taste", 1.4);
+    this.setBoardHover(false);
     this.startBlend();
     this.state = "overview";
     this.focused = null;
@@ -1476,6 +1575,29 @@ export class EsperEngine {
 
   // ---------------- input ----------------
 
+  // ---------------- guestbook ----------------
+
+  /** A new note: the camera turns to the board while the paper flies in from where the composer folded it. */
+  private guestbookPin(value: string) {
+    if (!this.board) return;
+    const { note, start } = JSON.parse(value) as { note: BoardNote; start: PinStart };
+    this.guestbookNotes = [...this.guestbookNotes.filter((n) => n.id !== note.id), note];
+    // The paper waits on the glass until the camera has settled on the board, so it leaves into a still room.
+    let lead = 0.12;
+    if (!(this.state === "focus" && this.focused === "guestbook")) {
+      if (this.state === "enhance") return this.board.setNotes(this.guestbookNotes);
+      this.focus("guestbook", 1.1);
+      lead = 1.0;
+    }
+    this.board.pin(note, start, this.reducedMotion, lead, () => this.emit("guestbook-pinned", note.id));
+  }
+
+  private setBoardHover(on: boolean) {
+    if (on === this.boardHover) return;
+    this.boardHover = on;
+    this.emit("board-hover", on ? "1" : "");
+  }
+
   private ray(x: number, y: number) {
     const rect = this.canvas.getBoundingClientRect();
     this.raycaster.setFromCamera(new THREE.Vector2(((x - rect.left) / rect.width) * 2 - 1, -((y - rect.top) / rect.height) * 2 + 1), this.camera);
@@ -1483,7 +1605,9 @@ export class EsperEngine {
   }
 
   private stationAt(x: number, y: number) {
-    const hits = this.ray(x, y).intersectObjects([...this.stations.values()].map((s) => s.hit), false);
+    // The Visitor Board is a place of its own, inside About: it wins over the room around it.
+    if (this.board?.hit(this.ray(x, y))) return "guestbook";
+    const hits = this.ray(x, y).intersectObjects([...this.stations.values()].map((s) => s.hit).filter((h) => !h.userData.noHover), false);
     return hits.length ? (hits[0].object.userData.station as string) : "";
   }
 
@@ -1511,6 +1635,9 @@ export class EsperEngine {
       this.last.set(e.clientX, e.clientY);
       return;
     }
+    if (this.state === "focus" && this.focused === "taste" && this.board) {
+      this.setBoardHover(e.target === this.canvas && !this.overUi && this.board.hit(this.ray(e.clientX, e.clientY)));
+    }
     if (e.target !== this.canvas || this.state !== "overview" || !this.enabled || this.overUi) return this.setHover("");
     this.setHover(this.stationAt(e.clientX, e.clientY));
   };
@@ -1526,6 +1653,9 @@ export class EsperEngine {
       const c = this.cycles.find((cy) => figure[0].object === cy.obj || cy.obj.getObjectById(figure[0].object.id));
       if (c) return c.next();
     }
+    // A click while a note is arriving skips to it pinned.
+    if (this.board?.busy) return this.board.finish();
+    if (this.state === "focus" && this.focused === "taste" && this.board?.hit(this.ray(e.clientX, e.clientY))) return this.focus("guestbook", 1.4);
     const id = this.stationAt(e.clientX, e.clientY);
     if (this.state === "overview") {
       if (id) this.focus(id);
@@ -1557,9 +1687,10 @@ export class EsperEngine {
     this.emit("hover", id);
     // In the overview, the room under the pointer comes forward while the rest settle back.
     if (this.state === "overview") {
-      this.setFade(id || null, 0.45, 0.3);
+      const room = id === "guestbook" ? "taste" : id;
+      this.setFade(room || null, 0.45, 0.3);
       // The room under the pointer comes to life: its people step in, its screens wake.
-      this.activeStation = id || null;
+      this.activeStation = room || null;
       this.popDelay = 0;
       this.applyStations();
       this.popDelay = 0.3;
@@ -1598,6 +1729,7 @@ export class EsperEngine {
     this.composer.setSize(w, h);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
+    if (this.board) this.board.lastViewport = h;
   }
 
   private frame = () => {
@@ -1608,6 +1740,10 @@ export class EsperEngine {
     for (const f of this.flips) f.update(dt);
     // Reduced motion: everyone holds their pose (still shaped, hands and all) instead of moving.
     for (const p of this.persons) p.update(this.reducedMotion ? 0 : dt);
+    this.board?.update(dt, this.camera);
+    // A record plays while its room is the one being looked at (the Visitor Board is part of About).
+    const here = this.state === "focus" && this.focused ? (this.focused === "guestbook" ? "taste" : this.focused) : "";
+    for (const t of this.turntables) t.deck.update(dt, !!here && here === t.station, this.reducedMotion);
     for (const c of this.cycles) c.update(dt);
     this.updateDisplays(dt);
     this.updateCamera(dt);

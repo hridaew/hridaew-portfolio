@@ -75,6 +75,12 @@ type Slab = { c: THREE.Vector3; U: THREE.Vector3; S: THREE.Vector3; O: THREE.Vec
 /** Where a hand goes and how it's turned, in the rig's own space: the wrist, where the fingers point, where the palm faces. */
 export type Grip = { wrist: THREE.Vector3; fingers: THREE.Vector3; palm: THREE.Vector3; shape: HandPose; slab?: Slab };
 
+/**
+ * Two people in conversation. `to` is the other person's head (scene numbers). `talk` and `listen` are the parts of
+ * a shared `period` (fractions, 0..1) when this one speaks, or turns to hear the other. `hand`: the one they talk with.
+ */
+export type Talk = { to: number[]; period: number; talk: [number, number][]; listen: [number, number][]; hand: "l" | "r" };
+
 export class BotPerson {
   group = new THREE.Group();
   private holder = new THREE.Group();
@@ -112,7 +118,7 @@ export class BotPerson {
     seed = 0,
     /** palmsDown: hands flat on the floor, fingers toward the head (a push-up). glance: looks from what they hold up
      *  to what's in front of them and back (the Domis scan). */
-    private habits: { palmsDown?: boolean; glance?: boolean; scan?: boolean } = {},
+    private habits: { palmsDown?: boolean; glance?: boolean; scan?: boolean; talk?: Talk } = {},
   ) {
     this.seed = seed;
     this.model = model;
@@ -216,6 +222,7 @@ export class BotPerson {
     if (this.look) this.lookAround();
     if (this.habits.glance) this.glanceUp();
     if (this.habits.scan) this.scan();
+    if (this.habits.talk) this.turnToTalk();
     this.touch();
   }
 
@@ -368,6 +375,88 @@ export class BotPerson {
   }
 
   /** Something held to the body (a viewer at the eyes) rides on the chest, so it turns with them. */
+  /**
+   * The rig at rest (every bone back to its rest rotation), for measuring things that must be fitted once: where a
+   * head or a print goes. Calls `fn`, then poses the body again.
+   */
+  private atRest(fn: () => void) {
+    for (const [bone, q] of this.rest) bone.quaternion.copy(q);
+    this.model.position.copy(this.restPos);
+    this.group.updateWorldMatrix(true, true);
+    fn();
+    this.pose(this.t);
+  }
+
+  /** The rig's own facing at rest as a rotation (left, up, forward): how a head or a print is turned to face out. */
+  private get facing() {
+    return this.restFrame.clone();
+  }
+
+  /**
+   * Puts a different head on (Hridae's scan): the rig's own head shrinks away inside it, and the new one, authored
+   * with its origin at the skull base and facing +z, rides the head bone so it turns and nods with the body.
+   */
+  wearHead(head: THREE.Object3D, opts: { scale?: number; offset?: number[] } = {}) {
+    const bone = this.bone("head");
+    if (!bone) return;
+    this.atRest(() => {
+      const m = new THREE.Matrix4().copy(this.holder.matrixWorld).invert().multiply(bone.matrixWorld);
+      const pos = new THREE.Vector3(), quat = new THREE.Quaternion(), scl = new THREE.Vector3();
+      m.decompose(pos, quat, scl);
+      const shrink = 0.01;
+      bone.scale.multiplyScalar(shrink);
+      const pivot = new THREE.Group();
+      // In the bone's space: undo its turn and size at rest, so the head stands upright, facing the way the body does.
+      pivot.quaternion.copy(quat.clone().invert().multiply(this.facing));
+      pivot.scale.setScalar((opts.scale ?? 1) / (scl.x * shrink));
+      const o = opts.offset ?? [0, 0, 0];
+      // The offset is in the head's own frame (metres): +y up, +z forward.
+      pivot.position.copy(new THREE.Vector3(o[0], o[1], o[2]).applyQuaternion(pivot.quaternion).multiplyScalar(1 / (scl.x * shrink)));
+      pivot.add(head);
+      head.traverse((c) => {
+        if ((c as THREE.Mesh).isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+      bone.add(pivot);
+    });
+  }
+
+  /**
+   * A print on the shirt, raised a couple of millimetres: placed where a ray from in front meets the chest at rest,
+   * then carried by the chest bone. `left` and `up` (metres from the chest bone) put it where a logo sits on a tee.
+   */
+  emboss(print: THREE.Object3D, opts: { left?: number; up?: number } = {}) {
+    const chest = this.bone(this.rig.breathe);
+    if (!chest) return;
+    this.atRest(() => {
+      const meshes: THREE.Mesh[] = [];
+      this.model.traverse((c) => {
+        const sk = c as THREE.SkinnedMesh;
+        if (sk.isSkinnedMesh) {
+          sk.skeleton.update();
+          meshes.push(sk);
+        }
+      });
+      const f = this.facing;
+      const left = new THREE.Vector3(1, 0, 0).applyQuaternion(f);
+      const up = new THREE.Vector3(0, 1, 0).applyQuaternion(f), fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(f);
+      const at = this.local(chest).pos.addScaledVector(up, opts.up ?? 0.03).addScaledVector(left, opts.left ?? 0.09);
+      // Rig space to world for the ray, and the hit back again.
+      const toWorld = (v: THREE.Vector3) => v.clone().applyMatrix4(this.holder.matrixWorld);
+      const from = toWorld(at.clone().addScaledVector(fwd, 0.5));
+      const dir = toWorld(at).sub(from).normalize();
+      const hit = new THREE.Raycaster(from, dir, 0, 1).intersectObjects(meshes, false)[0];
+      const spot = hit ? this.holder.worldToLocal(hit.point.clone()) : at.clone().addScaledVector(fwd, 0.12);
+      print.position.copy(spot.addScaledVector(fwd, -0.0008));
+      print.quaternion.copy(f);
+      this.holder.add(print);
+      print.updateMatrixWorld(true);
+      chest.attach(print);
+    });
+  }
+
   carry(o: THREE.Object3D) {
     const chest = this.bone(this.rig.breathe);
     if (!chest) return;
@@ -423,6 +512,7 @@ export class BotPerson {
       this.j[key] = [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f, -(p[2] + (q[2] - p[2]) * f)];
     }
     this.idle();
+    if (this.habits.talk) this.converse();
     this.solve();
   }
 
@@ -449,6 +539,97 @@ export class BotPerson {
     for (const k of ["shl", "shr", "neck", "headBase", "headTop"]) add(k, new THREE.Vector3(0, breath, 0));
     // The head: a slow turn and a slower nod, a few degrees.
     add("headTop", right.clone().multiplyScalar(0.022 * Math.sin(t * 0.29 + 0.6)).add(fwd.clone().multiplyScalar(0.012 * Math.sin(t * 0.21 + 2.1))));
+  }
+
+  // ---------------- conversation ----------------
+
+  /**
+   * How much this person is turned to the other (face), speaking (talk) and listening (hear), each 0..1, eased in
+   * and out over about half a second. On the wall clock, so both people agree on whose turn it is.
+   */
+  private talkState() {
+    const c = this.habits.talk!;
+    const now = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+    const p = (now % c.period) / c.period;
+    const ease = 0.55 / c.period; // half a second either side, as a fraction of the period
+    const win = (r: [number, number][]) => {
+      let w = 0;
+      for (const [a, b] of r) {
+        const k = Math.min(1, Math.max(0, (p - a) / ease)) * Math.min(1, Math.max(0, (b - p) / ease));
+        w = Math.max(w, k * k * (3 - 2 * k));
+      }
+      return w;
+    };
+    const talk = win(c.talk), hear = win(c.listen);
+    return { talk, hear, face: Math.max(talk, hear), now };
+  }
+
+  /** The other person, in the rig's own space. */
+  private partner() {
+    const to = this.habits.talk!.to;
+    return new THREE.Vector3(to[0], to[1], -to[2]);
+  }
+
+  /** Before the body is solved: lean in a touch, and while speaking, the talking hand comes up and moves in beats. */
+  private converse() {
+    const { talk, face, now } = this.talkState();
+    if (face <= 0) return;
+    const pelvis = this.J("pelvis"), neck = this.J("neck"), shl = this.J("shl"), shr = this.J("shr");
+    if (!pelvis || !neck || !shl || !shr) return;
+    const up = neck.clone().sub(pelvis).normalize();
+    const right = shr.clone().sub(shl).normalize();
+    const fwd = new THREE.Vector3().crossVectors(up, right).normalize();
+    const toward = this.flat(this.partner().sub(neck), up);
+    const add = (k: string, v: THREE.Vector3) => {
+      const p = this.j[k];
+      if (p) this.j[k] = [p[0] + v.x, p[1] + v.y, p[2] + v.z];
+    };
+    // Leaning in to the other person.
+    const lean = toward.clone().multiplyScalar(0.03 * face);
+    for (const [k, w] of [["neck", 1], ["shl", 0.9], ["shr", 0.9], ["headBase", 1], ["headTop", 1], ["ell", 0.6], ["elr", 0.6], ["wrl", 0.4], ["wrr", 0.4]] as const)
+      add(k, lean.clone().multiplyScalar(w));
+    if (talk <= 0) return;
+    // The talking hand: up from the lap to about chest height, a little out toward the other person, moving in
+    // the small uneven beats of speech.
+    const s = this.habits.talk!.hand;
+    const el = this.J(`el${s}`), wr = this.J(`wr${s}`), sh = s === "l" ? shl : shr;
+    if (!el || !wr) return;
+    const t = now + this.seed * 3;
+    const beat = 0.022 * Math.sin(t * 5.3) * Math.max(0, Math.sin(t * 1.7)) + 0.012 * Math.sin(t * 2.9 + 1);
+    const elbowTo = sh.clone().addScaledVector(up, -0.22).addScaledVector(fwd, 0.08).addScaledVector(toward, 0.05);
+    const wristTo = elbowTo
+      .clone()
+      .addScaledVector(up, 0.12 + beat)
+      .addScaledVector(fwd, 0.16)
+      .addScaledVector(toward, 0.07 + 0.015 * Math.sin(t * 2.2));
+    const mix = (k: string, from: THREE.Vector3, to: THREE.Vector3) => {
+      const v = from.clone().lerp(to, talk);
+      this.j[k] = [v.x, v.y, v.z];
+    };
+    mix(`el${s}`, el, elbowTo);
+    mix(`wr${s}`, wr, wristTo);
+  }
+
+  /** After the body is posed: the head turns to the other person; listening, it nods now and then. */
+  private turnToTalk() {
+    const { talk, hear, face, now } = this.talkState();
+    if (face <= 0) return;
+    const head = this.bone("head") ?? this.bone(this.rig.neck);
+    const l = this.J("shl"), r = this.J("shr"), neck = this.J("neck"), pelvis = this.J("pelvis");
+    if (!head?.parent || !l || !r || !neck || !pelvis) return;
+    const up = neck.clone().sub(pelvis).normalize();
+    const right = r.clone().sub(l).normalize();
+    const fwd = new THREE.Vector3().crossVectors(up, right).normalize();
+    const dir = this.flat(this.partner().sub(neck), up);
+    const yaw = Math.max(-1.1, Math.min(1.1, Math.atan2(new THREE.Vector3().crossVectors(fwd, dir).dot(up), fwd.dot(dir))));
+    const t = now + this.seed * 5;
+    // Listening: a nod every couple of seconds. Speaking: the head moves a little with the words.
+    const nod = hear * (1 - talk) * 0.11 * Math.pow(Math.max(0, Math.sin(t * 1.9)), 6);
+    const speak = talk * 0.035 * Math.sin(t * 3.4);
+    const inv = this.local(head.parent).quat.invert();
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(up.clone().applyQuaternion(inv), yaw * 0.75 * face));
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(right.clone().applyQuaternion(inv), nod + speak));
+    head.updateMatrixWorld(true);
   }
 
   private J(k: string) {

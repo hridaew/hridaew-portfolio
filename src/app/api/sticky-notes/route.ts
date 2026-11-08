@@ -1,37 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
-import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
+import { SITE_ORIGIN } from "@/lib/site-identity";
+import { escapeHtml, isAdmin, notesStore, removeSignature, toPublic, type NoteData } from "@/lib/notes-store";
 
 // Force dynamic — never cache GET responses on Vercel edge
 export const dynamic = "force-dynamic";
 
-function getRedis() {
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
-
 const VALID_PAGES = ["home", "room", "virdio", "memory-care", "obscura", "domis"];
+/** Pages whose notes everyone can read (the room's guestbook). The case studies' notes stay private. */
+const PUBLIC_PAGES = ["room"];
 const VALID_COLORS = ["#FFF9C4", "#F8BBD0", "#C8E6C9", "#BBDEFB", "#E1BEE7"];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RATE_LIMIT = 15;
-const RATE_WINDOW = 3600; // 1 hour in seconds
+const PUBLIC_LIMIT = 500;
+const NO_STORE = { "Cache-Control": "no-store, max-age=0" };
 
-type NoteData = {
-  id: string;
-  message: string;
-  email?: string;
-  userId: string;
-  x: number;
-  y: number;
-  color: string;
-  rotation: number;
-  createdAt: string;
-  page: string;
-  [key: string]: unknown;
-};
+const unavailable = () => NextResponse.json({ error: "Sticky notes storage is not configured." }, { status: 503 });
 
 // --- Email notification (fire-and-forget) ---
 
@@ -41,69 +26,51 @@ async function sendNotificationEmail(note: NoteData) {
   if (!apiKey || !notifEmail) return;
 
   const resend = new Resend(apiKey);
-  const pageLabel =
-    note.page === "home"
+  const guestbook = note.page === "room";
+  const pageLabel = guestbook
+    ? "the Visitor Board"
+    : note.page === "home"
       ? "Home"
-      : note.page === "room"
-      ? "Home (the room)"
-      : note.page
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase());
+      : note.page.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const sig = removeSignature(note.id);
+  const removeUrl = sig ? `${SITE_ORIGIN}/api/sticky-notes/remove?id=${encodeURIComponent(note.id)}&sig=${sig}` : "";
 
   await resend.emails.send({
     from: "Portfolio Notes <onboarding@resend.dev>",
     to: notifEmail,
-    subject: `New sticky note on ${pageLabel}`,
+    subject: guestbook ? "New note on the Visitor Board" : `New sticky note on ${pageLabel}`,
     html: `
-      <h2>New Sticky Note</h2>
-      <p><strong>Page:</strong> ${pageLabel}</p>
-      <p><strong>Message:</strong> ${note.message}</p>
-      ${note.email ? `<p><strong>From:</strong> ${note.email}</p>` : "<p><em>No email provided</em></p>"}
+      <h2>New note on ${escapeHtml(pageLabel)}</h2>
+      <p><strong>Message:</strong> ${escapeHtml(note.message)}</p>
+      ${note.name ? `<p><strong>Signed:</strong> ${escapeHtml(note.name)}</p>` : ""}
+      ${note.email ? `<p><strong>From:</strong> ${escapeHtml(note.email)}</p>` : ""}
       <p><strong>Time:</strong> ${new Date(note.createdAt).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}</p>
-      <p style="color:#999;font-size:12px">Color: ${note.color} | Position: (${Math.round(note.x)}, ${Math.round(note.y)})</p>
+      ${guestbook && removeUrl ? `<p><a href="${removeUrl}">Remove from the Visitor Board</a></p>` : ""}
     `,
   });
 }
 
-// --- GET: Fetch notes for a user or admin ---
+// --- GET: a visitor's own notes, the owner's view of everything, or a public page's notes ---
 
 export async function GET(request: NextRequest) {
-  const redis = getRedis();
-  if (!redis) return NextResponse.json([]);
+  const store = notesStore();
+  if (!store) return NextResponse.json([]);
 
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
-  const admin = searchParams.get("admin");
+  const page = searchParams.get("page");
 
   try {
-    let noteIds: string[];
-
-    if (admin === "hridae") {
-      noteIds = await redis.smembers("all_notes");
-    } else if (userId) {
-      noteIds = await redis.smembers(`user_notes:${userId}`);
-    } else {
-      return NextResponse.json([]);
+    if (searchParams.get("scope") === "public") {
+      if (!page || !PUBLIC_PAGES.includes(page)) return NextResponse.json({ error: "Invalid page" }, { status: 400 });
+      const notes = (await store.byPage(page)).slice(0, PUBLIC_LIMIT);
+      return NextResponse.json(notes.map((n) => toPublic(n, userId)), { headers: NO_STORE });
     }
-
-    if (!noteIds || noteIds.length === 0) {
-      return NextResponse.json([]);
-    }
-
-    const notes = await Promise.all(
-      noteIds.map((id) => redis.hgetall<NoteData>(`note:${id}`))
-    );
-
-    const validNotes = notes
-      .filter((n): n is NoteData => n !== null)
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-
-    return NextResponse.json(validNotes, {
-      headers: { "Cache-Control": "no-store, max-age=0" },
-    });
+    let notes: NoteData[];
+    if (isAdmin(searchParams.get("admin"))) notes = await store.all();
+    else if (userId) notes = await store.byUser(userId);
+    else return NextResponse.json([]);
+    return NextResponse.json(notes, { headers: NO_STORE });
   } catch (error) {
     console.error("GET /api/sticky-notes error:", error);
     return NextResponse.json([]);
@@ -113,13 +80,8 @@ export async function GET(request: NextRequest) {
 // --- POST: Create a new note ---
 
 export async function POST(request: NextRequest) {
-  const redis = getRedis();
-  if (!redis) {
-    return NextResponse.json(
-      { error: "Sticky notes storage is not configured." },
-      { status: 503 }
-    );
-  }
+  const store = notesStore();
+  if (!store) return unavailable();
 
   try {
     const body = await request.json();
@@ -129,15 +91,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ id: "ok" });
     }
 
-    // Validation
-    const { message, email, userId, x, y, color, rotation, page } = body;
+    const { message, email, name, userId, color, rotation, page } = body;
+    const guestbook = PUBLIC_PAGES.includes(page);
+    // The guestbook pins notes to its board, so it has no screen position.
+    const x = guestbook ? 0 : body.x;
+    const y = guestbook ? 0 : body.y;
 
-    if (
-      typeof message !== "string" ||
-      !message.trim() ||
-      message.length > 200
-    ) {
+    if (typeof message !== "string" || !message.trim() || message.length > 200) {
       return NextResponse.json({ error: "Invalid message" }, { status: 400 });
+    }
+    if (name !== undefined && (typeof name !== "string" || name.trim().length > 40)) {
+      return NextResponse.json({ error: "Invalid name" }, { status: 400 });
     }
     if (!userId || !UUID_RE.test(userId)) {
       return NextResponse.json({ error: "Invalid userId" }, { status: 400 });
@@ -149,45 +113,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid color" }, { status: 400 });
     }
     if (typeof x !== "number" || typeof y !== "number") {
-      return NextResponse.json(
-        { error: "Invalid coordinates" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid coordinates" }, { status: 400 });
     }
 
-    // Rate limiting
-    const rateKey = `rate:${userId}`;
-    const count = await redis.incr(rateKey);
-    if (count === 1) {
-      await redis.expire(rateKey, RATE_WINDOW);
-    }
-    if (count > RATE_LIMIT) {
-      return NextResponse.json(
-        { error: "Rate limit exceeded. Try again later." },
-        { status: 429 }
-      );
+    if ((await store.hit(userId)) > RATE_LIMIT) {
+      return NextResponse.json({ error: "Rate limit exceeded. Try again later." }, { status: 429 });
     }
 
-    // Generate ID and build note
-    const id =
-      Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     const note: NoteData = {
       id,
       message: message.trim(),
-      ...(email?.trim() ? { email: email.trim() } : {}),
+      ...(typeof name === "string" && name.trim() ? { name: name.trim() } : {}),
+      // The guestbook is public, so it never collects an email.
+      ...(!guestbook && typeof email === "string" && email.trim() ? { email: email.trim() } : {}),
       userId,
       x,
       y,
       color,
-      rotation,
+      rotation: Math.max(-8, Math.min(8, Number(rotation) || 0)),
       createdAt: new Date().toISOString(),
       page,
     };
 
-    // Store in Redis
-    await redis.hset(`note:${id}`, note);
-    await redis.sadd(`user_notes:${userId}`, id);
-    await redis.sadd("all_notes", id);
+    await store.create(note);
 
     // Send email notification after response (non-blocking)
     after(async () => {
@@ -198,59 +147,40 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(note, { status: 201 });
+    return NextResponse.json(guestbook ? toPublic(note, userId) : note, { status: 201 });
   } catch (error) {
     console.error("POST /api/sticky-notes error:", error);
-    return NextResponse.json(
-      { error: "Failed to create note" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
   }
 }
 
 // --- DELETE: Remove a note ---
 
 export async function DELETE(request: NextRequest) {
-  const redis = getRedis();
-  if (!redis) {
-    return NextResponse.json(
-      { error: "Sticky notes storage is not configured." },
-      { status: 503 }
-    );
-  }
+  const store = notesStore();
+  if (!store) return unavailable();
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const userId = searchParams.get("userId");
-  const admin = searchParams.get("admin");
 
   if (!id) {
     return NextResponse.json({ error: "Missing note ID" }, { status: 400 });
   }
 
   try {
-    const note = await redis.hgetall<NoteData>(`note:${id}`);
-
+    const note = await store.get(id);
     if (!note) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
-
-    // Authorization: must be the note owner or admin
-    if (admin !== "hridae" && note.userId !== userId) {
+    // Authorization: must be the note owner or the site owner
+    if (!isAdmin(searchParams.get("admin")) && note.userId !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    // Delete note and remove from indexes
-    await redis.del(`note:${id}`);
-    await redis.srem(`user_notes:${note.userId}`, id);
-    await redis.srem("all_notes", id);
-
+    await store.remove(note);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE /api/sticky-notes error:", error);
-    return NextResponse.json(
-      { error: "Failed to delete note" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
   }
 }

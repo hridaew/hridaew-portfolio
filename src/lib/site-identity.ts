@@ -47,6 +47,9 @@ export const PERSON = {
   ],
 } as const;
 
+/** Build number. Bump on every push: patch for fixes, minor for features. */
+export const SITE_VERSION = "v3.14.0";
+
 export const PERSON_BIO = [
   "I'm a Product Designer obsessed with making, and I have 6 years of experience designing for interaction models that barely exist yet. I focus on the user and learn by making, whether on the canvas, in code, or the physical world.",
   "I've designed features that help people understand their homes at Domis, AR fitness for any space at Virdio, an interactive exhibition at MOHAI, and tangible, accessible experiences for people living with Alzheimer's at the San Francisco Campus for Jewish Living.",

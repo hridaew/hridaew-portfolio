@@ -1,4 +1,24 @@
-/** What each corner of the room is. Copy follows the site's own case study digest (llms-full.txt). */
+import { homepageProjects } from "@/data/homepage-projects";
+import {
+  BUTTER_CHICKEN_INTRO_P1,
+  ORCA_OPENING,
+  RECORDER_CARD_CAPTION,
+  SAVOR_OPENING,
+} from "@/data/waffling-article-copy";
+
+/**
+ * What each corner of the room is. The words are the site's own: each project's description from the home page
+ * cards, and each waffling's opening line, so the room and the writing never drift apart.
+ */
+const describe = (slug: string) => {
+  const description = homepageProjects.find((p) => p.slug === slug)?.description;
+  // Loud while developing; in production the window just goes without a summary rather than taking the room down.
+  if (!description && process.env.NODE_ENV !== "production") throw new Error(`stations: no home page project "${slug}"`);
+  return description;
+};
+// First sentence, curly apostrophes. No lookbehind: Safari before 16.4 can't parse it.
+const opening = (text: string) => (text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text).replace(/'/g, "’");
+
 export type Station = {
   id: string;
   title: string;
@@ -14,6 +34,9 @@ export type Station = {
   images?: { src: string; alt: string; video?: string }[];
 };
 
+/** The Visitor Board in About: a place of its own (reached by clicking it in the room), with no pill in the bar. */
+export const BOARD: Station = { id: "guestbook", title: "Visitor Board" };
+
 export const STATIONS: Station[] = [
   {
     id: "domis",
@@ -25,9 +48,8 @@ export const STATIONS: Station[] = [
     ],
     title: "Domis",
     role: "Founding Product Designer",
-    period: "2024 to now",
-    summary:
-      "Domis helps people keep track of a house: what it is, what it needs and what to do next. Setup is the hard part, so the work is about getting useful structure from the smallest thing a person will actually do.",
+    period: "2024–now",
+    summary: describe("domis"),
     href: "/domis",
   },
   {
@@ -40,9 +62,8 @@ export const STATIONS: Station[] = [
     ],
     title: "Virdio",
     role: "Product Designer",
-    period: "2021 to 2022",
-    summary:
-      "Hardware-free AR fitness across iOS, Android, web and TV, using the camera instead of gym equipment. Calibration had to feel like a warm-up rather than a scan, and the workout had to keep going when tracking failed.",
+    period: "2021–2022",
+    summary: describe("virdio"),
     href: "/virdio",
   },
   {
@@ -56,8 +77,7 @@ export const STATIONS: Station[] = [
     title: "OBSCURA",
     role: "Lead Designer and Developer",
     period: "MOHAI, Seattle, 2025 · Potrero Hill Neighborhood House, San Francisco, 2026",
-    summary:
-      "An immersive exhibit built around more than 300 unseen photographs of post-war life in Japan. The viewer’s gaze curates which images appear, so every path through the archive is personal.",
+    summary: describe("obscura"),
     note: "Featured in The Potrero View, November 2026.",
     href: "/obscura",
   },
@@ -73,8 +93,7 @@ export const STATIONS: Station[] = [
     short: "MCES",
     role: "Interaction Designer",
     period: "With Maria Mortati Experience Design",
-    summary:
-      "A multi-sensory station for people living with mid to late stage Alzheimer’s: a driving simulator, a haptic cat-petting interactive and a library for caregivers.",
+    summary: describe("memory-care"),
     note: "Fast Company World Changing Ideas finalist, 2022.",
     href: "/memory-care",
   },
@@ -87,10 +106,10 @@ export const STATIONS: Station[] = [
     ],
     title: "Wafflings",
     links: [
-      { title: "Saving Baby J", line: "An arcade game played by throwing orca plushies", href: "/waffling/orca" },
-      { title: "Savor", line: "A phone video becomes a 3D Gaussian splat", href: "/waffling/savor" },
-      { title: "Recorder", line: "A skeuomorphic voice recorder", href: "/waffling/recorder" },
-      { title: "Butter chicken", line: "The recipe", href: "/butter-chicken" },
+      { title: "Savor", line: opening(SAVOR_OPENING), href: "/waffling/savor" },
+      { title: "Saving Baby J", line: opening(ORCA_OPENING), href: "/waffling/orca" },
+      { title: "Recorder", line: opening(RECORDER_CARD_CAPTION), href: "/waffling/recorder" },
+      { title: "Butter Chicken", line: opening(BUTTER_CHICKEN_INTRO_P1), href: "/butter-chicken" },
     ],
   },
   {
