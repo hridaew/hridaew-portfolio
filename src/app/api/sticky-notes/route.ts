@@ -13,7 +13,7 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
-const VALID_PAGES = ["home", "virdio", "memory-care", "obscura", "domis"];
+const VALID_PAGES = ["home", "room", "virdio", "memory-care", "obscura", "domis"];
 const VALID_COLORS = ["#FFF9C4", "#F8BBD0", "#C8E6C9", "#BBDEFB", "#E1BEE7"];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RATE_LIMIT = 15;
@@ -44,6 +44,8 @@ async function sendNotificationEmail(note: NoteData) {
   const pageLabel =
     note.page === "home"
       ? "Home"
+      : note.page === "room"
+      ? "Home (the room)"
       : note.page
           .replace(/-/g, " ")
           .replace(/\b\w/g, (c) => c.toUpperCase());

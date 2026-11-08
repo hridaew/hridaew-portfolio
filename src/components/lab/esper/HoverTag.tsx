@@ -25,7 +25,7 @@ export function HoverTag({ id }: { id: string }) {
     <div ref={ref} aria-hidden className="pointer-events-none fixed left-0 top-0 z-30 will-change-transform">
       <span
         className={cn(
-          "block rounded-full bg-[rgba(255,255,255,0.72)] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[13px] font-medium tracking-[-0.01em] text-[#1d1d1f]",
+          "esper-pill block rounded-full bg-[rgba(255,255,255,0.72)] px-3 py-1.5 font-[family-name:var(--font-geist)] text-[13px] font-medium tracking-[-0.01em] text-[#1d1d1f]",
           "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6),0_8px_24px_-10px_rgba(40,36,30,0.35)] backdrop-blur-xl",
           "origin-top-left transition-[opacity,transform] duration-150 ease-out",
           id ? "scale-100 opacity-100" : "scale-95 opacity-0",

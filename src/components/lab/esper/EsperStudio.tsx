@@ -205,7 +205,9 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
       flyCamera: false,
     },
   );
-  agentRef.current = studio.agent === "Cursor" ? "cursor" : "claude";
+  useEffect(() => {
+    agentRef.current = studio.agent === "Cursor" ? "cursor" : "claude";
+  }, [studio.agent]);
   useEffect(() => send("SetTool", studio.tool === "Prompt" ? "note" : "select"), [studio.tool, send]);
   useEffect(() => send("Fidelity", String(studio.fidelity)), [studio.fidelity, send]);
   useEffect(() => send("SetFly", studio.flyCamera ? "1" : "0"), [studio.flyCamera, send]);
@@ -230,7 +232,9 @@ export function EsperStudio({ send, canvas }: { send: Send; canvas: HTMLCanvasEl
     },
   );
   const cameraRef = useRef(camera);
-  cameraRef.current = camera;
+  useEffect(() => {
+    cameraRef.current = camera;
+  }, [camera]);
   useEffect(() => {
     if (studio.flyCamera) send("SetFov", String(camera.fov));
   }, [camera.fov, studio.flyCamera, send]);

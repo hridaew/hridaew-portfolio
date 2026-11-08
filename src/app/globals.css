@@ -1806,6 +1806,146 @@ html[data-home-layout] .home-project-embla {
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 
+/* ESPER, dark variant (/lab/esper?theme=dark): the page's ink and paper tokens turn over, and the interface's light
+   utility colours are remapped in place, so the same markup serves both. */
+[data-esper-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f2f2f0;
+  --ink-secondary: #d9d9d5;
+  --ink-muted: #a9a9a3;
+  --ink-subtle: #8f8f89;
+  --ink-rgb: 242 242 240;
+  --paper: #151517;
+  --paper-raised: #1c1c1f;
+  --paper-sunken: #111113;
+  --paper-rgb: 21 21 23;
+}
+[data-esper-theme="dark"] .text-\[\#1d1d1f\],
+[data-esper-theme="dark"] .hover\:text-\[\#1d1d1f\]:hover,
+[data-esper-theme="dark"] .group:hover .group-hover\:text-\[\#1d1d1f\] { color: #f2f2f0; }
+[data-esper-theme="dark"] .text-black\/45 { color: rgb(255 255 255 / 0.5); }
+[data-esper-theme="dark"] .text-black\/60 { color: rgb(255 255 255 / 0.64); }
+[data-esper-theme="dark"] .text-black\/75 { color: rgb(255 255 255 / 0.78); }
+[data-esper-theme="dark"] .text-black\/85 { color: rgb(255 255 255 / 0.86); }
+[data-esper-theme="dark"] .text-black\/90 { color: rgb(255 255 255 / 0.9); }
+[data-esper-theme="dark"] .bg-black\/\[0\.04\] { background-color: rgb(255 255 255 / 0.05); }
+[data-esper-theme="dark"] .bg-black\/\[0\.08\] { background-color: rgb(255 255 255 / 0.1); }
+[data-esper-theme="dark"] .bg-black\/\[0\.1\] { background-color: rgb(255 255 255 / 0.12); }
+[data-esper-theme="dark"] .bg-black\/\[0\.22\] { background-color: rgb(255 255 255 / 0.22); }
+[data-esper-theme="dark"] .hover\:bg-black\/\[0\.08\]:hover { background-color: rgb(255 255 255 / 0.1); }
+[data-esper-theme="dark"] .hover\:bg-black\/\[0\.1\]:hover { background-color: rgb(255 255 255 / 0.13); }
+[data-esper-theme="dark"] .hover\:bg-black\/\[0\.16\]:hover { background-color: rgb(255 255 255 / 0.18); }
+[data-esper-theme="dark"] .bg-\[\#1c1c1c\]\/\[0\.045\] { background-color: rgb(255 255 255 / 0.08); }
+[data-esper-theme="dark"] .hover\:bg-\[\#1c1c1c\]\/\[0\.08\]:hover { background-color: rgb(255 255 255 / 0.13); }
+[data-esper-theme="dark"] .esper-chip-label { color: rgb(255 255 255 / 0.85) !important; mix-blend-mode: normal !important; }
+/* Shared pieces styled inline for light pages (the email pill): dark ink and luminosity blending turn light. */
+[data-esper-theme="dark"] [style*="28, 28, 28"],
+[data-esper-theme="dark"] [style*="28,28,28"] { color: rgb(255 255 255 / 0.85) !important; }
+[data-esper-theme="dark"] [style*="luminosity"] { mix-blend-mode: normal !important; }
+[data-esper-theme="dark"] path[stroke="#1c1c1c"] { stroke: #f2f2f0; }
+[data-esper-theme="dark"] .bg-\[\#1c1c1c\]\/\[0\.06\] { background-color: rgb(255 255 255 / 0.1); }
+[data-esper-theme="dark"] .bg-\[\#1c1c1c\]\/\[0\.08\] { background-color: rgb(255 255 255 / 0.12); }
+/* The one solid button (and the loading line) turns light on dark. */
+[data-esper-theme="dark"] .bg-\[\#1d1d1f\] { background-color: #f2f2f0; color: #151517; }
+[data-esper-theme="dark"] .hover\:bg-black\/80:hover { background-color: rgb(255 255 255 / 0.85); }
+[data-esper-theme="dark"] .from-\[\#ece9e4\]\/70 { --tw-gradient-from: rgb(18 18 20 / 0.7); }
+/* Glass: smoky rather than milky, with a fainter rim. */
+[data-esper-theme="dark"] .esper-liquid {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(160deg, rgba(40, 40, 44, 0.66), rgba(24, 24, 27, 0.58));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 28px rgba(255, 255, 255, 0.03),
+    0 30px 70px -28px rgba(0, 0, 0, 0.6);
+}
+[data-esper-theme="dark"] .esper-liquid::before {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.04) 38%, rgba(255, 255, 255, 0.02) 62%, rgba(255, 255, 255, 0.18));
+}
+[data-esper-theme="dark"] .esper-pill {
+  background-color: rgba(34, 34, 38, 0.66) !important;
+  color: #f2f2f0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 60px -24px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ESPER dark: the achievement toast (rendered at the page root, outside the room) turns dark too. */
+html[data-esper-dark] {
+  --ach-pill-fill: #232327;
+  --ach-pill-text: #f2f2f0;
+  --ach-pill-outline: rgba(255, 255, 255, 0.14);
+  --ach-pill-rim: rgba(255, 255, 255, 0.14);
+}
+html[data-esper-dark] [style*="ach-pill-fill"] {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ESPER: the case study sheet over the room. Headings in the room's own face (Geist, semibold, tight) rather than
+   Bricolage, and the panel floats with a margin like the room's cards instead of sitting flush to the edge. */
+html[data-esper] [data-case-sheet] {
+  --font-display: var(--font-geist);
+}
+html[data-esper] [data-case-sheet] :is(.type-display, .type-display-black, .type-h1, .type-h2, h1, h2) {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+html[data-esper] [data-case-sheet-panel] {
+  top: 16px;
+  bottom: 16px;
+  right: 16px;
+  width: min(1280px, calc(100vw - 4.5rem));
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+html[data-esper] [data-case-sheet-panel] > header {
+  border-radius: 28px 28px 0 0;
+}
+@media (max-width: 767px) {
+  html[data-esper] [data-case-sheet-panel] { top: 8px; bottom: 8px; right: 8px; width: calc(100vw - 16px); border-radius: 22px; }
+}
+/* ESPER dark: the case study turns over too (the same tokens as the room's dark skin). */
+html[data-esper-dark] [data-case-sheet] {
+  color-scheme: dark;
+  --ink: #f2f2f0;
+  --ink-secondary: #d9d9d5;
+  --ink-muted: #a9a9a3;
+  --ink-subtle: #8f8f89;
+  --ink-rgb: 242 242 240;
+  --paper: #151517;
+  --paper-raised: #1c1c1f;
+  --paper-sunken: #111113;
+  --paper-rgb: 21 21 23;
+}
+html[data-esper-dark] [data-case-sheet-panel] {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ESPER: the loading mark. Bars rise in turn (a slight overshoot, then settle), the fill eases after progress, and
+   on ready the bars drop away left to right. */
+.esper-logo-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: esper-bar-in 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.esper-logo-fill { transition: width 360ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.esper-logo-out .esper-logo-bar {
+  animation: esper-bar-out 280ms cubic-bezier(0.55, 0, 0.75, 0.2) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+@keyframes esper-bar-in {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes esper-bar-out {
+  from { transform: scaleY(1); opacity: 1; }
+  to { transform: scaleY(0); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esper-logo-bar, .esper-logo-out .esper-logo-bar { animation: none; }
+  .esper-logo-out { opacity: 0; transition: opacity 200ms ease-out; }
+}
+
 /* ESPER: dossier content settles in when the camera arrives. */
 @keyframes esper-dossier-in {
   from { opacity: 0; transform: translateY(6px); }

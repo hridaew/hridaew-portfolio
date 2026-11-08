@@ -89,7 +89,8 @@
         -4.5
       ],
       "h": 2.5,
-      "t": 0.14
+      "t": 0.14,
+      "solid": true
     },
     {
       "id": "house/south-east",
@@ -108,7 +109,8 @@
         -4.5
       ],
       "h": 1.0,
-      "t": 0.14
+      "t": 0.14,
+      "solid": true
     },
     {
       "id": "house/south-west",
@@ -145,7 +147,8 @@
         3.3
       ],
       "h": 1.0,
-      "t": 0.14
+      "t": 0.14,
+      "solid": true
     },
     {
       "id": "house/row-0",
@@ -321,143 +324,557 @@
     {
       "id": "domis/fridge",
       "group": "Domis",
-      "kind": "model",
-      "src": "kenney:kitchenFridgeLarge",
+      "kind": "group",
       "p": [
         -3.75,
         0,
-        4.03
+        4.05
       ],
       "r": [
         0,
-        180,
+        0,
         0
       ],
-      "height": 1.9,
-      "nodes": {
-        "doorLeft": [
-          0,
-          -105,
-          0
-        ],
-        "doorRight": [
-          0,
-          105,
-          0
-        ]
-      },
-      "shake": 0.004
-    },
-    {
-      "id": "domis/fridge-liner",
-      "kind": "box",
-      "material": "ClayMid",
-      "p": [
-        -3.75,
-        0.98,
-        3.694
+      "children": [
+        {
+          "id": "side-l",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            -0.435,
+            0.9,
+            0.0
+          ],
+          "size": [
+            0.05,
+            1.8,
+            0.72
+          ],
+          "radius": 0.022
+        },
+        {
+          "id": "side-r",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.435,
+            0.9,
+            0.0
+          ],
+          "size": [
+            0.05,
+            1.8,
+            0.72
+          ],
+          "radius": 0.022
+        },
+        {
+          "id": "top",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            1.775,
+            0.0
+          ],
+          "size": [
+            0.92,
+            0.05,
+            0.72
+          ],
+          "radius": 0.022
+        },
+        {
+          "id": "back",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.9,
+            0.335
+          ],
+          "size": [
+            0.92,
+            1.8,
+            0.05
+          ],
+          "radius": 0.01
+        },
+        {
+          "id": "floor",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.635,
+            0.0
+          ],
+          "size": [
+            0.92,
+            0.05,
+            0.72
+          ],
+          "radius": 0.012
+        },
+        {
+          "id": "liner",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            0.0,
+            1.23,
+            0.306
+          ],
+          "size": [
+            0.82,
+            1.09,
+            0.008
+          ],
+          "radius": 0.003
+        },
+        {
+          "id": "lamp",
+          "kind": "box",
+          "material": "Lamp",
+          "p": [
+            0.0,
+            1.738,
+            -0.24
+          ],
+          "size": [
+            0.492,
+            0.014,
+            0.05
+          ],
+          "radius": 0.006
+        },
+        {
+          "id": "shelf-0",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            1.0,
+            0.03
+          ],
+          "size": [
+            0.82,
+            0.012,
+            0.62
+          ],
+          "radius": 0.004
+        },
+        {
+          "id": "shelf-1",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            1.28,
+            0.03
+          ],
+          "size": [
+            0.82,
+            0.012,
+            0.62
+          ],
+          "radius": 0.004
+        },
+        {
+          "id": "shelf-2",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            1.54,
+            0.03
+          ],
+          "size": [
+            0.82,
+            0.012,
+            0.62
+          ],
+          "radius": 0.004
+        },
+        {
+          "id": "crisper-l",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            -0.205,
+            0.77,
+            0.03
+          ],
+          "size": [
+            0.39,
+            0.18,
+            0.6
+          ],
+          "radius": 0.014
+        },
+        {
+          "id": "crisper-r",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            0.205,
+            0.77,
+            0.03
+          ],
+          "size": [
+            0.39,
+            0.18,
+            0.6
+          ],
+          "radius": 0.014
+        },
+        {
+          "id": "panel",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            0.0,
+            1.69,
+            0.28
+          ],
+          "size": [
+            0.3,
+            0.06,
+            0.04
+          ],
+          "radius": 0.006
+        },
+        {
+          "id": "freezer",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.38,
+            -0.39
+          ],
+          "size": [
+            0.914,
+            0.552,
+            0.06
+          ],
+          "radius": 0.022
+        },
+        {
+          "id": "freezer-handle",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            0.0,
+            0.59,
+            -0.445
+          ],
+          "size": [
+            0.66,
+            0.024,
+            0.024
+          ],
+          "radius": 0.012
+        },
+        {
+          "id": "plinth",
+          "kind": "box",
+          "material": "ClayMid",
+          "p": [
+            0.0,
+            0.05,
+            0.03
+          ],
+          "size": [
+            0.88,
+            0.1,
+            0.66
+          ],
+          "radius": 0.01
+        },
+        {
+          "id": "grille-0",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.025,
+            -0.335
+          ],
+          "size": [
+            0.76,
+            0.008,
+            0.008
+          ],
+          "radius": 0.003
+        },
+        {
+          "id": "grille-1",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.05,
+            -0.335
+          ],
+          "size": [
+            0.76,
+            0.008,
+            0.008
+          ],
+          "radius": 0.003
+        },
+        {
+          "id": "grille-2",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0.0,
+            0.075,
+            -0.335
+          ],
+          "size": [
+            0.76,
+            0.008,
+            0.008
+          ],
+          "radius": 0.003
+        },
+        {
+          "id": "door-l",
+          "kind": "group",
+          "p": [
+            -0.46,
+            0,
+            -0.36
+          ],
+          "r": [
+            0,
+            72,
+            0
+          ],
+          "children": [
+            {
+              "id": "panel",
+              "kind": "box",
+              "material": "Clay",
+              "p": [
+                0.228,
+                1.23,
+                -0.032
+              ],
+              "size": [
+                0.456,
+                1.128,
+                0.064
+              ],
+              "radius": 0.022
+            },
+            {
+              "id": "gasket",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0.228,
+                1.23,
+                0.004
+              ],
+              "size": [
+                0.426,
+                1.098,
+                0.01
+              ],
+              "radius": 0.005
+            },
+            {
+              "id": "handle",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0.411,
+                1.14,
+                -0.085
+              ],
+              "size": [
+                0.024,
+                0.46,
+                0.024
+              ],
+              "radius": 0.012
+            },
+            {
+              "id": "bin-0",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0.228,
+                0.92,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            },
+            {
+              "id": "bin-1",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0.228,
+                1.26,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            },
+            {
+              "id": "bin-2",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                0.228,
+                1.56,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            }
+          ]
+        },
+        {
+          "id": "door-r",
+          "kind": "group",
+          "p": [
+            0.46,
+            0,
+            -0.36
+          ],
+          "r": [
+            0,
+            -105,
+            0
+          ],
+          "children": [
+            {
+              "id": "panel",
+              "kind": "box",
+              "material": "Clay",
+              "p": [
+                -0.228,
+                1.23,
+                -0.032
+              ],
+              "size": [
+                0.456,
+                1.128,
+                0.064
+              ],
+              "radius": 0.022
+            },
+            {
+              "id": "gasket",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                -0.228,
+                1.23,
+                0.004
+              ],
+              "size": [
+                0.426,
+                1.098,
+                0.01
+              ],
+              "radius": 0.005
+            },
+            {
+              "id": "handle",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                -0.411,
+                1.14,
+                -0.085
+              ],
+              "size": [
+                0.024,
+                0.46,
+                0.024
+              ],
+              "radius": 0.012
+            },
+            {
+              "id": "bin-0",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                -0.228,
+                0.92,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            },
+            {
+              "id": "bin-1",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                -0.228,
+                1.26,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            },
+            {
+              "id": "bin-2",
+              "kind": "box",
+              "material": "ClayMid",
+              "p": [
+                -0.228,
+                1.56,
+                0.045
+              ],
+              "size": [
+                0.356,
+                0.08,
+                0.07
+              ],
+              "radius": 0.01
+            }
+          ]
+        }
       ],
-      "size": [
-        0.96,
-        1.62,
-        0.012
-      ],
-      "radius": 0.004,
-      "group": "Domis"
-    },
-    {
-      "id": "domis/fridge-shelf-0",
-      "kind": "box",
-      "material": "Clay",
-      "p": [
-        -3.75,
-        0.55,
-        3.63
-      ],
-      "size": [
-        0.94,
-        0.018,
-        0.14
-      ],
-      "radius": 0.004,
-      "group": "Domis"
-    },
-    {
-      "id": "domis/fridge-shelf-1",
-      "kind": "box",
-      "material": "Clay",
-      "p": [
-        -3.75,
-        0.95,
-        3.63
-      ],
-      "size": [
-        0.94,
-        0.018,
-        0.14
-      ],
-      "radius": 0.004,
-      "group": "Domis"
-    },
-    {
-      "id": "domis/fridge-shelf-2",
-      "kind": "box",
-      "material": "Clay",
-      "p": [
-        -3.75,
-        1.33,
-        3.63
-      ],
-      "size": [
-        0.94,
-        0.018,
-        0.14
-      ],
-      "radius": 0.004,
-      "group": "Domis"
-    },
-    {
-      "id": "domis/fridge-freezer",
-      "kind": "box",
-      "material": "Clay",
-      "p": [
-        -3.75,
-        1.55,
-        3.625
-      ],
-      "size": [
-        0.96,
-        0.045,
-        0.15
-      ],
-      "radius": 0.006,
-      "group": "Domis"
-    },
-    {
-      "id": "domis/fridge-crisper",
-      "kind": "box",
-      "material": "ClayMid",
-      "p": [
-        -3.75,
-        0.3,
-        3.62
-      ],
-      "size": [
-        0.88,
-        0.22,
-        0.16
-      ],
-      "radius": 0.012,
-      "group": "Domis"
+      "shake": 0.003
     },
     {
       "id": "domis/fridge-bottle-0",
       "kind": "lathe",
       "material": "Clay",
       "p": [
-        -4.09,
-        0.96,
-        3.64
+        -4.03,
+        1.006,
+        4.12
       ],
       "profile": [
         0,
@@ -485,9 +902,9 @@
       "kind": "lathe",
       "material": "Clay",
       "p": [
-        -4.01,
-        0.96,
-        3.63
+        -3.94,
+        1.006,
+        4.01
       ],
       "profile": [
         0,
@@ -516,8 +933,8 @@
       "material": "Clay",
       "p": [
         -3.5,
-        0.66,
-        3.64
+        1.106,
+        4.07
       ],
       "size": [
         0.09,
@@ -538,8 +955,8 @@
       "material": "Clay",
       "p": [
         -3.7,
-        1.34,
-        3.64
+        1.286,
+        4.03
       ],
       "profile": [
         0,
@@ -567,14 +984,14 @@
       "kind": "box",
       "material": "Clay",
       "p": [
-        -3.95,
-        1.39,
-        3.635
+        -3.93,
+        1.596,
+        4.09
       ],
       "size": [
         0.22,
         0.1,
-        0.12
+        0.14
       ],
       "radius": 0.012,
       "group": "Domis",
@@ -585,30 +1002,13 @@
       ]
     },
     {
-      "id": "domis/fridge-panel",
-      "kind": "box",
-      "material": "ClayMid",
-      "p": [
-        -3.75,
-        1.72,
-        3.688
-      ],
-      "size": [
-        0.34,
-        0.07,
-        0.02
-      ],
-      "radius": 0.006,
-      "group": "Domis"
-    },
-    {
       "id": "domis/fridge-fault",
       "kind": "box",
       "material": "Clay",
       "p": [
-        -3.64,
-        1.72,
-        3.676
+        -3.65,
+        1.69,
+        4.306
       ],
       "size": [
         0.022,
@@ -636,7 +1036,7 @@
       "p": [
         -3.67,
         0.003,
-        3.15
+        3.37
       ],
       "size": [
         0.62,
@@ -659,7 +1059,7 @@
       "p": [
         -3.37,
         0.004,
-        2.88
+        3.09
       ],
       "size": [
         0.3,
@@ -727,6 +1127,66 @@
       "height": 0.92
     },
     {
+      "id": "domis/laptop-base",
+      "kind": "box",
+      "material": "Clay",
+      "p": [
+        -1.18,
+        0.928,
+        4.05
+      ],
+      "size": [
+        0.34,
+        0.016,
+        0.235
+      ],
+      "radius": 0.006,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/laptop-keys",
+      "kind": "box",
+      "material": "ClayMid",
+      "p": [
+        -1.18,
+        0.936,
+        4.07
+      ],
+      "size": [
+        0.28,
+        0.002,
+        0.106
+      ],
+      "radius": 0.001,
+      "group": "Domis"
+    },
+    {
+      "id": "domis/laptop",
+      "group": "Domis",
+      "kind": "screen",
+      "w": 0.32,
+      "h": 0.2,
+      "border": 0.008,
+      "t": 0.006,
+      "p": [
+        -1.18,
+        1.042,
+        4.196
+      ],
+      "r": [
+        15,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "src": "Content/Domis/laptop_web.jpg",
+        "floats": {
+          "_Brightness": 1.1
+        }
+      }
+    },
+    {
       "id": "domis/phone-rest",
       "group": "Domis",
       "kind": "screen",
@@ -759,8 +1219,8 @@
       "id": "domis/phone-held",
       "group": "Domis",
       "kind": "screen",
-      "w": 0.09,
-      "h": 0.185,
+      "w": 0.075,
+      "h": 0.155,
       "border": 0.005,
       "t": 0.009,
       "p": [
@@ -878,6 +1338,8 @@
       ],
       "station": "domis",
       "when": "active",
+      "glance": true,
+      "body": "Claudia",
       "grip": {
         "kind": "phone",
         "object": "domis/phone-held"
@@ -1033,6 +1495,36 @@
       "on": "taste/sideboard"
     },
     {
+      "id": "taste/pc-screen",
+      "group": "Taste",
+      "kind": "screen",
+      "w": 0.57,
+      "h": 0.35,
+      "border": 0.0,
+      "t": 0.003,
+      "p": [
+        0.88,
+        0.863,
+        4.217
+      ],
+      "r": [
+        8.4,
+        0,
+        0
+      ],
+      "display": {
+        "surface": "Screen",
+        "floats": {
+          "_Brightness": 1.1
+        },
+        "active": [
+          "Content/Taste/arsenal.jpg"
+        ],
+        "activeBrightness": 1.15
+      },
+      "station": "taste"
+    },
+    {
       "id": "taste/keyboard",
       "group": "Taste",
       "kind": "model",
@@ -1122,7 +1614,7 @@
       ],
       "display": {
         "surface": "Screen",
-        "src": "Content/Albums/lgseo_front.jpg",
+        "src": "Content/Albums/motm2_front.jpg",
         "lit": true
       },
       "corner": 0.01
@@ -1147,7 +1639,7 @@
       ],
       "display": {
         "surface": "Screen",
-        "src": "Content/Albums/motm2_front.jpg",
+        "src": "Content/Albums/lgseo_front.jpg",
         "lit": true
       },
       "corner": 0.01
@@ -1406,11 +1898,6 @@
           ],
           "radius": 0.02
         }
-      ],
-      "tint": [
-        0.45,
-        0.29,
-        0.19
       ]
     },
     {
@@ -1549,12 +2036,12 @@
       ],
       "display": {
         "surface": "Screen",
-        "src": "Content/MemoryCare/station.jpg",
+        "src": "Content/MemoryCare/drive.jpg",
         "floats": {
           "_Brightness": 0.9
         },
         "active": [
-          "Content/MemoryCare/resident_wheel.jpg",
+          "Content/MemoryCare/drive.jpg",
           "Content/MemoryCare/kitten.jpg"
         ],
         "seconds": 3.5,
@@ -1592,8 +2079,7 @@
     {
       "id": "memorycare/stool",
       "group": "MemoryCare",
-      "kind": "model",
-      "src": "ph:folding_wooden_stool",
+      "kind": "group",
       "p": [
         2.35,
         0,
@@ -1601,10 +2087,61 @@
       ],
       "r": [
         0,
-        30,
+        0,
         0
       ],
-      "height": 0.46,
+      "children": [
+        {
+          "id": "foot",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.012,
+            0
+          ],
+          "size": [
+            0.3,
+            0.024,
+            0.3
+          ],
+          "radius": 0.012,
+          "corner": 0.15
+        },
+        {
+          "id": "stem",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.23,
+            0
+          ],
+          "size": [
+            0.036,
+            0.44,
+            0.036
+          ],
+          "radius": 0.018
+        },
+        {
+          "id": "top",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.448,
+            0
+          ],
+          "size": [
+            0.42,
+            0.024,
+            0.42
+          ],
+          "radius": 0.012,
+          "corner": 0.21
+        }
+      ],
       "tint": [
         1.0,
         0.82,
@@ -1770,6 +2307,7 @@
       ],
       "station": "memory-care",
       "when": "active",
+      "scan": true,
       "grip": {
         "kind": "wheel",
         "object": "memorycare/steering-wheel"
@@ -1817,13 +2355,24 @@
       "display": {
         "surface": "Screen",
         "src": "Content/Virdio/tv_idle.png",
+        "align": "top",
         "floats": {
           "_Brightness": 1.1
         },
         "active": [
-          "Content/Virdio/tv_class.jpg"
+          "Content/Virdio/tv_pushup_0.jpg",
+          "Content/Virdio/tv_pushup_1.jpg"
         ],
-        "activeBrightness": 1.3
+        "activeBrightness": 1.3,
+        "sync": {
+          "to": "virdio/person",
+          "frames": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
       },
       "station": "virdio"
     },
@@ -2004,7 +2553,7 @@
       ],
       "display": {
         "surface": "Screen",
-        "src": "Content/Virdio/phone.jpg",
+        "src": "Content/Virdio/phone_classes.png",
         "floats": {
           "_Brightness": 1.35
         }
@@ -2023,172 +2572,343 @@
       "poses": [
         {
           "pelvis": [
-            -2.75,
-            0.95,
-            -2.0
-          ],
-          "neck": [
-            -2.75,
-            1.44,
-            -2.0
-          ],
-          "headBase": [
-            -2.75,
-            1.52,
-            -2.0
-          ],
-          "headTop": [
-            -2.75,
-            1.7,
-            -2.0
-          ],
-          "shl": [
-            -2.75,
-            1.4,
-            -1.8
-          ],
-          "shr": [
-            -2.75,
-            1.4,
-            -2.2
+            -2.45,
+            0.424,
+            -1.85
           ],
           "hipl": [
-            -2.75,
-            0.92,
-            -1.9
+            -2.35,
+            0.424,
+            -1.85
           ],
           "hipr": [
-            -2.75,
-            0.92,
-            -2.1
+            -2.55,
+            0.424,
+            -1.85
           ],
           "knl": [
-            -2.73,
-            0.48,
-            -1.8
+            -2.35,
+            0.19,
+            -1.42
           ],
           "knr": [
-            -2.73,
-            0.48,
-            -2.2
+            -2.55,
+            0.19,
+            -1.42
           ],
           "anl": [
-            -2.75,
-            0.05,
-            -1.79
+            -2.35,
+            0.1,
+            -1.0
           ],
           "anr": [
-            -2.75,
-            0.05,
-            -2.21
+            -2.55,
+            0.1,
+            -1.0
+          ],
+          "shl": [
+            -2.25,
+            0.6,
+            -2.31
+          ],
+          "shr": [
+            -2.65,
+            0.6,
+            -2.31
+          ],
+          "neck": [
+            -2.45,
+            0.639,
+            -2.36
+          ],
+          "headBase": [
+            -2.45,
+            0.666,
+            -2.43
+          ],
+          "headTop": [
+            -2.45,
+            0.705,
+            -2.61
           ],
           "ell": [
-            -2.69,
-            1.16,
-            -1.7
+            -2.22,
+            0.33,
+            -2.3
           ],
           "wrl": [
-            -2.45,
-            1.22,
-            -1.8
+            -2.24,
+            0.04,
+            -2.3
           ],
           "elr": [
-            -2.69,
-            1.16,
+            -2.68,
+            0.33,
             -2.3
           ],
           "wrr": [
-            -2.45,
-            1.22,
-            -2.2
+            -2.66,
+            0.04,
+            -2.3
           ]
         },
         {
           "pelvis": [
-            -2.75,
-            0.63,
-            -2.0
-          ],
-          "neck": [
-            -2.59,
-            1.12,
-            -2.0
-          ],
-          "headBase": [
-            -2.558,
-            1.2,
-            -2.0
-          ],
-          "headTop": [
-            -2.43,
-            1.38,
-            -2.0
-          ],
-          "shl": [
-            -2.59,
-            1.08,
-            -1.8
-          ],
-          "shr": [
-            -2.59,
-            1.08,
-            -2.2
+            -2.45,
+            0.424,
+            -1.85
           ],
           "hipl": [
-            -2.75,
-            0.6,
-            -1.9
+            -2.35,
+            0.424,
+            -1.85
           ],
           "hipr": [
-            -2.75,
-            0.6,
-            -2.1
+            -2.55,
+            0.424,
+            -1.85
           ],
           "knl": [
-            -2.39,
-            0.352,
-            -1.76
+            -2.35,
+            0.19,
+            -1.42
           ],
           "knr": [
-            -2.39,
-            0.352,
-            -2.24
+            -2.55,
+            0.19,
+            -1.42
           ],
           "anl": [
-            -2.75,
-            0.05,
-            -1.75
+            -2.35,
+            0.1,
+            -1.0
           ],
           "anr": [
-            -2.75,
-            0.05,
-            -2.25
+            -2.55,
+            0.1,
+            -1.0
+          ],
+          "shl": [
+            -2.25,
+            0.6,
+            -2.31
+          ],
+          "shr": [
+            -2.65,
+            0.6,
+            -2.31
+          ],
+          "neck": [
+            -2.45,
+            0.639,
+            -2.36
+          ],
+          "headBase": [
+            -2.45,
+            0.666,
+            -2.43
+          ],
+          "headTop": [
+            -2.45,
+            0.705,
+            -2.61
           ],
           "ell": [
-            -2.45,
-            0.92,
-            -1.74
+            -2.22,
+            0.33,
+            -2.3
           ],
           "wrl": [
-            -2.2,
-            0.94,
-            -1.88
+            -2.24,
+            0.04,
+            -2.3
           ],
           "elr": [
-            -2.45,
-            0.92,
-            -2.26
+            -2.68,
+            0.33,
+            -2.3
           ],
           "wrr": [
-            -2.2,
-            0.94,
-            -2.12
+            -2.66,
+            0.04,
+            -2.3
+          ]
+        },
+        {
+          "pelvis": [
+            -2.45,
+            0.174,
+            -1.85
+          ],
+          "hipl": [
+            -2.35,
+            0.174,
+            -1.85
+          ],
+          "hipr": [
+            -2.55,
+            0.174,
+            -1.85
+          ],
+          "knl": [
+            -2.35,
+            0.067,
+            -1.42
+          ],
+          "knr": [
+            -2.55,
+            0.067,
+            -1.42
+          ],
+          "anl": [
+            -2.35,
+            0.1,
+            -1.0
+          ],
+          "anr": [
+            -2.55,
+            0.1,
+            -1.0
+          ],
+          "shl": [
+            -2.25,
+            0.22,
+            -2.37
+          ],
+          "shr": [
+            -2.65,
+            0.22,
+            -2.37
+          ],
+          "neck": [
+            -2.45,
+            0.244,
+            -2.42
+          ],
+          "headBase": [
+            -2.45,
+            0.251,
+            -2.49
+          ],
+          "headTop": [
+            -2.45,
+            0.236,
+            -2.67
+          ],
+          "ell": [
+            -2.12,
+            0.27,
+            -2.13
+          ],
+          "wrl": [
+            -2.24,
+            0.04,
+            -2.3
+          ],
+          "elr": [
+            -2.78,
+            0.27,
+            -2.13
+          ],
+          "wrr": [
+            -2.66,
+            0.04,
+            -2.3
+          ]
+        },
+        {
+          "pelvis": [
+            -2.45,
+            0.174,
+            -1.85
+          ],
+          "hipl": [
+            -2.35,
+            0.174,
+            -1.85
+          ],
+          "hipr": [
+            -2.55,
+            0.174,
+            -1.85
+          ],
+          "knl": [
+            -2.35,
+            0.067,
+            -1.42
+          ],
+          "knr": [
+            -2.55,
+            0.067,
+            -1.42
+          ],
+          "anl": [
+            -2.35,
+            0.1,
+            -1.0
+          ],
+          "anr": [
+            -2.55,
+            0.1,
+            -1.0
+          ],
+          "shl": [
+            -2.25,
+            0.22,
+            -2.37
+          ],
+          "shr": [
+            -2.65,
+            0.22,
+            -2.37
+          ],
+          "neck": [
+            -2.45,
+            0.244,
+            -2.42
+          ],
+          "headBase": [
+            -2.45,
+            0.251,
+            -2.49
+          ],
+          "headTop": [
+            -2.45,
+            0.236,
+            -2.67
+          ],
+          "ell": [
+            -2.12,
+            0.27,
+            -2.13
+          ],
+          "wrl": [
+            -2.24,
+            0.04,
+            -2.3
+          ],
+          "elr": [
+            -2.78,
+            0.27,
+            -2.13
+          ],
+          "wrr": [
+            -2.66,
+            0.04,
+            -2.3
           ]
         }
       ],
-      "flip": 1.8,
+      "flip": [
+        0.5,
+        1.0,
+        0.15,
+        0.75
+      ],
       "station": "virdio",
       "when": "active",
+      "palms": "floor",
+      "body": "Eric",
       "hands": [
         "relaxed",
         "relaxed"
@@ -2365,8 +3085,7 @@
     {
       "id": "wafflings/stool",
       "group": "Wafflings",
-      "kind": "model",
-      "src": "ph:folding_wooden_stool",
+      "kind": "group",
       "p": [
         -0.7,
         0,
@@ -2374,14 +3093,60 @@
       ],
       "r": [
         0,
-        15,
+        0,
         0
       ],
-      "height": 0.46,
-      "tint": [
-        0.78,
-        0.6,
-        0.42
+      "children": [
+        {
+          "id": "foot",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.012,
+            0
+          ],
+          "size": [
+            0.3,
+            0.024,
+            0.3
+          ],
+          "radius": 0.012,
+          "corner": 0.15
+        },
+        {
+          "id": "stem",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.23,
+            0
+          ],
+          "size": [
+            0.036,
+            0.44,
+            0.036
+          ],
+          "radius": 0.018
+        },
+        {
+          "id": "top",
+          "kind": "box",
+          "material": "Clay",
+          "p": [
+            0,
+            0.448,
+            0
+          ],
+          "size": [
+            0.42,
+            0.024,
+            0.42
+          ],
+          "radius": 0.012,
+          "corner": 0.21
+        }
       ]
     },
     {
@@ -3206,172 +3971,6 @@
         "rest",
         "relaxed"
       ]
-    },
-    {
-      "id": "me/resting",
-      "group": "Taste",
-      "kind": "person",
-      "p": [
-        0,
-        0,
-        0
-      ],
-      "poses": [
-        {
-          "pelvis": [
-            0.483,
-            0.45,
-            2.336
-          ],
-          "neck": [
-            0.369,
-            0.89,
-            2.581
-          ],
-          "headBase": [
-            0.361,
-            0.96,
-            2.599
-          ],
-          "headTop": [
-            0.344,
-            1.15,
-            2.635
-          ],
-          "shl": [
-            0.558,
-            0.84,
-            2.625
-          ],
-          "shr": [
-            0.214,
-            0.84,
-            2.464
-          ],
-          "ell": [
-            0.774,
-            0.7,
-            2.516
-          ],
-          "wrl": [
-            0.884,
-            0.73,
-            2.281
-          ],
-          "elr": [
-            0.158,
-            0.7,
-            2.229
-          ],
-          "wrr": [
-            0.268,
-            0.73,
-            1.993
-          ],
-          "hipl": [
-            0.582,
-            0.44,
-            2.36
-          ],
-          "hipr": [
-            0.401,
-            0.44,
-            2.276
-          ],
-          "knl": [
-            0.769,
-            0.55,
-            2.006
-          ],
-          "knr": [
-            0.543,
-            0.55,
-            1.901
-          ],
-          "anl": [
-            0.898,
-            0.09,
-            1.801
-          ],
-          "anr": [
-            0.599,
-            0.09,
-            1.684
-          ]
-        }
-      ],
-      "station": "taste",
-      "when": "active",
-      "children": [
-        {
-          "id": "headphones-l",
-          "kind": "box",
-          "material": "Clay",
-          "p": [
-            0.452,
-            1.055,
-            2.664
-          ],
-          "size": [
-            0.035,
-            0.085,
-            0.085
-          ],
-          "radius": 0.03,
-          "r": [
-            0,
-            155,
-            0
-          ]
-        },
-        {
-          "id": "headphones-r",
-          "kind": "box",
-          "material": "Clay",
-          "p": [
-            0.252,
-            1.055,
-            2.571
-          ],
-          "size": [
-            0.035,
-            0.085,
-            0.085
-          ],
-          "radius": 0.03,
-          "r": [
-            0,
-            155,
-            0
-          ]
-        },
-        {
-          "id": "headphones-band",
-          "kind": "tube",
-          "material": "ClayMid",
-          "p": [
-            0,
-            0,
-            0
-          ],
-          "path": [
-            0.452,
-            1.085,
-            2.664,
-            0.348,
-            1.185,
-            2.626,
-            0.252,
-            1.085,
-            2.571
-          ],
-          "t": 0.018
-        }
-      ],
-      "hands": [
-        "rest",
-        "relaxed"
-      ]
     }
   ],
   "lights": [
@@ -3426,9 +4025,9 @@
     {
       "id": "overview",
       "p": [
-        -96.394,
-        96.394,
-        -96.394
+        -77.115,
+        77.115,
+        -77.115
       ],
       "target": [
         0.0,
@@ -3454,14 +4053,14 @@
     {
       "id": "virdio",
       "p": [
-        -4.75,
+        -4.45,
         2.3,
         -1.4
       ],
       "target": [
-        -1.507,
+        -1.517,
         0.8,
-        -2.643
+        -2.641
       ],
       "fov": 60
     },
@@ -3529,24 +4128,20 @@
       "view": "domis",
       "items": [
         "domis/fridge",
-        "domis/fridge-liner",
-        "domis/fridge-shelf-0",
-        "domis/fridge-shelf-1",
-        "domis/fridge-shelf-2",
-        "domis/fridge-freezer",
-        "domis/fridge-crisper",
         "domis/fridge-bottle-0",
         "domis/fridge-bottle-1",
         "domis/fridge-carton",
         "domis/fridge-jar",
         "domis/fridge-tub",
-        "domis/fridge-panel",
         "domis/fridge-fault",
         "domis/leak-0",
         "domis/leak-1",
         "domis/cabinet-0",
         "domis/sink",
         "domis/cabinet-1",
+        "domis/laptop-base",
+        "domis/laptop-keys",
+        "domis/laptop",
         "domis/phone-rest",
         "domis/phone-held",
         "domis/person"
@@ -3603,7 +4198,7 @@
       ],
       "screen": "virdio/tv",
       "enter": [
-        -2.3,
+        -2.0,
         1.45,
         -2.0
       ]
@@ -3720,6 +4315,7 @@
         "taste/sideboard",
         "taste/record-player",
         "taste/monitor",
+        "taste/pc-screen",
         "taste/keyboard",
         "taste/mouse",
         "taste/ledge-records",
@@ -3730,8 +4326,7 @@
         "taste/game-0",
         "taste/game-1",
         "taste/game-2",
-        "taste/lounge-chair",
-        "me/resting"
+        "taste/lounge-chair"
       ],
       "boost": 1.4,
       "rect": [
@@ -3752,15 +4347,15 @@
   ],
   "look": {
     "exposure": 0,
-    "ambient": 0.4,
+    "ambient": 0.24,
     "ambient.warm": 0.52,
     "reflections": 0.48,
-    "sun.yaw": 47,
-    "sun.height": 36,
-    "sun.warm": 0.14,
-    "sun.shadow": 0.25,
-    "ao": 0.2,
-    "ao.radius": 0.13,
+    "sun.yaw": 49,
+    "sun.height": 45,
+    "sun.warm": 0.04,
+    "sun.shadow": 0.06,
+    "ao": 0.1,
+    "ao.radius": 0.05,
     "ao.direct": 0.2,
     "lens": 2,
     "orbit": 25,
@@ -3772,11 +4367,11 @@
     "contrast": -6,
     "saturation": -39,
     "style": 0,
-    "style.size": 7,
+    "style.size": 4,
     "pipe.cap": 0,
     "pipe.aa": 3,
     "pipe.upscale": 1,
-    "light.CityLight": 1.45,
+    "light.CityLight": 1.6,
     "cycle": 4
   }
 }

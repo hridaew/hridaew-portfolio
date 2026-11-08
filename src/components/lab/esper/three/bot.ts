@@ -16,12 +16,15 @@ type Rig = {
   finger?: (f: Finger, i: number, side: "l" | "r") => string;
   /** Upper arm, forearm, hand per side: reached by two-bone IK so wrists land exactly where they're sent. */
   arms?: Record<"l" | "r", [string, string, string]>;
+  /** Thigh, shin, foot per side: IK plants the feet where the pose puts the ankles, knees toward the pose's knees. */
+  legs?: Record<"l" | "r", [string, string, string]>;
   chains: [string, string, string, string][] };
 /** Renderpeople's rigged people (Unity export): hip, spine_01-03, neck, head, upperarm/lowerarm/hand, upperleg/lowerleg/foot. */
 const RENDERPEOPLE: Rig = {
   hips: "hip",
   finger: (f, i, side) => (i > 3 ? `${f}_end_${side}` : `${f}_0${i}_${side}`),
   arms: { l: ["upperarm_l", "lowerarm_l", "hand_l"], r: ["upperarm_r", "lowerarm_r", "hand_r"] },
+  legs: { l: ["upperleg_l", "lowerleg_l", "foot_l"], r: ["upperleg_r", "lowerleg_r", "foot_r"] },
   foot: "foot_l",
   neck: "neck",
   shl: "upperarm_l",
@@ -50,8 +53,8 @@ const FINGERS: Finger[] = ["thumb", "index", "middle", "ring", "pinky"];
  */
 export type HandPose = "relaxed" | "grip" | "hold" | "rest" | "phone" | "wheel" | "viewer";
 const HANDS: Record<HandPose, { fingers: number[]; thumb: number[] }> = {
-  // Cradling a phone from behind: fingers run up its back and hook its far edge, the thumb along the near edge.
-  phone: { fingers: [0.35, 1.2, 0.9], thumb: [0.5, 0.3, 0.2] },
+  // Cradling a phone: the starting curl; the fingertips are then solved onto its edges (BotPerson.touch).
+  phone: { fingers: [0.2, 0.6, 0.5], thumb: [0.3, 0.1, 0.05] },
   // A fist round the wheel's rim, the thumb wrapped over the front.
   wheel: { fingers: [1.15, 1.35, 1.0], thumb: [0.75, 0.6, 0.45] },
   // Steadying a viewer by its sides: fingers along the side and over the front edge, thumbs underneath.
@@ -61,10 +64,16 @@ const HANDS: Record<HandPose, { fingers: number[]; thumb: number[] }> = {
   hold: { fingers: [0.55, 0.8, 0.55], thumb: [0.35, 0.3, 0.2] },
   rest: { fingers: [0.16, 0.24, 0.16], thumb: [0.08, 0.1, 0.08] },
 };
-const FAN: Record<Finger, number> = { thumb: 1, index: 0.82, middle: 1, ring: 1.1, pinky: 1.22 };
+/** How a phone sits in the hand (metres): the wrist's depth behind the back, how far in from the far edge the knuckles
+ *  land, and how far below the centre. */
+const PHONE = { back: 0.03, inset: 0.03, low: 0.07 };const FAN: Record<Finger, number> = { thumb: 1, index: 0.82, middle: 1, ring: 1.1, pinky: 1.22 };
+
+/** A held slab (a phone), rig space: its centre, its up, its width direction (toward the hand's thumb side), the
+ *  way its screen faces, and its size. Fingertips are solved onto it each frame. */
+type Slab = { c: THREE.Vector3; U: THREE.Vector3; S: THREE.Vector3; O: THREE.Vector3; w: number; h: number; t: number };
 
 /** Where a hand goes and how it's turned, in the rig's own space: the wrist, where the fingers point, where the palm faces. */
-export type Grip = { wrist: THREE.Vector3; fingers: THREE.Vector3; palm: THREE.Vector3; shape: HandPose };
+export type Grip = { wrist: THREE.Vector3; fingers: THREE.Vector3; palm: THREE.Vector3; shape: HandPose; slab?: Slab };
 
 export class BotPerson {
   group = new THREE.Group();
@@ -79,11 +88,16 @@ export class BotPerson {
   private restFrame = new THREE.Quaternion();
 
   /** Each finger bone, with the axis (in its own space) that curls it toward the palm. */
-  private knuckles: { bone: THREE.Object3D; axis: THREE.Vector3; f: Finger; i: number; side: "l" | "r" }[] = [];
+  private knuckles: { bone: THREE.Object3D; axis: THREE.Vector3; f: Finger; i: number; side: "l" | "r"; curl: number }[] = [];
   /** Hands sent to something they hold; the rest follow the pose's wrists. */
   private grips: Partial<Record<"l" | "r", Grip>> = {};
   /** Per side: arm bone lengths, and the hand's own finger and palm directions (in its own space). */
   private armLen: Partial<Record<"l" | "r", [number, number]>> = {};
+  private legLen: Partial<Record<"l" | "r", [number, number]>> = {};
+  /** Each foot's orientation at rest (rig space), kept flat and turned with the body when planted. */
+  private footRest: Partial<Record<"l" | "r", THREE.Quaternion>> = {};
+  /** This frame's turn of the whole body from its rest facing. */
+  private turnQ = new THREE.Quaternion();
   private handFrame: Partial<Record<"l" | "r", { f: THREE.Vector3; n: THREE.Vector3 }>> = {};
   /** Every person keeps their own time, so a room never breathes in unison. */
   private seed: number;
@@ -91,10 +105,14 @@ export class BotPerson {
   constructor(
     model: THREE.Object3D,
     private poses: Joints[],
-    private seconds: number,
+    /** Seconds per step between poses: one number for all, or one per step (a rep with its own rhythm). */
+    private seconds: number | number[],
     private look = 0,
     private hands: [HandPose, HandPose] = ["relaxed", "relaxed"],
     seed = 0,
+    /** palmsDown: hands flat on the floor, fingers toward the head (a push-up). glance: looks from what they hold up
+     *  to what's in front of them and back (the Domis scan). */
+    private habits: { palmsDown?: boolean; glance?: boolean; scan?: boolean } = {},
   ) {
     this.seed = seed;
     this.model = model;
@@ -137,6 +155,14 @@ export class BotPerson {
    * with the palm normal, so turning about it brings the fingertip toward the palm. Kept in the bone's own space.
    */
   private measureHands() {
+    for (const side of ["l", "r"] as const) {
+      const leg = this.rig.legs?.[side];
+      const bs = leg?.map((n) => this.bone(n));
+      if (!leg || !bs || bs.some((b) => !b)) continue;
+      const [u, l, f] = bs.map((b) => this.local(b!).pos);
+      this.legLen[side] = [u.distanceTo(l), l.distanceTo(f)];
+      this.footRest[side] = this.local(bs[2]!).quat;
+    }
     const name = this.rig.finger;
     if (!name) return;
     const P = (n: string) => {
@@ -162,7 +188,7 @@ export class BotPerson {
           if (!bone || !a || !b) continue;
           const axisH = new THREE.Vector3().crossVectors(b.clone().sub(a).normalize(), n).normalize();
           const axis = axisH.applyQuaternion(this.local(bone).quat.invert());
-          this.knuckles.push({ bone, axis, f, i, side });
+          this.knuckles.push({ bone, axis, f, i, side, curl: 0 });
         }
     }
   }
@@ -174,7 +200,8 @@ export class BotPerson {
       const shape = HANDS[this.grips[k.side]?.shape ?? this.hands[k.side === "l" ? 0 : 1]];
       const base = (k.f === "thumb" ? shape.thumb : shape.fingers)[k.i - 1] * (k.f === "thumb" ? 1 : FAN[k.f]);
       const drift = 0.035 * Math.sin(t * 0.55 + k.i * 0.7 + FINGERS.indexOf(k.f) * 1.3 + (k.side === "l" ? 0 : 2));
-      k.bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(k.axis, base + drift));
+      k.curl = base + drift;
+      k.bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(k.axis, k.curl));
     }
   }
 
@@ -187,6 +214,9 @@ export class BotPerson {
     this.pose(this.t);
     this.shapeHands();
     if (this.look) this.lookAround();
+    if (this.habits.glance) this.glanceUp();
+    if (this.habits.scan) this.scan();
+    this.touch();
   }
 
   /** Sends a hand to something it holds (null lets it go back to the pose). */
@@ -228,11 +258,80 @@ export class BotPerson {
     // far edge and the curled fingers hook round it.
     const L = this.flat(f.right.clone().negate(), O);
     const F = L.clone().multiplyScalar(0.85).add(U.clone().multiplyScalar(0.5)).normalize();
+    // This body's own palm (wrist to the middle knuckle), so a smaller hand still lands its knuckles on the back.
+    const hand = this.bone(this.rig.arms?.r[2] ?? ""), knuckle = this.bone(this.rig.finger?.("middle", 1, "r") ?? "");
+    const palm = hand && knuckle ? this.local(hand).pos.distanceTo(this.local(knuckle).pos) : 0.08;
     const wrist = c.clone()
-      .sub(O.clone().multiplyScalar(size.t / 2 + 0.022))
-      .add(L.clone().multiplyScalar(size.w / 2 - 0.015 - 0.095 * 0.85))
-      .sub(U.clone().multiplyScalar(0.07));
-    this.grip("r", { wrist, fingers: F, palm: O, shape: "phone" });
+      .sub(O.clone().multiplyScalar(size.t / 2 + PHONE.back))
+      .add(L.clone().multiplyScalar(size.w / 2 - PHONE.inset - palm * 0.85))
+      .sub(U.clone().multiplyScalar(PHONE.low));
+    this.grip("r", { wrist, fingers: F, palm: O, shape: "phone", slab: { c, U, S: L.clone().negate(), O, ...size } });
+  }
+
+  /**
+   * Fingertips onto what the hand holds, solved every frame from wherever the knuckles are: each finger bends only
+   * about its own knuckle axis (no twisting) until its tip rests on the far edge, level with its knuckle; the thumb
+   * goes round the near edge and settles just over the screen.
+   */
+  private touch() {
+    const name = this.rig.finger;
+    if (!name) return;
+    for (const side of ["l", "r"] as const) {
+      const slab = this.grips[side]?.slab;
+      if (!slab) continue;
+      const { c, U, S, O, w, h, t } = slab;
+      const at = (s: number, u: number, o: number) =>
+        c.clone().add(S.clone().multiplyScalar(s)).add(U.clone().multiplyScalar(u)).add(O.clone().multiplyScalar(o));
+      const u = (p: THREE.Vector3) => p.clone().sub(c).dot(U);
+      const clampU = (v: number) => Math.min(h / 2 - 0.012, Math.max(-h / 2 + 0.008, v));
+      const pos = (n: string) => { const b = this.bone(n); return b ? this.local(b).pos : null; };
+      this.bone(this.rig.arms?.[side][2] ?? "")?.updateMatrixWorld(true);
+      for (const f of FINGERS) {
+        const chain = [1, 2, 3].map((i) => this.knuckles.find((k) => k.side === side && k.f === f && k.i === i));
+        const tip = this.bone(name(f, 4, side)), root = pos(name(f, 1, side));
+        if (chain.some((k) => !k) || !tip || !root) continue;
+        if (f === "thumb") {
+          // Tucked behind: the thumb lies along the back, out of sight, nowhere near the glass.
+          const ru = u(root);
+          const behind = -t / 2 - 0.017;
+          this.ccd([chain[0]!], this.bone(name(f, 2, side))!, at(w / 2 - 0.004, clampU(ru + 0.022), behind), false);
+          this.ccd([chain[2]!, chain[1]!], tip, at(w / 2 - 0.01, clampU(ru + 0.06), behind), false);
+        } else {
+          // The pad against the far edge, a touch round onto the front.
+          this.ccd([chain[2]!, chain[1]!, chain[0]!], tip, at(-w / 2 - 0.005, clampU(u(root) + 0.004), 0.002), true);
+        }
+      }
+    }
+  }
+
+  /**
+   * Cyclic coordinate descent: each joint in turn, tip-most first, turns to bring `tip` toward `target`. Hinged
+   * joints turn only about their curl axis and stay within a real finger's range; free ones (the thumb) turn any way.
+   */
+  private ccd(chain: { bone: THREE.Object3D; axis: THREE.Vector3; curl: number }[], tip: THREE.Object3D, target: THREE.Vector3, hinge: boolean) {
+    for (let it = 0; it < 8; it++) {
+      for (const k of chain) {
+        const p = this.local(k.bone).pos, e = this.local(tip).pos;
+        const a = e.sub(p), b = target.clone().sub(p);
+        if (hinge) {
+          const ax = k.axis.clone().applyQuaternion(this.local(k.bone).quat).normalize();
+          a.sub(ax.clone().multiplyScalar(a.dot(ax)));
+          b.sub(ax.clone().multiplyScalar(b.dot(ax)));
+          if (a.lengthSq() < 1e-10 || b.lengthSq() < 1e-10) continue;
+          let ang = Math.atan2(ax.dot(new THREE.Vector3().crossVectors(a, b)), a.dot(b));
+          // Keep the joint between slightly straight and fully curled.
+          ang = Math.min(1.75 - k.curl, Math.max(-0.15 - k.curl, ang));
+          k.curl += ang;
+          k.bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(k.axis, ang));
+        } else {
+          if (a.lengthSq() < 1e-10 || b.lengthSq() < 1e-10) continue;
+          const dq = new THREE.Quaternion().setFromUnitVectors(a.normalize(), b.normalize());
+          this.setLocalQuat(k.bone, dq.multiply(this.local(k.bone).quat));
+          continue;
+        }
+        k.bone.updateMatrixWorld(true);
+      }
+    }
   }
 
   /** Both hands on a steering wheel at ten and two: fists round the rim, palms toward the hub. Scene space. */
@@ -243,7 +342,7 @@ export class BotPerson {
     const up = this.flat(new THREE.Vector3(0, 1, 0), n), right = this.flat(f.right, n);
     const R = this.toRig(centre.clone().add(new THREE.Vector3(radius, 0, 0))).distanceTo(c);
     for (const [side, th] of [["l", -1], ["r", 1]] as const) {
-      const a = th * (58 * Math.PI) / 180;
+      const a = th * (98 * Math.PI) / 180;
       const p = c.clone().add(right.clone().multiplyScalar(R * Math.sin(a))).add(up.clone().multiplyScalar(R * Math.cos(a)));
       const radial = p.clone().sub(c).normalize();
       const F = n.clone().negate();
@@ -297,16 +396,26 @@ export class BotPerson {
     spine.updateMatrixWorld(true);
   }
 
+  /** Which key pose the body is closest to right now (it has passed halfway to the next): what a screen syncs to. */
+  get nearestPose() {
+    return this.nearest;
+  }
+  private nearest = 0;
+
   private pose(t: number) {
     const n = this.poses.length;
     if (!n) return;
     let f = 0, a = this.poses[0], b = a;
-    if (n > 1 && this.seconds > 0) {
-      const phase = t / this.seconds;
-      const k = Math.floor(phase) % n;
+    this.nearest = 0;
+    const steps = Array.isArray(this.seconds) ? this.seconds : Array(n).fill(this.seconds);
+    const cycle = steps.slice(0, n).reduce((s, v) => s + (v || 0), 0);
+    if (n > 1 && cycle > 0) {
+      let at = t % cycle, k = 0;
+      while (k < n - 1 && at >= steps[k]) at -= steps[k++];
       a = this.poses[k];
       b = this.poses[(k + 1) % n];
-      f = phase - Math.floor(phase);
+      f = Math.min(1, at / Math.max(1e-4, steps[k]));
+      this.nearest = f < 0.5 ? k : (k + 1) % n;
       f = f * f * (3 - 2 * f);
     }
     for (const key in a) {
@@ -377,6 +486,7 @@ export class BotPerson {
     const left = new THREE.Vector3().crossVectors(up, fwd).normalize();
     const want = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(left, up, fwd));
     const turn = want.multiply(this.restFrame.clone().invert());
+    this.turnQ.copy(turn);
     this.setLocalQuat(hips, turn.multiply(this.local(hips).quat));
 
     // Hips onto the pelvis.
@@ -385,8 +495,10 @@ export class BotPerson {
     this.model.updateMatrixWorld(true);
 
     const armBones = new Set(Object.values(this.rig.arms ?? {}).flatMap((a) => a.slice(0, 2)));
+    const legBones = new Set(Object.values(this.rig.legs ?? {}).flatMap((a) => a.slice(0, 2)));
     for (const [bn, cn, ja, jb] of this.rig.chains) {
       if (this.armLen.l && armBones.has(bn)) continue;
+      if (this.legLen.l && legBones.has(bn)) continue;
       const bone = this.bone(bn), child = this.bone(cn), a = this.J(ja), b = this.J(jb);
       if (!bone || !child || !a || !b) continue;
       const pb = this.local(bone).pos, pc = this.local(child).pos;
@@ -395,8 +507,37 @@ export class BotPerson {
       const dq = new THREE.Quaternion().setFromUnitVectors(cur, want);
       this.setLocalQuat(bone, dq.multiply(this.local(bone).quat));
     }
+    for (const side of ["l", "r"] as const) this.plant(side);
     this.breathe();
     for (const side of ["l", "r"] as const) this.reach(side);
+  }
+
+  /** Feet on the ankles' marks (so a squat stays on the floor), knees toward the pose's knees, soles kept flat. */
+  private plant(side: "l" | "r") {
+    const leg = this.rig.legs?.[side], len = this.legLen[side], rest = this.footRest[side];
+    const target = this.J(side === "l" ? "anl" : "anr"), pole = this.J(side === "l" ? "knl" : "knr");
+    if (!leg || !len || !rest || !target || !pole) return;
+    const [ub, lb, fb] = leg.map((n) => this.bone(n));
+    if (!ub || !lb || !fb) return;
+    this.twoBone(ub, lb, fb, len, target, pole);
+    this.setLocalQuat(fb, this.turnQ.clone().multiply(rest));
+  }
+
+  /** Two-bone IK in rig space: the end goes to `target` (or as near as the bones reach), the middle bends toward `pole`. */
+  private twoBone(ub: THREE.Object3D, lb: THREE.Object3D, eb: THREE.Object3D, [L1, L2]: [number, number], target: THREE.Vector3, pole: THREE.Vector3) {
+    const s = this.local(ub).pos;
+    const dir = target.clone().sub(s);
+    const d = Math.min(L1 + L2 - 1e-3, Math.max(Math.abs(L1 - L2) + 1e-3, dir.length()));
+    dir.normalize();
+    const a = (L1 * L1 - L2 * L2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, L1 * L1 - a * a));
+    const pv = pole.clone().sub(s);
+    const perp = pv.sub(dir.clone().multiplyScalar(pv.dot(dir)));
+    if (perp.lengthSq() < 1e-8) perp.set(0, -1, 0);
+    perp.normalize();
+    const mid = s.clone().add(dir.clone().multiplyScalar(a)).add(perp.multiplyScalar(h));
+    const end = s.clone().add(dir.clone().multiplyScalar(d));
+    this.aim(ub, lb, mid.clone().sub(s));
+    this.aim(lb, eb, end.clone().sub(mid));
   }
 
   /** Aims a bone so its child lies along `to` from it. */
@@ -418,28 +559,70 @@ export class BotPerson {
     const target = g?.wrist.clone() ?? this.J(side === "l" ? "wrl" : "wrr");
     const pole = this.J(side === "l" ? "ell" : "elr");
     if (!ub || !lb || !hb || !target || !pole) return;
-    const [L1, L2] = len;
-    const s = this.local(ub).pos;
-    const dir = target.clone().sub(s);
-    const d = Math.min(L1 + L2 - 1e-3, Math.max(Math.abs(L1 - L2) + 1e-3, dir.length()));
-    dir.normalize();
-    const a = (L1 * L1 - L2 * L2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, L1 * L1 - a * a));
-    const pv = pole.clone().sub(s);
-    const perp = pv.sub(dir.clone().multiplyScalar(pv.dot(dir)));
-    if (perp.lengthSq() < 1e-8) perp.set(0, -1, 0);
-    perp.normalize();
-    const elbow = s.clone().add(dir.clone().multiplyScalar(a)).add(perp.multiplyScalar(h));
-    const wrist = s.clone().add(dir.clone().multiplyScalar(d));
-    this.aim(ub, lb, elbow.clone().sub(s));
-    this.aim(lb, hb, wrist.clone().sub(elbow));
+    this.twoBone(ub, lb, hb, len, target, pole);
     const hf = this.handFrame[side];
-    if (!g || !hf) return;
+    if (!hf) return;
+    if (!g && this.habits.palmsDown) {
+      // Flat on the floor: palm down, fingers pointing the way the head is (flattened onto the floor).
+      const head = this.J("neck")!.sub(this.J("pelvis")!);
+      head.y = 0;
+      if (head.lengthSq() < 1e-6) return;
+      const q = this.handBasis(head, new THREE.Vector3(0, -1, 0), hf);
+      this.setLocalQuat(hb, q);
+      return;
+    }
+    if (!g) return;
+    this.setLocalQuat(hb, this.handBasis(g.fingers, g.palm, hf));
+  }
+
+  /** The hand's rotation (rig space) that points its fingers along `fingers` with its palm facing `palm`. */
+  private handBasis(fingers: THREE.Vector3, palm: THREE.Vector3, hf: { f: THREE.Vector3; n: THREE.Vector3 }) {
     const basis = (f: THREE.Vector3, n: THREE.Vector3) => {
       const F = f.clone().normalize();
       const N = n.clone().sub(F.clone().multiplyScalar(n.dot(F))).normalize();
       return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(F, N, new THREE.Vector3().crossVectors(F, N)));
     };
-    const q = basis(g.fingers, g.palm).multiply(basis(hf.f, hf.n).invert());
-    this.setLocalQuat(hb, q);
+    return basis(fingers, palm).multiply(basis(hf.f, hf.n).invert());
+  }
+
+  /**
+   * Watching a screen: the head drifts across it and back, a few degrees each way, never quite repeating; the arms
+   * and hands stay where they are (only the head turns).
+   */
+  private scan() {
+    const head = this.bone("head") ?? this.bone(this.rig.neck);
+    const l = this.J("shl"), r = this.J("shr");
+    if (!head?.parent || !l || !r) return;
+    const t = this.t + this.seed * 17;
+    const yaw = 0.11 * Math.sin(t * 0.31) + 0.05 * Math.sin(t * 0.73 + 1.1);
+    const pitch = 0.035 * Math.sin(t * 0.47 + 0.4);
+    const inv = this.local(head.parent).quat.invert();
+    const upAxis = new THREE.Vector3(0, 1, 0).applyQuaternion(inv);
+    const sideAxis = r.sub(l).normalize().applyQuaternion(inv);
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(upAxis, yaw));
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(sideAxis, pitch));
+    head.updateMatrixWorld(true);
+  }
+
+  /**
+   * Every few seconds the head lifts from what they hold to what's in front of them (the fridge's nameplate), stays
+   * a moment, and comes back. A held, eased look rather than a wobble.
+   */
+  private glanceUp() {
+    const head = this.bone("head") ?? this.bone(this.rig.neck);
+    const l = this.J("shl"), r = this.J("shr");
+    if (!head?.parent || !l || !r) return;
+    const period = 6.5, p = ((this.t + this.seed * 13) % period) / period;
+    // Up between 55% and 85% of the cycle, easing in and out over about half a second each way.
+    const ramp = (x: number) => Math.min(1, Math.max(0, x));
+    const up = ramp((p - 0.55) / 0.08) * ramp((0.85 - p) / 0.08);
+    const w = up * up * (3 - 2 * up);
+    const side = r.sub(l).normalize();
+    const axis = side.applyQuaternion(this.local(head.parent).quat.invert());
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(axis, -0.32 * w));
+    // ...with a small turn toward the fridge's top corner while up.
+    const upAxis = new THREE.Vector3(0, 1, 0).applyQuaternion(this.local(head.parent).quat.invert());
+    head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(upAxis, 0.12 * w));
+    head.updateMatrixWorld(true);
   }
 }

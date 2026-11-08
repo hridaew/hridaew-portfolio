@@ -4,6 +4,7 @@ import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { roundedBox, roundedPanel, softWall } from "./geometry";
 import { lathe, tube, type Joints } from "./kit";
 import { BotPerson, type HandPose } from "./bot";
@@ -24,11 +25,16 @@ import { clone as cloneRig } from "three/examples/jsm/utils/SkeletonUtils.js";
 type Item = {
   id: string; group?: string; kind: string; src?: string; p?: number[]; r?: number[]; s?: number[];
   size?: number[]; material?: string; w?: number; h?: number; t?: number; path?: number[]; radius?: number; corner?: number;
-  noShadows?: boolean; hidden?: boolean; tint?: number[]; station?: string; when?: string; flip?: number; cycle?: number;
+  noShadows?: boolean; hidden?: boolean; tint?: number[]; station?: string; when?: string; flip?: number | number[]; cycle?: number;
   display?: {
     surface?: string; src?: string; floats?: Record<string, number>; active?: string[]; seconds?: number; activeBrightness?: number; lit?: boolean;
     /** A looping, muted video (a site path like /assets/...), always playing, fitted inside the panel on black. */
     video?: string;
+    /** "top": the idle picture is cropped from its top edge rather than its centre. */
+    align?: string;
+    /** Follow a person's movement instead of a timer: `syncTo` names them, `frames` maps each of their key poses to
+     *  one of the `active` pictures (the push-up class shows "up" while they're up, "down" while they're down). */
+    sync?: { to: string; frames: number[] };
   };
   /** A child that rides on its person's chest bone (e.g. a viewer held to the face), so it turns with them. */
   attach?: string;
@@ -36,6 +42,16 @@ type Item = {
   look?: number;
   /** person: the shape of each hand, [left, right]: relaxed, grip (a wheel), hold (a phone), rest (on an armrest). */
   hands?: string[];
+  /** Never ghosts when another room is picked out (the house's outer walls). */
+  solid?: boolean;
+  /** person: one of the bodies by name (Eric, Carla, Claudia), when the role needs it (no heels for push-ups). */
+  body?: string;
+  /** person: "floor" puts the palms flat on the floor (push-ups). */
+  palms?: string;
+  /** person: now and then looks up from what they hold to what's in front of them. */
+  glance?: boolean;
+  /** person: the head drifts slowly around what they're watching (the driver taking in the road on the screen). */
+  scan?: boolean;
   /** Rattles in short bursts while its room is in use (metres of jitter); its swung parts twitch too. */
   shake?: number;
   /** person: what their hands hold. phone (right hand) and wheel name the object; viewer is the one they carry. */
@@ -71,14 +87,32 @@ const toWorld = (v: THREE.Vector3) => new THREE.Vector3(v.x, v.y, -v.z);
 const srgb = (c: number[]) => new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace);
 
 const PALETTE: Record<string, number[]> = {
-  WallWhite: [0.965, 0.96, 0.95], Floor: [0.925, 0.92, 0.91], Clay: [0.94, 0.935, 0.925], Figure: [0.74, 0.76, 0.8],
-  Me: [0.16, 0.16, 0.18], Bezel: [0.94, 0.935, 0.925], Console: [0.94, 0.935, 0.925], Plinth: [0.94, 0.935, 0.925],
-  DeskTop: [0.94, 0.935, 0.925], DeskLeg: [0.94, 0.935, 0.925],
+  // Whites are neutral (no cream): the room reads as white clay under a neutral sun.
+  WallWhite: [0.96, 0.96, 0.96], Floor: [0.92, 0.92, 0.92], Clay: [0.94, 0.94, 0.94], Figure: [0.74, 0.76, 0.8],
+  Me: [0.16, 0.16, 0.18], Bezel: [0.94, 0.94, 0.94], Console: [0.94, 0.94, 0.94], Plinth: [0.94, 0.94, 0.94],
+  DeskTop: [0.94, 0.94, 0.94], DeskLeg: [0.94, 0.94, 0.94],
   // Neutrals for a finished look without colour: a mid clay, soft fabric, dark graphite, satin metal.
-  ClayMid: [0.84, 0.83, 0.81], Fabric: [0.88, 0.865, 0.84], Graphite: [0.16, 0.16, 0.17], Satin: [0.78, 0.78, 0.79],
+  ClayMid: [0.84, 0.84, 0.84], Fabric: [0.9, 0.9, 0.9], Graphite: [0.16, 0.16, 0.17], Satin: [0.78, 0.78, 0.79],
   // People.
   Skin: [0.86, 0.86, 0.85], Top: [0.7, 0.7, 0.7], Bottom: [0.42, 0.42, 0.43], Hair: [0.2, 0.2, 0.2], Shoes: [0.25, 0.25, 0.26],
 };
+/** The dark variant: the same house in charcoal clay; screens and the ghosts glow against it. */
+const DARK_CLAY = [0.34, 0.34, 0.36];
+const PALETTE_DARK: Record<string, number[]> = {
+  ...PALETTE,
+  WallWhite: [0.3, 0.3, 0.32], Floor: [0.24, 0.24, 0.26], Clay: DARK_CLAY, Bezel: DARK_CLAY, Console: DARK_CLAY, Plinth: DARK_CLAY,
+  DeskTop: DARK_CLAY, DeskLeg: DARK_CLAY, ClayMid: [0.26, 0.26, 0.28], Fabric: [0.3, 0.3, 0.32],
+};
+/** Things that give light (the fridge's lamp): emissive strength by theme, light and dark. */
+const GLOW: Record<string, { color: number[]; light: number; dark: number }> = {
+  Lamp: { color: [1, 1, 0.97], light: 0.9, dark: 1.6 },
+};
+/** A lamp also lights what's around it: a small, soft, shadowless point light just under it (candela; the sun is
+ *  about 3 here, so this lifts the shelves and food without flooding the room). */
+const LAMP_LIGHT = { color: [0.94, 0.97, 1], light: 0.35, dark: 0.6, range: 1.5 };
+/** Screens big enough to light a room (TVs, monitors, the laptop, the projection; not phones or covers) throw a soft
+ *  light the colour of what they show. Strength grows with the screen's size; it's stronger in the dark room. */
+const SCREEN_LIGHT = { minArea: 0.05, light: 0.18, dark: 0.5 };
 const FINISH: Record<string, { roughness: number; metalness: number }> = {
   Satin: { roughness: 0.32, metalness: 0.75 }, Graphite: { roughness: 0.45, metalness: 0.1 }, Bezel: { roughness: 0.4, metalness: 0.1 },
   Fabric: { roughness: 1, metalness: 0 }, Hair: { roughness: 0.75, metalness: 0 },
@@ -161,7 +195,19 @@ const personModel = (id: string) => PEOPLE[[...id].reduce((h, c) => (h * 31 + c.
 type Display = {
   mat: THREE.MeshBasicMaterial; station?: string; idle?: THREE.Texture; frames: (THREE.Texture | undefined)[];
   seconds: number; idleB: number; activeB: number; aspect: number; t: number; i: number;
+  /** A copy of the face just in front, that the next picture fades in on; then it becomes the face's picture. */
+  over: THREE.MeshBasicMaterial;
+  /** What the screen is showing or fading to (null: the device's own white), and how far the fade has got (1 = done). */
+  shown: THREE.Texture | null; fade: number;
+  /** Whether its room was in use when last shown, so the slideshow restarts only when that changes. */
+  on: boolean;
+  face: THREE.Mesh;
+  sync?: { to: string; frames: number[] };
+  /** The light the screen throws on what's in front of it: tinted by its picture, dark when it shows nothing. */
+  glow?: ScreenGlow;
 };
+
+type ScreenGlow = { light: THREE.PointLight; base: number; to: number; color: THREE.Color; toColor: THREE.Color; video?: HTMLVideoElement; t: number };
 
 export class EsperEngine {
   private renderer: THREE.WebGLRenderer;
@@ -173,7 +219,8 @@ export class EsperEngine {
   private gtao: GTAOPass;
   private sun = new THREE.DirectionalLight(0xffffff, 1);
   private hemi = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
-  private loader = new GLTFLoader();
+  // Published models are Meshopt-compressed (scripts/compress-esper-models.mjs); dev serves them as authored.
+  private loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   private models = new Map<string, Promise<GLTF | null>>();
   private textures = new Map<string, Promise<THREE.Texture | null>>();
   /** Dev reads straight from the Unity project; the live site from public/esper/assets (esper-unity/Tools/publish_web.py). */
@@ -212,6 +259,9 @@ export class EsperEngine {
   private moving: Pose | null = null;
   private intro = false;
   private reducedMotion = false;
+  private dark = false;
+  private groundMat = new THREE.ShadowMaterial({ opacity: 0.16 });
+  private paused = false;
   private frameOffset = 0;
   private lens = 0;
   private orbit = 40;
@@ -244,7 +294,7 @@ export class EsperEngine {
     this.scene.add(this.root);
 
     // Ground: shows only the shadows and contact darkening, so the house sits on the page colour.
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: 0.16 }));
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), this.groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.002;
     ground.receiveShadow = true;
@@ -282,6 +332,8 @@ export class EsperEngine {
     canvas.addEventListener("pointerdown", this.onDown);
     window.addEventListener("pointermove", this.onMove);
     window.addEventListener("pointerup", this.onUp);
+    window.addEventListener("pointercancel", this.onCancel);
+    document.addEventListener("pointerout", this.onLeave);
     canvas.addEventListener("contextmenu", this.onContext);
     this.raf = requestAnimationFrame(this.frame);
     if (process.env.NODE_ENV !== "production") (window as unknown as { __esper?: unknown }).__esper = this;
@@ -293,6 +345,8 @@ export class EsperEngine {
     this.canvas.removeEventListener("pointerdown", this.onDown);
     window.removeEventListener("pointermove", this.onMove);
     window.removeEventListener("pointerup", this.onUp);
+    window.removeEventListener("pointercancel", this.onCancel);
+    document.removeEventListener("pointerout", this.onLeave);
     this.canvas.removeEventListener("contextmenu", this.onContext);
     this.stopVideos();
     this.composer.dispose();
@@ -306,7 +360,7 @@ export class EsperEngine {
     const mats: THREE.MeshStandardMaterial[] = [];
     obj.traverse((o) => {
       const m = o as THREE.Mesh;
-      if (!m.isMesh || !m.material || m.name === "Screen" || m.name === "Video") return;
+      if (!m.isMesh || !m.material || m.name === "Screen" || m.name === "Video" || m.name === "Veil") return;
       const list = (Array.isArray(m.material) ? m.material : [m.material]).map((x) => x.clone() as THREE.MeshStandardMaterial);
       m.material = Array.isArray(m.material) ? list : list[0];
       for (const x of list) if (x.color) mats.push(x);
@@ -333,6 +387,33 @@ export class EsperEngine {
 
   /** Things that rattle (a failing fridge): quiet, then a short burst of buzzing, only while their room is in use. */
   private shakers: { obj: THREE.Object3D; amp: number; base: THREE.Vector3; parts: THREE.Object3D[]; partY: number[] }[] = [];
+
+  /** Failing lamps (the broken fridge's): steady most of the time, then a stutter of dropouts every few seconds. */
+  private lamps: { light: THREE.PointLight; mat: THREE.MeshStandardMaterial; light0: number; glow0: number; t: number; next: number; burst: number }[] = [];
+  private updateLamps(dt: number) {
+    for (const l of this.lamps) {
+      let k = 1;
+      if (!this.reducedMotion) {
+        l.t += dt;
+        if (l.burst <= 0 && l.t >= l.next) {
+          l.burst = 0.35 + Math.random() * 0.55; // a stutter lasts a fraction of a second
+          l.t = 0;
+        }
+        if (l.burst > 0) {
+          l.burst -= dt;
+          // Uneven dropouts: mostly dim flicks, the odd full blackout, never a regular rhythm.
+          const n = Math.sin(l.t * 61) * Math.sin(l.t * 23 + 1.7) + Math.sin(l.t * 97 + 0.4) * 0.5;
+          k = n > 0.55 ? 0.08 : n > 0.1 ? 0.55 : 1;
+          if (l.burst <= 0) {
+            l.next = 2.5 + Math.random() * 5;
+            l.t = 0;
+          }
+        }
+      }
+      l.light.intensity = l.light0 * k;
+      l.mat.emissiveIntensity = l.glow0 * (0.25 + 0.75 * k);
+    }
+  }
   private shakeT = 0;
 
   private updateShakers(dt: number) {
@@ -358,6 +439,23 @@ export class EsperEngine {
   private ghostMat: THREE.MeshStandardMaterial | null = null;
   private ghost() {
     if (this.ghostMat) return this.ghostMat;
+    if (this.dark) {
+      // The dark room: people are solid, a soft graphite, the rim lifting their outline off the charcoal.
+      const d = new THREE.MeshStandardMaterial({ color: srgb([0.4, 0.405, 0.42]), roughness: 1, metalness: 0 });
+      d.userData.baseOpacity = 1;
+      d.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <dithering_fragment>",
+          `#include <dithering_fragment>
+          float rim = pow(1.0 - clamp(abs(dot(normalize(vNormal), normalize(vViewPosition))), 0.0, 1.0), 2.2);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.36, 0.365, 0.38), 0.45);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.62, 0.63, 0.66), rim * 0.55);`,
+        );
+      };
+      d.customProgramCacheKey = () => "esper-ghost-dark";
+      this.ghostMat = d;
+      return d;
+    }
     const m = new THREE.MeshStandardMaterial({ color: srgb([0.93, 0.925, 0.915]), roughness: 1, metalness: 0, transparent: true, opacity: 0.8 });
     m.userData.baseOpacity = 0.8;
     m.onBeforeCompile = (shader) => {
@@ -443,6 +541,17 @@ export class EsperEngine {
       case "SetPointerOverUi": this.overUi = value === "1"; return;
       case "SetFrameOffset": this.frameOffset = parseFloat(value) || 0; return;
       case "SetReducedMotion": this.reducedMotion = value === "1"; return;
+      // A case study sheet covers the room: stop drawing it until the sheet closes.
+      case "SetPaused": this.paused = value === "1"; return;
+      // The dark variant. Sent before the scene is built: materials take their colours as they're made.
+      case "SetTheme":
+        this.dark = value === "dark";
+        this.scene.background = new THREE.Color(this.dark ? "#232325" : "#ece9e4"); // tone mapping darkens it to the page colour
+        this.groundMat.opacity = this.dark ? 0.45 : 0.16;
+        this.materials.clear();
+        this.clays.clear();
+        this.ghostMat = null;
+        return;
       case "SetAssetBase": this.assetBase = value; return;
       case "PlayIntro": return this.playIntro(parseFloat(value) || 4.5);
       case "Enable": this.enabled = value !== "1"; return;
@@ -457,12 +566,17 @@ export class EsperEngine {
     const build = ++this.built;
     this.stopVideos();
     this.loads = [];
+    this.shakers = [];
+    this.lamps = [];
+    this.videoGlows = [];
     const next = new THREE.Group();
     const flips: Flip[] = [], cycles: Cycle[] = [], displays: Display[] = [], staged: typeof this.staged = [];
     const persons: Person[] = [];
     const tinted: typeof this.tinted = [];
     const screens = new Map<string, THREE.Object3D>();
     const pending: Promise<void>[] = [];
+    // People stay hidden until a room wakes, so the room doesn't wait for them (they're the heaviest downloads).
+    const later: Promise<void>[] = [];
 
     const make = (it: Item, parent: THREE.Object3D, me: boolean, top: boolean) => {
       let obj: THREE.Object3D;
@@ -474,6 +588,13 @@ export class EsperEngine {
           const geo = it.radius && it.radius > 0 ? roundedBox(size, it.corner && it.corner > 0 ? it.corner : it.radius, it.radius) : new THREE.BoxGeometry(...size);
           obj = new THREE.Mesh(geo, mat(it.material, it.tint));
           obj.userData.len = size[1];
+          if (it.material === "Lamp") {
+            const lamp = new THREE.PointLight(srgb(LAMP_LIGHT.color), this.dark ? LAMP_LIGHT.dark : LAMP_LIGHT.light, LAMP_LIGHT.range, 2);
+            lamp.position.set(0, -0.08, 0);
+            obj.add(lamp);
+            const m = (obj as THREE.Mesh).material as THREE.MeshStandardMaterial;
+            this.lamps.push({ light: lamp, mat: m, light0: lamp.intensity, glow0: m.emissiveIntensity, t: 0, next: 1.5 + Math.random() * 3, burst: 0 });
+          }
           break;
         }
         case "wall":
@@ -510,8 +631,8 @@ export class EsperEngine {
           const holder = obj;
           const poses = it.poses ?? [];
           const secs = it.flip ?? 0;
-          pending.push(
-            this.model(personModel(it.id ?? "")).then((g) => {
+          later.push(
+            this.model(it.body ? `rp:${it.body}` : personModel(it.id ?? "")).then((g) => {
               if (!g || build !== this.built) return;
               const rig = cloneRig(g.scene);
               rig.traverse((o) => {
@@ -520,13 +641,20 @@ export class EsperEngine {
               });
               const seed = [...(it.id ?? "")].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 1000, 5) / 1000;
               const hands = (it.hands ?? []) as HandPose[];
-              const bot: Person = new BotPerson(rig, poses, secs, it.look ?? 0, [hands[0] ?? "relaxed", hands[1] ?? "relaxed"], seed);
+              const bot: Person = new BotPerson(rig, poses, secs, it.look ?? 0, [hands[0] ?? "relaxed", hands[1] ?? "relaxed"], seed, {
+                palmsDown: it.palms === "floor",
+                glance: !!it.glance,
+                scan: !!it.scan,
+              });
               holder.add(bot.group);
               holder.updateMatrixWorld(true);
               for (const c of [...holder.children]) if (c.userData.attach) bot.carry(c);
               if (it.grip) this.holders.push({ bot, it, obj: holder });
               this.persons.push(bot);
               this.refade(holder);
+              // Arriving after the reveal: get its shaders ready now, against the room's lights, so its first
+              // appearance doesn't hitch.
+              if (this.ready) this.renderer.compileAsync(bot.group, this.camera, this.scene).catch(() => {});
             }),
           );
           break;
@@ -616,7 +744,12 @@ export class EsperEngine {
       parent.add(obj);
       for (const c of it.children ?? []) make(c, obj, isMe, false);
       if (it.kind === "screen" && it.display) this.attachDisplay(it, obj, displays);
-      if (it.flip && it.flip > 0 && it.kind !== "person") flips.push(new Flip(obj, it.flip));
+      if (typeof it.flip === "number" && it.flip > 0 && it.kind !== "person") flips.push(new Flip(obj, it.flip));
+      // A built thing that rattles (the fridge): the whole body buzzes, its doors twitch on their hinges.
+      if (it.shake && it.kind !== "model") {
+        const parts = obj.children.filter((c) => c.name.startsWith("door"));
+        this.shakers.push({ obj, amp: it.shake, base: obj.position.clone(), parts, partY: parts.map((o) => o.rotation.y) });
+      }
       if (it.cycle && it.cycle > 0) cycles.push(new Cycle(obj, it.cycle));
       if (it.station) staged.push({ obj, station: it.station, when: it.when ?? "" });
       if (it.tint && it.kind !== "model") this.tintable(obj, it.tint, tinted);
@@ -624,7 +757,7 @@ export class EsperEngine {
         obj.userData.room = stationOf.get(it.id) ?? it.station ?? "";
         screens.set(it.id, obj);
         // People only show while their own room is in front, so they never ghost; they fade on their own.
-        if (it.when !== "active") tops.push({ obj, station: stationOf.get(it.id) ?? "", path: it.kind === "wall" ? it.path : undefined });
+        if (it.when !== "active" && !it.solid) tops.push({ obj, station: stationOf.get(it.id) ?? "", path: it.kind === "wall" ? it.path : undefined });
       }
     };
     const tops: typeof this.tops = [];
@@ -653,7 +786,6 @@ export class EsperEngine {
     this.tinted = tinted;
     this.holders = [];
     this.items = new Map(spec.items.map((i) => [i.id, i]));
-    this.shakers = [];
     this.cycles = cycles;
     this.displays = displays;
     this.staged = staged;
@@ -664,7 +796,7 @@ export class EsperEngine {
     this.appears.clear();
     this.applyStations();
     if (this.focused) this.setFade(this.focused);
-    // Nothing shows until everything is in: models, people, pictures and the splat, placed and compiled.
+    // Nothing shows until the room is in: models, pictures and the splat, placed and compiled. People follow.
     let done = 0;
     const all = [...pending, ...this.loads];
     for (const p of all) p.then(() => this.emit("progress", String(++done / all.length))).catch(() => {});
@@ -768,7 +900,14 @@ export class EsperEngine {
     let m = this.materials.get(key);
     if (!m) {
       const fin = FINISH[name] ?? { roughness: 0.9, metalness: 0 };
-      m = new THREE.MeshStandardMaterial({ color: srgb(tint ?? PALETTE[name] ?? PALETTE.Clay), ...fin });
+      const pal = this.dark ? PALETTE_DARK : PALETTE;
+      m = new THREE.MeshStandardMaterial({ color: srgb(tint ?? pal[name] ?? pal.Clay), ...fin });
+      const glow = GLOW[name];
+      if (glow) {
+        m.color = srgb(this.dark ? [0.82, 0.83, 0.86] : glow.color);
+        m.emissive = srgb(glow.color);
+        m.emissiveIntensity = this.dark ? glow.dark : glow.light;
+      }
       this.materials.set(key, m);
     }
     return m;
@@ -835,11 +974,24 @@ export class EsperEngine {
       mat, station: it.station, frames: [], seconds: d.seconds && d.seconds > 0 ? d.seconds : 2.5, idleB: b,
       activeB: d.activeBrightness && d.activeBrightness > 0 ? d.activeBrightness : b,
       aspect: it.kind === "screen" && it.h ? (it.w ?? 1) / it.h : 0, t: 0, i: 0,
+      over: mat.clone(), shown: null, fade: 1, on: false, face: face as THREE.Mesh, sync: d.sync,
     };
+    // The fade layer: the same shape, a hair in front (faces look down local -Z), drawn over the face.
+    disp.over.transparent = true;
+    disp.over.depthWrite = false;
+    disp.over.opacity = 0;
+    const veil = new THREE.Mesh((face as THREE.Mesh).geometry, disp.over);
+    veil.name = "Veil";
+    veil.position.z = -0.0006;
+    veil.renderOrder = 1;
+    (face as THREE.Mesh).add(veil);
+    if (!d.lit && it.kind === "screen") disp.glow = this.screenGlow(face as THREE.Mesh, it.w ?? 1, it.h ?? 1);
     out.push(disp);
-    if (d.src) this.texture(d.src).then((t) => t && ((disp.idle = this.fit(t, disp.aspect)), this.showDisplay(disp)));
+    if (d.src) this.texture(d.src).then((t) => t && ((disp.idle = this.fit(t, disp.aspect, d.align)), this.showDisplay(disp)));
     (d.active ?? []).forEach((src, i) => this.texture(src).then((t) => t && ((disp.frames[i] = this.fit(t, disp.aspect)), this.showDisplay(disp))));
   }
+
+  private videoGlows: ScreenGlow[] = [];
 
   /** The panel goes black and the video plays inside it at its own shape: letterboxed, never cropped. */
   private attachVideo(it: Item, face: THREE.Mesh, src: string) {
@@ -854,6 +1006,8 @@ export class EsperEngine {
     video.preload = "auto";
     this.videos.push(video);
     const w = it.w ?? 1, h = it.h ?? 1;
+    const glow = this.screenGlow(face, w, h, video);
+    if (glow) this.videoGlows.push(glow);
     const tex = new THREE.VideoTexture(video);
     tex.colorSpace = THREE.SRGBColorSpace;
     const mat = new THREE.MeshBasicMaterial({ map: tex, toneMapped: false });
@@ -874,8 +1028,52 @@ export class EsperEngine {
     });
   }
 
-  /** Cover-fits an image to a panel's shape. */
-  private fit(t: THREE.Texture, aspect: number) {
+  /** A soft light a little in front of a screen's face (faces look down local -Z), sized to the screen. */
+  private screenGlow(face: THREE.Object3D, w: number, h: number, video?: HTMLVideoElement): ScreenGlow | undefined {
+    const area = w * h;
+    if (area < SCREEN_LIGHT.minArea) return undefined;
+    const size = Math.sqrt(area);
+    const light = new THREE.PointLight(0xffffff, 0, 1.0 + size * 2.2, 2);
+    light.position.z = -(0.22 + size * 0.15);
+    face.add(light);
+    const base = (this.dark ? SCREEN_LIGHT.dark : SCREEN_LIGHT.light) * Math.min(1.5, Math.max(0.45, size * 1.5));
+    return { light, base, to: video ? base : 0, color: new THREE.Color(1, 1, 1), toColor: new THREE.Color(0.9, 0.93, 1), video, t: 0 };
+  }
+
+  /** The average colour of a picture (sampled small and cached), softened toward white so the light stays gentle. */
+  private pictureColors = new WeakMap<object, THREE.Color>();
+  private pictureColor(src: CanvasImageSource | undefined | null): THREE.Color {
+    const fallback = new THREE.Color(0.92, 0.94, 1);
+    if (!src) return fallback;
+    const cached = this.pictureColors.get(src as object);
+    if (cached && !(src instanceof HTMLVideoElement)) return cached;
+    try {
+      const c = document.createElement("canvas");
+      c.width = c.height = 8;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      if (!g) return fallback;
+      g.drawImage(src, 0, 0, 8, 8);
+      const px = g.getImageData(0, 0, 8, 8).data;
+      let r = 0, gr = 0, b = 0;
+      for (let i = 0; i < px.length; i += 4) {
+        r += px[i];
+        gr += px[i + 1];
+        b += px[i + 2];
+      }
+      const n = (px.length / 4) * 255;
+      const col = new THREE.Color().setRGB(r / n, gr / n, b / n, THREE.SRGBColorSpace);
+      // Keep the hue, lift it toward white, and normalise so a dark picture still lights a little.
+      const max = Math.max(col.r, col.g, col.b, 1e-3);
+      col.multiplyScalar(1 / max).lerp(new THREE.Color(1, 1, 1), 0.45);
+      this.pictureColors.set(src as object, col);
+      return col;
+    } catch {
+      return fallback;
+    }
+  }
+
+  /** Cover-fits an image to a panel's shape: centred, or held to its top edge (`align: "top"`). */
+  private fit(t: THREE.Texture, aspect: number, align?: string) {
     if (!aspect) return t;
     const img = t.image as { width: number; height: number };
     const ta = img.width / img.height;
@@ -885,22 +1083,104 @@ export class EsperEngine {
       c.offset.set((1 - aspect / ta) / 2, 0);
     } else {
       c.repeat.set(1, ta / aspect);
-      c.offset.set(0, (1 - ta / aspect) / 2);
+      c.offset.set(0, align === "top" ? 1 - ta / aspect : (1 - ta / aspect) / 2);
     }
     c.needsUpdate = true;
     return c;
   }
 
+  /**
+   * Shows what a screen should show now: its slideshow while its room is in use, else its idle picture (or the
+   * device's own white). Changes fade in over half a second on a layer in front; while loading they just appear.
+   */
   private showDisplay(d: Display) {
     const on = !!d.station && d.station === this.activeStation;
     const frames = d.frames.filter(Boolean) as THREE.Texture[];
-    const tex = on && frames.length ? frames[d.i % frames.length] : d.idle;
-    if (tex && d.mat.map !== tex) {
-      d.mat.map = tex;
-      d.mat.needsUpdate = true;
+    const tex = (on && frames.length ? frames[d.i % frames.length] : d.idle) ?? null;
+    const lit = (d.mat as THREE.Material).type === "MeshStandardMaterial";
+    const b = lit ? 1 : Math.min(1, (on ? d.activeB : d.idleB) * 0.85);
+    if (d.glow) {
+      // A blank device (its own white) throws no light; a picture throws its colour.
+      d.glow.to = tex ? d.glow.base * Math.max(0.5, b) : 0;
+      if (tex) d.glow.toColor.copy(this.pictureColor(tex.image as CanvasImageSource));
     }
-    const b = Math.min(1, (on ? d.activeB : d.idleB) * 0.85);
-    d.mat.color.setScalar((d.mat as THREE.Material).type === "MeshStandardMaterial" ? 1 : b);
+    if (tex === d.shown) {
+      if (d.fade >= 1) d.mat.color.setScalar(b);
+      d.over.color.setScalar(b);
+      return;
+    }
+    // Still loading, or its room is ghosted (a full-strength fade would show through): change in place.
+    if (!this.ready || d.face.material !== d.mat) {
+      d.over.opacity = 0;
+      this.setScreen(d.mat, tex, b, d.face);
+      d.shown = tex;
+      d.fade = 1;
+      return;
+    }
+    if (d.fade < 1) this.setScreen(d.mat, d.shown, d.over.color.r, d.face); // a fade cut short: settle on where it was going
+    this.setScreen(d.over, tex, b);
+    d.over.opacity = 0;
+    d.shown = tex;
+    d.fade = 0;
+  }
+
+  private setScreen(m: THREE.MeshBasicMaterial, tex: THREE.Texture | null, b: number, face?: THREE.Mesh) {
+    if (m.map !== tex) {
+      if (!m.map !== !tex) m.needsUpdate = true; // with or without a map is a different shader
+      m.map = tex;
+    }
+    m.color.setScalar(b);
+    // While its room is ghosted the face draws a faded copy of this material: keep the copy showing the same picture.
+    const ghost = face?.userData.ghost as THREE.MeshBasicMaterial | undefined;
+    if (ghost && ghost !== m) {
+      if (!ghost.map !== !tex) ghost.needsUpdate = true;
+      ghost.map = tex;
+      ghost.color.setScalar(b);
+    }
+  }
+
+  private updateDisplays(dt: number) {
+    const ease = 1 - Math.exp(-dt * 6);
+    const settle = (g: ScreenGlow) => {
+      g.color.lerp(g.toColor, ease);
+      g.light.color.copy(g.color);
+      g.light.intensity += (g.to - g.light.intensity) * ease;
+    };
+    for (const g of this.videoGlows) {
+      // The projection: re-read the frame's colour a few times a second.
+      if (g.video && g.video.readyState >= 2 && (g.t += dt) > 0.3) {
+        g.t = 0;
+        this.pictureColors.delete(g.video);
+        g.toColor.copy(this.pictureColor(g.video));
+      }
+      settle(g);
+    }
+    for (const d of this.displays) {
+      if (d.glow) settle(d.glow);
+      const on = !!d.station && d.station === this.activeStation;
+      if (on && d.sync) {
+        // In step with the person: the picture for the pose they're nearest.
+        const who = this.persons.find((p) => p.group.parent?.userData.id === d.sync!.to);
+        const i = who ? d.sync.frames[who.nearestPose] ?? 0 : 0;
+        if (i !== d.i) {
+          d.i = i;
+          this.showDisplay(d);
+        }
+      } else if (on && d.frames.length > 1 && (d.t += dt) >= d.seconds) {
+        d.t = 0;
+        d.i++;
+        this.showDisplay(d);
+      }
+      if (d.fade >= 1) continue;
+      // A synced screen keeps up with the body: a quicker crossfade.
+      d.fade = Math.min(1, d.fade + dt / (d.sync ? 0.18 : 0.5));
+      const k = d.fade * d.fade * (3 - 2 * d.fade);
+      d.over.opacity = k;
+      if (d.fade >= 1) {
+        this.setScreen(d.mat, d.shown, d.over.color.r, d.face);
+        d.over.opacity = 0;
+      }
+    }
   }
 
   /** Ghosts everything that isn't part of a room (its things, and walls that touch it). Each object eases on its
@@ -932,7 +1212,7 @@ export class EsperEngine {
           return;
         }
         const m = obj as THREE.Mesh;
-        if (!m.isMesh || !m.material) return;
+        if (!m.isMesh || !m.material || m.name === "Veil") return; // a screen's fade layer keeps its own opacity
         if (e >= 1) {
           if (m.userData.orig) {
             m.material = m.userData.orig as THREE.Material;
@@ -977,8 +1257,12 @@ export class EsperEngine {
       }
     }
     for (const d of this.displays) {
-      d.i = 0;
-      d.t = 0;
+      const on = !!d.station && d.station === this.activeStation;
+      if (on !== d.on) {
+        d.on = on;
+        d.i = 0;
+        d.t = 0;
+      }
       this.showDisplay(d);
     }
   }
@@ -1128,6 +1412,7 @@ export class EsperEngine {
     this.applyStations();
     this.setFade(null);
     this.emit("overview");
+    if (this.pointer && !this.overUi && this.enabled) this.setHover(this.stationAt(this.pointer.x, this.pointer.y));
   }
 
   /** Going in: a dolly zoom into the device. The lens opens over the first half, then the camera closes in. */
@@ -1211,7 +1496,11 @@ export class EsperEngine {
     this.last.set(e.clientX, e.clientY);
   };
 
+  /** The mouse's last spot over the room (touch has no hover, so it isn't kept). */
+  private pointer: { x: number; y: number } | null = null;
+
   private onMove = (e: PointerEvent) => {
+    this.pointer = e.pointerType === "mouse" && e.target === this.canvas ? { x: e.clientX, y: e.clientY } : null;
     if (this.pressing) {
       if (!this.dragged && this.pressAt.distanceTo(new THREE.Vector2(e.clientX, e.clientY)) > 6) this.dragged = true;
       if (this.dragged && this.state !== "enhance" && !this.intro) {
@@ -1245,6 +1534,17 @@ export class EsperEngine {
       // Up close, a click anywhere steps back out. The case study opens from the card.
       this.back();
     }
+  };
+
+  private onCancel = () => {
+    this.pressing = false;
+    this.dragged = false;
+  };
+
+  private onLeave = (e: PointerEvent) => {
+    if (e.relatedTarget) return; // only when leaving the window itself
+    this.pointer = null;
+    if (this.state === "overview") this.setHover("");
   };
 
   private onContext = (e: Event) => {
@@ -1304,24 +1604,19 @@ export class EsperEngine {
   private frame = () => {
     this.raf = requestAnimationFrame(this.frame);
     const dt = Math.min(0.1, this.clock.getDelta());
+    if (this.paused) return;
     this.stepper?.(dt);
     for (const f of this.flips) f.update(dt);
     // Reduced motion: everyone holds their pose (still shaped, hands and all) instead of moving.
     for (const p of this.persons) p.update(this.reducedMotion ? 0 : dt);
     for (const c of this.cycles) c.update(dt);
-    for (const d of this.displays) {
-      if (!d.station || d.station !== this.activeStation || d.frames.length < 2) continue;
-      if ((d.t += dt) >= d.seconds) {
-        d.t = 0;
-        d.i++;
-        this.showDisplay(d);
-      }
-    }
+    this.updateDisplays(dt);
     this.updateCamera(dt);
     this.updateFade(dt);
     this.updateTints(dt);
     if (this.holders.length) this.placeHands();
     this.updateShakers(dt);
+    this.updateLamps(dt);
     for (const [obj, a] of this.appears) {
       if (a.wait > 0) {
         a.wait -= dt;

@@ -39,6 +39,10 @@ const NOTE_H = 168;
 const GLASS_SURFACE =
     "border border-ink/[0.08] bg-paper-raised/[0.72] shadow-e3 backdrop-blur-[54.45px]";
 
+/** The room's bottom-bar glass (EsperInterface), for the room's dock. */
+const STRIP_GLASS =
+    "bg-[rgba(255,255,255,0.62)] backdrop-blur-[40px] backdrop-saturate-[1.7] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(255,255,255,0.4),0_24px_60px_-24px_rgba(40,36,30,0.35)]";
+
 type PanelPhase = "closed" | "opening" | "open" | "closing" | "collapsing";
 
 /**
@@ -146,9 +150,13 @@ type DraftNote = Omit<StickyNote, "x" | "y" | "createdAt">;
 
 interface StickyNotesProps {
     page?: string;
+    /** Where the "leave a note" control sits (the room docks it level with its bottom bar). */
+    dockClassName?: string;
+    /** The room's liquid glass (a capsule that opens into a glass card) instead of the paper-stack style. */
+    glass?: boolean;
 }
 
-export function StickyNotes({ page = "home" }: StickyNotesProps) {
+export function StickyNotes({ page = "home", dockClassName = "fixed bottom-24 right-4 z-[110] md:right-8", glass = false }: StickyNotesProps) {
     const { unlock } = useAchievements();
     const [notes, setNotes] = useState<StickyNote[]>([]);
     const [phase, setPhase] = useState<PanelPhase>("closed");
@@ -235,7 +243,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
 
         clearPanelTimers();
 
-        if (reduceMotion) {
+        if (reduceMotion || glass) {
             setRevealContent(false);
             setRevealCta(true);
             setPhase("closed");
@@ -253,7 +261,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
             setPhase("collapsing");
             setDraftId(null);
         }, CONTENT_OUT_MS);
-    }, [reduceMotion, clearPanelTimers]);
+    }, [reduceMotion, clearPanelTimers, glass]);
 
     useEffect(() => {
         if (!panelExpanded) return;
@@ -268,6 +276,15 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
             document.removeEventListener("mousedown", onPointerDown);
             document.removeEventListener("touchstart", onPointerDown);
         };
+    }, [panelExpanded, closeComposer]);
+
+    useEffect(() => {
+        if (!panelExpanded) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") closeComposer();
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
     }, [panelExpanded, closeComposer]);
 
     useEffect(() => {
@@ -304,7 +321,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
         setRevealContent(false);
         setRevealCta(false); // fade CTA label + allow sheets to exit next
 
-        if (reduceMotion) {
+        if (reduceMotion || glass) {
             setPhase("open");
             setRevealContent(true);
             return;
@@ -319,7 +336,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                 setPhase("open");
             }, Math.max(0, SHELL_MS - CONTENT_LEAD_MS));
         }, CTA_OUT_MS);
-    }, [reduceMotion, clearPanelTimers]);
+    }, [reduceMotion, clearPanelTimers, glass]);
 
     const onShellLayoutComplete = useCallback(() => {
         const current = phaseRef.current;
@@ -421,6 +438,189 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
 
     if (isMobile) return null;
 
+    const composer = (
+        <>
+                                    <div className="flex items-start justify-between gap-3">
+                                        <p className={cn("text-left text-ink-muted", glass ? "text-[13.5px] leading-[1.45]" : "leading-relaxed type-caption")}>
+                                            Leave a note. Only you and Hridae can see
+                                            yours.
+                                        </p>
+                                        <motion.button
+                                            type="button"
+                                            whileTap={
+                                                reduceMotion ? undefined : TAP
+                                            }
+                                            onClick={closeComposer}
+                                            aria-label="Close sticky note form"
+                                            className={cn("flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors", glass ? "-mr-2 -mt-1 bg-ink/[0.1] text-ink hover:bg-ink/[0.18]" : "border border-ink/[0.08] bg-ink/[0.02] text-ink-secondary hover:bg-ink/[0.04]")}
+                                        >
+                                            <span
+                                                className="rotate-45 font-semibold leading-none type-body-lg"
+                                                aria-hidden
+                                            >
+                                                +
+                                            </span>
+                                        </motion.button>
+                                    </div>
+
+                                    <motion.div
+                                        layoutId={postItLayoutId}
+                                        transition={morphTransition}
+                                        data-postit-paper
+                                        className="relative flex aspect-square w-full flex-col overflow-hidden p-4 text-left shadow-[0_12px_28px_rgba(0,0,0,0.22),0_2px_0_rgba(255,255,255,0.4)_inset] ring-1 ring-black/10"
+                                        style={{
+                                            backgroundColor: selectedColor,
+                                            borderRadius: 2,
+                                            color: "#2a2a2a",
+                                            rotate: -1.5,
+                                        }}
+                                    >
+                                        <textarea
+                                            value={message}
+                                            onChange={(e) =>
+                                                setMessage(e.target.value)
+                                            }
+                                            placeholder="Write something…"
+                                            autoFocus={revealContent}
+                                            className="min-h-0 w-full flex-1 resize-none border-0 bg-transparent p-0 text-left text-[15px] leading-snug text-[#2a2a2a] placeholder:text-black/35 focus:outline-none focus:ring-0"
+                                            maxLength={200}
+                                        />
+
+                                        <div className="mt-2 border-t border-black/10 pt-2">
+                                            <input
+                                                value={email}
+                                                onChange={(e) =>
+                                                    setEmail(e.target.value)
+                                                }
+                                                placeholder="Email (optional)"
+                                                type="email"
+                                                className="w-full border-0 bg-transparent p-0 text-left text-[12px] text-[#2a2a2a]/80 placeholder:text-black/30 focus:outline-none focus:ring-0"
+                                            />
+                                        </div>
+
+                                        <input
+                                            value={honeypot}
+                                            onChange={(e) =>
+                                                setHoneypot(e.target.value)
+                                            }
+                                            name="website"
+                                            autoComplete="off"
+                                            tabIndex={-1}
+                                            aria-hidden="true"
+                                            className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+                                            placeholder="Website"
+                                        />
+                                    </motion.div>
+
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-1.5">
+                                            {COLORS.map((color) => (
+                                                <motion.button
+                                                    key={color}
+                                                    type="button"
+                                                    whileTap={
+                                                        reduceMotion
+                                                            ? undefined
+                                                            : {
+                                                                  scale: 0.9,
+                                                                  transition: {
+                                                                      duration: 0.08,
+                                                                  },
+                                                              }
+                                                    }
+                                                    onClick={() =>
+                                                        setSelectedColor(color)
+                                                    }
+                                                    className={cn(
+                                                        "size-6 rounded-full border transition-transform",
+                                                        selectedColor === color
+                                                            ? cn("scale-110 border-ink shadow-md ring-2 ring-ink/[0.32] ring-offset-1", glass ? "ring-offset-transparent" : "ring-offset-[#1d1d1d]")
+                                                            : "border-ink/[0.12] hover:scale-105"
+                                                    )}
+                                                    style={{
+                                                        backgroundColor: color,
+                                                    }}
+                                                    aria-label={`Select color ${color}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <motion.button
+                                            type="button"
+                                            whileTap={
+                                                reduceMotion || !message.trim()
+                                                    ? undefined
+                                                    : TAP
+                                            }
+                                            onClick={handleSubmit}
+                                            disabled={!message.trim()}
+                                            className={cn(
+                                                "rounded-full transition-opacity disabled:cursor-not-allowed disabled:opacity-35",
+                                                glass
+                                                    ? "bg-ink px-4 py-2 text-[13.5px] font-semibold text-paper hover:opacity-85"
+                                                    : "border border-ink/[0.12] bg-white/90 px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-wide text-[#141416] hover:bg-paper-raised"
+                                            )}
+                                        >
+                                            Stick it
+                                        </motion.button>
+                                    </div>
+        </>
+    );
+
+    // The room: the same frosted strip as its project bar. A quiet capsule; the composer grows out of its corner
+    // with a short spring while the capsule steps back, and leaves with a quick fade the other way.
+    const roomDock = (
+        <div ref={triggerRef} className={dockClassName}>
+            {!placingNote ? (
+                <div className="relative font-[family-name:var(--font-geist)] text-[#1d1d1f]">
+                    <motion.div
+                        initial={false}
+                        animate={panelExpanded ? { opacity: 0, scale: 0.94 } : { opacity: 1, scale: 1 }}
+                        transition={reduceMotion ? { duration: 0 } : { duration: panelExpanded ? 0.12 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        className={cn("esper-pill origin-bottom-right rounded-full p-1.5", STRIP_GLASS)}
+                        style={{ pointerEvents: panelExpanded ? "none" : "auto" }}
+                    >
+                        <button
+                            type="button"
+                            onClick={openComposer}
+                            aria-label="Leave a sticky note"
+                            aria-expanded={panelExpanded}
+                            className="flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium tracking-[-0.01em] text-black/75 transition-[background-color,color,transform] duration-200 ease-out hover:bg-black/[0.1] hover:text-[#1d1d1f] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50"
+                        >
+                            Leave me a note
+                            <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>
+                                <path d="M6 1.5v9M1.5 6h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                            </svg>
+                        </button>
+                    </motion.div>
+                    <AnimatePresence>
+                        {panelExpanded ? (
+                            <motion.div
+                                key="composer"
+                                ref={formRef}
+                                role="dialog"
+                                aria-label="Compose sticky note"
+                                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 8 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 4, transition: { duration: 0.14, ease: [0.4, 0, 1, 1] } }}
+                                transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34, mass: 0.8 }}
+                                className={cn("esper-pill absolute bottom-0 right-0 flex w-[min(calc(100vw-2rem),20.5rem)] origin-bottom-right flex-col gap-4 rounded-[28px] p-5", STRIP_GLASS)}
+                            >
+                                <motion.div
+                                    className="flex flex-col gap-4"
+                                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.22, delay: reduceMotion ? 0 : 0.06, ease: [0.22, 1, 0.36, 1] }}
+                                >
+                                    {composer}
+                                </motion.div>
+                            </motion.div>
+                        ) : null}
+                    </AnimatePresence>
+                </div>
+            ) : null}
+        </div>
+    );
+
     return (
         <LayoutGroup id={layoutGroupId}>
             {placingNote && (
@@ -428,7 +628,7 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                     className="fixed inset-0 z-[150] cursor-none"
                     onClick={handlePlacement}
                 >
-                    <div className="pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full border border-ink/[0.08] bg-paper-raised/[0.85] px-4 py-2 text-left text-ink shadow-e3 backdrop-blur-[54.45px] type-body">
+                    <div className={cn("pointer-events-none fixed left-1/2 top-6 z-[151] -translate-x-1/2 rounded-full px-4 py-2 text-left text-ink", glass ? cn("esper-pill font-[family-name:var(--font-geist)] text-[13.5px] font-medium", STRIP_GLASS) : "border border-ink/[0.08] bg-paper-raised/[0.85] shadow-e3 backdrop-blur-[54.45px] type-body")}>
                         Click to stick · Esc to cancel
                     </div>
 
@@ -495,14 +695,15 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                 );
             })}
 
+            {glass ? roomDock : (
             <div
                 ref={triggerRef}
-                className="fixed bottom-24 right-4 z-[110] md:right-8"
+                className={dockClassName}
             >
                 {!placingNote ? (
                     <div className="relative">
                         <AnimatePresence>
-                            {!panelExpanded && revealCta
+                            {!panelExpanded && revealCta && !glass
                                 ? [0, 1].map((i) => (
                                       <motion.div
                                           key={`sheet-${i}`}
@@ -598,130 +799,14 @@ export function StickyNotes({ page = "home" }: StickyNotesProps) {
                                             : "none",
                                     }}
                                 >
-                                    <div className="flex items-start justify-between gap-3">
-                                        <p className="text-left leading-relaxed text-ink-muted type-caption">
-                                            Leave a note. Only you and Hridae can see
-                                            yours.
-                                        </p>
-                                        <motion.button
-                                            type="button"
-                                            whileTap={
-                                                reduceMotion ? undefined : TAP
-                                            }
-                                            onClick={closeComposer}
-                                            aria-label="Close sticky note form"
-                                            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-ink/[0.08] bg-ink/[0.02] text-ink-secondary transition-colors hover:bg-ink/[0.04]"
-                                        >
-                                            <span
-                                                className="rotate-45 font-semibold leading-none type-body-lg"
-                                                aria-hidden
-                                            >
-                                                +
-                                            </span>
-                                        </motion.button>
-                                    </div>
-
-                                    <motion.div
-                                        layoutId={postItLayoutId}
-                                        transition={morphTransition}
-                                        data-postit-paper
-                                        className="relative flex aspect-square w-full flex-col overflow-hidden p-4 text-left shadow-[0_12px_28px_rgba(0,0,0,0.22),0_2px_0_rgba(255,255,255,0.4)_inset] ring-1 ring-black/10"
-                                        style={{
-                                            backgroundColor: selectedColor,
-                                            borderRadius: 2,
-                                            color: "#2a2a2a",
-                                            rotate: -1.5,
-                                        }}
-                                    >
-                                        <textarea
-                                            value={message}
-                                            onChange={(e) =>
-                                                setMessage(e.target.value)
-                                            }
-                                            placeholder="Write something…"
-                                            autoFocus={revealContent}
-                                            className="min-h-0 w-full flex-1 resize-none border-0 bg-transparent p-0 text-left text-[15px] leading-snug text-[#2a2a2a] placeholder:text-black/35 focus:outline-none focus:ring-0"
-                                            maxLength={200}
-                                        />
-
-                                        <div className="mt-2 border-t border-black/10 pt-2">
-                                            <input
-                                                value={email}
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
-                                                placeholder="Email (optional)"
-                                                type="email"
-                                                className="w-full border-0 bg-transparent p-0 text-left text-[12px] text-[#2a2a2a]/80 placeholder:text-black/30 focus:outline-none focus:ring-0"
-                                            />
-                                        </div>
-
-                                        <input
-                                            value={honeypot}
-                                            onChange={(e) =>
-                                                setHoneypot(e.target.value)
-                                            }
-                                            name="website"
-                                            autoComplete="off"
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                            className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
-                                            placeholder="Website"
-                                        />
-                                    </motion.div>
-
-                                    <div className="flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-1.5">
-                                            {COLORS.map((color) => (
-                                                <motion.button
-                                                    key={color}
-                                                    type="button"
-                                                    whileTap={
-                                                        reduceMotion
-                                                            ? undefined
-                                                            : {
-                                                                  scale: 0.9,
-                                                                  transition: {
-                                                                      duration: 0.08,
-                                                                  },
-                                                              }
-                                                    }
-                                                    onClick={() =>
-                                                        setSelectedColor(color)
-                                                    }
-                                                    className={cn(
-                                                        "size-6 rounded-full border transition-transform",
-                                                        selectedColor === color
-                                                            ? "scale-110 border-ink shadow-md ring-2 ring-ink/[0.32] ring-offset-1 ring-offset-[#1d1d1d]"
-                                                            : "border-ink/[0.12] hover:scale-105"
-                                                    )}
-                                                    style={{
-                                                        backgroundColor: color,
-                                                    }}
-                                                    aria-label={`Select color ${color}`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <motion.button
-                                            type="button"
-                                            whileTap={
-                                                reduceMotion || !message.trim()
-                                                    ? undefined
-                                                    : TAP
-                                            }
-                                            onClick={handleSubmit}
-                                            disabled={!message.trim()}
-                                            className="rounded-full border border-ink/[0.12] bg-white/90 px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-medium uppercase tracking-wide text-[#141416] transition-opacity hover:bg-paper-raised disabled:cursor-not-allowed disabled:opacity-35"
-                                        >
-                                            Stick it
-                                        </motion.button>
-                                    </div>
+                                    {composer}
                                 </motion.div>
                             )}
                         </motion.div>
                     </div>
                 ) : null}
             </div>
+            )}
         </LayoutGroup>
     );
 }

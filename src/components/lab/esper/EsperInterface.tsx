@@ -38,7 +38,16 @@ const press = "transition-[background-color,color,transform] duration-200 ease-o
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50";
 
 export function EsperInterface({ ready, active, showTitle, hovered, onSelect, onBack, onOpen }: Props) {
-  const { openSheet } = useSheetNav();
+  const { openSheet, prefetchSheet } = useSheetNav();
+  // Warm the case study (route and sheet content) as soon as a room is hovered or its card shows, so "Read the
+  // case study" opens at once instead of waiting on the download.
+  useEffect(() => {
+    for (const id of [hovered, active]) {
+      const st = id ? STATIONS.find((x) => x.id === id) : undefined;
+      if (st?.href) prefetchSheet(st.href);
+      for (const l of st?.links ?? []) prefetchSheet(l.href);
+    }
+  }, [hovered, active, prefetchSheet]);
   const station = STATIONS.find((s) => s.id === active) ?? null;
   // The last place stays on the card while it fades out.
   const [shown, setShown] = useState(station);
@@ -72,7 +81,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
       >
         <h1 className="text-[clamp(34px,4vw,48px)] font-semibold leading-none tracking-[-0.035em]">Hridae Walia</h1>
         <p className="mt-3 max-w-[34ch] text-[16px] leading-[1.45] text-black/75">
-          Product designer, designing for interaction models that barely exist yet.
+          Product designer, designing for novel interaction models.
         </p>
       </div>
 
@@ -81,6 +90,8 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
         className={cn(
           "absolute left-6 top-6 text-[14px] leading-tight tracking-[-0.01em] transition-opacity duration-700 md:left-8 md:top-7",
           showTitle || !ready ? "opacity-0" : "opacity-100",
+          // On a phone the card needs the height: the bio steps aside while a room is open.
+          station && "max-md:pointer-events-none max-md:opacity-0",
         )}
       >
         <p>
@@ -88,13 +99,12 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
           <span className="ml-2 text-black/60">Product designer</span>
         </p>
         <p className="mt-2 max-w-[min(400px,calc(100vw-48px))] text-[13px] leading-[1.5] text-black/60">
-          I&rsquo;m a Product Designer obsessed with making, and I have 6 years of experience designing for interaction
-          models that barely exist yet. I focus on the user and learn by making, whether on the canvas, in code, or the
+          I am obsessed with making, and I have 6 years of experience designing for novel
+          interaction models. I focus on the user and learn by making, whether on the canvas, in code, or the
           physical world.
         </p>
         {/* The same strip as the home page's bio card. */}
         <div className="pointer-events-auto mt-3 flex items-center gap-4">
-          <CopyEmailPill />
           {[
             { href: CV_HREF, label: "CV" },
             { href: LINKEDIN_HREF, label: "in" },
@@ -106,17 +116,18 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
               rel="noopener noreferrer"
               className={cn("flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]", focusRing)}
             >
-              <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold" style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}>
+              <span className="esper-chip-label font-[family-name:var(--font-geist-mono)] text-xs font-extrabold" style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}>
                 {l.label}
               </span>
             </a>
           ))}
+          <CopyEmailPill />
         </div>
       </div>
 
       {/* The one ornament: places in the room, About, and the light */}
-      <nav aria-label="Work" className="pointer-events-auto absolute inset-x-0 bottom-5 flex justify-center px-4 md:bottom-7">
-        <div className={cn("scrollbar-hide flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full p-1.5 transition-opacity duration-700 ease-out", ready ? "opacity-100" : "opacity-0", glass)}>
+      <nav aria-label="Work" className="pointer-events-auto absolute inset-x-0 bottom-[max(36px,env(safe-area-inset-bottom))] flex justify-center px-2 md:bottom-7 md:px-4">
+        <div className={cn("esper-pill scrollbar-hide flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full p-1 min-[385px]:p-1.5 transition-opacity duration-700 ease-out", ready ? "opacity-100" : "opacity-0", glass)}>
           {STATIONS.map((s) => {
             const isActive = s.id === active;
             return (
@@ -126,7 +137,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                 onClick={() => (isActive ? onBack() : onSelect(s.id))}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "shrink-0 rounded-full px-4 py-2 text-[13.5px] font-medium tracking-[-0.01em]",
+                  "shrink-0 rounded-full px-[7px] py-2 text-[12.5px] min-[385px]:px-[8px] font-medium tracking-[-0.01em] min-[400px]:px-3 min-[400px]:text-[13px] md:px-4 md:text-[13.5px]",
                   press,
                   isActive
                     ? "bg-black/[0.22] text-[#1d1d1f] "
@@ -136,7 +147,14 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                   focusRing,
                 )}
               >
-                {s.title}
+                {s.short ? (
+                  <>
+                    <span className="min-[400px]:hidden">{s.short}</span>
+                    <span className="max-[399px]:hidden">{s.title}</span>
+                  </>
+                ) : (
+                  s.title
+                )}
               </button>
             );
           })}
@@ -148,8 +166,8 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
         aria-label={shown ? shown.title : undefined}
         aria-live="polite"
         className={cn(
-          "pointer-events-auto absolute inset-x-4 bottom-24 flex max-h-[56vh] flex-col md:inset-x-auto md:bottom-auto md:right-8 md:top-1/2 md:max-h-[calc(100vh-200px)] md:-translate-y-1/2",
-          about ? "md:w-[min(600px,calc(100vw-64px))]" : "md:w-[min(500px,calc(100vw-64px))]",
+          "pointer-events-auto absolute inset-x-3 top-3 flex max-h-[calc(100dvh-118px)] flex-col md:inset-x-auto md:bottom-auto md:right-8 md:top-1/2 md:max-h-[calc(100vh-200px)] md:-translate-y-1/2",
+          about ? "md:w-[min(656px,calc(100vw-64px))]" : "md:w-[min(500px,calc(100vw-64px))]",
           !station && "pointer-events-none",
         )}
       >
@@ -160,7 +178,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
             station ? "scale-100 opacity-100" : "scale-[0.97] opacity-0",
           )}
         >
-        <div className={cn("scrollbar-hide min-h-0 overflow-y-auto overflow-x-hidden rounded-[32px] px-7 pb-7 pt-6", about && "p-8")}>
+        <div className={cn("scrollbar-hide min-h-0 overflow-y-auto overflow-x-hidden rounded-[32px] px-5 pb-6 pt-5 md:px-7 md:pb-7 md:pt-6", about && "p-6 md:p-8")}>
           {shown && about && <AboutCard onClose={onBack} />}
           {shown && !about && (
             <div key={shown.id} className="esper-dossier-in">
@@ -175,7 +193,7 @@ export function EsperInterface({ ready, active, showTitle, hovered, onSelect, on
                   {shown.period && <span className="block text-black/60">{shown.period}</span>}
                 </p>
               )}
-              <p className="mt-4 text-[15px] leading-[1.55] tracking-[-0.005em] text-black/90">{shown.summary}</p>
+              {shown.summary && <p className="mt-4 text-[15px] leading-[1.55] tracking-[-0.005em] text-black/90">{shown.summary}</p>}
               {shown.note && <p className="mt-3 text-[13.5px] leading-[1.5] text-black/60">{shown.note}</p>}
               {shown.links && (
                 <ul className="-mx-3 mt-4 flex flex-col">
@@ -246,15 +264,19 @@ function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: str
   } else if (station.images) {
     slides = station.images.map((img) => (
       <div key={img.src} className="home-work-card-frame relative overflow-clip rounded-2xl bg-black/[0.04]">
-        <Image src={img.src} alt={img.alt} fill sizes="420px" draggable={false} className="pointer-events-none select-none object-cover" />
+        {img.video ? (
+          <video src={img.video} poster={img.src} aria-label={img.alt} autoPlay muted loop playsInline preload="metadata" className="pointer-events-none absolute inset-0 size-full select-none object-cover" />
+        ) : (
+          <Image src={img.src} alt={img.alt} fill sizes="420px" draggable={false} className="pointer-events-none select-none object-cover" />
+        )}
       </div>
     ));
   }
   if (!slides.length) return null;
   return (
     <div
-      className="-mx-7 mt-5"
-      style={{ ["--home-work-card-max" as string]: "min(420px, calc(100vw - 88px))" }}
+      className="-mx-5 mt-5 md:-mx-7"
+      style={{ ["--home-work-card-max" as string]: "min(420px, calc(100vw - 64px))" }}
       onPointerDownCapture={(e) => (tap.current = { x: e.clientX, y: e.clientY })}
       onPointerUpCapture={(e) => {
         const s = tap.current;
@@ -264,7 +286,7 @@ function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: str
         if (s && Math.hypot(e.clientX - s.x, e.clientY - s.y) <= 14 && station.href && onOpen) onOpen(station.id);
       }}
     >
-      <ProjectCarousel className="scrollbar-hide overflow-hidden px-7" trackEndPadding="inline" autoplayDelayMs={4500}>
+      <ProjectCarousel className="scrollbar-hide overflow-hidden px-5 md:px-7" trackEndPadding="inline" autoplayDelayMs={4500}>
         {slides.map((s, i) => (
           <div key={i} className="flex-[0_0_auto]">
             {s}
@@ -276,43 +298,20 @@ function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: str
 }
 
 /** Off hours is also About: the home page's bio card, larger, in the glass of the room's window. */
+/**
+ * Off hours is also About: the home page's bio card, larger, in the room's glass window. The name, title and links
+ * are already on the page (top left), so the card is just the story: bio, experience, education, the top threes.
+ */
 function AboutCard({ onClose }: { onClose: () => void }) {
   return (
     <div className="esper-dossier-in">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 flex-col gap-1.5">
-          <h2
-            className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-normal"
-            style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}
-          >
-            Hridae Walia
-          </h2>
-          <p className="text-base font-semibold leading-normal" style={{ color: "rgba(28,28,28,0.55)", mixBlendMode: "luminosity" }}>
-            Product Designer
-          </p>
-        </div>
+      <div className="mb-3 flex justify-end">
         <CloseButton onClick={onClose} />
       </div>
-      <div className="mt-5 mb-8 flex items-center gap-4">
-        <CopyEmailPill />
-        {[
-          { href: CV_HREF, label: "CV" },
-          { href: LINKEDIN_HREF, label: "in" },
-        ].map((l) => (
-          <a
-            key={l.label}
-            href={l.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn("flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]", focusRing)}
-          >
-            <span className="font-[family-name:var(--font-geist-mono)] text-xs font-extrabold" style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}>
-              {l.label}
-            </span>
-          </a>
-        ))}
+      {/* The body opens with a divider meant to sit under the name; with no name above, it goes. */}
+      <div className="[&>div>div:first-child]:hidden [&>div>div:nth-child(2)]:pt-0">
+        <HeroCardExpandedBody />
       </div>
-      <HeroCardExpandedBody />
     </div>
   );
 }

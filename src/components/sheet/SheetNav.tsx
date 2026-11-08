@@ -31,6 +31,11 @@ interface SheetNavValue {
   clearActiveKey: () => void;
 }
 
+/** The room (home) takes the sheet at every width: a phone keeps the room behind the case study too. */
+function overRoom() {
+  return typeof document !== "undefined" && document.documentElement.hasAttribute("data-esper");
+}
+
 const SheetNavContext = createContext<SheetNavValue>({
   activeKey: null,
   openSheet: () => false,
@@ -88,7 +93,7 @@ export function SheetNavProvider({ children }: { children: React.ReactNode }) {
 
   const openSheet = useCallback(
     (href: string) => {
-      if (!isHomeSplitLayout()) return false;
+      if (!isHomeSplitLayout() && !overRoom()) return false;
       const key = hrefToKey(href);
       if (!key || !getSheetRoute(key)) return false;
       skipRouteSync.current = false;
@@ -119,7 +124,7 @@ export function SheetNavProvider({ children }: { children: React.ReactNode }) {
 
   const replaceSheet = useCallback(
     (href: string) => {
-      if (!isHomeSplitLayout()) return false;
+      if (!isHomeSplitLayout() && !overRoom()) return false;
       const key = hrefToKey(href);
       if (!key || !getSheetRoute(key)) return false;
       skipRouteSync.current = false;

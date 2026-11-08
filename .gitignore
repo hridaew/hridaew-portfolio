@@ -65,3 +65,7 @@ socialpreview.png
 
 # python
 __pycache__/
+
+# ESPER: Unity build output and local browser-test captures
+/esper-unity/Builds/
+/.playwright-mcp/

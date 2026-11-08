@@ -187,7 +187,7 @@ export function CaseStudySheet({
   if (!open || !activeKey) return null;
 
   return (
-    <div className="fixed inset-0 z-[200]" role="presentation">
+    <div data-case-sheet className="fixed inset-0 z-[200]" role="presentation">
       <motion.button
         type="button"
         aria-label={
@@ -205,6 +205,7 @@ export function CaseStudySheet({
 
       <motion.div
         ref={panelRef}
+        data-case-sheet-panel
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

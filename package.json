@@ -41,6 +41,7 @@
     "three": "^0.182.0"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/matter-js": "^0.20.2",

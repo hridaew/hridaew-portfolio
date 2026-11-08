@@ -54,7 +54,8 @@
 
 ## Deployment Checklist
 
-- **Build number (MANDATORY on push)**: Bump the version string at the bottom of `src/app/page.tsx` (currently at ~line 341) only when preparing to push/deploy—not on every local edit or agent turn. Increment patch for fixes, minor for features. Never push without bumping.
+- **Build number (MANDATORY on push)**: Bump `SITE_VERSION` in `src/components/home/HomePage.tsx` only when preparing to push/deploy—not on every local edit or agent turn. Increment patch for fixes, minor for features. Never push without bumping.
+- **ESPER publish (MANDATORY on push)**: The home page is the ESPER room. Production reads `public/esper/`, so run `python esper-unity/Tools/publish_web.py` (copies, slims and Meshopt-compresses the room's assets) before pushing.
 - **Deploy command**: `vercel --prod --yes` from project root
 - **Always commit + push before deploying** so git and Vercel stay in sync
 - Before deploying, verify local `main` is up to date with `origin/main` (`git fetch origin && git log --oneline origin/main -3`)

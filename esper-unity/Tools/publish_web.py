@@ -54,6 +54,22 @@ def slim(dest):
                 im.save(p, optimize=True)
             else:
                 im.convert("RGB").save(p, quality=84, optimize=True)
+    # Pictures on screens, shelves and walls: no bigger than they ever show. A record sleeve is a few centimetres of
+    # screen even up close (512 px); a TV or projector fills more of it (1024 px).
+    for dirpath, _, names in os.walk(os.path.join(dest, "Esper", "Content")):
+        for n in names:
+            if not n.lower().endswith((".jpg", ".jpeg", ".png")):
+                continue
+            p = os.path.join(dirpath, n)
+            im = Image.open(p)
+            cap = 512 if os.path.basename(dirpath) in ("Albums", "Games") else 1024
+            if max(im.size) > cap:
+                k = cap / max(im.size)
+                im = im.resize((round(im.size[0] * k), round(im.size[1] * k)), Image.LANCZOS)
+            if n.lower().endswith(".png"):
+                (im if im.mode in ("RGB", "RGBA", "L", "LA", "P") else im.convert("RGBA")).save(p, optimize=True)
+            else:
+                im.convert("RGB").save(p, quality=82, optimize=True, progressive=True)
     return sum(os.path.getsize(os.path.join(d, n)) for d, _, ns in os.walk(dest) for n in ns)
 
 
@@ -91,7 +107,11 @@ def main():
         os.makedirs(os.path.dirname(out), exist_ok=True)
         shutil.copy2(src, out)
         total += os.path.getsize(src)
-    total = slim(dest)
+    slim(dest)
+    # Models: Meshopt geometry compression, every node kept (the hand solver aims the empty fingertip bones).
+    import subprocess
+    subprocess.run(["node", os.path.join(ROOT, "scripts", "compress-esper-models.mjs"), dest], check=True, cwd=ROOT)
+    total = sum(os.path.getsize(os.path.join(d, n)) for d, _, ns in os.walk(dest) for n in ns)
     os.makedirs(os.path.join(OUT, "live"), exist_ok=True)
     shutil.copy2(SCENE, os.path.join(OUT, "live", "scene.json"))
     print(f"{len(files) - len(missing)} files, {total / 1e6:.1f} MB -> public/esper/assets")

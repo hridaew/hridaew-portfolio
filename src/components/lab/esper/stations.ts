@@ -2,14 +2,16 @@
 export type Station = {
   id: string;
   title: string;
+  /** A shorter label for the room bar on narrow phones. */
+  short?: string;
   role?: string;
   period?: string;
-  summary: string;
+  summary?: string;
   note?: string;
   href?: string;
   links?: { title: string; line: string; href: string }[];
   /** A few real photographs, people in them where there are any. Shown under the title. */
-  images?: { src: string; alt: string }[];
+  images?: { src: string; alt: string; video?: string }[];
 };
 
 export const STATIONS: Station[] = [
@@ -26,7 +28,6 @@ export const STATIONS: Station[] = [
     period: "2024 to now",
     summary:
       "Domis helps people keep track of a house: what it is, what it needs and what to do next. Setup is the hard part, so the work is about getting useful structure from the smallest thing a person will actually do.",
-    note: "Type an address, photograph a nameplate, drop in an inspection report.",
     href: "/domis",
   },
   {
@@ -69,6 +70,7 @@ export const STATIONS: Station[] = [
       { src: "/assets/memory-care/station_side.jpg", alt: "The station in the community room" },
     ],
     title: "Memory Care",
+    short: "MCES",
     role: "Interaction Designer",
     period: "With Maria Mortati Experience Design",
     summary:
@@ -79,12 +81,11 @@ export const STATIONS: Station[] = [
   {
     id: "wafflings",
     images: [
+      { src: "/assets/savor/card-first.jpg", video: "/assets/savor/card.mp4", alt: "The Savor trailer: a phone video of a sculpture becomes a 3D Gaussian splat" },
       { src: "/assets/orca/throw-test.jpg", alt: "Throwing an orca plush at the screen" },
       { src: "/assets/orca/final-booth.jpg", alt: "The Saving Baby J booth" },
-      { src: "/assets/savor/mighty-hand-visit.png", alt: "Capturing a sculpture for Savor" },
     ],
     title: "Wafflings",
-    summary: "Smaller builds, made to find out how something feels.",
     links: [
       { title: "Saving Baby J", line: "An arcade game played by throwing orca plushies", href: "/waffling/orca" },
       { title: "Savor", line: "A phone video becomes a 3D Gaussian splat", href: "/waffling/savor" },
@@ -95,7 +96,8 @@ export const STATIONS: Station[] = [
   {
     id: "taste",
     // Off hours and About are one room: the bio card opens here (EsperInterface's AboutCard).
-    title: "About",
+    title: "About me",
+    short: "About",
     summary: "When I’m not designing, I’m painting, playing basketball, playing video games or watching Arsenal.",
   },
 ];
