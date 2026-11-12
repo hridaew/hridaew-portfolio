@@ -16,8 +16,9 @@ const img = heroExpandedAssets;
 function AboutSection() {
   return (
     <div className="flex w-full min-w-0 flex-col items-start gap-8 sm:flex-row">
-      <div className="flex w-full max-w-[128px] shrink-0 flex-col items-start gap-2 sm:w-[128px]">
-        <div className="relative size-[128px] shrink-0 rounded-lg shadow-e2">
+      {/* Narrow (stacked): the portrait and its caption side by side, one row. Beside the bio: portrait over caption. */}
+      <div className="flex w-full shrink-0 flex-row items-center gap-4 sm:w-[128px] sm:flex-col sm:items-start sm:gap-2">
+        <div className="relative size-[88px] shrink-0 rounded-lg shadow-e2 sm:size-[128px]">
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
             <Image
               alt="Portrait at Valve Software"
@@ -28,8 +29,8 @@ function AboutSection() {
             />
           </div>
         </div>
-        <p className="site-gallery-caption w-full min-w-0 text-ink-muted">
-          This is me at valve software :D
+        <p className="type-caption min-w-0 flex-1 text-ink-muted sm:w-full sm:flex-none">
+          This is me at Valve Software :D
         </p>
       </div>
       <div className="site-body flex min-w-0 max-w-[432px] flex-1 flex-col gap-6 text-ink-secondary">

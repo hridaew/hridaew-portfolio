@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,10 +18,6 @@ import { EsperLogo } from "./EsperLogo";
 type Room = { send: (method: string, value?: string) => void; dispose: () => void };
 
 type EsperEvent = CustomEvent<{ event: string; payload: string }>;
-
-/** The opening's tuning panel (DialKit), in development only: production never loads it. */
-const BuildDials =
-  process.env.NODE_ENV !== "production" ? dynamic(() => import("./BuildDials"), { ssr: false }) : () => null;
 
 export function EsperRoom() {
   const router = useRouter();
@@ -307,6 +302,8 @@ export function EsperRoom() {
     },
     [send],
   );
+  // Phone: the card sheet tells the room how much of the screen it covers, so the subject stays in the open part.
+  const onInsets = useCallback((top: number, bottom: number) => send("SetViewInsets", `${Math.round(top)},${Math.round(bottom)}`), [send]);
   const toggleTheme = useCallback(() => {
     setDark((prev) => {
       const next = !prev;
@@ -323,9 +320,8 @@ export function EsperRoom() {
         id="esper-canvas"
         tabIndex={-1}
         aria-label="A roofless model house seen from above. Each room is a project."
-        className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity ease-out active:cursor-grabbing"
+        className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity duration-[900ms] ease-out active:cursor-grabbing"
         style={{
-          transitionDuration: "var(--esper-room-fade, 900ms)",
           opacity: ready && !leaving && !failed ? 1 : 0,
           cursor: (hovering && !menuHovering) || overBoard ? "pointer" : undefined,
           touchAction: "none",
@@ -334,7 +330,7 @@ export function EsperRoom() {
 
       {/* Boot: the mark rises, fills as the room loads, and sinks into the ground as the house starts to draw. */}
       {!failed && (
-        <div aria-hidden className={cn("pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity delay-[var(--esper-logo-gone,800ms)] duration-200", dark ? "text-[#f2f2f0]" : "text-[#1d1d1f]", ready && "opacity-0")}>
+        <div aria-hidden className={cn("pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity delay-[785ms] duration-200", dark ? "text-[#f2f2f0]" : "text-[#1d1d1f]", ready && "opacity-0")}>
           <EsperLogo progress={progress} done={ready} className="h-[52px] w-auto" />
         </div>
       )}
@@ -350,6 +346,7 @@ export function EsperRoom() {
           onBack={back}
           onHover={onMenuHover}
           onToggleTheme={toggleTheme}
+          onInsets={onInsets}
           guestbook={{ notes, highlight, onDelete: deleteNote, onCompose: () => setComposing(true) }}
           onOpen={(id) => {
             // The case study slides in over the room (the site's own sheet); narrow screens go to the page.
@@ -358,8 +355,6 @@ export function EsperRoom() {
           }}
         />
       )}
-
-      <BuildDials onReplay={() => send("ReplayBuild")} />
 
       {ready && !failed && !leaving && <GuestbookComposer open={composing} onOpenChange={setComposing} onSend={sendNote} launched={launched} />}
 

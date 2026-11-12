@@ -93,6 +93,9 @@ const D2R = Math.PI / 180;
 
 /** One thing the opening build moves into place: when its turn comes, and where and how big it is at rest. */
 type BuildPiece = { obj: THREE.Object3D; at: number; wall: boolean; p0: THREE.Vector3; s0: THREE.Vector3; c: THREE.Vector3 };
+/** The overview on a phone held upright: the width it's framed for (wider than the 0.82 of other screens), so the
+ *  whole house fits across with a margin. */
+const PORTRAIT_FIT = 1.02;
 const smooth01 = (x: number) => {
   const k = Math.max(0, Math.min(1, x));
   return k * k * (3 - 2 * k);
@@ -321,7 +324,8 @@ export class EsperEngine {
   private activeStation: string | null = null;
   private look = new THREE.Vector2();
   private lookTarget = new THREE.Vector2();
-  private blend: { from: Pose; t: number; duration: number } | null = null;
+  /** A camera move under way: where it set out from (and the picture's shift then), and how far it has got. */
+  private blend: { from: Pose; t: number; duration: number; insets: { top: number; bottom: number } } | null = null;
   private current: Pose | null = null;
   private moving: Pose | null = null;
   private intro = false;
@@ -617,6 +621,12 @@ export class EsperEngine {
       case "NextActivity": return this.cycles.forEach((c) => c.next());
       case "SetPointerOverUi": this.overUi = value === "1"; return;
       case "SetFrameOffset": this.frameOffset = parseFloat(value) || 0; return;
+      // "top,bottom": CSS pixels of the screen covered by the interface (the phone's card sheet).
+      case "SetViewInsets": {
+        const [top, bottom] = value.split(",").map((v) => parseFloat(v) || 0);
+        this.insetsTo = { top, bottom };
+        return;
+      }
       case "SetReducedMotion": this.reducedMotion = value === "1"; return;
       // A case study sheet covers the room: stop drawing it until the sheet closes.
       case "SetPaused": this.paused = value === "1"; return;
@@ -1574,15 +1584,6 @@ export class EsperEngine {
     const slide = id === "overview" || fov > 15 ? 0 : (dist * Math.tan((fov / 2) * D2R) * Math.tan(this.frameOffset * D2R)) / Math.tan(18 * D2R);
     const target = r.pivot.clone().addScaledVector(right, slide);
     const pos = target.clone().addScaledVector(fwd, -dist);
-    // On narrow portrait screens, the dossier card sits in the lower half of the viewport; tilt the aim point down while keeping the camera's elevated position so the 3D subject sits in the open upper half without walls occluding it.
-    if (id !== "overview" && this.camera.aspect < 0.85) {
-      const camUp = new THREE.Vector3().crossVectors(fwd, right).normalize();
-      if (camUp.y < 0) camUp.negate();
-      const framedFor = fov < 15 ? 0.82 : 1.3;
-      const effFov = this.camera.aspect >= framedFor ? fov : Math.min(100, (2 * Math.atan(Math.tan((fov / 2) * D2R) * (framedFor / this.camera.aspect))) / D2R);
-      const halfH = dist * Math.tan((effFov / 2) * D2R);
-      target.addScaledVector(camUp, -0.28 * halfH);
-    }
     return { pos, target, fov };
   }
 
@@ -1591,13 +1592,15 @@ export class EsperEngine {
   }
 
   private startBlend(duration = 2.1) {
-    if (this.current) this.blend = { from: { pos: this.current.pos.clone(), target: this.current.target.clone(), fov: this.current.fov }, t: 0, duration };
+    if (!this.current) return;
+    this.blend = { from: { pos: this.current.pos.clone(), target: this.current.target.clone(), fov: this.current.fov }, t: 0, duration, insets: { ...this.insets } };
   }
 
   private updateCamera(dt: number) {
     if (this.state !== "enhance" && !this.intro) this.look.lerp(this.lookTarget, 1 - Math.exp(-dt * 10));
     let pose = this.moving ?? this.poseOf(this.liveId(), this.look);
     if (!pose) return;
+    let moved: { e: number; insets: { top: number; bottom: number } } | null = null;
     if (this.blend && !this.moving) {
       this.blend.t = Math.min(1, this.blend.t + dt / (this.reducedMotion ? 0.01 : this.blend.duration));
       const k = this.blend.t, e = k < 0.5 ? 8 * k ** 4 : 1 - Math.pow(-2 * k + 2, 4) / 2;
@@ -1617,6 +1620,7 @@ export class EsperEngine {
       const hop = f.pos.distanceTo(pose.pos);
       if (fd < 20 && td < 20) pos.y += Math.sin(Math.PI * e) * Math.min(4, hop * 0.45);
       pose = { pos, target, fov: fovE };
+      moved = { e, insets: this.blend.insets };
       if (k >= 1) this.blend = null;
     }
     this.current = pose;
@@ -1626,13 +1630,46 @@ export class EsperEngine {
     cam.lookAt(toWorld(pose.target));
     // Views are framed for a landscape screen. On a narrow one (a phone held upright) keep the same width in view,
     // so the house and each room's subject aren't cropped at the sides.
-    // (The overview's long lens already leaves room around the house, so it holds the house's width from narrower.)
-    const FRAMED_FOR = pose.fov < 15 ? 0.82 : 1.3;
+    // (The overview's long lens already leaves room around the house, so it holds the house's width from narrower;
+    // on a phone held upright it pulls back a little further, so the whole house fits with a margin.)
+    // The width held eases with the lens (long 10 deg -> close 40 deg) rather than switching at a threshold: a move
+    // between the overview and a room passes through every lens in between, and a switch there was a visible jump.
+    const narrowFit = cam.aspect < 0.75 ? PORTRAIT_FIT : 0.82;
+    const FRAMED_FOR = narrowFit + (1.3 - narrowFit) * smooth01((pose.fov - 10) / 30);
     cam.fov = cam.aspect >= FRAMED_FOR ? pose.fov : Math.min(100, 2 * Math.atan(Math.tan((pose.fov / 2) * D2R) * (FRAMED_FOR / cam.aspect)) / D2R);
     const dist = pose.pos.distanceTo(pose.target);
     cam.near = Math.max(0.02, Math.min(dist * 0.05, dist - 30));
     cam.far = dist + 80;
+    this.applyInsets(dt, moved);
     cam.updateProjectionMatrix();
+  }
+
+  /**
+   * The screen the room has to itself. On a phone the card sheet covers the bottom: the picture is shifted (not the
+   * camera moved) so whatever the camera looks at sits in the middle of the open area above it, and follows the
+   * sheet as it rises and falls. While the camera is moving (room to room, where the sheet also changes height for
+   * the new place) the shift rides the move's own easing, so the two are one motion: otherwise the picture slides
+   * first (the sheet is quick) and the camera follows (it starts slow), which reads as a jolt before the move.
+   */
+  private insets = { top: 0, bottom: 0 };
+  private insetsTo = { top: 0, bottom: 0 };
+  private applyInsets(dt: number, moved: { e: number; insets: { top: number; bottom: number } } | null) {
+    if (moved) {
+      this.insets.top = moved.insets.top + (this.insetsTo.top - moved.insets.top) * moved.e;
+      this.insets.bottom = moved.insets.bottom + (this.insetsTo.bottom - moved.insets.bottom) * moved.e;
+    } else {
+      // Otherwise it stays with the sheet (opening, folding, a finger on it); the sheet's own spring is the easing.
+      const k = 1 - Math.exp(-dt * 30);
+      this.insets.top += (this.insetsTo.top - this.insets.top) * k;
+      this.insets.bottom += (this.insetsTo.bottom - this.insets.bottom) * k;
+    }
+    const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    const shift = (this.insets.bottom - this.insets.top) / 2;
+    if (!w || !h || Math.abs(shift) < 0.5) {
+      if (this.camera.view?.enabled) this.camera.clearViewOffset();
+      return;
+    }
+    this.camera.setViewOffset(w, h, 0, shift, w, h);
   }
 
   private select(id: string) {
@@ -2198,8 +2235,9 @@ export class EsperEngine {
   private resize() {
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     if (!w || !h) return;
-    // Render at most ~1440 lines tall; the page scales it up.
-    const pr = Math.min(window.devicePixelRatio || 1, Math.max(1, 1440 / h));
+    this.setPhoneTier(w < 768 && window.matchMedia("(pointer: coarse)").matches);
+    // Render at most ~1440 lines tall; the page scales it up. A phone's small, dense screen gets 1.5x at most.
+    const pr = Math.min(window.devicePixelRatio || 1, Math.max(1, 1440 / h), this.phone ? 1.5 : Infinity);
     this.renderer.setPixelRatio(pr);
     this.renderer.setSize(w, h, false);
     this.composer.setPixelRatio(pr);
@@ -2207,6 +2245,24 @@ export class EsperEngine {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     if (this.board) this.board.lastViewport = h;
+  }
+
+  /** A phone's GPU gets a lighter room: half the occlusion samples and a smaller sun shadow. */
+  private phone = false;
+  private setPhoneTier(on: boolean) {
+    if (on === this.phone) return;
+    this.phone = on;
+    const n = on ? 8 : 16;
+    this.gtao.updateGtaoMaterial({ samples: n });
+    this.gtao.updatePdMaterial({ samples: n });
+    const size = on ? 1024 : 2048;
+    this.sun.shadow.mapSize.set(size, size);
+    // Both of the shadow's targets (the soft shadow blurs through a second one) are remade at the new size.
+    const sh = this.sun.shadow as unknown as { map: THREE.WebGLRenderTarget | null; mapPass: THREE.WebGLRenderTarget | null };
+    sh.map?.dispose();
+    sh.map = null;
+    sh.mapPass?.dispose();
+    sh.mapPass = null;
   }
 
   private frame = () => {

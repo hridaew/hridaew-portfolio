@@ -48,7 +48,7 @@ export const PERSON = {
 } as const;
 
 /** Build number. Bump on every push: patch for fixes, minor for features. */
-export const SITE_VERSION = "v3.14.0";
+export const SITE_VERSION = "v3.15.0";
 
 export const PERSON_BIO = [
   "I'm a Product Designer obsessed with making, and I have 6 years of experience designing for novel interaction models. I focus on the user and learn by making, whether on the canvas, in code, or the physical world.",

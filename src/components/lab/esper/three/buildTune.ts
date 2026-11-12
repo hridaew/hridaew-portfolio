@@ -1,15 +1,13 @@
 /**
- * The opening's numbers: the loading mark, the plan, the walls, the furnishing, the camera and the interface. These
- * defaults are what ships. In development the DialKit panel (BuildDials) writes overrides to window.__esperBuild;
- * the room reads them each time the build starts, so "replay" shows a change at once.
+ * The opening's numbers: the plan, the walls, the furnishing, the camera and the interface. (The loading mark's
+ * timings are CSS, in globals.css: bars rise 580 ms, 60 ms apart; fill glides 900 ms; exit 300 ms after 260 ms, 45 ms
+ * apart; the room fades in over 900 ms.) Tuned with DialKit, which was removed after; see 07be138 to bring it back.
  */
 export type Transition =
   | { type: "spring"; stiffness?: number; damping?: number; mass?: number; visualDuration?: number; bounce?: number }
   | { type: "easing"; duration: number; ease: [number, number, number, number] };
 
 export const BUILD_TUNE = {
-  /** The loading mark (ms; CSS). Seen on a full reload. */
-  loader: { barRise: 580, barStagger: 60, fillGlide: 900, exitDelay: 260, exitDuration: 300, exitStagger: 45, roomFadeIn: 900 },
   /** The plan sketch on the floor (s, m). `delay` is the wait after the room is ready, before the first line. */
   plan: { delay: 0.11, outlineAt: 0, outlineDuration: 0.25, innerAt: 0.1, innerGap: 0.016, innerDuration: 0.13, width: 0.034, opacity: 2, tipLength: 0.48, tipGlow: 2.7, fadeOut: 0.05 },
   /** The walls' two beats, and the spring they rise on. */
@@ -25,13 +23,8 @@ export const BUILD_TUNE = {
 };
 export type BuildTune = typeof BUILD_TUNE;
 
-/** The defaults with any development overrides on top, folder by folder. */
 export function buildTune(): BuildTune {
-  const o = typeof window !== "undefined" ? (window as unknown as { __esperBuild?: Partial<BuildTune> }).__esperBuild : undefined;
-  if (!o) return BUILD_TUNE;
-  const out = { ...BUILD_TUNE } as Record<string, unknown>;
-  for (const k of Object.keys(BUILD_TUNE) as (keyof BuildTune)[]) out[k] = { ...BUILD_TUNE[k], ...(o[k] ?? {}) };
-  return out as BuildTune;
+  return BUILD_TUNE;
 }
 
 /** A spring's natural frequency and damping ratio, from either physics or Motion's visualDuration/bounce. */

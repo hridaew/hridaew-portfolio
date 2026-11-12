@@ -9,9 +9,10 @@ import {
   type ComponentType,
 } from "react";
 import { useRouter } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useDragControls, useReducedMotion } from "framer-motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollerProvider } from "@/components/sheet/scroller-context";
+import { useIsPhone } from "@/components/lab/esper/useIsPhone";
 import { useSheetNav } from "@/components/sheet/SheetNav";
 import {
   getCachedSheetBody,
@@ -48,6 +49,12 @@ export function CaseStudySheet({
   const { activeKey, replaceSheet, clearActiveKey } = useSheetNav();
 
   const [closing, setClosing] = useState(false);
+  // Over the room on a phone, the case study rises from the bottom like the room's own sheet, and a pull down on its
+  // header puts it away; elsewhere it slides in from the right.
+  const phone = useIsPhone();
+  // (Read as it renders: the sheet only ever opens in the browser, after the room has marked the page.)
+  const rises = phone && typeof document !== "undefined" && document.documentElement.hasAttribute("data-esper");
+  const dragControls = useDragControls();
   const [, setBodyTick] = useState(0);
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -214,14 +221,24 @@ export function CaseStudySheet({
           activeKey === "obscura" &&
             "cursor-none [&_a]:cursor-pointer [&_button]:cursor-pointer [&_input]:cursor-text [&_select]:cursor-pointer [&_textarea]:cursor-text",
         )}
-        initial={{ x: "100%" }}
-        animate={{ x: closing ? "100%" : 0 }}
+        initial={rises ? { y: "100%" } : { x: "100%" }}
+        animate={rises ? { y: closing ? "100%" : 0 } : { x: closing ? "100%" : 0 }}
         transition={closing ? exitPanel : enterPanel}
+        drag={rises ? "y" : false}
+        dragListener={false}
+        dragControls={dragControls}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 1 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 120 || info.velocity.y > 600) close();
+        }}
         onAnimationComplete={() => {
           if (closing) onExitComplete();
         }}
       >
         <header
+          onPointerDown={rises ? (e) => dragControls.start(e) : undefined}
+          style={rises ? { touchAction: "none" } : undefined}
           className={cn(
             "relative z-10 flex shrink-0 items-center gap-4 border-b px-5 py-3 transition-colors duration-200",
             scrolled
@@ -229,6 +246,7 @@ export function CaseStudySheet({
               : "border-transparent bg-paper"
           )}
         >
+          {rises && <span aria-hidden className="absolute left-1/2 top-1.5 h-[5px] w-9 -translate-x-1/2 rounded-full bg-ink/[0.18]" />}
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"

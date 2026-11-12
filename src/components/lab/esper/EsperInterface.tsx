@@ -1,19 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CopyEmailPill } from "@/components/shared/CopyEmailPill";
-import { HeroCardExpandedBody } from "@/components/home/HeroCardExpandedBody";
-import { ProjectCarousel } from "@/components/home/ProjectCarousel";
-import { HomeProjectCard } from "@/components/home/WorkSection";
+import { useEffect, useState } from "react";
 import { useSheetNav } from "@/components/sheet/SheetNav";
-import { homepageProjects } from "@/data/homepage-projects";
-import { CV_HREF, LINKEDIN_HREF } from "@/lib/site-identity";
 import { cn } from "@/lib/utils";
 import { glass, press, focusRing } from "./chrome";
 import { GuestbookList, type GuestNote } from "./Guestbook";
-import { BOARD, STATIONS, type Station } from "./stations";
+import { PhoneDeck } from "./PhoneDeck";
+import { useIsPhone } from "./useIsPhone";
+import { AboutBody, BIO, CloseButton, IntroLinks, StationDetails } from "./StationContent";
+import { BOARD, STATIONS } from "./stations";
 
 type Props = {
   ready: boolean;
@@ -27,6 +22,8 @@ type Props = {
   /** Opens the case study with the camera move into the room; without it the button is a plain link. */
   onOpen?: (id: string) => void;
   guestbook: { notes: GuestNote[]; highlight: string | null; onDelete: (id: string) => void; onCompose: () => void };
+  /** Phone: how much of the screen the card sheet covers (CSS px from the top and bottom), for the room's framing. */
+  onInsets?: (top: number, bottom: number) => void;
 };
 
 
@@ -39,8 +36,9 @@ const ABOUT_ID = "taste";
  */
 const geist = "font-[family-name:var(--font-geist)]";
 
-export function EsperInterface({ ready, active, hovered, dark = true, onSelect, onBack, onHover, onToggleTheme, onOpen, guestbook }: Props) {
-  const { openSheet, prefetchSheet } = useSheetNav();
+export function EsperInterface({ ready, active, hovered, dark = true, onSelect, onBack, onHover, onToggleTheme, onOpen, onInsets, guestbook }: Props) {
+  const { prefetchSheet } = useSheetNav();
+  const isPhone = useIsPhone();
   // Warm the case study (route and sheet content) as soon as a room is hovered or its card shows, so "Read the
   // case study" opens at once instead of waiting on the download.
   useEffect(() => {
@@ -55,6 +53,32 @@ export function EsperInterface({ ready, active, hovered, dark = true, onSelect, 
   const [shown, setShown] = useState(station);
   if (station && station !== shown) setShown(station);
   const about = shown?.id === ABOUT_ID;
+
+  const themeToggle = onToggleTheme && (
+    <button
+      type="button"
+      onClick={onToggleTheme}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      title={dark ? "Switch to light mode" : "Switch to dark mode"}
+      className={cn(
+        "pointer-events-auto absolute right-[max(16px,env(safe-area-inset-right))] top-[max(16px,env(safe-area-inset-top))] flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] text-[#1d1d1f] opacity-40 transition-[opacity,background-color,transform] duration-300 hover:bg-[#1c1c1c]/[0.08] hover:opacity-95 focus-visible:opacity-100 active:scale-[0.96] md:right-8 md:top-7",
+        !ready && "pointer-events-none opacity-0",
+        focusRing,
+      )}
+    >
+      {dark ? <SunIcon /> : <MoonIcon />}
+    </button>
+  );
+
+  // A phone gets its own layout: the room above, a sheet of cards below (PhoneDeck).
+  if (isPhone) {
+    return (
+      <div className={cn("pointer-events-none absolute inset-0 text-[#1d1d1f] antialiased", geist, !ready && "invisible")}>
+        {themeToggle}
+        <PhoneDeck ready={ready} active={active} onSelect={onSelect} onBack={onBack} onOpen={onOpen} onInsets={onInsets} guestbook={guestbook} />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -77,49 +101,12 @@ export function EsperInterface({ ready, active, hovered, dark = true, onSelect, 
         )}
       >
         <h1 className="site-chapter-heading">Hridae Walia</h1>
-        <p className="site-body mt-2 max-w-[min(420px,calc(100vw-48px))] text-ink-secondary">
-          I’m a Product Designer obsessed with making, and I have 6 years of experience designing for novel
-          interaction models. I focus on the user and learn by making, whether on the canvas, in code, or
-          the physical world.
-        </p>
-        {/* The same strip as the home page's bio card. */}
-        <div className="pointer-events-auto mt-3 flex items-center gap-4">
-          {[
-            { href: CV_HREF, label: "CV" },
-            { href: LINKEDIN_HREF, label: "in" },
-          ].map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn("flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] transition-colors hover:bg-[#1c1c1c]/[0.08]", focusRing)}
-            >
-              <span className="esper-chip-label font-[family-name:var(--font-geist-mono)] text-xs font-extrabold" style={{ color: "rgba(28,28,28,0.8)", mixBlendMode: "luminosity" }}>
-                {l.label}
-              </span>
-            </a>
-          ))}
-          <CopyEmailPill />
-        </div>
+        <p className="site-body mt-2 max-w-[min(420px,calc(100vw-48px))] text-ink-secondary">{BIO}</p>
+        <IntroLinks className="pointer-events-auto mt-3" />
       </div>
 
       {/* Subtle light/dark room toggle in the top right */}
-      {onToggleTheme && (
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-          title={dark ? "Switch to light mode" : "Switch to dark mode"}
-          className={cn(
-            "pointer-events-auto absolute right-6 top-6 flex size-8 items-center justify-center rounded-2xl bg-[#1c1c1c]/[0.045] text-[#1d1d1f] opacity-40 transition-[opacity,background-color,transform] duration-300 hover:bg-[#1c1c1c]/[0.08] hover:opacity-95 focus-visible:opacity-100 active:scale-[0.96] md:right-8 md:top-7",
-            !ready && "pointer-events-none opacity-0",
-            focusRing,
-          )}
-        >
-          {dark ? <SunIcon /> : <MoonIcon />}
-        </button>
-      )}
+      {themeToggle}
 
       {/* The one ornament: places in the room, About, and the light */}
       <nav aria-label="Work" className="pointer-events-auto absolute inset-x-0 bottom-[max(36px,env(safe-area-inset-bottom))] flex justify-center px-2 md:bottom-7 md:px-4">
@@ -188,7 +175,16 @@ export function EsperInterface({ ready, active, hovered, dark = true, onSelect, 
           )}
         >
         <div className={cn("scrollbar-hide min-h-0 overflow-y-auto overflow-x-hidden rounded-[32px] px-5 pb-6 pt-5 md:px-7 md:pb-7 md:pt-6")}>
-          {shown && about && <AboutCard onClose={onBack} />}
+          {shown && about && (
+            <div className="esper-dossier-in">
+              {/* Titled and closed like every other window. */}
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="site-chapter-heading">About me</h2>
+                <CloseButton onClick={onBack} />
+              </div>
+              <AboutBody className="mt-5" />
+            </div>
+          )}
           {shown && shown.id === BOARD.id && (
             <div key="guestbook" className="esper-dossier-in">
               <div className="flex items-center justify-between gap-4">
@@ -204,150 +200,13 @@ export function EsperInterface({ ready, active, hovered, dark = true, onSelect, 
                 <h2 className="site-chapter-heading">{shown.title}</h2>
                 <CloseButton onClick={onBack} />
               </div>
-              <ProjectMedia station={shown} onOpen={onOpen} />
-              {(shown.role || shown.period) && (
-                <p className={cn("type-body-medium", shown.images ? "mt-4" : "mt-1.5")}>
-                  {shown.role && <span className="font-medium text-black/90">{shown.role}</span>}
-                  {shown.period && <span className="block font-normal text-black/60">{shown.period}</span>}
-                </p>
-              )}
-              {shown.summary && <p className="site-body mt-4 text-black/90">{shown.summary}</p>}
-              {shown.note && <p className="type-caption mt-3 text-black/60">{shown.note}</p>}
-              {shown.links && (
-                <ul className="-mx-3 mt-4 flex flex-col">
-                  {shown.links.map((l) => (
-                    <li key={l.href}>
-                      <Link
-                        href={l.href}
-                        onClick={(e) => {
-                          if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-                          if (openSheet(l.href)) e.preventDefault();
-                        }}
-                        className={cn("group flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 hover:bg-black/[0.08]", press, focusRing)}>
-                        <span>
-                          <span className="type-headline block">{l.title}</span>
-                          <span className="type-caption mt-0.5 block text-black/60">{l.line}</span>
-                        </span>
-                        <ArrowIcon />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {shown.href && (
-                <Link
-                  href={shown.href}
-                  onClick={(e) => {
-                    if (!onOpen || e.metaKey || e.ctrlKey || e.shiftKey) return;
-                    e.preventDefault();
-                    onOpen(shown.id);
-                  }}
-                  className={cn("type-body-medium mt-6 inline-flex items-center rounded-full bg-[#1d1d1f] px-5 py-2.5 font-semibold text-white hover:bg-black/80", press, focusRing)}
-                >
-                  Read the case study
-                </Link>
-              )}
+              <StationDetails station={shown} onOpen={onOpen} />
             </div>
           )}
         </div>
         </div>
       </section>
     </div>
-  );
-}
-
-function CloseButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Close"
-      className={cn("-mr-2 grid size-8 shrink-0 place-items-center rounded-full bg-black/[0.08] text-black/85 hover:bg-black/[0.16] hover:text-[#1d1d1f]", press, focusRing)}
-    >
-      <CloseIcon />
-    </button>
-  );
-}
-
-/**
- * The home page's own project row: the same Embla carousel and the same three cards. A tap on a card takes the
- * camera into the case study (as the button does) instead of jumping straight to the page.
- */
-function ProjectMedia({ station, onOpen }: { station: Station; onOpen?: (id: string) => void }) {
-  const project = homepageProjects.find((p) => p.slug === station.id);
-  const tap = useRef<{ x: number; y: number } | null>(null);
-  let slides: ReactNode[] = [];
-  if (project) {
-    slides = ([0, 1, 2] as const).map((i) => <HomeProjectCard key={i} project={project} index={i} hideCaption />);
-  } else if (station.images) {
-    slides = station.images.map((img) => (
-      <div key={img.src} className="home-work-card-frame relative overflow-clip rounded-2xl bg-black/[0.04]">
-        {img.video ? (
-          <video src={img.video} poster={img.src} aria-label={img.alt} autoPlay muted loop playsInline preload="metadata" className="pointer-events-none absolute inset-0 size-full select-none object-cover" />
-        ) : (
-          <Image src={img.src} alt={img.alt} fill sizes="420px" draggable={false} className="pointer-events-none select-none object-cover" />
-        )}
-      </div>
-    ));
-  }
-  if (!slides.length) return null;
-  return (
-    <div
-      className="-mx-5 mt-5 md:-mx-7"
-      style={{ ["--home-work-card-max" as string]: "min(420px, calc(100vw - 64px))" }}
-      onPointerDownCapture={(e) => (tap.current = { x: e.clientX, y: e.clientY })}
-      onPointerUpCapture={(e) => {
-        const s = tap.current;
-        tap.current = null;
-        if (!project) return;
-        e.stopPropagation();
-        if (s && Math.hypot(e.clientX - s.x, e.clientY - s.y) <= 14 && station.href && onOpen) onOpen(station.id);
-      }}
-    >
-      <ProjectCarousel className="scrollbar-hide overflow-hidden px-5 md:px-7" trackEndPadding="inline" autoplayDelayMs={4500}>
-        {slides.map((s, i) => (
-          <div key={i} className="flex-[0_0_auto]">
-            {s}
-          </div>
-        ))}
-      </ProjectCarousel>
-    </div>
-  );
-}
-
-/**
- * Off hours is also About: the home page's bio card, larger, in the room's glass window. The name, title and links
- * are already on the page (top left), so the card is just the story: bio, experience, education, the top threes.
- */
-function AboutCard({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="esper-dossier-in">
-      {/* Titled and closed like every other window. */}
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="site-chapter-heading">About me</h2>
-        <CloseButton onClick={onClose} />
-      </div>
-      {/* The body opens with a divider meant to sit under the name; the title row stands in for it. */}
-      <div className="mt-5 [&>div>div:first-child]:hidden [&>div>div:nth-child(2)]:pt-0">
-        <HeroCardExpandedBody />
-      </div>
-    </div>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>
-      <path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden className="shrink-0 text-black/45 transition-colors group-hover:text-[#1d1d1f]">
-      <path d="M4 10L10 4M5 4h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
 

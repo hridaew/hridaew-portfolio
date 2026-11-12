@@ -1231,6 +1231,7 @@ html[data-home-layout] .home-project-embla {
 [data-esper-theme="dark"] .bg-black\/\[0\.08\] { background-color: rgb(255 255 255 / 0.1); }
 [data-esper-theme="dark"] .bg-black\/\[0\.1\] { background-color: rgb(255 255 255 / 0.12); }
 [data-esper-theme="dark"] .bg-black\/\[0\.22\] { background-color: rgb(255 255 255 / 0.22); }
+[data-esper-theme="dark"] .border-black\/\[0\.08\] { border-color: rgb(255 255 255 / 0.1); }
 [data-esper-theme="dark"] .hover\:bg-black\/\[0\.08\]:hover { background-color: rgb(255 255 255 / 0.1); }
 [data-esper-theme="dark"] .hover\:bg-black\/\[0\.1\]:hover { background-color: rgb(255 255 255 / 0.13); }
 [data-esper-theme="dark"] .hover\:bg-black\/\[0\.16\]:hover { background-color: rgb(255 255 255 / 0.18); }
@@ -1297,8 +1298,21 @@ html[data-esper] [data-case-sheet-panel] {
 html[data-esper] [data-case-sheet-panel] > header {
   border-radius: 28px 28px 0 0;
 }
+/* On a phone it's a sheet risen from the bottom (CaseStudySheet), the room just showing above it. */
 @media (max-width: 767px) {
-  html[data-esper] [data-case-sheet-panel] { top: 8px; bottom: 8px; right: 8px; width: calc(100vw - 16px); border-radius: 22px; }
+  html[data-esper] [data-case-sheet-panel] {
+    top: calc(env(safe-area-inset-top) + 12px);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 22px 22px 0 0;
+    border-bottom: 0;
+  }
+  html[data-esper] [data-case-sheet-panel] > header {
+    border-radius: 22px 22px 0 0;
+    padding-top: 1.125rem;
+  }
 }
 /* ESPER dark: the case study turns over too (the same tokens as the room's dark skin). */
 html[data-esper-dark] [data-case-sheet] {
@@ -1342,17 +1356,16 @@ html[data-esper-dark] [data-case-sheet-panel] {
    progress, long enough that one file arriving reads as a steady advance rather than a jump; on ready the fill
    finishes, then the bars sink into the ground left to right. Transforms and opacity only, so the compositor runs it
    while the main thread builds the room. */
-/* The timings are variables so the development tuning panel (BuildDials) can set them; these fallbacks ship. */
 .esper-logo-bar {
   transform-origin: 50% 100%;
-  animation: esper-bar-in var(--esper-bar-rise, 580ms) cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
-  animation-delay: calc(var(--i) * var(--esper-bar-stagger, 60ms));
+  animation: esper-bar-in 580ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
+  animation-delay: calc(var(--i) * 60ms);
 }
-.esper-logo-fill { transition: transform var(--esper-fill-glide, 900ms) cubic-bezier(0.25, 0.8, 0.3, 1); }
+.esper-logo-fill { transition: transform 900ms cubic-bezier(0.25, 0.8, 0.3, 1); }
 .esper-logo-out .esper-logo-fill { transition-duration: 280ms; }
 .esper-logo-out .esper-logo-bar {
-  animation: esper-bar-out var(--esper-exit-duration, 300ms) cubic-bezier(0.55, 0, 0.75, 0.2) both;
-  animation-delay: calc(var(--esper-exit-delay, 260ms) + var(--i) * var(--esper-exit-stagger, 45ms));
+  animation: esper-bar-out 300ms cubic-bezier(0.55, 0, 0.75, 0.2) both;
+  animation-delay: calc(260ms + var(--i) * 45ms);
 }
 @keyframes esper-bar-in {
   from { transform: scaleY(0); opacity: 0; }
