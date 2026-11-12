@@ -10,6 +10,7 @@ import { lathe, tube, type Joints } from "./kit";
 import { BotPerson, type HandPose, type Talk } from "./bot";
 import { GuestbookBoard, type BoardNote, type PinStart } from "./guestbook";
 import { Turntable } from "./turntable";
+import { buildTune, progress, settleTime, type BuildTune } from "./buildTune";
 
 type Person = BotPerson;
 import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
@@ -89,6 +90,37 @@ type Rest = { pos: THREE.Vector3; fwd: THREE.Vector3; fov: number; pivot: THREE.
 type Pose = { pos: THREE.Vector3; target: THREE.Vector3; fov: number };
 
 const D2R = Math.PI / 180;
+
+/** One thing the opening build moves into place: when its turn comes, and where and how big it is at rest. */
+type BuildPiece = { obj: THREE.Object3D; at: number; wall: boolean; p0: THREE.Vector3; s0: THREE.Vector3; c: THREE.Vector3 };
+const smooth01 = (x: number) => {
+  const k = Math.max(0, Math.min(1, x));
+  return k * k * (3 - 2 * k);
+};
+/** A wall's hologram: a glassy white shell (brighter at its silhouette, faint scanlines drifting up), shown only above
+ *  the clay that's risen into it, with a bright print edge where the two meet. */
+const HOLO_VS = /* glsl */ `
+  varying float vY; varying vec3 vN; varying vec3 vV;
+  void main() {
+    vY = position.y;
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vN = normalize(normalMatrix * normal);
+    vV = -mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }`;
+const HOLO_FS = /* glsl */ `
+  uniform float uRise; uniform float uAlpha; uniform float uT; uniform vec3 uAccent;
+  uniform float uRim; uniform float uScan; uniform float uEdge;
+  varying float vY; varying vec3 vN; varying vec3 vV;
+  void main() {
+    if (vY < uRise - 0.004) discard;
+    float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.0);
+    float scan = smoothstep(0.6, 1.0, sin(vY * 70.0 - uT * 9.0) * 0.5 + 0.5);
+    float edge = exp(-pow((vY - uRise) / 0.018, 2.0));
+    float a = uAlpha * (0.07 + uRim * fres + uScan * scan) + edge * min(uAlpha * 2.0, 1.0);
+    if (a < 0.003) discard;
+    gl_FragColor = vec4(uAccent * (1.0 + uEdge * edge), a);
+  }`;
 
 /** The HW mark (the favicon's six bars, as in EsperLogo), raised 2.5 mm: a print on a shirt. 7 cm across, facing +z. */
 function hwMark(mat: THREE.Material) {
@@ -317,6 +349,8 @@ export class EsperEngine {
   private sunAngles = { yaw: 125, height: 55, warm: 0.25, strength: 1.6 };
 
   constructor(private canvas: HTMLCanvasElement, opts: { preserveDrawingBuffer?: boolean } = {}) {
+    // Unpack the compressed models on worker threads, so the page (and the loading mark) keeps moving meanwhile.
+    (MeshoptDecoder as { useWorkers?: (n: number) => void }).useWorkers?.(Math.min(4, Math.max(1, (navigator.hardwareConcurrency || 2) - 1)));
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !!opts.preserveDrawingBuffer, powerPreference: "high-performance" });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.NeutralToneMapping;
@@ -359,6 +393,18 @@ export class EsperEngine {
     this.gtao.updateGtaoMaterial({ radius: 0.7, distanceExponent: 1.2, thickness: 1.5, scale: 0.9, samples: 16 });
     this.gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
     this.composer.addPass(this.gtao);
+    // The opening build's light-only layers (plan, holograms) cast no ambient occlusion: hide them from the
+    // pass's normal render, as it already hides lines and points.
+    const ao = this.gtao as unknown as { _overrideVisibility: () => void; _visibilityCache: THREE.Object3D[] };
+    const hideLines = ao._overrideVisibility.bind(ao);
+    ao._overrideVisibility = () => {
+      hideLines();
+      for (const o of this.noAO) {
+        if (!o.visible) continue;
+        o.visible = false;
+        ao._visibilityCache.push(o);
+      }
+    };
     this.composer.addPass(new OutputPass());
 
     this.observer = new ResizeObserver(() => this.resize());
@@ -576,13 +622,14 @@ export class EsperEngine {
       case "SetPaused": this.paused = value === "1"; return;
       case "Hover":
         this.uiHover = value;
-        if (this.state === "overview") this.setHover(value);
+        if (this.state === "overview" && !this.building) this.setHover(value);
         return;
       case "SetTheme":
         this.setTheme(value === "dark");
         return;
       case "SetAssetBase": this.assetBase = value; return;
-      case "PlayIntro": return this.playIntro(parseFloat(value) || 4.5);
+      case "PlayIntro": return this.playIntro(parseFloat(value) || undefined);
+      case "ReplayBuild": return this.replayBuild();
       case "Enable": this.enabled = value !== "1"; return;
       case "SetTool": this.tool = value === "note" ? "note" : "select"; return;
       case "GuestbookNotes":
@@ -702,6 +749,7 @@ export class EsperEngine {
   // ---------------- scene ----------------
 
   private applyScene(spec: Spec) {
+    this.finishBuild(false);
     for (const t of this.turntables) t.deck.dispose();
     this.turntables = [];
     const build = ++this.built;
@@ -1003,14 +1051,16 @@ export class EsperEngine {
       } catch {}
       for (const st of hidden) st.obj.visible = false;
       if (build !== this.built) return;
-      if (!this.ready && this.state === "overview") {
-        this.playIntro(2.2);
+      if (!this.ready && this.state === "overview" && !this.reducedMotion) {
+        this.startBuild(spec, screens, stationOf);
+        this.playIntro();
       }
       // Two frames on screen behind the cover, so the first thing seen is a finished picture.
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       if (!this.ready) {
         this.ready = true;
         this.emit("ready");
+        if (!this.building) this.showChrome();
       }
     });
 
@@ -1592,6 +1642,7 @@ export class EsperEngine {
   }
 
   private focus(id: string, duration?: number) {
+    this.finishBuild(false);
     if (this.intro) {
       this.intro = false;
       this.stepper = null;
@@ -1670,14 +1721,315 @@ export class EsperEngine {
   }
   private stepper: ((dt: number) => void) | null = null;
 
-  private playIntro(seconds: number) {
+  // ---------------- the build ----------------
+
+  /** The build's bright: white in the dark room; graphite on the light clay, where white wouldn't show. */
+  private accent() {
+    return this.dark ? srgb([1, 1, 1]) : srgb([0.12, 0.12, 0.13]);
+  }
+
+  /**
+   * The first reveal: the house builds itself, in about three seconds.
+   * - The plan sketches itself on the floor in half a second: the outline, then the partitions in one sweep round the
+   *   house, each line led by a bright pen tip.
+   * - The walls are the event, in two beats (the outline, then every partition together): each fades in as a
+   *   hologram at full height and the clay rises into it on a soft spring, a bright print edge riding its top.
+   *   Hologram and plan fade once they stand.
+   * - The rooms are furnished one by one in the order of the bar: each thing drops in and settles with a small squash.
+   * The clay only moves (transforms), so shadows and ambient occlusion follow it; the light-only layers are kept out
+   * of the occlusion pass. Time advances at most a 30 fps step per frame, so a hitch slows it rather than skipping
+   * ahead. People aren't part of it (they sleep until a room is picked). A press, or picking a room, finishes it.
+   */
+  private building: {
+    t: number;
+    end: number;
+    chromeAt: number;
+    fadeFrom: number;
+    pieces: BuildPiece[];
+    fx: THREE.Mesh[];
+    geos: THREE.BufferGeometry[];
+    plan: THREE.ShaderMaterial;
+    holos: { mat: THREE.ShaderMaterial; at: number; rise: number; h: number }[];
+    tune: BuildTune;
+  } | null = null;
+  /** What the first load's build was made from, so the tuning panel can replay it. */
+  private lastBuild: { spec: Spec; tops: Map<string, THREE.Object3D>; stationOf: Map<string, string> } | null = null;
+  /** Light-only meshes the ambient occlusion pass should not see. */
+  private noAO: THREE.Object3D[] = [];
+  private chromeShown = false;
+
+  /** The interface (name, bar) comes in once the walls stand, so the house has the stage first. */
+  private showChrome() {
+    if (this.chromeShown) return;
+    this.chromeShown = true;
+    this.emit("chrome");
+  }
+
+  private startBuild(spec: Spec, tops: Map<string, THREE.Object3D>, stationOf: Map<string, string>) {
+    this.finishBuild(false);
+    this.lastBuild = { spec, tops, stationOf };
+    const T = buildTune();
+    this.scene.updateMatrixWorld(true);
+    const box = new THREE.Box3();
+    const piece = (obj: THREE.Object3D, at: number, wall: boolean): BuildPiece => {
+      // Grown and squashed about the bottom of its bounds (in the house's own space), not its origin: some things
+      // (the obscura rail) are authored about the middle of the house.
+      box.setFromObject(obj);
+      const c = obj.position.clone();
+      if (!box.isEmpty() && Number.isFinite(box.min.y)) {
+        c.copy(this.root.worldToLocal(new THREE.Vector3((box.min.x + box.max.x) / 2, box.min.y, (box.min.z + box.max.z) / 2)));
+      }
+      return { obj, at, wall, p0: obj.position.clone(), s0: obj.scale.clone(), c };
+    };
+    const pieces: BuildPiece[] = [];
+    const fx: THREE.Mesh[] = [];
+    const geos: THREE.BufferGeometry[] = [];
+    const accent = this.accent();
+    const ink = this.dark ? { c: srgb([0.8, 0.8, 0.8]), a: 0.5 * T.plan.opacity } : { c: srgb([0.3, 0.3, 0.3]), a: 0.45 * T.plan.opacity };
+    const lightOnly = (mesh: THREE.Mesh, order: number) => {
+      mesh.renderOrder = order;
+      mesh.frustumCulled = false;
+      mesh.castShadow = false;
+      mesh.receiveShadow = false;
+      this.world.add(mesh);
+      fx.push(mesh);
+    };
+
+    // The plan: a ribbon along every wall. The outline (the house's outer walls) is drawn first, all at once; then
+    // the partitions one after another, sweeping round the middle.
+    const walls = spec.items.filter((it) => it.kind === "wall" && it.path && it.path.length >= 4 && tops.get(it.id));
+    const angle = (path: number[]) => {
+      let x = 0, z = 0;
+      for (let i = 0; i < path.length; i += 2) {
+        x += path[i];
+        z += path[i + 1];
+      }
+      return Math.atan2(z, x);
+    };
+    const outline = walls.filter((w) => w.solid);
+    const inner = walls.filter((w) => !w.solid).sort((a, b) => angle(a.path!) - angle(b.path!));
+    const pos: number[] = [], along: number[] = [], start: number[] = [], dur: number[] = [], lens: number[] = [], index: number[] = [];
+    const HALF = T.plan.width / 2, Y = 0.003;
+    const holos: NonNullable<typeof this.building>["holos"] = [];
+    let wallsDone = 0;
+    [...outline, ...inner].forEach((it, n) => {
+      const obj = tops.get(it.id)! as THREE.Mesh;
+      obj.updateMatrix();
+      const pts: THREE.Vector3[] = [];
+      for (let i = 0; i + 1 < it.path!.length; i += 2) pts.push(new THREE.Vector3(it.path![i], 0, it.path![i + 1]).applyMatrix4(obj.matrix));
+      let len = 0;
+      for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z);
+      if (len < 1e-4) return;
+      const isOutline = n < outline.length;
+      const at = isOutline ? T.plan.outlineAt : T.plan.innerAt + (n - outline.length) * T.plan.innerGap;
+      const d = Math.max(0.01, isOutline ? T.plan.outlineDuration : T.plan.innerDuration);
+      let acc = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i];
+        const seg = Math.hypot(b.x - a.x, b.z - a.z);
+        if (seg < 1e-5) continue;
+        const nx = (-(b.z - a.z) / seg) * HALF, nz = ((b.x - a.x) / seg) * HALF;
+        const base = pos.length / 3;
+        pos.push(a.x + nx, Y, a.z + nz, a.x - nx, Y, a.z - nz, b.x + nx, Y, b.z + nz, b.x - nx, Y, b.z - nz);
+        along.push(acc / len, acc / len, (acc + seg) / len, (acc + seg) / len);
+        start.push(at, at, at, at);
+        dur.push(d, d, d, d);
+        lens.push(len, len, len, len);
+        index.push(base, base + 1, base + 2, base + 1, base + 3, base + 2);
+        acc += seg;
+      }
+      // The wall: its hologram fades in, then the clay rises into it (never before its line is drawn).
+      const rise = Math.max(at + d, isOutline ? T.walls.outlineAt : T.walls.innerAt);
+      const holo = new THREE.ShaderMaterial({
+        uniforms: {
+          uRise: { value: 0 }, uAlpha: { value: 0 }, uT: { value: 0 }, uAccent: { value: accent },
+          uRim: { value: T.hologram.rim }, uScan: { value: T.hologram.scanlines }, uEdge: { value: T.hologram.edgeGlow },
+        },
+        vertexShader: HOLO_VS,
+        fragmentShader: HOLO_FS,
+        transparent: true,
+        depthWrite: false,
+        blending: this.dark ? THREE.AdditiveBlending : THREE.NormalBlending,
+        // Pushed back a touch, so where the clay has risen it wins over its own hologram.
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+      });
+      const hm = new THREE.Mesh(obj.geometry, holo);
+      hm.position.copy(obj.position);
+      hm.quaternion.copy(obj.quaternion);
+      hm.scale.copy(obj.scale);
+      if (T.hologram.show) {
+        lightOnly(hm, 2);
+        holos.push({ mat: holo, at: rise - T.hologram.lead, rise, h: it.h || 1 });
+      } else holo.dispose();
+      pieces.push(piece(obj, rise, true));
+      wallsDone = Math.max(wallsDone, rise + settleTime(T.walls.rise));
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute("aAlong", new THREE.Float32BufferAttribute(along, 1));
+    geo.setAttribute("aStart", new THREE.Float32BufferAttribute(start, 1));
+    geo.setAttribute("aDur", new THREE.Float32BufferAttribute(dur, 1));
+    geo.setAttribute("aLen", new THREE.Float32BufferAttribute(lens, 1));
+    geo.setIndex(index);
+    geos.push(geo);
+    const plan = new THREE.ShaderMaterial({
+      uniforms: {
+        uT: { value: 0 }, uFade: { value: 1 }, uInk: { value: ink.c }, uInkA: { value: ink.a }, uAccent: { value: accent },
+        uTip: { value: Math.max(0.001, T.plan.tipLength) }, uTipGlow: { value: T.plan.tipGlow },
+      },
+      vertexShader: /* glsl */ `
+        attribute float aAlong; attribute float aStart; attribute float aDur; attribute float aLen;
+        uniform float uT;
+        varying float vAlong; varying float vP; varying float vLen; varying float vDone; varying float vOn;
+        void main() {
+          vAlong = aAlong;
+          vLen = aLen;
+          float p = clamp((uT - aStart) / aDur, 0.0, 1.0);
+          vOn = step(0.0001, p);
+          // The pen eases off the mark and onto the end, like a hand.
+          vP = 0.5 - 0.5 * cos(3.14159265 * p);
+          vDone = uT - aStart - aDur;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }`,
+      fragmentShader: /* glsl */ `
+        uniform vec3 uInk; uniform vec3 uAccent; uniform float uInkA; uniform float uFade; uniform float uTip; uniform float uTipGlow;
+        varying float vAlong; varying float vP; varying float vLen; varying float vDone; varying float vOn;
+        void main() {
+          if (vOn < 0.5 || vAlong > vP) discard;
+          // The pen tip: bright at the head, trailing off behind it, gone once the line is done.
+          float head = exp(-((vP - vAlong) * vLen) / uTip) * (1.0 - clamp(vDone / 0.3, 0.0, 1.0));
+          gl_FragColor = vec4(mix(uInk, uAccent * uTipGlow, head), mix(uInkA, 1.0, head) * uFade);
+        }`,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+    });
+    lightOnly(new THREE.Mesh(geo, plan), 3);
+    this.noAO = [...fx];
+
+    // The rooms, in the bar's order, each a beat after the last; inside a room, the floor-standing things first and
+    // what rests on them after.
+    const order = spec.stations.map((s) => s.id).filter((id) => id !== "guestbook");
+    const rooms = new Map<string, Item[]>();
+    for (const it of spec.items) {
+      if (it.kind === "wall" || it.kind === "person" || it.id === "house/floor" || it.when === "active" || !tops.get(it.id)) continue;
+      const room = stationOf.get(it.id) ?? it.station ?? "";
+      rooms.set(room, [...(rooms.get(room) ?? []), it]);
+    }
+    const ranked = [...rooms.keys()].sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
+    ranked.forEach((room, i) => {
+      const list = rooms.get(room)!.sort((a, b) => (a.p?.[1] ?? 0) - (b.p?.[1] ?? 0) || (a.p?.[0] ?? 0) - (b.p?.[0] ?? 0));
+      const gap = Math.min(T.furnish.itemGap, 0.42 / list.length);
+      list.forEach((it, j) => pieces.push(piece(tops.get(it.id)!, T.furnish.at + i * T.furnish.roomGap + j * gap, false)));
+    });
+
+    const fadeFrom = wallsDone - 0.25;
+    const landed = T.furnish.fallTime + 4.6 / Math.max(1, T.furnish.settle);
+    const end = Math.max(fadeFrom + T.plan.fadeOut, ...pieces.map((p) => p.at + (p.wall ? settleTime(T.walls.rise) : landed)));
+    // A moment of grace: the plan starts as the loading mark sinks into the ground.
+    this.building = { t: -T.plan.delay, end, chromeAt: T.ui.interfaceAt, fadeFrom, pieces, fx, geos, plan, holos, tune: T };
+    for (const p of pieces) this.placePiece(p, -1, T);
+  }
+
+  /** A piece of the build, `t` seconds after its turn came (negative: not yet). */
+  private placePiece(p: BuildPiece, t: number, T: BuildTune) {
+    let fx = 1, fy = 1, lift = 0;
+    if (p.wall) {
+      fy = Math.max(1e-4, progress(T.walls.rise, t));
+    } else {
+      const F = T.furnish, FALL = Math.max(0.01, F.fallTime), H = F.dropHeight;
+      if (t <= 0) {
+        fx = fy = 1e-4;
+        lift = H;
+      } else if (t < FALL) {
+        // Falls in under gravity, growing to full size on the way.
+        const u = t / FALL;
+        lift = H * (1 - u * u);
+        fx = fy = 0.45 + 0.55 * (1 - (1 - u) * (1 - u));
+      } else {
+        // Lands: a small squash that springs back and settles.
+        const l = t - FALL, w = Math.exp(-F.settle * l) * Math.cos(F.bounce * l);
+        fx = 1 + F.squash * 0.55 * w;
+        fy = 1 - F.squash * w;
+      }
+    }
+    const { obj, p0, s0, c } = p;
+    obj.scale.set(s0.x * fx, s0.y * fy, s0.z * fx);
+    obj.position.set(c.x + (p0.x - c.x) * fx, c.y + (p0.y - c.y) * fy + lift, c.z + (p0.z - c.z) * fx);
+  }
+
+  private updateBuild(dt: number) {
+    const b = this.building;
+    if (!b) return;
+    b.t += Math.min(dt, 1 / 30);
+    const t = b.t;
+    const T = b.tune;
+    for (const p of b.pieces) this.placePiece(p, t - p.at, T);
+    const fade = 1 - smooth01((t - b.fadeFrom) / Math.max(0.01, T.plan.fadeOut));
+    b.plan.uniforms.uT.value = t;
+    b.plan.uniforms.uFade.value = fade;
+    for (const h of b.holos) {
+      // Fades in, holds while the clay rises into it, fades once it stands.
+      const H = T.hologram;
+      const shown = smooth01((t - h.at) / Math.max(0.01, H.fadeIn));
+      const gone = smooth01((t - h.rise - settleTime(T.walls.rise) * 0.7) / Math.max(0.01, H.fadeOut));
+      h.mat.uniforms.uAlpha.value = H.opacity * shown * (1 - gone);
+      h.mat.uniforms.uRise.value = h.h * Math.max(0, progress(T.walls.rise, t - h.rise));
+      h.mat.uniforms.uT.value = t;
+    }
+    if (t >= b.chromeAt) this.showChrome();
+    if (t >= b.end) this.finishBuild();
+  }
+
+  /** Everything where it belongs, the build's layers gone; then whatever the pointer is already on lights up. */
+  private finishBuild(catchUp = true) {
+    const b = this.building;
+    if (!b) return;
+    this.building = null;
+    for (const p of b.pieces) {
+      p.obj.scale.copy(p.s0);
+      p.obj.position.copy(p.p0);
+    }
+    // The holograms share their walls' geometry; only the build's own geometry is freed.
+    for (const m of b.fx) {
+      m.removeFromParent();
+      (m.material as THREE.Material).dispose();
+    }
+    for (const g of b.geos) g.dispose();
+    this.noAO = [];
+    this.showChrome();
+    if (!catchUp || this.state !== "overview") return;
+    if (this.pointer && !this.overUi && this.enabled) this.setHover(this.stationAt(this.pointer.x, this.pointer.y));
+    else if (this.uiHover) this.setHover(this.uiHover);
+  }
+
+  /** The tuning panel's replay: the first load's build and camera settle again, from the overview. */
+  private replayBuild() {
+    const last = this.lastBuild;
+    if (!last || this.reducedMotion) return;
+    if (this.state === "focus") this.back();
+    this.finishBuild(false);
+    this.blend = null;
+    this.startBuild(last.spec, last.tops, last.stationOf);
+    this.playIntro();
+  }
+
+  private playIntro(seconds?: number) {
     if (this.reducedMotion) return;
     this.intro = true;
     let t = 0;
-    const start = new THREE.Vector2(-12, 3.5);
+    // A small settle while the house builds, not a tour: the camera barely moves.
+    const C = buildTune().camera;
+    const length = Math.max(0.05, seconds ?? C.duration);
+    const start = new THREE.Vector2(C.settleX, C.settleY);
     this.look.copy(start);
     this.stepper = (dt) => {
-      t = Math.min(1, t + dt / seconds);
+      t = Math.min(1, t + dt / length);
       const e = 1 - Math.pow(1 - t, 3);
       this.look.copy(start).lerp(new THREE.Vector2(), e);
       if (t >= 1) {
@@ -1727,6 +2079,7 @@ export class EsperEngine {
 
   private onDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
+    this.finishBuild();
     this.pressing = true;
     this.dragged = false;
     this.pressAt.set(e.clientX, e.clientY);
@@ -1748,12 +2101,14 @@ export class EsperEngine {
         }
         const k = 220 / Math.max(400, this.canvas.clientWidth);
         const range = this.state === "overview" ? this.orbit : this.orbit / 2;
-        this.lookTarget.x = Math.max(-range, Math.min(range, this.lookTarget.x - (e.clientX - this.last.x) * k));
+        this.lookTarget.x = Math.max(-range, Math.min(range, this.lookTarget.x + (e.clientX - this.last.x) * k));
         this.lookTarget.y = Math.max(-10, Math.min(12, this.lookTarget.y - (e.clientY - this.last.y) * k));
       }
       this.last.set(e.clientX, e.clientY);
       return;
     }
+    // While the house builds, nothing lights up under the pointer (finishBuild catches up with where it rests).
+    if (this.building) return;
     if (this.state === "focus" && this.focused === "taste" && this.board) {
       this.setBoardHover(e.target === this.canvas && !this.overUi && this.board.hit(this.ray(e.clientX, e.clientY)));
     }
@@ -1874,6 +2229,7 @@ export class EsperEngine {
     this.updateTints(dt);
     if (this.holders.length) this.placeHands();
     this.updateShakers(dt);
+    this.updateBuild(dt); // after the shakers, which also place what they rattle
     this.updateLamps(dt);
     for (const [obj, a] of this.appears) {
       if (a.wait > 0) {

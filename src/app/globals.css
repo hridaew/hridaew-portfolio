@@ -1338,18 +1338,21 @@ html[data-esper-dark] [data-case-sheet-panel] {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ESPER: the loading mark. Bars rise in turn (a slight overshoot, then settle), the fill eases after progress, and
-   on ready the bars drop away left to right. */
+/* ESPER: the loading mark (EsperLogo). Bars rise in turn (a slight overshoot, then settle); the fill glides after
+   progress, long enough that one file arriving reads as a steady advance rather than a jump; on ready the fill
+   finishes, then the bars sink into the ground left to right. Transforms and opacity only, so the compositor runs it
+   while the main thread builds the room. */
+/* The timings are variables so the development tuning panel (BuildDials) can set them; these fallbacks ship. */
 .esper-logo-bar {
-  transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: esper-bar-in 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
-  animation-delay: calc(var(--i) * 60ms);
+  animation: esper-bar-in var(--esper-bar-rise, 580ms) cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
+  animation-delay: calc(var(--i) * var(--esper-bar-stagger, 60ms));
 }
-.esper-logo-fill { transition: width 360ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.esper-logo-fill { transition: transform var(--esper-fill-glide, 900ms) cubic-bezier(0.25, 0.8, 0.3, 1); }
+.esper-logo-out .esper-logo-fill { transition-duration: 280ms; }
 .esper-logo-out .esper-logo-bar {
-  animation: esper-bar-out 280ms cubic-bezier(0.55, 0, 0.75, 0.2) both;
-  animation-delay: calc(var(--i) * 45ms);
+  animation: esper-bar-out var(--esper-exit-duration, 300ms) cubic-bezier(0.55, 0, 0.75, 0.2) both;
+  animation-delay: calc(var(--esper-exit-delay, 260ms) + var(--i) * var(--esper-exit-stagger, 45ms));
 }
 @keyframes esper-bar-in {
   from { transform: scaleY(0); opacity: 0; }

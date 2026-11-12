@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,6 +20,10 @@ type Room = { send: (method: string, value?: string) => void; dispose: () => voi
 
 type EsperEvent = CustomEvent<{ event: string; payload: string }>;
 
+/** The opening's tuning panel (DialKit), in development only: production never loads it. */
+const BuildDials =
+  process.env.NODE_ENV !== "production" ? dynamic(() => import("./BuildDials"), { ssr: false }) : () => null;
+
 export function EsperRoom() {
   const router = useRouter();
   const { openSheet, activeKey } = useSheetNav();
@@ -26,6 +31,8 @@ export function EsperRoom() {
   const roomRef = useRef<Room | null>(null);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
+  // The interface waits for the house to build (the room says when), so the opening has the stage to itself.
+  const [chrome, setChrome] = useState(false);
   const [hovering, setHovering] = useState<string>("");
   const [menuHovering, setMenuHovering] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -99,8 +106,11 @@ export function EsperRoom() {
         if (reduced) u?.send("SetReducedMotion", "1");
         // Up close, subjects sit left of the dossier on wide screens.
         u?.send("SetFrameOffset", window.innerWidth >= 768 ? "7" : "0");
+      } else if (event === "chrome") {
+        setChrome(true);
       } else if (event === "progress") {
-        setProgress(0.12 + 0.88 * Number(payload));
+        // Downloads take the mark most of the way; the last stretch is the room compiling, filled on "ready".
+        setProgress(0.12 + 0.76 * Number(payload));
       } else if (event === "focus") {
         setActive(payload);
       } else if (event === "overview") {
@@ -173,6 +183,13 @@ export function EsperRoom() {
       roomRef.current = null;
     };
   }, [router]);
+
+  // A safety net: the interface never waits on the opening for long.
+  useEffect(() => {
+    if (!ready || chrome) return;
+    const t = window.setTimeout(() => setChrome(true), 6000);
+    return () => window.clearTimeout(t);
+  }, [ready, chrome]);
 
   // Things drawn at the page root (the case study sheet, the achievement toast) take the room's styling while it's open.
   useEffect(() => {
@@ -306,25 +323,26 @@ export function EsperRoom() {
         id="esper-canvas"
         tabIndex={-1}
         aria-label="A roofless model house seen from above. Each room is a project."
-        className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity duration-[900ms] ease-out active:cursor-grabbing"
+        className="absolute inset-0 h-full w-full cursor-grab outline-none transition-opacity ease-out active:cursor-grabbing"
         style={{
+          transitionDuration: "var(--esper-room-fade, 900ms)",
           opacity: ready && !leaving && !failed ? 1 : 0,
           cursor: (hovering && !menuHovering) || overBoard ? "pointer" : undefined,
           touchAction: "none",
         }}
       />
 
-      {/* Boot: the mark rises, fills as the room loads, and steps away as the house fades in. */}
+      {/* Boot: the mark rises, fills as the room loads, and sinks into the ground as the house starts to draw. */}
       {!failed && (
-        <div aria-hidden className={cn("pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity delay-[520ms] duration-200", dark ? "text-[#f2f2f0]" : "text-[#1d1d1f]", ready && "opacity-0")}>
+        <div aria-hidden className={cn("pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity delay-[var(--esper-logo-gone,800ms)] duration-200", dark ? "text-[#f2f2f0]" : "text-[#1d1d1f]", ready && "opacity-0")}>
           <EsperLogo progress={progress} done={ready} className="h-[52px] w-auto" />
         </div>
       )}
 
-      {!leaving && !failed && <HoverTag id={active || menuHovering ? "" : hovering} />}
+      {!leaving && !failed && <HoverTag id={active || menuHovering || !chrome ? "" : hovering} />}
       {!leaving && !failed && (
         <EsperInterface
-          ready={ready}
+          ready={ready && chrome}
           active={pinning && active === "guestbook" ? null : active}
           hovered={hovering}
           dark={dark}
@@ -340,6 +358,8 @@ export function EsperRoom() {
           }}
         />
       )}
+
+      <BuildDials onReplay={() => send("ReplayBuild")} />
 
       {ready && !failed && !leaving && <GuestbookComposer open={composing} onOpenChange={setComposing} onSend={sendNote} launched={launched} />}
 
