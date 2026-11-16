@@ -11,6 +11,7 @@ import { useSheetNav } from "@/components/sheet/SheetNav";
 import { homepageProjects } from "@/data/homepage-projects";
 import { CV_HREF, LINKEDIN_HREF } from "@/lib/site-identity";
 import { cn } from "@/lib/utils";
+import { StationAwards } from "./Awards";
 import { press, focusRing } from "./chrome";
 import type { Station } from "./stations";
 
@@ -60,8 +61,7 @@ export function StationDetails({
   phone?: boolean;
 }) {
   const { openSheet } = useSheetNav();
-  const role = phone ? undefined : station.role;
-  return (
+  const role = phone ? undefined : station.role;  return (
     <div className={className}>
       <ProjectMedia station={station} onOpen={onOpen} fill={phone} />
       {(role || station.period) && (
@@ -71,6 +71,7 @@ export function StationDetails({
         </p>
       )}
       {station.summary && <p className="site-body mt-4 text-black/90">{station.summary}</p>}
+      <StationAwards station={station} className="mt-4" />
       {station.note && <p className="type-caption mt-3 text-black/60">{station.note}</p>}
       {station.links && (
         <ul className="-mx-3 mt-4 flex flex-col">

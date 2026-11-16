@@ -28,6 +28,8 @@ export type Station = {
   period?: string;
   summary?: string;
   note?: string;
+  /** Honours and press, shown as capsules in the window (Awards.tsx). `title` is the full formal name, on hover. */
+  awards?: { label: string; title?: string; kind: "award" | "finalist" | "press" }[];
   href?: string;
   links?: { title: string; line: string; href: string }[];
   /** A few real photographs, people in them where there are any. Shown under the title. */
@@ -78,7 +80,7 @@ export const STATIONS: Station[] = [
     role: "Lead Designer and Developer",
     period: "MOHAI, Seattle, 2025 · Potrero Hill Neighborhood House, San Francisco, 2026",
     summary: describe("obscura"),
-    note: "Featured in The Potrero View, November 2026.",
+    awards: [{ label: "Featured in The Potrero View", title: "Featured in The Potrero View, November 2026", kind: "press" }],
     href: "/obscura",
   },
   {
@@ -94,7 +96,11 @@ export const STATIONS: Station[] = [
     role: "Interaction Designer",
     period: "With Maria Mortati Experience Design",
     summary: describe("memory-care"),
-    note: "Fast Company World Changing Ideas finalist, 2022.",
+    awards: [
+      { label: "Fast Company World Changing Ideas finalist", title: "Finalist: Fast Company 2022 World Changing Ideas (Experimental Category)", kind: "finalist" },
+      { label: "CABHI award, twice", title: "CABHI (Centre for Aging + Brain Health Innovation): 2× award recipient", kind: "award" },
+      { label: "SCAN Foundation Innovation Award", kind: "award" },
+    ],
     href: "/memory-care",
   },
   {

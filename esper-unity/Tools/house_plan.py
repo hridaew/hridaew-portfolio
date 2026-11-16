@@ -417,6 +417,31 @@ mces = [
         **seated(P), **arms(P, (-0.2, 0.74, 0.34), (-0.14, 0.9, 0.62), (0.2, 0.74, 0.34), (0.14, 0.9, 0.62))}), "scan": True},
 ]
 
+# The project's honours on a shelf on the tall north wall, seen from the overview without a click: the SCAN
+# Foundation Innovation Award (a cup), CABHI twice (two award blocks), and the Fast Company World Changing Ideas
+# finalist plaque leaning on the wall. Each is solid gold, one material throughout.
+TX, TY = 2.72, 1.26   # shelf centre along the wall, shelf height
+TZ = IN - 0.08        # the line the awards stand on
+cup = [0, 0, 0.026, 0, 0.026, 0.008, 0.01, 0.016, 0.008, 0.06, 0.016, 0.07, 0.046, 0.09, 0.054, 0.12, 0.056, 0.165, 0, 0.165]
+mces += [
+    soft("memorycare/awards-shelf", [TX, TY, IN - 0.08], [1.05, 0.03, 0.16], r=0.004, group="MemoryCare", material="ClayMid"),
+    thing("memorycare/award-cup", "MemoryCare", [TX - 0.33, TY + 0.015, TZ], FACE_SOUTH, [
+        soft("plinth", [0, 0.03, 0], [0.09, 0.06, 0.09], r=0.008, material="Gold"),
+        lathe("cup", [0, 0.06, 0], cup, material="Gold"),
+        {**ring("handle-l", [-0.062, 0.195, 0], 0.022, 0.007, rot=[90, 0, 0]), "material": "Gold"},
+        {**ring("handle-r", [0.062, 0.195, 0], 0.022, 0.007, rot=[90, 0, 0]), "material": "Gold"},
+    ]),
+    *[thing(f"memorycare/award-block-{k}", "MemoryCare", [TX + 0.02 + k * 0.13, TY + 0.015, TZ], FACE_SOUTH, [
+        soft("foot", [0, 0.015, 0], [0.085, 0.03, 0.05], r=0.006, material="Gold"),
+        soft("block", [0, 0.03 + h / 2, 0], [0.065, h, 0.022], r=0.01, material="Gold"),
+    ]) for k, h in enumerate([0.17, 0.14])],
+    thing("memorycare/award-certificate", "MemoryCare", [TX + 0.37, TY + 0.015 + 0.11, IN - 0.05], FACE_SOUTH, [
+        # A solid gold plaque: the face raised a little inside its border, all one metal.
+        soft("plate", [0, 0, 0], [0.2, 0.25, 0.018], r=0.004, material="Gold"),
+        soft("face", [0, 0, -0.01], [0.16, 0.21, 0.006], r=0.003, material="Gold"),
+    ], r=[8, FACE_SOUTH, 0]),
+]
+
 # ---------------- Virdio (front west): the class on the TV, the phone flat on the table with its classes, room to move ----------------
 vx, vz = -2.45, -2.0   # far enough from the sofa for a push-up
 P = pose(vx, vz, 90)
@@ -511,6 +536,16 @@ obscura = [
     screen("obscura/projection", "Obscura", [scx + sdir[0] * 0.074, 1.235, scz + sdir[1] * 0.074], SCY + 180, 1.02, 1.01,
            {"surface": "Screen", "video": "/assets/obscura/spectator.mp4"}, border=0.0, depth=0.002, corner=0.001, station="obscura"),
 ]
+# The Potrero View article (November 2026, page 7), framed in gold on the tall east wall beside the booth.
+PVW, PVH, PVY, PVZ = 0.5, 0.4, 1.45, -1.45   # the clipping is 1200 x 957
+obscura += [
+    thing("obscura/press-potrero-view", "Obscura", [IN - 0.02, PVY, PVZ], FACE_WEST, [
+        soft("frame", [0, 0, 0], [PVW + 0.06, PVH + 0.06, 0.024], r=0.005, material="Gold"),
+    ]),
+    screen("obscura/press-clipping", "Obscura", [IN - 0.035, PVY, PVZ], FACE_WEST, PVW, PVH,
+           {"surface": "Screen", "src": "Content/Press/potrero_view.jpg", "lit": True}, border=0.0, depth=0.004, corner=0.001),
+]
+
 seats = [(1.15, -1.85), (1.85, -2.2)]
 for k, (sx_, sz_) in enumerate(seats):
     yaw = math.degrees(math.atan2(scx - sx_, scz - sz_))
@@ -567,7 +602,8 @@ views = {v["id"]: v for v in s["views"]}
 views["overview"].update(iso([0.0, 0.0, 0.0], 14.0))
 views["domis"].update(shoulder(dx, dz, 0, [phone_at[0], 1.25, phone_at[2] + 0.3], back=1.35, side=-1.15, height=2.2, fov=58, lead=0.3))
 views["taste"].update({"p": [1.95, 2.75, -1.0], "target": [1.05, 0.7, 2.6], "fov": 58})
-views["memory-care"].update(shoulder(mx, mz, 90, [alx + 0.2, 1.15, alz], back=1.75, side=-0.6, height=2.3, fov=60, lead=0.7))
+# Turned left of the shoulder so the honours shelf shows at the left edge; the cats fall under the window card.
+views["memory-care"].update({"p": [1.05, 2.45, 3.25], "target": [4.0, 1.0, 2.5], "fov": 65})
 views["virdio"].update(shoulder(vx, vz, 90, [XV - 0.3, 0.8, vz + 0.15], back=2.0, side=-0.6, height=2.3, fov=60, lead=0.8))
 views["wafflings"].update(shoulder(fx2, fz2, FY, [hx, 1.2, hz], back=1.7, side=-0.55, height=2.25, fov=58, lead=0.4))
 views["obscura"].update({"p": [0.0, 3.1, -5.6], "target": [3.4, 0.9, -3.5], "fov": 64})
@@ -602,8 +638,7 @@ TINTS = {
     "domis/fridge-jar": DOMIS, "domis/fridge-tub": DOMIS_PALE, "domis/fridge-fault": DOMIS,
     "domis/leak-0": DOMIS_PALE, "domis/leak-1": DOMIS_PALE,
     "virdio/sofa": VIRDIO_PALE, "virdio/coffee-table": VIRDIO,
-    "memorycare/cat-0": MCES_DEEP, "memorycare/cat-1": MCES, "memorycare/footrest": MCES_PALE, "memorycare/stool": MCES_PALE,
-    "obscura/curtain-s": OBSCURA_DEEP, "obscura/curtain-e": OBSCURA_DEEP, "obscura/curtain-n": OBSCURA_DEEP,
+    "memorycare/cat-0": MCES_DEEP, "memorycare/cat-1": MCES, "memorycare/footrest": MCES_PALE, "memorycare/stool": MCES_PALE,    "obscura/curtain-s": OBSCURA_DEEP, "obscura/curtain-e": OBSCURA_DEEP, "obscura/curtain-n": OBSCURA_DEEP,
     "obscura/chair-0": OBSCURA, "obscura/chair-1": OBSCURA,
     "wafflings/whale": [0.22, 0.24, 0.28],
     "taste/record-player": [0.3, 0.3, 0.32],

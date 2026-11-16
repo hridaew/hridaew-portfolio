@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
@@ -157,6 +158,8 @@ const PALETTE: Record<string, number[]> = {
   ClayMid: [0.84, 0.84, 0.84], Fabric: [0.9, 0.9, 0.9], Graphite: [0.16, 0.16, 0.17], Satin: [0.78, 0.78, 0.79],
   // The guestbook's corkboard: the one warm surface in the clay, so the paper notes have something to sit on.
   Cork: [0.8, 0.69, 0.53],
+  // Honours (the Memory Care trophies, the Potrero View frame): the one metal that keeps its colour, in both themes.
+  Gold: [0.86, 0.68, 0.38],
   // People.
   Skin: [0.86, 0.86, 0.85], Top: [0.7, 0.7, 0.7], Bottom: [0.42, 0.42, 0.43], Hair: [0.2, 0.2, 0.2], Shoes: [0.25, 0.25, 0.26],
 };
@@ -166,11 +169,18 @@ const PALETTE_DARK: Record<string, number[]> = {
   ...PALETTE,
   WallWhite: [0.3, 0.3, 0.32], Floor: [0.24, 0.24, 0.26], Clay: DARK_CLAY, Bezel: DARK_CLAY, Console: DARK_CLAY, Plinth: DARK_CLAY,
   DeskTop: DARK_CLAY, DeskLeg: DARK_CLAY, ClayMid: [0.26, 0.26, 0.28], Fabric: [0.3, 0.3, 0.32], Cork: [0.42, 0.36, 0.28],
+  Gold: [0.74, 0.58, 0.32],
 };
 /** Things that give light (the fridge's lamp): emissive strength by theme, light and dark. */
-const GLOW: Record<string, { color: number[]; light: number; dark: number }> = {
+const GLOW: Record<string, { color: number[]; light: number; dark: number; keep?: boolean }> = {
   Lamp: { color: [1, 1, 0.97], light: 0.9, dark: 1.6 },
+  // Just a breath of warmth so the gold catches the eye from the overview; any more flattens it toward plastic.
+  // `keep`: the surface stays gold rather than turning lamp-white.
+  Gold: { color: [1, 0.72, 0.32], light: 0.04, dark: 0.08, keep: true },
 };
+/** Metal (the gold) has no colour of its own to light, only reflections, so it gets a soft studio to reflect. Kept
+ *  near the room's own light level, and lower in the dark room, so it sits in the clay instead of glowing out of it. */
+const METAL_ENV = { light: 0.75, dark: 0.35 };
 /** A lamp also lights what's around it: a small, soft, shadowless point light just under it (candela; the sun is
  *  about 3 here, so this lifts the shelves and food without flooding the room). */
 const LAMP_LIGHT = { color: [0.94, 0.97, 1], light: 0.35, dark: 0.6, range: 1.5 };
@@ -180,6 +190,8 @@ const SCREEN_LIGHT = { minArea: 0.05, light: 0.18, dark: 0.5 };
 const FINISH: Record<string, { roughness: number; metalness: number }> = {
   Satin: { roughness: 0.32, metalness: 0.75 }, Graphite: { roughness: 0.45, metalness: 0.1 }, Bezel: { roughness: 0.4, metalness: 0.1 },
   Fabric: { roughness: 1, metalness: 0 }, Hair: { roughness: 0.75, metalness: 0 },
+  // Satin rather than mirror: the soft-3D look, highlights broad and gentle like the clay's light.
+  Gold: { roughness: 0.34, metalness: 1 },
 };
 const SKY = [0.97, 0.97, 0.97], GROUND_COOL = [0.88, 0.88, 0.88], GROUND_WARM = [0.93, 0.91, 0.88];
 const SUN_SCALE = 2.6, BOUNCE_SCALE = 2.2; // three's light units against the Unity-tuned look values
@@ -692,7 +704,11 @@ export class EsperEngine {
     for (const [key, m] of this.materials) {
       const name = key.split(":")[0];
       const glow = GLOW[name];
-      if (glow) {
+      if (m.envMap) m.envMapIntensity = METAL_ENV.light + (METAL_ENV.dark - METAL_ENV.light) * k;
+      if (glow?.keep) {
+        m.color.copy(srgb(PALETTE[name])).lerp(srgb(PALETTE_DARK[name]), k);
+        m.emissiveIntensity = glow.light + (glow.dark - glow.light) * k;
+      } else if (glow) {
         m.color.copy(srgb(glow.color)).lerp(srgb([0.82, 0.83, 0.86]), k);
         m.emissive.copy(srgb(glow.color));
         m.emissiveIntensity = glow.light + (glow.dark - glow.light) * k;
@@ -1143,6 +1159,7 @@ export class EsperEngine {
   }
 
   private materials = new Map<string, THREE.MeshStandardMaterial>();
+  private shine?: THREE.Texture;
   /** No colour anywhere for now: tints are ignored, everything takes its named neutral. */
   private material(name: string, _tint?: number[]) {
     const tint = undefined as number[] | undefined;
@@ -1155,9 +1172,15 @@ export class EsperEngine {
       m.userData.matName = name;
       const glow = GLOW[name];
       if (glow) {
-        m.color = srgb(this.dark ? [0.82, 0.83, 0.86] : glow.color);
+        if (!glow.keep) m.color = srgb(this.dark ? [0.82, 0.83, 0.86] : glow.color);
         m.emissive = srgb(glow.color);
         m.emissiveIntensity = this.dark ? glow.dark : glow.light;
+      }
+      // Metal needs something to reflect: a soft studio room, made once, for the gold only.
+      if (fin.metalness >= 1) {
+        this.shine ??= new THREE.PMREMGenerator(this.renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+        m.envMap = this.shine;
+        m.envMapIntensity = this.dark ? METAL_ENV.dark : METAL_ENV.light;
       }
       this.materials.set(key, m);
     }
