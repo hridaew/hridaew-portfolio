@@ -1275,10 +1275,6 @@ html[data-home-layout] .home-project-embla {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 60px -24px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* ESPER: the gold of the room's trophies, on the award capsules' icons (deep enough for 3:1 on light glass). */
-.esper-gold { color: #a8730c; }
-[data-esper-theme="dark"] .esper-gold { color: #f2c35b; }
-
 /* ESPER dark: the achievement toast (rendered at the page root, outside the room) turns dark too. */
 html[data-esper-dark] {
   --ach-pill-fill: #232327;
